@@ -279,7 +279,7 @@
                                                 </div>
                                                 <a href="javascript:void(0)" onclick="this.style.color = 'red'; return take_value(this, '<c:out value="${ans.a_id}"/>', 'upvote', 'answer');" >Upvote(<c:out value="${ans.vote}"/>)</a>&nbsp;&nbsp; 
                                                 <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${ans.a_id}"/>', 'downvote', 'answer');" >Downvote</a>&nbsp;&nbsp;
-                                                <a href="javascript:void(0)" value="Comment" onclick="showAns<c:out value="${ans.a_id}"/>CommentBox()">Commentt</a>&nbsp;&nbsp;
+                                                <a href="javascript:void(0)" value="Comment" onclick="showAns<c:out value="${ans.a_id}"/>CommentBox()">Comment</a>&nbsp;&nbsp;
                                                 <a href="javascript:void(0)">View(<c:out value="${ans.total_view}"/>)</a>
                                                 <form action="SubmitAnswerComment.jsp" method="get">
                                                     <div class="hidden" id="Anscomment<c:out value="${ans.a_id}"/>">

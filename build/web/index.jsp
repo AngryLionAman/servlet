@@ -1,17 +1,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ page language="java" %>
+<%@ page import="java.sql.*" %> 
+<%@ include file="site.jsp" %>
+<%@ include file="validator.jsp" %>
+<%@ page isErrorPage="true" errorPage="error.jsp" %>        
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html lang="en">
-    <head>
-        <%@page language="java" %>
-        <%@page import="java.sql.*" %> 
-        <%@include file="site.jsp" %>
-        <%@include file="validator.jsp" %>
-
-        <%@page isErrorPage="true" errorPage="error.jsp" %>
-
+    <head>  
         <meta charset="UTF-8">
-        <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
         <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <!-- For Resposive Device -->
@@ -53,26 +51,27 @@
         </script> 
 
         <script type="text/javascript">
-            function take_value(el, question_id, action) {
-            <% if (session.getAttribute("email") == null) { %>
-                alert("Please login first");<%
-                } else {%>
-                el.onclick = function (event) {
-                    event.preventDefault();
-                };
-                if (action === "upvote") {
-                    var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_question_vote.jsp?question_id=" + question_id + "&action=upvote", true);
-                    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    http.send();
+            function take_value(el, question_id, sUserid, action) {
+                if (question_id.length > 0 && question_id !== null && sUserid !== null && sUserid.length > 0 && action !== null) {
+                    el.onclick = function (event) {
+                        event.preventDefault();
+                    };
+                    if (action === "upvote") {
+                        var http = new XMLHttpRequest();
+                        http.open("POST", "<%=DB_AJAX_PATH%>/submit_question_vote.jsp?question_id=" + question_id + "&action=upvote", true);
+                        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        http.send();
+                    }
+                    if (action === "downvote") {
+                        var http = new XMLHttpRequest();
+                        http.open("POST", "<%=DB_AJAX_PATH%>/submit_question_vote.jsp?question_id=" + question_id + "&action=downvote", true);
+                        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        http.send();
+                    }
+                } else {
+                    alert("please login first!!!");
                 }
-                if (action === "downvote") {
-                    var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_question_vote.jsp?question_id=" + question_id + "&action=downvote", true);
-                    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    http.send();
-                }
-            <% }%>
+
             }
         </script>
         <style>
@@ -83,7 +82,6 @@
 
     <body>
         <div class="main-page-wrapper">
-            <%--@include file="header.jsp" --%>
             <jsp:include page="header.jsp"/>
             <jsp:useBean id="function" class="com.string.name"/>
             <div class="clear-fix"></div>
@@ -135,7 +133,7 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="themeBox" style="height:200px;">
                                         <div class="boxHeading">
-                                           Post something
+                                            Post something
                                         </div>
                                         <div><textarea type="text" class="anstext" placeholder="Post you question here" data-toggle="modal" data-target="#myModal" readonly=""></textarea></div>
 
@@ -189,8 +187,8 @@
                                                 <div class="questionArea">
 
 
-                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${question.q_id}"/>', '<%="upvote"%>');" >Upvote(<c:out value="${question.vote}"/>)</a>&nbsp;&nbsp; 
-                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${question.q_id}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${question.q_id}"/>', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(<c:out value="${question.vote}"/>)</a>&nbsp;&nbsp; 
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${question.q_id}"/>', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
                                                     <a href="Answer.jsp?q=<c:out value="${fn:replace(question.question,' ','+')}"/>&Id=<c:out value="${question.q_id}"/>" >Ans(<c:out value="${question.tac}"/>)</a>&nbsp;&nbsp;
                                                     <a href="javascript:void(0)">View(<c:out value="${question.total_view}"/>)</a>
                                                     <!-- Comment on question -->
@@ -234,8 +232,8 @@
                                             <div class="questionArea">
                                                 <div class="postedBy">Posted By : <a href="profile.jsp?user=<c:out value="${r_question.firstname}"/>&ID=<c:out value="${r_question.id}"/>"><c:out value="${function.convertStringUpperToLower(r_question.firstname)}"/></a></div>
                                             </div>
-                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${r_question.q_id}"/>', '<%="upvote"%>');" >Upvote(<c:out value="${r_question.vote}"/>)</a>&nbsp;&nbsp; 
-                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${r_question.q_id}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
+                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${r_question.q_id}"/>', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(<c:out value="${r_question.vote}"/>)</a>&nbsp;&nbsp; 
+                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${r_question.q_id}"/>', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
                                             <a href="Answer.jsp?q=<c:out value="${fn:replace(r_question.question,' ','+')}"/>&Id=<c:out value="${r_question.q_id}"/>" >Ans(<c:out value="${r_question.tac}"/>)</a>&nbsp;&nbsp;                                         
                                             <a href="javascript:void(0)">View(<c:out value="${r_question.total_view}"/>)</a>
                                             <!-- Comment on question -->
@@ -351,8 +349,8 @@
                                                 <div class="postedBy">POSTED_BY :<a href="profile.jsp?user=<%=Username.replaceAll(" ", "+")%>&ID=<%=userId%>"> <%=firstName(Username)%></a></div>
 
                                             </div>
-                                            <a href="javascript:void(0)" onclick="return take_value(this, '<%=rs1.getInt("q_id")%>', 'upvote');">Upvote(<%=Vote%>)</a>&nbsp;&nbsp;
-                                            <a href="javascript:void(0)" onclick="return take_value(this, '<%=rs1.getInt("q_id")%>', 'upvote');">Downvote</a>&nbsp;&nbsp;
+                                            <a href="javascript:void(0)" onclick="return take_value(this, '<%=rs1.getInt("q_id")%>', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote');">Upvote(<%=Vote%>)</a>&nbsp;&nbsp;
+                                            <a href="javascript:void(0)" onclick="return take_value(this, '<%=rs1.getInt("q_id")%>', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote');">Downvote</a>&nbsp;&nbsp;
                                             <a href="Answer.jsp?q=<%=rs1.getString("question").replaceAll(" ", "-")%>&Id=<%=rs1.getInt("q_id")%>">Ans(<%=TotoalAnswerCount%>)</a>&nbsp;&nbsp;
                                             <a href="javascript:void(0)">View(<%=total_count%>)</a>
                                             <!-- Fetching the Comment on question -->

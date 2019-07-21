@@ -3,10 +3,6 @@
 <%@page import="java.sql.*"%>
 <%@include file="site.jsp" %>
 <%
-    String sl = request.getParameter("sl");
-    if (sl == null) {
-        sl = "en";
-    }
     if (session.getAttribute("email") != null) {
         String email = (String) session.getAttribute("email");
         Connection connection = null;
@@ -21,8 +17,6 @@
                 }
                 connection = DriverManager.getConnection(DB_URL_, DB_USERNAME_, DB_PASSWORD_);
             }
-            //String firstname = null;
-            //String lastname = null;
             String higher_edu = null;
             String best_achievement = null;
             String ImagePath = null;
@@ -50,20 +44,20 @@
                 }
                 //out.println("<br>");
                 if (higher_edu == null || higher_edu.length() <= 0) {
-                    out.println("<br><a href=UpdateUserProfile.jsp?sl=" + sl + ">Insert your higher_edu</a>");
+                    out.println("<br><a href=UpdateUserProfile.jsp>Insert your higher_edu</a>");
                     b_higher_edu = false;
                 }
               
                 if (best_achievement == null || best_achievement.length() <= 0) {
-                    out.println("<br><a href=UpdateUserProfile.jsp?sl=" + sl + ">Insert your best_achievement</a>");
+                    out.println("<br><a href=UpdateUserProfile.jsp>Insert your best_achievement</a>");
                     b_best_achievement = false;
                 }
                 if (bio == null || bio.length() <= 0) {
-                    out.println("<br><a href=UpdateUserProfile.jsp?sl=" + sl + ">Insert your bio</a>");
+                    out.println("<br><a href=UpdateUserProfile.jsp>Insert your bio</a>");
                     b_bio = false;
                 }
                  if (ImagePath == null) {
-                    out.println("<br><a href=UpdateUserProfile.jsp?sl=" + sl + ">Update your image profile</a>");
+                    out.println("<br><a href=UpdateUserProfile.jsp>Update your image profile</a>");
                 }
                
 
@@ -100,7 +94,7 @@
             }
              
               if ( b_higher_edu && b_best_achievement && b_bio && ImagePath != null && TotalAnswerCount != 0 && TotalQuestionCount != 0 ) {
-                    out.println("<br><a href=UpdateUserProfile.jsp?sl=" + sl + ">Your profile is up to date</a>");
+                    out.println("<br><a href=UpdateUserProfile.jsp>Your profile is up to date</a>");
                 }
 
         } catch (Exception e) {
