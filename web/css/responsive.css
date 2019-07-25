@@ -146,7 +146,7 @@
     #sync2 .item {margin: 0 auto;}
     .latest-news .single-post, footer .footer-logo, footer .footer-link, footer .footer-recent-post, footer .footer-address,
     .latest-news .single-post .img-holder img,.blog_details .blog-image .quote {width:100%;}
-    footer .footer-logo, footer .footer-link, footer .footer-recent-post, footer .footer-address {min-height: auto;}
+    footer .footer-logo, footer .footer-link, footer .footer-recent-post, footer .footer-address {min-height: available;/*min-height was auto(was showing the error)*/}
     .blog-section-top .single-post,.service-details-page .content-holder .text {width:100%;}
     .blog-section-top .single-post.Mfix {margin: 40px 0 -65px 0;}
     .about-us-manage h4,.project-details-page .text {margin-top: 40px;}

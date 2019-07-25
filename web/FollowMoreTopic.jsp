@@ -1,48 +1,25 @@
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@include file="site.jsp" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <%@page language="java"%>
-        <%@page import="java.sql.*"%>
-        <%@include file="site.jsp" %>
-        <%@include file="validator.jsp" %>
-        <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-        <%!            
-            String TOPIC_MAY_YOU_LIKE = "";
-            String FOLLOW = "";
-            String FOLLOWED = "";
-        %>
-        <%
-            String sl = request.getParameter("sl");
-            if (sl == null) {
-                sl = "en";
-            }
-            if (sl.equalsIgnoreCase("hi")) {
-                TOPIC_MAY_YOU_LIKE = "विषय, आपको पसंद आ सकता है";
-                FOLLOW = "फॉलो करे";
-                FOLLOWED = "फॉलो कर चुके हैं";
-
-            } else {
-                TOPIC_MAY_YOU_LIKE = "Topic, may you like";
-                FOLLOW = "Follow";
-                FOLLOWED = "Followed";
-            }
-        %>
         <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
         <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <title>Follow More Topic | InquiryHere </title>
+        <title>Follow More Topic | inquiryere.com </title>
         <!-- Main style sheet -->
         <link rel="stylesheet" type="text/css" href="css/style.css">
         <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <script type="text/javascript">
             function take_value(el, _topic_id, id_of_user) {
-            <% if (session.getAttribute("email") == null) { %>
-                alert("Please login first");<%
+            <% if (session.getAttribute("Session_id_of_user") == null) { %>
+                alert("Please login first or refresh the page!!");<%
                 } else {%>
                 if (el.value === "follow") {
                     el.value = "followed";
@@ -67,26 +44,9 @@
     </head>
 
     <body>
+
+        <jsp:include page="header.jsp"/>
         <div class="main-page-wrapper">
-            <!-- Header _________________________________ -->
-            <%--@include file="header.jsp" --%>
-            <jsp:include page="header.jsp">
-                <jsp:param name="sl" value="<%=sl%>"/>
-            </jsp:include>
-            <%
-                Connection connection = null;
-                ResultSet resultSet = null;
-                PreparedStatement preparedStatement = null;
-                try {
-                    if (connection == null || connection.isClosed()) {
-                        try {
-                            Class.forName("com.mysql.jdbc.Driver");
-                        } catch (ClassNotFoundException ex) {
-                            out.println("Exception in loading the class forname Driver" + ex);
-                        }
-                        connection = DriverManager.getConnection(DB_URL_, DB_USERNAME_, DB_PASSWORD_);
-                    }
-            %>
             <div class="bodydata">
                 <div class="container clear-fix">
                     <div class="row">
@@ -98,133 +58,105 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="themeBox" style="height:auto;margin-bottom:0px;">
                                         <div class="boxHeading">
-                                            <%=TOPIC_MAY_YOU_LIKE%>
+                                            Topic, may you like
                                         </div>
-                                        <%--
+                                        <c:catch var="ex">
+                                            <c:set var="rowsPerPage" value="100" />
+                                            <c:set var="pageNumber" value="1" />
+                                            <c:if test="${param.p ne null}">
+                                                <c:set var="pageNumber" value="${param.p}" />
+                                            </c:if>
+
+                                            <c:set var="start" value="${pageNumber*rowsPerPage-rowsPerPage}"/>
+                                            <c:set var="stop" value="${pageNumber*rowsPerPage-1}"/>
+
+                                            <sql:query var="topic" dataSource="jdbc/mydatabase" >
+                                                select t.unique_id,t.topic_name,(select count(topic_id) from topic_followers_detail where topic_id = t.unique_id)as count from topic t ORDER BY RAND();
+                                            </sql:query>
+
+                                            <c:set var="a">
+                                                <fmt:formatNumber value="${topic.rowCount/rowsPerPage}" maxFractionDigits="0"/>
+                                            </c:set>
+
+                                            <c:set var="b" value="${topic.rowCount/rowsPerPage}" />
+
+                                            <c:choose>
+                                                <c:when test="${a==0}">
+                                                    <c:set var="numberOfPages" value="1" scope="page"/>   
+                                                </c:when>
+
+                                                <c:when test="${b>a}">
+                                                    <c:set var="xxx" value="${b%a}"/>
+                                                    <c:if test="${xxx>0}">
+                                                        <c:set var="numberOfPages" value="${b-xxx+1}" scope="page"/>   
+                                                    </c:if>
+                                                </c:when>
+
+                                                <c:when test="${a>=b}">
+                                                    <c:set var="numberOfPages" value="${a}" scope="page"/>    
+                                                </c:when>
+                                            </c:choose>
+                                            <c:forEach var="t" items="${topic.rows}" begin="${start}" end="${stop}">
+                                                <div style="width:auto;height:52px;border:1px solid #000;float: left; margin-right: 5px; margin-bottom: 5px;" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                                    <span title="Totoal followers of ${t.topic_name} is ${t.count}"><a href=topic.jsp?t=${t.topic_name}&id=${t.unique_id}>${t.topic_name}</a> (${t.count})</span>
+                                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
+                                                        <sql:query dataSource="jdbc/mydatabase" var="found">
+                                                            SELECT count(*) as cnt FROM topic_followers_detail where topic_id = ? and user_or_followers_id = ? limit 1;
+                                                            <sql:param value="${t.unique_id}"/>
+                                                            <sql:param value="${sessionScope.Session_id_of_user}"/>
+                                                        </sql:query>
+                                                        <c:forEach items="${found.rows}" var="f" varStatus="loop">
+                                                            <c:set value="${f.cnt}" var="count"/>
+                                                        </c:forEach>
+                                                        <c:if test="${count eq 1}">
+                                                            <input type="button" value="Unfollow" id="myButton1" onclick="return take_value(this, '${t.unique_id}', '${sessionScope.Session_id_of_user}');" />
+                                                        </c:if>
+                                                        <c:if test="${count ne 1}">
+                                                            <input type="button" value="follow" id="myButton1" onclick="return take_value(this, '${t.unique_id}', '${sessionScope.Session_id_of_user}');" />
+                                                        </c:if>
+                                                    </c:if>
+                                                    <c:if test="${sessionScope.Session_id_of_user eq null}">
+                                                        <input type="button" value="follow" id="myButton1" onclick="alert('Please Login To Follow');" />
+                                                    </c:if>
+                                                </div>
+                                            </c:forEach>
+
+                                            <div class="clear-fix" style="border-style: solid;border-width: 1px;">
+                                                <%--For displaying Previous link --%>
+                                            <c:if test="${pageNumber gt 1}">
+                                                <a href="FollowMoreTopic.jsp?p=${pageNumber - 1}">Previous</a>
+                                            </c:if>
+                                            <c:forEach begin="1" end="${numberOfPages}" var="i">
+                                                <c:choose>
+                                                    <c:when test="${i!=pageNumber}">
+                                                        <a href="FollowMoreTopic.jsp?p=<c:out value="${i}"/>"><c:out value="${i}"/></a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <b style="color: red;"><c:out value="${i}"/></b>
+                                                    </c:otherwise>        
+                                                </c:choose>       
+                                            </c:forEach>  
+                                            <%--For displaying Next link --%>
+                                            <c:if test="${pageNumber lt numberOfPages}">
+                                                <a href="FollowMoreTopic.jsp?p=${pageNumber + 1}">Next</a>
+                                            </c:if>
+                                            </div>   
                                             
-                                            if (session.getAttribute("email") != null) {
-                                                String email = (String) session.getAttribute("email");
-                                                try {
-                                                    String p = "SELECT * FROM newuser WHERE email = '" + email + "'";
-                                                    preparedStatement = connection.prepareStatement(p);
-                                                    resultSet = preparedStatement.executeQuery();
-                                                    while (resultSet.next()) {
-                                                        id_of_user = resultSet.getInt("id");
-                                                    }
-                                                } catch (Exception e) {
-                                                    out.println("Unable to retrieve!!" + e);
-                                                }
-                                            }
-                                        --%>
-
-                                        <%
-                                            int id_of_user = 0;
-                                            try{
-                                                if(session.getAttribute("Session_id_of_user") != null){
-                                                   id_of_user = (Integer) session.getAttribute("Session_id_of_user"); 
-                                                }                       
-                                            }catch(Exception msg){
-                                                out.println(msg);
-                                            }
-                                            try {
-                                                //Connection con_topic = null;
-                                                String name_topic = null;
-                                                String p_topic = "select t.unique_id,t.topic_name,(select count(topic_id) from topic_followers_detail "
-                                                        + "where topic_id = t.unique_id)as count from topic t";
-                                                preparedStatement = connection.prepareStatement(p_topic);
-                                                resultSet = preparedStatement.executeQuery();
-                                                int i = 1;
-                                                String Status = null;
-                                                while (resultSet.next()) {
-                                                    int _topic_id = resultSet.getInt("t.unique_id");
-                                                    int count = resultSet.getInt("count");
-                                                    name_topic = convertStringUpperToLower(resultSet.getString("t.topic_name"));
-                                        %>   
-                                        <div style="width:auto;height:52px;border:1px solid #000;float: left; margin-right: 5px; margin-bottom: 5px;" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                            <span title="Totoal followers of <%=name_topic%> is <%=count%>"><a href=topic.jsp?t=<%=name_topic.replaceAll(" ", "+")%>&id=<%=_topic_id%>&sl=<%=sl%>><%=name_topic%></a> (<%=count%>)</span>
-                                            <%
-                                                Statement stmt_topic_followers;
-                                                ResultSet rs_topic_followers;
-                                                stmt_topic_followers = connection.createStatement();
-                                                String topic_followers = "SELECT * FROM topic_followers_detail";
-                                                rs_topic_followers = stmt_topic_followers.executeQuery(topic_followers);
-                                                try {
-                                                    while (rs_topic_followers.next()) {
-                                                        int f_topic_id = rs_topic_followers.getInt("topic_id");
-                                                        int f_followers_id = rs_topic_followers.getInt("user_or_followers_id");
-
-                                                        if ((f_topic_id == _topic_id) && (f_followers_id == id_of_user)) {
-                                                            Status = "present";
-                                                        }
-                                                    }
-                                                } catch (Exception msg) {
-                                                    out.println("Error in inner blok" + msg);
-                                                }
-                                                stmt_topic_followers.close();
-                                                rs_topic_followers.close();
-                                            %>
-                                            <%
-                                                if (Status == "present") {
-                                            %> <input type="button" value="Unfollow" id="myButton1" onclick="return take_value(this, '<%=_topic_id%>', '<%=id_of_user%>');" /><%
-                                                    } else {%>
-                                            <input type="button" value="follow" id="myButton1" onclick="return take_value(this, '<%=_topic_id%>', '<%=id_of_user%>');" />
-                                            <% }
-                                                        Status = null;
-                                                        out.println("</div>");
-                                                    }
-
-                                                } catch (Exception e) {
-                                                    out.println("Unable to retrieve - >" + e);
-                                                }
-                                            %>
-
-                                            <%
-                                                } catch (Exception e) {
-                                                    out.println("Error in main try block:-" + e);
-                                                } finally {
-
-                                                    if (connection != null || !connection.isClosed()) {
-                                                        try {
-                                                            connection.close();
-                                                        } catch (Exception e) {
-                                                            out.println("Exception in closing connection " + e);
-                                                        }
-                                                    }
-                                                    if (resultSet != null || !resultSet.isClosed()) {
-                                                        try {
-                                                            resultSet.close();
-                                                        } catch (Exception e) {
-                                                            out.println("Exception in closing resulatset " + e);
-                                                        }
-                                                    }
-                                                    if (preparedStatement != null || !preparedStatement.isClosed()) {
-                                                        try {
-                                                            preparedStatement.close();
-                                                        } catch (Exception e) {
-                                                            out.println("Exception in closing preparedStatement " + e);
-                                                        }
-                                                    }
-                                                }
-                                            %>
-                                            <div class="clear-fix"></div>
-                                        </div>
+                                        </c:catch>
+                                        <c:if test="${ex ne null}">
+                                            ${ex}
+                                        </c:if>
                                     </div>
-
                                 </div>
-                                            <div class="row margintop10">
-                                            </div>
-                                                
                             </div>
                         </div>
                     </div>
                 </div>
-                <%@include file="notificationhtml.jsp" %>
-                <jsp:include page="footer.jsp">
-                    <jsp:param name="sl" value="<%=sl%>"/>
-                </jsp:include>
-                <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
-                <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
-                <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
             </div>
+        </div>
+        <jsp:include page="footer.jsp"/>
+        <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
+        <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
+        <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
     </body>
 </html>

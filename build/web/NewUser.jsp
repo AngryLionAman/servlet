@@ -51,6 +51,7 @@
 
     if (firstname == null || email == null || password == null) {
         out.println("you can't access this page direcitly");
+        response.sendRedirect("signup.jsp?ref=nuser");
     } else {
         //Form validation
         /*Email validation*/
@@ -151,10 +152,6 @@
                         //Statement statement = connection.createStatement();
                         String insert_user = "insert into newuser(firstname,username,email,email_s,password,imagepath) values(?,?,?,?,?,?)";
 
-                        //'" + firstname + "','" + lastname + "','" + email + "','0','" + password + "','inquiryhere_Logo.PNG'
-                        //Email_s represent the security of gmail
-                        // i can make this value as default but when i thought about this, i did't know about how to set default value in database
-                        // and when i got to know that time i feel lazy thats why i leave it as it was
                         preparedStatement = connection.prepareStatement(insert_user);
                         preparedStatement.setString(1, firstname);
                         preparedStatement.setString(2, userName);
@@ -171,7 +168,7 @@
                             response.addCookie(usernameCookie);
                             response.addCookie(passwordCookie);
                         } catch (Exception msg) {
-                            out.println("Please use password without space");
+                            out.println("We got the problem in login,Please login agin, <a href=login.jsp>click here to login</a>");
                         }
                         
 //                        statement.execute(p);
@@ -187,7 +184,7 @@
                         }
                         session.setAttribute("email", email);
                         session.setAttribute("Session_id_of_user", Session_id_of_user);
-                        response.sendRedirect("CompleteProfilefFollowTopic.jsp?sl=" + sl);
+                        response.sendRedirect("CompleteProfilefFollowTopic.jsp");
                     } catch (Exception e1) {
                         out.print("Error:-" + e1);
                     }
@@ -219,9 +216,24 @@
                 }
             }
         } else {
-            out.println("Its seem like you are doing effort to break the site rule"
-                    + "<br>Plese follow the procedure ,don't try to break the rule other wise your activity "
-                    + "will be recorded for the monitoring purpose");
+            %>
+            <center>
+                
+            
+            <b style="color: red;">We got some problem</b><br><br>
+            <b>1. May be you are putting the wrong email and email pattern</b><br><br>
+            <b>2. May be you are using the spacial character with full name</b><br><br>
+            <b>3. Your password length may be shorter then 6 character </b><br><br>
+            <a href="login.jsp?ref=nuser">Click here to login</a><br><br>
+            <a href="signup.jsp?ref=nuser">Click here for Sign up page</a><br><br>
+            <p>
+                Or it's seem like you are doing effort to break the site rule
+                    <br>Plese follow the procedure ,don't try to break the rule other wise your activity 
+                    will be recorded for the monitoring purpose
+            </p>
+            </center>
+<%
+            out.println(" ");
         }
     }
 %>

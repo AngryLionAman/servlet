@@ -1,2 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/inquiryhere"/>
+<Context path="/inquiryhere">
+    <Resource auth="Container" 
+              driverClassName="com.mysql.jdbc.Driver" 
+              maxActive="10" 
+              maxIdle="2" 
+              name="jdbc/mydatabase" 
+              password="" 
+              type="javax.sql.DataSource" 
+              url="jdbc:mysql://localhost/bharat?useUnicode=true&amp;characterEncoding=utf-8" 
+              username="root" 
+              validationQuery="select 1">        
+              
+    </Resource>
+</Context>

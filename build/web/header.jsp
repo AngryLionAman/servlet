@@ -43,7 +43,7 @@
         <script type="text/javascript">
             function validateForm()
             {
-                var a = document.forms["Form"]["search"].value;
+                var a = document.forms["Form"]["q"].value;
                 if (a === null || a === "", a.trim() === "")
                 {
                     return false;
@@ -59,8 +59,8 @@
         </script>
         <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 serachhere" style="display:inline-block;">
             <div style="overflow: hidden; padding-right: .5em;">
-                <form action="SearchBar.jsp" name="Form" onsubmit="return validateForm()">
-                    <input type="text" style="width: 100%;" name="search" required="">
+                <form action="search.jsp" name="Form" onsubmit="return validateForm()">
+                    <input type="text" style="width: 100%;" name="q" required="">
                 </form>
             </div>
         </div>
@@ -80,16 +80,16 @@
                     }
                 %>                
                 <a href="signup.jsp" class="helpicon"  style="color: white;padding-left: 10px;padding-right: 30px;">SIgnUp</a>
-                <a href="Login.jsp?URL=<%=url%>" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Login</a>
+                <a href="login.jsp?URL=<%=url%>" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Login</a>
             </c:if>
             <a href="index.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Home</a>
             <c:if test="${sessionScope.Session_id_of_user ne null}">
-                <sql:query dataSource="${dbsource}" var="user">
+                <sql:query dataSource="jdbc/mydatabase" var="user">
                     SELECT * FROM newuser WHERE id =?;
                     <sql:param value="${sessionScope.Session_id_of_user}"/>
                 </sql:query> 
                 <c:forEach var="userdetail" items="${user.rows}">
-                    <a href="Logout.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
+                    <a href="logout.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
                     <a href="profile.jsp?user=<c:out value="${userdetail.username}"/>&ID=<c:out value="${userdetail.id}"/>" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">
                         <b><c:out value="${fun.firstName(userdetail.firstname)}"/></b>
                     </a>             

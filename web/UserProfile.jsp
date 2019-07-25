@@ -1,3 +1,7 @@
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page language="java"%>
 <%@page import="java.sql.*"%>
 <%@include file="site.jsp" %>
@@ -5,28 +9,8 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-        <%!              String USER_PROFILE = "";
-            String FOLLOW = "";
-            String FOLLOWED = "";
-        %>
-        <%
-            String sl = request.getParameter("sl");
-            if (sl == null) {
-                sl = "en";
-            }
-            if (sl.equalsIgnoreCase("hi")) {
-                USER_PROFILE = "प्रोफ़ाइल";
-                FOLLOW = "फॉलो करे";
-                FOLLOWED = "फॉलो कर चुके हैं";
+        <meta charset="UTF-8">       
 
-            } else {
-                USER_PROFILE = "User Profile";
-                FOLLOW = "Follow";
-                FOLLOWED = "Followed";
-            }
-        %>
         <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -48,10 +32,10 @@
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <script type="text/javascript">
 
-            function take_value(el,user_id, id_of_user) {
-            <% if (session.getAttribute("email") == null) { %>
-                alert("Please login first");<%
-                } else { %>
+            function take_value(el, user_id, id_of_user) {
+            <% if (session.getAttribute("Session_id_of_user") == null) { %>
+                alert("Please login first or refrest the page");<%
+                } else {%>
                 if (el.value === "follow") {
                     el.value = "followed";
                     var http = new XMLHttpRequest();
@@ -73,198 +57,122 @@
 
     <body>
         <div class="main-page-wrapper">
-            <jsp:include page="header.jsp">
-                <jsp:param name="sl" value="<%=sl%>"></jsp:param>                   
-            </jsp:include>
-            <%
-                Connection connection = null;
-                ResultSet resultSet = null;
-                PreparedStatement preparedStatement = null;
-                try {
-                    if (connection == null || connection.isClosed()) {
-                        try {
-                            Class.forName("com.mysql.jdbc.Driver");
-                        } catch (ClassNotFoundException ex) {
-                            out.println("Exception in loading the class forname Driver" + ex);
-                        }
-                        connection = DriverManager.getConnection(DB_URL_, DB_USERNAME_, DB_PASSWORD_);
-                    }
-            %>
+            <jsp:include page="header.jsp"/>
             <div class="bodydata">
                 <div class="container clear-fix">
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-
-
-                            <div class="clear-fix"></div>
-
-
-                            <div class="clear-fix"></div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="themeBox" style="height:auto;margin-bottom:0px;">
                                         <div class="boxHeading">
-                                            <%=USER_PROFILE%>
+                                            User Profile
                                         </div>
                                         <!-- <div style="">Post something here</div> -->
                                         <div class="userProfiles">
-                                            <%
-                                                int id_of_user = 0;
-                                                if(session.getAttribute("Session_id_of_user") != null){
-                                                    id_of_user = (Integer) session.getAttribute("Session_id_of_user");
-                                                }
-//                                                if (session.getAttribute("email") != null) {
-//                                                    String email = (String) session.getAttribute("email");
-//                                                    try {
-//                                                        String sql = "SELECT * FROM newuser WHERE email = '" + email + "'";
-//                                                        preparedStatement = connection.prepareStatement(sql);
-//                                                        resultSet = preparedStatement.executeQuery();
-//                                                        while (resultSet.next()) {
-//                                                            id_of_user = resultSet.getInt("id");
-//                                                        }
-//                                                    } catch (Exception e) {
-//                                                        out.println("Unable to retrieve!!" + e);
-//                                                    }
-//                                                }
-                                            %>
+                                            <c:catch var="ex">
+                                                <c:set var="rowsPerPage" value="50" />
+                                                <c:set var="pageNumber" value="1" />
+                                                <c:if test="${param.p ne null}">
+                                                    <c:set var="pageNumber" value="${param.p}" />
+                                                </c:if>
 
-                                            <%
-                                                String firstname, imagepath;
-                                                int user_id = 0;
-                                                String Status = null;
-                                                try {
-                                                    String sql = "SELECT ID,firstname,imagepath FROM newuser";
-                                                    preparedStatement = connection.prepareStatement(sql);
-                                                    resultSet = preparedStatement.executeQuery();
-                                                    while (resultSet.next()) {
-                                                        user_id = resultSet.getInt("ID");
-                                                        firstname = resultSet.getString("firstname");
-                                                        imagepath = resultSet.getString("imagepath");
-                                                        Statement stmt_topic_followers;
+                                                <c:set var="start" value="${pageNumber*rowsPerPage-rowsPerPage}"/>
+                                                <c:set var="stop" value="${pageNumber*rowsPerPage-1}"/>
 
-                                                        ResultSet rs_topic_followers;
-                                                        stmt_topic_followers = connection.createStatement();
-                                                        String topic_followers = "SELECT * FROM ak_follower_detail";
-                                                        rs_topic_followers = stmt_topic_followers.executeQuery(topic_followers);
+                                                <sql:query var="userProfile" dataSource="jdbc/mydatabase">
+                                                    SELECT ID,firstname,imagepath FROM newuser;
+                                                </sql:query>
+                                                <c:set var="a">
+                                                    <fmt:formatNumber value="${userProfile.rowCount/rowsPerPage}" maxFractionDigits="0"/>
+                                                </c:set>
 
-                                                        while (rs_topic_followers.next()) {
-                                                            int db_user_id = rs_topic_followers.getInt("user_id");
-                                                            int f_followers_id = rs_topic_followers.getInt("followers_id");
+                                                <c:set var="b" value="${userProfile.rowCount/rowsPerPage}" />
 
-                                                            if ((db_user_id == user_id) && (f_followers_id == id_of_user)) {
-                                                                Status = "present";
-                                                            }
-                                                        }
-                                                        stmt_topic_followers.close();
-                                                        rs_topic_followers.close();
-                                            %>
-                                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                                <c:choose>
+                                                    <c:when test="${a==0}">
+                                                        <c:set var="numberOfPages" value="1" scope="page"/>   
+                                                    </c:when>
 
-                                                <img src="images/<%=imagepath%>" alt="" style="width:100%; border:1px solid #ddd;margin-top:20px;">
-                                                <a href="profile.jsp?user=<%=convertStringUpperToLower(firstname).replaceAll(" ", "+")%>&ID=<%=user_id%>&sl=<%=sl%>"><%=convertStringUpperToLower(firstname)%></a>
-                                                <%
-                                                    if (Status == "present") {
-                                                        %><input type="button" class="float-right" value="unfollow" id="myButton1" onclick="return take_value(this,'<%=user_id%>', '<%=id_of_user%>');" /><%
-                                                    } else {%>
-                                                <input type="button" class="float-right" value="follow" id="myButton1" onclick="return take_value(this,'<%=user_id%>', '<%=id_of_user%>');" />
-                                                <% }
-                                                    Status = null;
-                                                %>
+                                                    <c:when test="${b>a}">
+                                                        <c:set var="xxx" value="${b%a}"/>
+                                                        <c:if test="${xxx>0}">
+                                                            <c:set var="numberOfPages" value="${b-xxx+1}" scope="page"/>   
+                                                        </c:if>
+                                                    </c:when>
 
-                                            </div>
-                                            <%
-                                                    }
-
-                                                } catch (Exception e) {
-                                                    out.println(e.getMessage());
-                                                }
-                                            %>
+                                                    <c:when test="${a>=b}">
+                                                        <c:set var="numberOfPages" value="${a}" scope="page"/>    
+                                                    </c:when>
+                                                </c:choose>
+                                                <c:forEach items="${userProfile.rows}" var="user" begin="${start}" end="${stop}">
+                                                    <c:if test="${sessionScope.Session_id_of_user ne user.ID}">
+                                                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                                            <img src="images/${user.imagepath}" alt="" style="width:100%; border:1px solid #ddd;margin-top:20px;">
+                                                            <a href="profile.jsp?user=${user.firstname}&ID=${user.ID}">${user.firstname}</a>
+                                                            <c:if test="${sessionScope.Session_id_of_user ne null}">
+                                                                <sql:query dataSource="jdbc/mydatabase" var="fDetail"> 
+                                                                    select count(*) as cnt from ak_follower_detail where user_id = ? and followers_id = ? limit 1;
+                                                                    <sql:param value="${user.ID}"/>
+                                                                    <sql:param value="${sessionScope.Session_id_of_user}"/>
+                                                                </sql:query>
+                                                                <c:forEach items="${fDetail.rows}" var="value">
+                                                                    <c:set value="${value.cnt}" var="found"/>
+                                                                </c:forEach>
+                                                                <c:if test="${found eq 1}">
+                                                                    <input type="button" class="float-right" value="unfollow" id="myButton1" onclick="return take_value(this, '${user.ID}', '${sessionScope.Session_id_of_user}');" /> 
+                                                                </c:if>
+                                                                <c:if test="${found ne 1}">
+                                                                    <input type="button" class="float-right" value="follow" id="myButton1" onclick="return take_value(this, '${user.ID}', '${sessionScope.Session_id_of_user}');" />
+                                                                </c:if>
+                                                            </c:if>
+                                                            <c:if test="${sessionScope.Session_id_of_user eq null}">
+                                                                <input type="button" class="float-right" value="follow" id="myButton1" onclick="alert('Please Login To Follow');" />
+                                                            </c:if>
+                                                        </div>
+                                                    </c:if>
+                                                </c:forEach>
+                                                <div class="clear-fix" style="border-style: solid;border-width: 1px;">&nbsp;&nbsp;&nbsp;
+                                                    <%--For displaying Previous link --%>
+                                                    <c:if test="${pageNumber gt 1}">
+                                                        <a href="UserProfile.jsp?p=${pageNumber - 1}">Previous</a>
+                                                    </c:if>
+                                                    <c:forEach begin="1" end="${numberOfPages}" var="i">
+                                                        <c:choose>
+                                                            <c:when test="${i!=pageNumber}">
+                                                                <a href="UserProfile.jsp?p=<c:out value="${i}"/>"><c:out value="${i}"/></a>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <b style="color: red;"><c:out value="${i}"/></b>
+                                                            </c:otherwise>        
+                                                        </c:choose>       
+                                                    </c:forEach>  
+                                                    <%--For displaying Next link --%>
+                                                    <c:if test="${pageNumber lt numberOfPages}">
+                                                        <a href="UserProfile.jsp?p=${pageNumber + 1}">Next</a>
+                                                    </c:if>
+                                                </div>   
+                                            </c:catch>
+                                            <c:if test="${ex ne null}">
+                                                ${ex}
+                                            </c:if>                                   
+                                            <div class="clear-fix"></div>
                                         </div>
-                                        <%
-                                            } catch (Exception e) {
-                                                out.println("Error in main try block:-" + e);
-                                            } finally {
-
-                                                if (connection != null || !connection.isClosed()) {
-                                                    try {
-                                                        connection.close();
-                                                    } catch (Exception e) {
-                                                        out.println("Exception in closing connection " + e);
-                                                    }
-                                                }
-                                                if (resultSet != null || !resultSet.isClosed()) {
-                                                    try {
-                                                        resultSet.close();
-                                                    } catch (Exception e) {
-                                                        out.println("Exception in closing resulatset " + e);
-                                                    }
-                                                }
-                                                if (preparedStatement != null || !preparedStatement.isClosed()) {
-                                                    try {
-                                                        preparedStatement.close();
-                                                    } catch (Exception e) {
-                                                        out.println("Exception in closing preparedStatement " + e);
-                                                    }
-                                                }
-                                            }
-                                        %>
-
-                                        <div class="clear-fix"></div>
                                     </div>
+
                                 </div>
-
-                            </div>
-
-
-                            <div class="row margintop10">
-
 
                             </div>
 
                         </div>
-<!--                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-
-                            <div class="themeBox" style="min-height:320px;">
-                                <div class="boxHeading">
-                                    Module
-                                </div>
-                                <div>
-                                    Need to write something   
-                                </div>
-
-                            </div>
-                            <div class="clear-fix"></div>
-                            <div class="themeBox" style="min-height:240px;">
-                                <div class="boxHeading">
-                                    Module
-                                </div>
-                                <div>
-                                    Second module   
-                                </div>
-
-
-                            </div>
-                            <div class="clear-fix"></div>
-
-
-                            <div class="clear-fix"></div>
-                        </div>-->
                     </div>
                 </div>
-            </div>
-            <%@include file="notificationhtml.jsp" %>
-            <jsp:include page="footer.jsp">
-                <jsp:param name="sl" value="<%=sl%>"/>
-            </jsp:include>
-            <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
-
-            <!-- Bootstrap JS -->
-            <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
-
-            <!-- Bootstrap Select JS -->
-            <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
-        </div> <!-- /.main-page-wrapper -->
+                <jsp:include page="footer.jsp"/>
+                <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
+                <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
+                <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
+            </div> <!-- /.main-page-wrapper -->
     </body>
 </html>

@@ -131,7 +131,7 @@
     width: 90%;
     opacity: 1;
     background: -webkit-radial-gradient(center, ellipse, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0) 80%);
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0) 80%);
+    /*background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0) 80%);*/
 }
 /*______________________ Global stlye ___________________*/
 
@@ -1649,11 +1649,7 @@ header.fixed .get-quote {
 }
 /*============================= Footer ===================*/
 footer {
-    background: #222221;
-}
-
-footer {
-    background: #222221;
+    background: #7aab87;
     font-family:"TradeGothicLTCom";
     color:#fff;
     padding:20px 0px;
@@ -1661,7 +1657,7 @@ footer {
 
 .reserved
 {
-    font-family:20px;
+    font-family:TradeGothicLTCom;
     color:#fff;
 }
 footer .opacity {

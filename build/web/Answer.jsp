@@ -102,11 +102,11 @@
             <c:redirect url = "/?ref=idnotfound"/>
         </c:if>
         <c:if test="${not empty param.Id}">
-            <sql:update dataSource="${dbsource}" var="update">
+            <sql:update dataSource="jdbc/mydatabase" var="update">
                 UPDATE question SET total_view = total_view + 1 WHERE q_id =?;
                 <sql:param value="${param.Id}"/>
             </sql:update>
-            <sql:query var="seo" dataSource="${dbsource}">
+            <sql:query var="seo" dataSource="jdbc/mydatabase">
                 SELECT q.q_id AS q_id,q.question AS question,SUBSTRING(a.answer,1,500) AS answer 
                 FROM question q LEFT JOIN answer a on q.q_id = a.q_id WHERE q.q_id = ? limit 1;
                 <sql:param value="${param.Id}"/>
@@ -123,7 +123,7 @@
                     <meta property="description" content="<c:out value="${h_seo.question}"/>"/>
                 </c:if>
             </c:forEach>
-            <sql:query dataSource="${dbsource}" var="tag">
+            <sql:query dataSource="jdbc/mydatabase" var="tag">
                 select tag_id as unique_id,
                 (select topic_name from topic where unique_id = question_topic_tag.tag_id)topic_name
                 from question_topic_tag where question_id =?;
@@ -162,7 +162,7 @@
                                 <div>
                                     <ul>
                                         <c:if test="${not empty param.Id}">
-                                            <sql:query dataSource="${dbsource}" var="topic">
+                                            <sql:query dataSource="jdbc/mydatabase" var="topic">
                                                 select tag_id as unique_id,
                                                 (select topic_name from topic where unique_id = question_topic_tag.tag_id) topic_name 
                                                 from question_topic_tag  where question_id =?;
@@ -193,7 +193,7 @@
                                 <div class="row">
                                     <!-- Displaying question and detail section-->
                                     <c:if test="${not empty param.Id}">
-                                        <sql:query dataSource="${dbsource}" var="question">
+                                        <sql:query dataSource="jdbc/mydatabase" var="question">
                                             SELECT user.id,user.higher_edu,user.firstname,q.question,q.q_id,q.id,q.total_view,q.vote,date(q.posted_time) as date 
                                             FROM newuser user RIGHT JOIN question q on user.id=q.id where q_id = ?;  
                                             <sql:param value="${param.Id}"/>
@@ -212,6 +212,7 @@
                                                 <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #7aab87;">
 
                                                     <h1 style="font-size: 20px; ">Ques :<c:out value="${q.question}"/> ?</h1> 
+                                                    <c:set var="quesTion" value="${q.question}"/>
 
                                                 </div>
                                                 <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${q.q_id}"/>', 'upvote', 'question');" >Upvote(<c:out value="${q.vote}"/>)</a> &nbsp;&nbsp; 
@@ -235,7 +236,7 @@
 
                                     <!-- Comment on question -->
                                     <c:if test="${not empty param.Id}">
-                                        <sql:query var="question_comment" dataSource="${dbsource}">
+                                        <sql:query var="question_comment" dataSource="jdbc/mydatabase">
                                             SELECT unique_id,user_id,(SELECT firstname FROM newuser WHERE id = comments.user_id )AS fullname,
                                             q_id,comments,time FROM comments WHERE q_id = ? AND user_id IS NOT NULL AND q_id IS NOT NULL;
                                             <sql:param value="${param.Id}"/>
@@ -250,7 +251,7 @@
                                     <div class="boxHeading marginbot10">Answer:</div>
                                     <!-- Answer of a question -->
                                     <c:if test="${not empty param.Id}">
-                                        <sql:query var="answer" dataSource="${dbsource}">
+                                        <sql:query var="answer" dataSource="jdbc/mydatabase">
                                             SELECT user.firstname,ans.answer,ans.a_id,ans.Answer_by_id,ans.total_view,ans.vote 
                                             FROM newuser user RIGHT JOIN answer ans on user.id = ans.Answer_by_id where q_id = ? 
                                             and a_id is not null order by vote desc;
@@ -258,7 +259,7 @@
                                         </sql:query>
                                         <c:set scope="page" var="ans_count" value="0"/>
                                         <c:forEach items="${answer.rows}" var="ans" varStatus="loop">
-                                            <sql:update dataSource="${dbsource}" var="store_view">
+                                            <sql:update dataSource="jdbc/mydatabase" var="store_view">
                                                 UPDATE answer SET total_view = total_view + 1 WHERE a_id =?;
                                                 <sql:param value="${ans.a_id}"/>
                                             </sql:update>
@@ -272,7 +273,7 @@
                                                         &nbsp;&nbsp;&nbsp;&nbsp;
                                                         <c:if test="${sessionScope.Session_id_of_user ne null}">
                                                             <c:if test="${ans.Answer_by_id eq sessionScope.Session_id_of_user}">
-                                                                <a href="edit_a.jsp?question=<c:out value="${q.question}"/>&q_id=<c:out value="${param.Id}"/>&ans_id=<c:out value="${ans.a_id}"/>&ans_by_id=<c:out value="${ans.Answer_by_id}"/>">Edit</a>
+                                                                <a href="edit_a.jsp?q=${quesTion}&q_id=<c:out value="${param.Id}"/>&ans_id=<c:out value="${ans.a_id}"/>&ans_by_id=<c:out value="${ans.Answer_by_id}"/>">Edit</a>
                                                             </c:if>
                                                         </c:if>
                                                     </div>
@@ -307,7 +308,7 @@
                                             </div>
                                             <!-- Comment on Answer -->
                                             <div align="right">
-                                                <sql:query dataSource="${dbsource}" var="ans_comment">
+                                                <sql:query dataSource="jdbc/mydatabase" var="ans_comment">
                                                     SELECT unique_id,user_id,(SELECT firstname FROM newuser WHERE id = comments.user_id )AS fullname,
                                                     ans_id,comments,time FROM comments WHERE ans_id = ? AND user_id IS NOT NULL AND ans_id IS NOT NULL;
                                                     <sql:param value="${ans.a_id}"/>
@@ -370,7 +371,7 @@
                                 </div>
                                 <div>
                                     <c:if test="${not empty param.Id}">
-                                        <sql:query dataSource="${dbsource}" var="related_question">
+                                        <sql:query dataSource="jdbc/mydatabase" var="related_question">
                                             SELECT DISTINCT q.id,q.question,q.q_id FROM question q 
                                             RIGHT JOIN question_topic_tag qtt ON qtt.question_id=q.q_id 
                                             WHERE tag_id IN (SELECT DISTINCT(tag_id) AS tag_id 
@@ -396,7 +397,7 @@
                                     Question you may like
                                 </div>
                                 <div>
-                                    <sql:query dataSource="${dbsource}" var="random_question">
+                                    <sql:query dataSource="jdbc/mydatabase" var="random_question">
                                         select q_id,question from question order by rand() limit 5;
                                     </sql:query>
                                     <c:forEach items="${random_question.rows}" var="r_q">

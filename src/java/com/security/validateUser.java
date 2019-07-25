@@ -6,10 +6,10 @@
 package com.security;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import com.connect.database;
 
 /**
  *
@@ -17,49 +17,30 @@ import java.sql.SQLException;
  */
 public class validateUser {
 
-    String DB_URL_ = "jdbc:mysql://localhost/bharat";
-    String DB_USERNAME_ = "root";
-    String DB_PASSWORD_ = null;
-
     public boolean validateUser(String username, String password) throws SQLException {
 
         boolean found = false;
-        try {
-            String cookiesMail = username;
-            String cookiesPassword = password;
-
-            Connection connection = null;
-            ResultSet resultSet = null;
-            PreparedStatement preparedStatement = null;
-
-            Class.forName("com.mysql.jdbc.Driver");
-
-            connection = DriverManager.getConnection(DB_URL_, DB_USERNAME_, DB_PASSWORD_);
-
+        database obj = new database();
+        try (Connection connection = obj.connect()) {
             try {
-
                 String v = "SELECT ID,email,password FROM newuser WHERE email = ?";
-
-                preparedStatement = connection.prepareStatement(v);
-                preparedStatement.setString(1, cookiesMail);
-                resultSet = preparedStatement.executeQuery();
-
-                while (resultSet.next()) {
-                    String password1 = resultSet.getString("password");
-                    if (cookiesPassword.equals(password1)) {
-                        found = true;
+                try (PreparedStatement preparedStatement = connection.prepareStatement(v)) {
+                    preparedStatement.setString(1, username);
+                    try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                        while (resultSet.next()) {
+                            String password1 = resultSet.getString("password");
+                            if (password.equals(password1)) {
+                                found = true;
+                            }
+                        }
                     }
                 }
-                connection.close();
-                resultSet.close();
-                preparedStatement.close();
 
             } catch (SQLException e) {
+                System.err.println(e);
             }
-        } catch (ClassNotFoundException msg) {
-
         }
+        obj.disconnect();
         return found;
     }
-
 }

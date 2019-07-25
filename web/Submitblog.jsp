@@ -4,11 +4,12 @@
 <%
     request.setCharacterEncoding("UTF-8");
     response.setCharacterEncoding("UTF-8");
-    if (session.getAttribute("email") != null) {
+    if (session.getAttribute("Session_id_of_user") != null) {
+        try{
         String blog_sub = request.getParameter("blog_subject");
         String blog_description = request.getParameter("blog_description");
-        String id_of_user = request.getParameter("id");
-        if (blog_sub != null && blog_description != null && id_of_user != null) {
+        int id_of_user = (Integer)session.getAttribute("Session_id_of_user");
+        if (blog_sub != null && blog_description != null) {
             Connection connection = null;
             Statement statement = null;
             try {
@@ -49,6 +50,9 @@
             }
         } else {
             out.println("It seem like you are logedin but trying to access this page diresctly");
+        }
+        }catch(Exception msg){
+            out.println(msg);
         }
     } else {
         // session.setAttribute("URL", URL);

@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html lang="en">
     <head>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -18,8 +19,7 @@
 
         <link rel="stylesheet" type="text/css" href="css/style.css">
         <!-- responsive style sheet -->
-        <link rel="stylesheet" type="text/css" href="css/responsive.css">
-        <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+        <link rel="stylesheet" type="text/css" href="css/responsive.css">        
 
     </head>
 

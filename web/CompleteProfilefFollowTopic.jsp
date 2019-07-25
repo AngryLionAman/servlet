@@ -57,7 +57,7 @@
                                             <label for="fname">Select at least five topic</label>
                                             <form action="SubmitProfileFollowTopic.jsp" method="get" name="dropdown_selection">  
                                                 <input type="hidden" name="userid" value="${sessionScope.Session_id_of_user}"/>
-                                                <sql:query dataSource="${dbsource}" var="topic">
+                                                <sql:query dataSource="jdbc/mydatabase" var="topic">
                                                     SELECT * FROM topic order by rand();
                                                 </sql:query>
                                                 <select id="s5" multiple="multiple" name="MultipleSelectedTopic" >

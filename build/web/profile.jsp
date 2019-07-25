@@ -1,48 +1,49 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@page language="java" %>
-<%@page import="java.sql.*" %> 
 <%@include file="validator.jsp" %>
 <%@include file="site.jsp" %>
 <%---------------Programming with jstl  ---------------------------%>
-<c:if test="${not empty param.ID and param.ID ne null}">
-    <c:set var="userid" scope="page" value="${param.ID}"/>
-</c:if>
-<c:if test="${not empty param.user and param.user ne null}">
-    <c:set var="username" scope="page" value="${param.user}"/>
-</c:if>
-<c:if test="${empty param.ID and param.ID eq null}">
-    <c:if test="${sessionScope.Session_id_of_user ne null}">
-        <c:set var="userid" scope="page" value="${sessionScope.Session_id_of_user}"/>
-    </c:if>  
-</c:if>
-<c:if test="${empty param.ID and not empty param.user}">
-    <sql:query dataSource="${dbsource}" var="f_user_id">
-        select id from newuser where username = ?;
-        <sql:param value="${param.user}"/>
-    </sql:query>
-    <c:forEach items="${f_user_id.rows}" var="user_id">
-        <c:set var="userid" value="${user_id.id}" scope="page"/>
-    </c:forEach>
-</c:if>
-<c:if test="${empty pageScope.username and pageScope.username eq null and empty pageScope.userid and pageScope.userid eq null}">
-    <c:redirect url="index.jsp"/>
-</c:if>
-<c:choose>
-    <c:when test="${not empty pageScope.userid and pageScope.userid ne null}">
-        <sql:query dataSource="${dbsource}" var="usersql" scope="page">
-            SELECT * FROM newuser WHERE ID = ?;
-            <sql:param value="${userid}" />
+<c:catch var="ex">
+    <c:if test="${not empty param.ID and param.ID ne null}">
+        <c:set var="userid" scope="page" value="${param.ID}"/>
+    </c:if>
+    <c:if test="${not empty param.user and param.user ne null}">
+        <c:set var="username" scope="page" value="${param.user}"/>
+    </c:if>
+    <c:if test="${empty param.ID and param.ID eq null}">
+        <c:if test="${sessionScope.Session_id_of_user ne null}">
+            <c:set var="userid" scope="page" value="${sessionScope.Session_id_of_user}"/>
+        </c:if>  
+    </c:if>
+    <c:if test="${empty param.ID and not empty param.user}">
+        <sql:query dataSource="${dbsource}" var="f_user_id">
+            select id from newuser where username = ?;
+            <sql:param value="${param.user}"/>
         </sql:query>
-    </c:when>
-    <c:otherwise >
-        <sql:query dataSource="${dbsource}" var="usersql" scope="page"> 
-            SELECT * FROM newuser WHERE username = ?;
-            <sql:param value="${username}" />
-        </sql:query>                              
-    </c:otherwise>
-</c:choose>
+        <c:forEach items="${f_user_id.rows}" var="user_id">
+            <c:set var="userid" value="${user_id.id}" scope="page"/>
+        </c:forEach>
+    </c:if>
+    <c:if test="${empty pageScope.username and pageScope.username eq null and empty pageScope.userid and pageScope.userid eq null}">
+        <c:redirect url="index.jsp"/>
+    </c:if>
+    <c:choose>
+        <c:when test="${not empty pageScope.userid and pageScope.userid ne null}">
+            <sql:query dataSource="${dbsource}" var="usersql" scope="page">
+                SELECT * FROM newuser WHERE ID = ?;
+                <sql:param value="${userid}" />
+            </sql:query>
+        </c:when>
+        <c:otherwise >
+            <sql:query dataSource="${dbsource}" var="usersql" scope="page"> 
+                SELECT * FROM newuser WHERE username = ?;
+                <sql:param value="${username}" />
+            </sql:query>                              
+        </c:otherwise>
+    </c:choose>
+</c:catch>
 <%-----------------------------------------------------------------------%>
 <!DOCTYPE html>
 <html lang="en">
@@ -66,8 +67,8 @@
 
         <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <c:forEach var="username" items="${usersql.rows}">
-            <title><c:out value="${username.firstname}"/> | inquiryHere.com</title>
+        <c:forEach var="user_name" items="${usersql.rows}">
+            <title><c:out value="${user_name.firstname}"/> | inquiryHere.com</title>
         </c:forEach>
 
 
@@ -133,6 +134,7 @@
 
                     <c:if test="${usersql ne null and not empty usersql}">
                         <c:forEach items="${usersql.rows}" var="user" >
+                            <c:set var="username" scope="page" value="${user.username}"/>
                             <sql:update dataSource="${dbsource}" var="updateuser">
                                 UPDATE newuser SET total_view = total_view + 1 WHERE ID =? ;
                                 <sql:param value="${user.id}" />
@@ -357,17 +359,17 @@
                             <c:forEach items="${blog.rows}" var="blog_cnt" >
                                 <c:set value="${blog_cnt.cnt}" var="b_cnt" scope="page"/>
                             </c:forEach>
-                            <div class="themeBox" style="min-height:auto;">
+                            <div class="themeBox" style="height: auto;">
                                 <div class="boxHeading">
                                     User Activity
                                 </div>
                                 <div>
-                                    <a href="profile.jsp?user=<c:out value="${username}"/>&value=Question&ID=<c:out value="${userid}"/>">Question(<c:out value="${q_cnt}"/>)</a><br>
-                                    <a href="profile.jsp?user=<c:out value="${username}"/>&value=Answer&ID=<c:out value="${userid}"/>">Answer(<c:out value="${a_cnt}"/>)</a><br>
-                                    <a href="profile.jsp?user=<c:out value="${username}"/>&value=Topic&ID=<c:out value="${userid}"/>">Topic Followed(<c:out value="${t_cnt}"/>)</a><br>
-                                    <a href="profile.jsp?user=<c:out value="${username}"/>&value=Following&ID=<c:out value="${userid}"/>">Following(<c:out value="${fl_cnt}"/>)</a><br>
-                                    <a href="profile.jsp?user=<c:out value="${username}"/>&value=Followers&ID=<c:out value="${userid}"/>">Followers(<c:out value="${fr_cnt}"/>)</a><br>
-                                    <a href="profile.jsp?user=<c:out value="${username}"/>&value=Blog&ID=<c:out value="${userid}"/>">Blog(<c:out value="${b_cnt}"/>)</a><br>
+                                    <a href="profile.jsp?user=<c:out value="${username}"/>&tab=Question&ID=<c:out value="${userid}"/>">Question(<c:out value="${q_cnt}"/>)</a><br>
+                                    <a href="profile.jsp?user=<c:out value="${username}"/>&tab=Answer&ID=<c:out value="${userid}"/>">Answer(<c:out value="${a_cnt}"/>)</a><br>
+                                    <a href="profile.jsp?user=<c:out value="${username}"/>&tab=Topic&ID=<c:out value="${userid}"/>">Topic Followed(<c:out value="${t_cnt}"/>)</a><br>
+                                    <a href="profile.jsp?user=<c:out value="${username}"/>&tab=Following&ID=<c:out value="${userid}"/>">Following(<c:out value="${fl_cnt}"/>)</a><br>
+                                    <a href="profile.jsp?user=<c:out value="${username}"/>&tab=Followers&ID=<c:out value="${userid}"/>">Followers(<c:out value="${fr_cnt}"/>)</a><br>
+                                    <a href="profile.jsp?user=<c:out value="${username}"/>&tab=Blog&ID=<c:out value="${userid}"/>">Blog(<c:out value="${b_cnt}"/>)</a><br>
                                 </div>
 
                             </div>
@@ -378,8 +380,8 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="themeBox" style="height:auto;margin-bottom:0px;">
                                         <c:choose>
-                                            <c:when test="${param.value ne null and not empty param.value}">
-                                                <c:set value="${param.value}" scope="page" var="ParametrVariable"/>
+                                            <c:when test="${param.tab ne null and not empty param.tab}">
+                                                <c:set value="${param.tab}" scope="page" var="ParametrVariable"/>
                                             </c:when>
                                             <c:otherwise>
                                                 <c:set scope="page" value="Question" var="ParametrVariable"/>
@@ -393,7 +395,7 @@
                                                     <sql:param value="${userid}" />                                                                                                  
                                                 </sql:query>
                                                 <c:forEach items="${question.rows}" var="q">
-                                                    <br>Q. <a href="Answer.jsp?q=<c:out value="${q.question}"/>&Id=<c:out value="${q.q_id}"/>" ><c:out value="${q.question}"/> ?</a>
+                                                    <br>Q. <a href="Answer.jsp?q=<c:out value="${fn:replace(q.question,' ','-')}"/>&Id=<c:out value="${q.q_id}"/>" ><c:out value="${q.question}"/> ?</a>
                                                     &nbsp;&nbsp;&nbsp;&nbsp; 
                                                     <c:if test="${sessionScope.Session_id_of_user ne null and q.id eq sessionScope.Session_id_of_user}">
                                                         <a href="edit_q.jsp?Id=<c:out value="${q.q_id}"/>">edit</a>
@@ -409,12 +411,12 @@
                                                     <sql:param value="${userid}"/>
                                                 </sql:query>
                                                 <c:forEach items="${answer.rows}" var="ans">
-                                                    <br> Q. <a href="Answer.jsp?q=<c:out value="${ans.question}"/>&Id=<c:out value="${ans.q_id}"/>" ><c:out value="${ans.question}"/> ?</a>
+                                                    <br> Q. <a href="Answer.jsp?q=<c:out value="${fn:replace(ans.question,' ','-')}"/>&Id=<c:out value="${ans.q_id}"/>" ><c:out value="${ans.question}"/> ?</a>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
                                                     <c:if test="${sessionScope.Session_id_of_user ne null and ans.Answer_by_id eq sessionScope.Session_id_of_user}">
                                                         <a href="edit_a.jsp?q_id=<c:out value="${ans.q_id}"/>&ans_id=<c:out value="${ans.a_id}"/>&ans_by_id=<c:out value="${ans.Answer_by_id}"/>">Edit your answer</a>
                                                     </c:if>
-                                                    <br>Ans.</b>&nbsp;&nbsp;&nbsp;&nbsp;<c:out value="${ans.short_ans}" escapeXml="false"/>  <a href="Answer.jsp?Id=<c:out value="${ans.q_id}"/>&q=<c:out value="${ans.question}"/>"> Continue Reading</a>
+                                                    <br>Ans.</b>&nbsp;&nbsp;&nbsp;&nbsp;<c:out value="${ans.short_ans}" escapeXml="false"/>  <a href="Answer.jsp?Id=<c:out value="${ans.q_id}"/>&q=<c:out value="${fn:replace(ans.question,' ','-')}"/>"> Continue Reading</a>
                                                 </c:forEach>
                                             </c:when>
                                             <c:when test="${ParametrVariable eq 'Topic'}">
@@ -426,7 +428,7 @@
                                                     <sql:param value="${userid}"/>
                                                 </sql:query>
                                                 <c:forEach items="${topic.rows}" var="t" >
-                                                    <br><a href="topic.jsp?t=<c:out value="${t.topic_name}"/>&id=<c:out value="${t.unique_id}"/>">&nbsp;&nbsp;&nbsp;&nbsp;<c:out value="${t.topic_name}"/></a>
+                                                    <br><a href="topic.jsp?t=<c:out value="${fn:replace(t.topic_name,' ','-')}"/>&id=<c:out value="${t.unique_id}"/>">&nbsp;&nbsp;&nbsp;&nbsp;<c:out value="${t.topic_name}"/></a>
                                                 </c:forEach>   
                                                 <br><a href=FollowMoreTopic.jsp> Follow more topic</a>  
                                             </c:when>
@@ -440,7 +442,7 @@
                                                 <c:forEach items="${Following.rows}" var="follow">
                                                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                                         <img src="images/<c:out value="${follow.imagepath}"/>" alt="" style="width:100%; border:1px solid #ddd;margin-top:20px;">
-                                                        <a href="profile.jsp?user=<c:out value="${follow.firstname}"/>&ID=<c:out value="${follow.ID}"/>"><c:out value="${follow.firstname}"/></a>
+                                                        <a href="profile.jsp?user=<c:out value="${fn:replace(follow.firstname,' ','-')}"/>&ID=<c:out value="${follow.ID}"/>"><c:out value="${follow.firstname}"/></a>
                                                     </div> 
                                                 </c:forEach>
                                                 <br><a href=UserProfile.jsp> FOLLOW MORE USER </a>
@@ -455,7 +457,7 @@
                                                 <c:forEach items="${followers.rows}" var="followers" >
                                                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                                         <img src="images/<c:out value="${followers.imagepath}"/>" alt="" style="width:100%; border:1px solid #ddd;margin-top:20px;">
-                                                        <a href="profile.jsp?user=<c:out value="${followers.firstname}"/>&ID=<c:out value="${followers.ID}"/>"><c:out value="${followers.firstname}"/></a>
+                                                        <a href="profile.jsp?user=<c:out value="${fn:replace(followers.firstname,' ','-')}"/>&ID=<c:out value="${followers.ID}"/>"><c:out value="${followers.firstname}"/></a>
                                                     </div>
                                                 </c:forEach>
                                                 <br><a href=UserProfile.jsp> FOLLOW MORE USER </a>
@@ -467,7 +469,7 @@
                                                     <sql:param value="${userid}"/>
                                                 </sql:query>
                                                 <c:forEach items="${blog.rows}" var="blog">
-                                                    <br><a href="D_Blog.jsp?sub=<c:out value="${blog.blog_subject}"/>&Blog_Id=<c:out value="${blog.blog_id}"/>"><c:out value="${blog.blog_subject}"/></a>
+                                                    <br><a href="D_Blog.jsp?sub=<c:out value="${fn:replace(blog.blog_subject,' ','-')}"/>&Blog_Id=<c:out value="${blog.blog_id}"/>"><c:out value="${blog.blog_subject}"/></a>
                                                 </c:forEach> 
                                                 <br><a href=WriteBlogHere.jsp> BLOG ABOUT SOMETHING </a>
                                             </c:when>
@@ -481,12 +483,13 @@
                     </div>
                 </div>
             </div>
-            <jsp:include page="footer.jsp"/>
+           
+        </div> <!-- /.main-page-wrapper -->
+         <jsp:include page="footer.jsp"/>
             <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
 
             <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
 
             <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
-        </div> <!-- /.main-page-wrapper -->
     </body>
 </html>

@@ -1,8 +1,10 @@
+<%@page import="java.sql.Connection"%>
+<%@page import="java.sql.PreparedStatement"%>
+<%@page import="java.sql.DriverManager"%>
+<%@page import="java.sql.ResultSet"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ page language="java" %>
-<%@ page import="java.sql.*" %> 
 <%@ include file="site.jsp" %>
 <%@ include file="validator.jsp" %>
 <%@ page isErrorPage="true" errorPage="error.jsp" %>        
@@ -103,7 +105,7 @@
                                     <ul>
                                         <c:choose>
                                             <c:when test="${sessionScope.Session_id_of_user ne null}">
-                                                <sql:query var="topic_by_user" dataSource="${dbsource}">
+                                                <sql:query var="topic_by_user" dataSource="jdbc/mydatabase">
                                                     select t.unique_id,t.topic_name,
                                                     (select count(topic_id) from topic_followers_detail where topic_id = t.unique_id)as count 
                                                     from topic t right join topic_followers_detail de on t.unique_id = de.topic_id 
@@ -112,7 +114,7 @@
                                                 </sql:query>
                                             </c:when>
                                             <c:otherwise>
-                                                <sql:query var="topic_by_user" dataSource="${dbsource}">
+                                                <sql:query var="topic_by_user" dataSource="jdbc/mydatabase">
                                                     SELECT t.unique_id AS unique_id,t.topic_name AS topic_name,
                                                     (SELECT COUNT(user_or_followers_id) FROM topic_followers_detail WHERE topic_id = t.unique_id) AS count 
                                                     FROM topic t where t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL ORDER BY RAND() LIMIT 5;
@@ -154,7 +156,7 @@
 
                                     <c:if test="${empty param.iPageNo and empty param.cPageNo}">
                                         <h4>Recent posted question</h4>
-                                        <sql:query dataSource="${dbsource}" var="question">
+                                        <sql:query dataSource="jdbc/mydatabase" var="question">
                                             SELECT q.total_view,date(q.posted_time) as date,
                                             q.q_id,(select count(*) from answer where q_id = q.q_id) as tac,
                                             q.question,q.vote,user.firstname,user.higher_edu,user.ID as u_ide FROM question 
@@ -177,7 +179,7 @@
                                                             <a href="edit_q.jsp?Id=<c:out value="${question.q_id}"/>&q=<c:out value="${fn:replace(question.question,' ','+')}"/>">edit</a>
                                                         </c:if>
                                                     </c:if>
-                                                    <sql:update var="inc_view" dataSource="${dbsource}">
+                                                    <sql:update var="inc_view" dataSource="jdbc/mydatabase">
                                                         UPDATE question
                                                         SET total_view = total_view + 1
                                                         WHERE q_id = ?;
@@ -193,7 +195,7 @@
                                                     <a href="javascript:void(0)">View(<c:out value="${question.total_view}"/>)</a>
                                                     <!-- Comment on question -->
                                                     <div align="right">
-                                                        <sql:query dataSource="${dbsource}" var="question_comment">
+                                                        <sql:query dataSource="jdbc/mydatabase" var="question_comment">
                                                             SELECT unique_id,user_id,(SELECT firstname FROM newuser WHERE id = comments.user_id )AS fullname,
                                                             q_id,comments,time FROM comments WHERE q_id = ? AND user_id IS NOT NULL AND q_id IS NOT NULL;
                                                             <sql:param value="${question.q_id}" ></sql:param>
@@ -209,7 +211,7 @@
                                     </c:if>
                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
                                         <h4>Related question</h4>  
-                                        <sql:query dataSource="${dbsource}" var="realted_question">
+                                        <sql:query dataSource="jdbc/mydatabase" var="realted_question">
                                             select DISTINCT q.id,(SELECT firstname FROM newuser WHERE id= q.id) as firstname,
                                             q.q_id,q.total_view,q.question,q.vote,(select count(*) from answer where q_id = q.q_id) as tac from question q 
                                             inner join question_topic_tag qtt on q.q_id = qtt.question_id where tag_id IN 
@@ -224,7 +226,7 @@
 
                                             <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #7aab87;">
                                                 <a href="Answer.jsp?q=<c:out value="${fn:replace(r_question.question,' ','+')}"/>&Id=<c:out value="${r_question.q_id}"/>" ><c:out value="${r_question.question}"/> ?</a>
-                                                <sql:update var="inc_view" dataSource="${dbsource}">
+                                                <sql:update var="inc_view" dataSource="jdbc/mydatabase">
                                                     UPDATE question SET total_view = total_view + 1 WHERE q_id =?;
                                                     <sql:param value="${r_question.q_id}"/>
                                                 </sql:update>
@@ -238,7 +240,7 @@
                                             <a href="javascript:void(0)">View(<c:out value="${r_question.total_view}"/>)</a>
                                             <!-- Comment on question -->
                                             <div align="right">
-                                                <sql:query dataSource="${dbsource}" var="q_com">
+                                                <sql:query dataSource="jdbc/mydatabase" var="q_com">
                                                     SELECT unique_id,user_id,
                                                     (SELECT firstname FROM newuser WHERE id = comments.user_id )AS fullname,
                                                     q_id,comments,time FROM comments WHERE q_id = ? AND user_id IS NOT NULL AND q_id IS NOT NULL;
@@ -564,7 +566,6 @@
                         </div>
 
                         <% }%>
-
                     </div>
 
                 </div>

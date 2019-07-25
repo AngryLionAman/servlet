@@ -1,54 +1,10 @@
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@include file="site.jsp" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html lang="en">
     <head>
-        <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-        <%!
-            String SUBJECT = "";
-            String POSTED_BY = "";
-            String DESCRIPTION = "";
-            String COMPLETE_YOUR_PROFILE = "";
-            String TRENDING_QUUESTION = "";
-        %>
-        <%
-            String sl = request.getParameter("sl");
-            if (sl == null) {
-                sl = "en";
-            }
-            if (sl.equalsIgnoreCase("hi")) {
-                SUBJECT = "विषय";
-                POSTED_BY = "द्वारा प्रकाशित";
-                DESCRIPTION = "विवरण";
-                COMPLETE_YOUR_PROFILE = "अपनी प्रोफाइल पूरी कीजिए";
-                TRENDING_QUUESTION = "ट्रेंडिंग सवाल";
-
-            } else {
-                SUBJECT = "Subject";
-                POSTED_BY = "Posted by";
-                DESCRIPTION = "Description";
-                COMPLETE_YOUR_PROFILE = "Complete your profile";
-                TRENDING_QUUESTION = "Trending question";
-            }
-        %>
-        <%
-            request.setCharacterEncoding("UTF-8");
-            response.setCharacterEncoding("UTF-8");
-            String str = request.getParameter("Blog_Id");
-            //String str = request.getParameter("id");
-            if (str == null || str.length() <= 0) {
-                response.sendRedirect("index.jsp?sl=" + sl);
-            }
-            String Question = "";
-            try {
-                for (int i = 0; i < str.length(); i++) {
-                    if (str.charAt(i) > 47 && str.charAt(i) < 58) {
-                        Question += str.charAt(i);
-                    }
-                }
-            } catch (Exception msg) {
-                out.println(msg);
-            }
-
-        %>
-
         <script src="ckeditor/ckeditor.js"></script>
         <meta charset="UTF-8">
         <!-- For IE -->
@@ -68,61 +24,42 @@
             gtag('js', new Date());
             gtag('config', 'UA-128307055-1');
         </script> 
-        <%@page language="java" %>
-        <%@page import="java.sql.*" %> 
-        <%@include file="site.jsp" %>
-        <%@include file="validator.jsp" %>
-        <%            Connection connection = null;
-            ResultSet resultSet = null;
-            PreparedStatement preparedStatement = null;
-            try {
-                if (connection == null || connection.isClosed()) {
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver");
-                    } catch (ClassNotFoundException ex) {
-                        out.println("Exception in loading the class forname Driver" + ex);
-                    }
-                    connection = DriverManager.getConnection(DB_URL_, DB_USERNAME_, DB_PASSWORD_);
-                }
-        %>
-        <%
-            String StoredQuestion = "";
-            String StoredAnswer = "";
-            String FirstName = "";
-            int UserID = 0;
-            int TotalView = 0;
-            if (Question != null) {
-                try {
-                    String p = "SELECT b.blog_subject,b.total_view,b.blog_id,substring(b.blog,1,500),user.firstname,user.id FROM blog b right join newuser user on b.blog_posted_by = user.Id  WHERE blog_id = '" + Question + "'";
-                    preparedStatement = connection.prepareStatement(p);
-                    resultSet = preparedStatement.executeQuery();
-                    while (resultSet.next()) {
-                        StoredQuestion = resultSet.getString("blog_subject");
-                        StoredAnswer = resultSet.getString("substring(b.blog,1,500)");
-                        FirstName = resultSet.getString("firstname");
-                        UserID = resultSet.getInt("ID");
-                        TotalView = resultSet.getInt("b.total_view") + 1;
-                        int blog_id = resultSet.getInt("b.blog_id");
-                        try {
-                            PreparedStatement ps1 = null;
-                            String countView = "UPDATE blog SET total_view = total_view + 1 WHERE blog_id =? ";
-                            ps1 = connection.prepareStatement(countView);
-                            ps1.setInt(1, blog_id);
-                            ps1.executeUpdate();
-                            ps1.close();
 
-                        } catch (Exception msg) {
-                            out.println("Error in cound the view" + msg);
-                        }
-                    }
-                } catch (Exception e) {
-                    out.println("Unable to retrieve!!" + e);
-                }
-            }
-        %>
-        <title><%=StoredQuestion%></title>
-        <meta property="og:title" content="<%=StoredQuestion%>" />
-        <meta property="og:description" content="<%=StoredAnswer%>"/>
+
+        <c:catch var="ex">
+            <c:if test="${param.Blog_Id eq null or empty param.Blog_Id}">
+                <c:redirect url="blog.jsp"/>
+            </c:if>
+            <c:if test="${param.Blog_Id ne null and not empty param.Blog_Id}">
+                <sql:query var="blog" dataSource="jdbc/mydatabase">
+                    SELECT b.blog_subject,b.total_view,b.blog_id,b.blog,
+                    user.firstname,user.username,user.id FROM blog b right join newuser user on b.blog_posted_by = user.Id  
+                    WHERE blog_id = ?;
+                    <sql:param value="${param.Blog_Id}"/>
+                </sql:query>
+                <c:forEach items="${blog.rows}" var="blog">
+                    <c:set value="${blog.blog_id}" var="blogId"/>
+                    <c:set value="${blog.blog_subject}" var="blogSub"/>
+                    <c:set value="${blog.blog}" var="blogDes"/>
+                    <c:set value="${blog.total_view}" var="blogView"/>
+                    <c:set value="${blog.firstname}" var="fullName"/>
+                    <c:set value="${blog.username}" var="userName"/>
+                    <c:set value="${blog.id}" var="userId"/>
+                    <sql:update dataSource="jdbc/mydatabase" var="iView">
+                        UPDATE blog SET total_view = total_view + 1 WHERE blog_id =?;
+                        <sql:param value="${blog.blog_id}"/>
+                    </sql:update>
+                    <title>${blog.blog_subject}</title>
+                    <meta property="og:title" content="${blog.blog_subject}" />
+                    <meta property="og:description" content="<c:out value="${fn:substring(blog.blog, 0, 300)}" escapeXml="false"/>"/>
+                </c:forEach>
+            </c:if>
+        </c:catch>
+        <c:if test="${ex ne null}">
+            ${ex}
+        </c:if>
+
+
         <meta property="og:url" content="https://www.inquiryhere.com/">
         <meta property="og:site_name" content="https://www.inquiryhere.com/" />
         <meta property="og:image" content="https://www.inquiryhere.com/images/logo/inquiryhere_Logo.PNG" />
@@ -163,24 +100,14 @@
     </head>
 
     <body>
+        <!-- Header _________________________________ -->
+        <jsp:include page="header.jsp"/>
         <div class="main-page-wrapper">
 
-
-            <!-- Header _________________________________ -->
-            <jsp:include page="header.jsp">
-                <jsp:param name="sl" value="<%=sl%>"/>
-            </jsp:include>
-            <div class="clear-fix"></div>
             <div class="bodydata">
                 <div class="container clear-fix">
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-
-                            <div class="clear-fix"></div>
-
-                            <div class="clear-fix"></div>
-
-                            <div class="clear-fix"></div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
 
@@ -192,104 +119,43 @@
 
                                         <div class="boxHeading marginbot10">
 
-                                          [ <%=TotalView%> ]  <%=SUBJECT%> :  <%=StoredQuestion%> 
+                                            [ ${blogView} ]  Subject :  ${blogSub}
                                         </div>
                                         <div class="questionArea">
 
-                                            <div class="postedBy"><%=POSTED_BY%> :<a href="profile.jsp?user=<%=FirstName.replaceAll(" ", "+")%>&ID=<%=UserID%>&sl=<%=sl%>"><%=FirstName%></a></div>
+                                            <div class="postedBy">Posted by :<a href="profile.jsp?user=${userName}&ID=${userId}">${fullName}</a></div>
 
                                         </div>
                                     </div>
-                                    <div class="boxHeading marginbot10"><%=DESCRIPTION%></div>
+                                    <div class="boxHeading marginbot10">Description</div>
 
-                                    <%
-
-                                        try {
-                                            String p = "SELECT * FROM blog WHERE  blog_id = '" + Question + "'";
-                                            preparedStatement = connection.prepareStatement(p);
-                                            resultSet = preparedStatement.executeQuery();
-                                            while (resultSet.next()) {
-                                                String answer = resultSet.getString("blog");
-                                    %>
                                     <div class="themeBox" style="height:auto;">
                                         <div class="boxHeading marginbot10" style="font-size: 15px;font-family: Arial, Helvetica, sans-serif;">
-                                            <%=answer%> 
+                                            ${blogDes}
                                         </div>
-
                                     </div>
 
                                     <div class="clear-fix"></div>
                                     Comments....<br>
                                     <div align="right">
+                                        <sql:query dataSource="jdbc/mydatabase" var="comment">
+                                            SELECT unique_id,user_id,(SELECT firstname FROM newuser WHERE id = user_id )AS fullname,q_id,comments,time FROM comments WHERE blog_id = ? ;
+                                            <sql:param value="${blogId}"/>
+                                        </sql:query>
+                                        <c:forEach items="${comment.rows}" var="cmt">
+                                            <c:out value="${cmt.comments}"/>:
+                                            <c:choose>
+                                                <c:when test="${cmt.fullname eq null or empty cmt.fullname}">
+                                                    <font color="green"> <c:out value="Guest User"/> </font>  
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a href="profile.jsp?user=${cmt.fullname}&ID=${cmt.user_id}">${cmt.fullname}</a>    
+                                                </c:otherwise>  
+                                            </c:choose>                                                                                     
+                                            <br>________________________________<br>
+                                        </c:forEach>
 
-                                        <%
-                                            try {
-                                                String sql_question_comment = "SELECT unique_id,user_id,"
-                                                        + "(SELECT firstname FROM newuser WHERE id = comments.user_id )AS fullname,"
-                                                        + "q_id,comments,time FROM comments WHERE blog_id = ? ";
-                                                preparedStatement = connection.prepareStatement(sql_question_comment);
-                                                preparedStatement.setString(1, Question);
-                                                resultSet = preparedStatement.executeQuery();
-                                                while (resultSet.next()) {
-                                                    String Blog_comments = resultSet.getString("comments");
-                                                    int user_id = resultSet.getInt("user_id");//userId of who commented
-                                                    String userName = "GuestUser";
-                                                    if (user_id != 0) {
-                                                        userName = resultSet.getString("fullname");//UserName who commentd   
-                                                    }
-                                                    String time = resultSet.getString("time");
-
-                                                    out.println(Blog_comments + ":- ");
-                                                    if (userName.equalsIgnoreCase("GuestUser")) {
-                                                        out.println("<b style=color:red;>" + userName + "</b>");
-                                                    } else {
-                                        %>
-                                        <a href="profile.jsp?user=<%=userName.replaceAll(" ", "+")%>&ID=<%=user_id%>&sl=<%=sl%>"><%=convertStringUpperToLower(userName)%></a>
-                                        <%  }
-                                                    out.println("(" + time + ") <br>_____________________________<br> ");
-                                                }
-
-                                            } catch (Exception msg) {
-                                                out.println("Error in loading question comment: -" + msg);
-                                            }
-                                        %>
                                     </div>
-                                    <%
-                                            }
-
-                                        } catch (Exception e) {
-                                            out.println("Unable to retrieve!!" + e);
-                                        }
-                                    %>
-                                    <%
-                                        } catch (Exception e) {
-                                            out.println("Error in main try block:-" + e);
-                                        } finally {
-
-                                            if (connection != null || !connection.isClosed()) {
-                                                try {
-                                                    connection.close();
-                                                } catch (Exception e) {
-                                                    out.println("Exception in closing connection " + e);
-                                                }
-                                            }
-                                            if (resultSet != null || !resultSet.isClosed()) {
-                                                try {
-                                                    resultSet.close();
-                                                } catch (Exception e) {
-                                                    out.println("Exception in closing resulatset " + e);
-                                                }
-                                            }
-                                            if (preparedStatement != null || !preparedStatement.isClosed()) {
-                                                try {
-                                                    preparedStatement.close();
-                                                } catch (Exception e) {
-                                                    out.println("Exception in closing preparedStatement " + e);
-                                                }
-                                            }
-                                        }
-                                    %>
-
                                     <%
                                         if (session.getAttribute("Session_id_of_user") == null) {
                                     %>
@@ -298,76 +164,39 @@
                                     </div>
                                     <form action="saveBlogComment.jsp" method="get">
                                         <div class="hidden" id="comment">
-                                            <input type="hidden" name="blog_id" value="<%=Question%>">
+                                            <input type="hidden" name="blogSub" value="${blogSub}">
+                                            <input type="hidden" name="blog_id" value="${blogId}">
+                                            <input type="hidden" name="bloggerUserId" value="${userId}">
                                             <textarea name="comments" rows="3" cols="30" required="" placeholder="What you think..."></textarea>
                                             <input type="submit" name="sub" value="Send Comment">
                                         </div>
                                     </form>
                                     <div align="center">
-                                        <button type="submit" class="button button1" onclick="location.href = 'Login.jsp';" >Login to comment</button> 
+                                        <button type="submit" class="button button1" onclick="location.href = 'login.jsp?URL=D_Blog.jsp?Blog_Id=${blogId}';" >Login to comment</button> 
                                     </div>
                                     <% } else {%>
                                     <form action="saveBlogComment.jsp" method="get">
-                                        <input type="hidden" name="blog_id" value="<%=Question%>">
+                                        <input type="hidden" name="blogSub" value="${blogSub}">
+                                        <input type="hidden" name="blog_id" value="${blogId}">
+                                        <input type="hidden" name="sessionUserId" value="${sessionScope.Session_id_of_user}">
+                                        <input type="hidden" name="bloggerUserId" value="${userId}">
                                         <textarea name="comments" rows="3" cols="30" required="" placeholder="What you think..."></textarea>
                                         <input type="submit" name="sub" value="Send Comment">
                                     </form>
-                                    <% } %>
-
-
+                                    <% }%>
                                 </div>
                             </div>
-
                         </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <%
-                                if (session.getAttribute("email") != null) {
-                            %>
-                            <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading">
-                                    <%=COMPLETE_YOUR_PROFILE%>
-                                </div>
-                                <div><jsp:include page="CompleteUserProfile.jsp" /></div>
-
-                            </div><% }%>
-                            <div class="clear-fix"></div>
-                            <%--
-                                if (session.getAttribute("email") != null) {
-                            %>
-<!--                            <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading">
-                                    <%=TRENDING_QUUESTION%>
-                                </div>
-                                <div>
-                                    <jsp:include page="TrendingQuestion.jsp" />
-                                </div>
-                            </div>-->
-                            <% }--%>
-                            <div class="clear-fix"></div>
-
-                            <div class="clear-fix"></div>
-                        </div>
-                        <div class="clear-fix"></div>
                     </div>
-                    <div class="clear-fix"></div>
                 </div>
-                <div class="clear-fix"></div>
-            </div>
-            <div class="clear-fix"></div>
-
-            <div class="modal fade" id="myModal" role="dialog">
-                <div class="modal-dialog">
-                </div>
-            </div>
-            <%@include file="notificationhtml.jsp" %>
-            <jsp:include page="footer.jsp">
-                <jsp:param name="sl" value="<%=sl%>"/>
-            </jsp:include>
-            <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
-            <!-- Bootstrap JS -->
-            <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
-            <!-- Bootstrap Select JS -->
-            <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
+            </div>     
         </div> <!-- /.main-page-wrapper -->
+        <jsp:include page="footer.jsp"/>
+        <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
+        <!-- Bootstrap JS -->
+        <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
+        <!-- Bootstrap Select JS -->
+        <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
 
-    </body></html>
+    </body>
+</html>
