@@ -67,9 +67,6 @@
 
 
         <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 float-right textalign-right">
-            <c:if test="${sessionScope.Session_id_of_user ne null}">
-                <a href="#" data-toggle="modal" class="helpicon" data-target="#myModalNq" style="color: white;padding-left: 10px;padding-right: 10px;">Inbox</a>  
-            </c:if>
             <a href="help.jsp" class="helpicon"  style="color: white;padding-left: 10px;padding-right: 30px;">Help</a>           
             <c:if test="${sessionScope.Session_id_of_user eq null}">  
                 <%

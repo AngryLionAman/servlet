@@ -1,3 +1,4 @@
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page import="java.sql.Connection"%>
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.DriverManager"%>
@@ -154,7 +155,7 @@
 
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                                    <c:if test="${empty param.iPageNo and empty param.cPageNo}">
+                                    <c:if test="${empty param.iPageNo and empty param.cPageNo and param.p}">
                                         <h4>Recent posted question</h4>
                                         <sql:query dataSource="jdbc/mydatabase" var="question">
                                             SELECT q.total_view,date(q.posted_time) as date,
@@ -211,49 +212,103 @@
                                     </c:if>
                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
                                         <h4>Related question</h4>  
-                                        <sql:query dataSource="jdbc/mydatabase" var="realted_question">
-                                            select DISTINCT q.id,(SELECT firstname FROM newuser WHERE id= q.id) as firstname,
-                                            q.q_id,q.total_view,q.question,q.vote,(select count(*) from answer where q_id = q.q_id) as tac from question q 
-                                            inner join question_topic_tag qtt on q.q_id = qtt.question_id where tag_id IN 
-                                            (select t.unique_id from topic t inner join topic_followers_detail de on t.unique_id = de.topic_id 
-                                            where user_or_followers_id = ?) and q.id is not null and q.q_id is not null 
-                                            and q.question is not null and (SELECT firstname FROM newuser WHERE id= q.id) is not null ORDER BY RAND();
-                                            <sql:param value="${sessionScope.Session_id_of_user}"></sql:param>
-                                        </sql:query>
+                                        <c:catch var="exp">
+                                            <c:set var="rowsPerPage" value="10" />
+                                            <c:set var="pageNumber" value="1" />
+                                            <c:if test="${param.p ne null}">
+                                                <c:set var="pageNumber" value="${param.p}" />
+                                            </c:if>
+
+                                            <c:set var="start" value="${pageNumber*rowsPerPage-rowsPerPage}"/>
+                                            <c:set var="stop" value="${pageNumber*rowsPerPage-1}"/>
+                                            <sql:query dataSource="jdbc/mydatabase" var="realted_question">
+                                                select DISTINCT q.id,(SELECT firstname FROM newuser WHERE id= q.id) as firstname,
+                                                q.q_id,q.total_view,q.question,q.vote,(select count(*) from answer where q_id = q.q_id) as tac from question q 
+                                                inner join question_topic_tag qtt on q.q_id = qtt.question_id where tag_id IN 
+                                                (select t.unique_id from topic t inner join topic_followers_detail de on t.unique_id = de.topic_id 
+                                                where user_or_followers_id = ?) and q.id is not null and q.q_id is not null 
+                                                and q.question is not null and (SELECT firstname FROM newuser WHERE id= q.id) is not null ORDER BY RAND();
+                                                <sql:param value="${sessionScope.Session_id_of_user}"></sql:param>
+                                            </sql:query>
+                                            <c:set var="a">
+                                                <fmt:formatNumber value="${realted_question.rowCount/rowsPerPage}" maxFractionDigits="0"/>
+                                            </c:set>
+
+                                            <c:set var="b" value="${realted_question.rowCount/rowsPerPage}" />
+
+                                            <c:choose>
+                                                <c:when test="${a==0}">
+                                                    <c:set var="numberOfPages" value="1" scope="page"/>   
+                                                </c:when>
+
+                                                <c:when test="${b>a}">
+                                                    <c:set var="xxx" value="${b%a}"/>
+                                                    <c:if test="${xxx>0}">
+                                                        <c:set var="numberOfPages" value="${b-xxx+1}" scope="page"/>   
+                                                    </c:if>
+                                                </c:when>
+
+                                                <c:when test="${a>=b}">
+                                                    <c:set var="numberOfPages" value="${a}" scope="page"/>    
+                                                </c:when>
+                                            </c:choose>
+
+                                            <c:forEach var="r_question" items="${realted_question.rows}" begin="${start}" end="${stop}">
+                                                <div class="themeBox" style="height:auto;">
+
+                                                    <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #7aab87;">
+                                                        <a href="Answer.jsp?q=<c:out value="${fn:replace(r_question.question,' ','+')}"/>&Id=<c:out value="${r_question.q_id}"/>" ><c:out value="${r_question.question}"/> ?</a>
+                                                        <sql:update var="inc_view" dataSource="jdbc/mydatabase">
+                                                            UPDATE question SET total_view = total_view + 1 WHERE q_id =?;
+                                                            <sql:param value="${r_question.q_id}"/>
+                                                        </sql:update>
+                                                    </div>
+                                                    <div class="questionArea">
+                                                        <div class="postedBy">Posted By : <a href="profile.jsp?user=<c:out value="${r_question.firstname}"/>&ID=<c:out value="${r_question.id}"/>"><c:out value="${function.convertStringUpperToLower(r_question.firstname)}"/></a></div>
+                                                    </div>
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${r_question.q_id}"/>', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(<c:out value="${r_question.vote}"/>)</a>&nbsp;&nbsp; 
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${r_question.q_id}"/>', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
+                                                    <a href="Answer.jsp?q=<c:out value="${fn:replace(r_question.question,' ','+')}"/>&Id=<c:out value="${r_question.q_id}"/>" >Ans(<c:out value="${r_question.tac}"/>)</a>&nbsp;&nbsp;                                         
+                                                    <a href="javascript:void(0)">View(<c:out value="${r_question.total_view}"/>)</a>
+                                                    <!-- Comment on question -->
+                                                    <div align="right">
+                                                        <sql:query dataSource="jdbc/mydatabase" var="q_com">
+                                                            SELECT unique_id,user_id,
+                                                            (SELECT firstname FROM newuser WHERE id = comments.user_id )AS fullname,
+                                                            q_id,comments,time FROM comments WHERE q_id = ? AND user_id IS NOT NULL AND q_id IS NOT NULL;
+                                                            <sql:param value="${r_question.q_id}"/>
+                                                        </sql:query>
+                                                        <c:forEach var="q_comt" items="${q_com.rows}">
+                                                            <c:out value="${q_comt.comments}"/>:-
+                                                            <a href="profile.jsp?user=<c:out value="${q_comt.fullname}"/>&ID=<c:out value="${q_comt.user_id}"/>"><c:out value="${q_comt.fullname}"/></a><br>                                                        
+                                                        </c:forEach>
+                                                    </div>
+                                                </div>
+
+                                            </c:forEach>
+                                            <%--For displaying Previous link --%>
+                                            <c:if test="${pageNumber gt 1}">
+                                                <a href="index.jsp?p=${pageNumber - 1}">Previous</a>
+                                            </c:if>
+                                            <c:forEach begin="1" end="${numberOfPages}" var="i">
+                                                <c:choose>
+                                                    <c:when test="${i!=pageNumber}">
+                                                        <a href="index.jsp?p=<c:out value="${i}"/>"><c:out value="${i}"/></a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <b style="color: red;"><c:out value="${i}"/></b>
+                                                    </c:otherwise>        
+                                                </c:choose>       
+                                            </c:forEach>  
+                                            <%--For displaying Next link --%>
+                                            <c:if test="${pageNumber lt numberOfPages}">
+                                                <a href="index.jsp?p=${pageNumber + 1}">Next</a>
+                                            </c:if>
+                                        </c:catch>
+                                        <c:if test="${exp ne null}">
+                                            ${exp}
+                                        </c:if>
                                     </c:if>
-                                    <c:forEach var="r_question" items="${realted_question.rows}">
-                                        <div class="themeBox" style="height:auto;">
-
-                                            <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #7aab87;">
-                                                <a href="Answer.jsp?q=<c:out value="${fn:replace(r_question.question,' ','+')}"/>&Id=<c:out value="${r_question.q_id}"/>" ><c:out value="${r_question.question}"/> ?</a>
-                                                <sql:update var="inc_view" dataSource="jdbc/mydatabase">
-                                                    UPDATE question SET total_view = total_view + 1 WHERE q_id =?;
-                                                    <sql:param value="${r_question.q_id}"/>
-                                                </sql:update>
-                                            </div>
-                                            <div class="questionArea">
-                                                <div class="postedBy">Posted By : <a href="profile.jsp?user=<c:out value="${r_question.firstname}"/>&ID=<c:out value="${r_question.id}"/>"><c:out value="${function.convertStringUpperToLower(r_question.firstname)}"/></a></div>
-                                            </div>
-                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${r_question.q_id}"/>', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(<c:out value="${r_question.vote}"/>)</a>&nbsp;&nbsp; 
-                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${r_question.q_id}"/>', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
-                                            <a href="Answer.jsp?q=<c:out value="${fn:replace(r_question.question,' ','+')}"/>&Id=<c:out value="${r_question.q_id}"/>" >Ans(<c:out value="${r_question.tac}"/>)</a>&nbsp;&nbsp;                                         
-                                            <a href="javascript:void(0)">View(<c:out value="${r_question.total_view}"/>)</a>
-                                            <!-- Comment on question -->
-                                            <div align="right">
-                                                <sql:query dataSource="jdbc/mydatabase" var="q_com">
-                                                    SELECT unique_id,user_id,
-                                                    (SELECT firstname FROM newuser WHERE id = comments.user_id )AS fullname,
-                                                    q_id,comments,time FROM comments WHERE q_id = ? AND user_id IS NOT NULL AND q_id IS NOT NULL;
-                                                    <sql:param value="${r_question.q_id}"/>
-                                                </sql:query>
-                                                <c:forEach var="q_comt" items="${q_com.rows}">
-                                                    <c:out value="${q_comt.comments}"/>:-
-                                                    <a href="profile.jsp?user=<c:out value="${q_comt.fullname}"/>&ID=<c:out value="${q_comt.user_id}"/>"><c:out value="${q_comt.fullname}"/></a><br>                                                        
-                                                </c:forEach>
-                                            </div>
-                                        </div>
-
-                                    </c:forEach>
 
 
                                     <h4>Question you may like</h4>

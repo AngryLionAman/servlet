@@ -1,5 +1,6 @@
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@include file="site.jsp" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -71,7 +72,7 @@
                                             <c:set var="stop" value="${pageNumber*rowsPerPage-1}"/>
 
                                             <sql:query var="topic" dataSource="jdbc/mydatabase" >
-                                                select t.unique_id,t.topic_name,(select count(topic_id) from topic_followers_detail where topic_id = t.unique_id)as count from topic t ORDER BY RAND();
+                                                select t.unique_id,t.topic_name,count(tf.user_or_followers_id)as count from topic t left join topic_followers_detail tf on tf.topic_id = t.unique_id group by t.unique_id ;
                                             </sql:query>
 
                                             <c:set var="a">
@@ -96,9 +97,11 @@
                                                     <c:set var="numberOfPages" value="${a}" scope="page"/>    
                                                 </c:when>
                                             </c:choose>
+                                                <jsp:useBean class="com.followmoretopic.totalQuestion" id="fun" scope="page"/>
                                             <c:forEach var="t" items="${topic.rows}" begin="${start}" end="${stop}">
+                                                <c:set var="totalQuestion" value="${fun.totalQestion(t.unique_id)}"/>
                                                 <div style="width:auto;height:52px;border:1px solid #000;float: left; margin-right: 5px; margin-bottom: 5px;" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                                    <span title="Totoal followers of ${t.topic_name} is ${t.count}"><a href=topic.jsp?t=${t.topic_name}&id=${t.unique_id}>${t.topic_name}</a> (${t.count})</span>
+                                                    <span title="Totoal followers of ${t.topic_name} is ${t.count} and total question asked related this topic is ${totalQuestion} "><a href=topic.jsp?t=${fn:replace(t.topic_name, ' ', '-')}&id=${t.unique_id}>${t.topic_name}(${totalQuestion})</a> </span>
                                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
                                                         <sql:query dataSource="jdbc/mydatabase" var="found">
                                                             SELECT count(*) as cnt FROM topic_followers_detail where topic_id = ? and user_or_followers_id = ? limit 1;
@@ -109,10 +112,10 @@
                                                             <c:set value="${f.cnt}" var="count"/>
                                                         </c:forEach>
                                                         <c:if test="${count eq 1}">
-                                                            <input type="button" value="Unfollow" id="myButton1" onclick="return take_value(this, '${t.unique_id}', '${sessionScope.Session_id_of_user}');" />
+                                                            <input type="button" value="Unfollow(${t.count})" id="myButton1" onclick="return take_value(this, '${t.unique_id}', '${sessionScope.Session_id_of_user}');" />
                                                         </c:if>
                                                         <c:if test="${count ne 1}">
-                                                            <input type="button" value="follow" id="myButton1" onclick="return take_value(this, '${t.unique_id}', '${sessionScope.Session_id_of_user}');" />
+                                                            <input type="button" value="follow(${t.count})" id="myButton1" onclick="return take_value(this, '${t.unique_id}', '${sessionScope.Session_id_of_user}');" />
                                                         </c:if>
                                                     </c:if>
                                                     <c:if test="${sessionScope.Session_id_of_user eq null}">

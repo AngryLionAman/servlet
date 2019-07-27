@@ -18,7 +18,7 @@
         </c:if>  
     </c:if>
     <c:if test="${empty param.ID and not empty param.user}">
-        <sql:query dataSource="${dbsource}" var="f_user_id">
+        <sql:query dataSource="jdbc/mydatabase" var="f_user_id">
             select id from newuser where username = ?;
             <sql:param value="${param.user}"/>
         </sql:query>
@@ -31,13 +31,13 @@
     </c:if>
     <c:choose>
         <c:when test="${not empty pageScope.userid and pageScope.userid ne null}">
-            <sql:query dataSource="${dbsource}" var="usersql" scope="page">
+            <sql:query dataSource="jdbc/mydatabase" var="usersql" scope="page">
                 SELECT * FROM newuser WHERE ID = ?;
                 <sql:param value="${userid}" />
             </sql:query>
         </c:when>
         <c:otherwise >
-            <sql:query dataSource="${dbsource}" var="usersql" scope="page"> 
+            <sql:query dataSource="jdbc/mydatabase" var="usersql" scope="page"> 
                 SELECT * FROM newuser WHERE username = ?;
                 <sql:param value="${username}" />
             </sql:query>                              
@@ -135,7 +135,7 @@
                     <c:if test="${usersql ne null and not empty usersql}">
                         <c:forEach items="${usersql.rows}" var="user" >
                             <c:set var="username" scope="page" value="${user.username}"/>
-                            <sql:update dataSource="${dbsource}" var="updateuser">
+                            <sql:update dataSource="jdbc/mydatabase" var="updateuser">
                                 UPDATE newuser SET total_view = total_view + 1 WHERE ID =? ;
                                 <sql:param value="${user.id}" />
                             </sql:update>
@@ -154,7 +154,7 @@
 
                                             <c:if test="${sessionScope.Session_id_of_user ne null}">
                                                 <c:if test="${sessionScope.Session_id_of_user ne user.id}" ><!--If user watching there own profile they will not get the follow button-->
-                                                    <sql:query dataSource="${dbsource}" var="followbutton">
+                                                    <sql:query dataSource="jdbc/mydatabase" var="followbutton">
                                                         SELECT * FROM ak_follower_detail where followers_id = ? and user_id = ? limit 1;
                                                         <sql:param value="${sessionScope.Session_id_of_user}"/>
                                                         <sql:param value="${user.id}"/>
@@ -264,7 +264,7 @@
                                             </table>
 
                                             <div align="right">
-                                                <sql:query dataSource="${dbsource}" var="profilecomment">
+                                                <sql:query dataSource="jdbc/mydatabase" var="profilecomment">
                                                     SELECT unique_id,user_id,(SELECT firstname FROM newuser WHERE id = comments.user_id )AS fullname,
                                                     q_id,comments,time FROM comments WHERE userprofileid = ?;
                                                     <sql:param value="${user.id}"/>
@@ -312,7 +312,7 @@
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                             <%-- TO the number of user activity --%>
                             <%-- For the question --%>
-                            <sql:query dataSource="${dbsource}" var="question">
+                            <sql:query dataSource="jdbc/mydatabase" var="question">
                                 SELECT count(*)cnt FROM question WHERE id = ?;
                                 <sql:param value="${userid}" />                                                                                                  
                             </sql:query>
@@ -320,7 +320,7 @@
                                 <c:set value="${q_count.cnt}" var="q_cnt" scope="page"/>
                             </c:forEach>
                             <%-- For the Answer --%>
-                            <sql:query dataSource="${dbsource}" var="answer">
+                            <sql:query dataSource="jdbc/mydatabase" var="answer">
                                 select count(*) as cnt from answer where  Answer_by_id = ?;
                                 <sql:param value="${userid}" />                                                                                                  
                             </sql:query>
@@ -328,7 +328,7 @@
                                 <c:set value="${a_count.cnt}" var="a_cnt" scope="page"/>
                             </c:forEach>
                             <%-- For the Topic --%>
-                            <sql:query dataSource="${dbsource}" var="topic">
+                            <sql:query dataSource="jdbc/mydatabase" var="topic">
                                 select count(*) as cnt from topic_followers_detail where user_or_followers_id = ?;
                                 <sql:param value="${userid}" />                                                                                                  
                             </sql:query>
@@ -336,7 +336,7 @@
                                 <c:set value="${t_count.cnt}" var="t_cnt" scope="page"/>
                             </c:forEach>
                             <%-- For the Following --%>
-                            <sql:query dataSource="${dbsource}" var="following">
+                            <sql:query dataSource="jdbc/mydatabase" var="following">
                                 select count(*) as cnt from ak_follower_detail where followers_id = ?;
                                 <sql:param value="${userid}" />                                                                                                  
                             </sql:query>
@@ -344,7 +344,7 @@
                                 <c:set value="${fl_count.cnt}" var="fl_cnt" scope="page"/>
                             </c:forEach>
                             <%-- For the Followers --%>
-                            <sql:query dataSource="${dbsource}" var="followers">
+                            <sql:query dataSource="jdbc/mydatabase" var="followers">
                                 select count(*) as cnt from ak_follower_detail where user_id = ?;
                                 <sql:param value="${userid}" />                                                                                                  
                             </sql:query>
@@ -352,7 +352,7 @@
                                 <c:set value="${fr_count.cnt}" var="fr_cnt" scope="page"/>
                             </c:forEach>
                             <%-- For the Blog --%>
-                            <sql:query dataSource="${dbsource}" var="blog">
+                            <sql:query dataSource="jdbc/mydatabase" var="blog">
                                 select count(*)as cnt from blog where blog_posted_by = ?;
                                 <sql:param value="${userid}" />                                                                                                  
                             </sql:query>
@@ -390,7 +390,7 @@
                                         <c:choose>
                                             <c:when test="${ParametrVariable eq 'Question'}">
                                                 <center><div class=boxHeading>QUESTION</div></center>    
-                                                    <sql:query dataSource="${dbsource}" var="question">
+                                                    <sql:query dataSource="jdbc/mydatabase" var="question">
                                                     SELECT * FROM question WHERE id = ?;
                                                     <sql:param value="${userid}" />                                                                                                  
                                                 </sql:query>
@@ -404,7 +404,7 @@
                                             </c:when>
                                             <c:when test="${ParametrVariable eq 'Answer'}">
                                                 <center><div class=boxHeading> ANSWER </div></center>
-                                                    <sql:query dataSource="${dbsource}" var="answer">
+                                                    <sql:query dataSource="jdbc/mydatabase" var="answer">
                                                     SELECT q.question,q.q_id,SUBSTRING(ans.answer,1,200)short_ans,
                                                     ans.a_id,ans.Answer_by_id from answer ans right join question q 
                                                     on q.q_id = ans.q_id where Answer_by_id = ?;
@@ -421,7 +421,7 @@
                                             </c:when>
                                             <c:when test="${ParametrVariable eq 'Topic'}">
                                                 <center><div class=boxHeading>TOPIC FOLLOWED </div></center>
-                                                    <sql:query dataSource="${dbsource}" var="topic">
+                                                    <sql:query dataSource="jdbc/mydatabase" var="topic">
                                                     select t.unique_id,t.topic_name from topic t 
                                                     right join topic_followers_detail de on t.unique_id = de.topic_id 
                                                     where user_or_followers_id= ? and t.unique_id is not null and t.topic_name is not null;
@@ -434,7 +434,7 @@
                                             </c:when>
                                             <c:when test="${ParametrVariable eq 'Following'}">
                                                 <center><div class=boxHeading> FOLLOWING </div></center>
-                                                    <sql:query dataSource="${dbsource}" var="Following">
+                                                    <sql:query dataSource="jdbc/mydatabase" var="Following">
                                                     select user.ID,user.firstname,user.imagepath from newuser user 
                                                     right join ak_follower_detail ak on ak.user_id=user.ID where followers_id = ?;
                                                     <sql:param value="${userid}"/>
@@ -449,7 +449,7 @@
                                             </c:when>
                                             <c:when test="${ParametrVariable eq 'Followers'}">
                                                 <center><div class=boxHeading> FOLLOWERS </div></center>
-                                                    <sql:query dataSource="${dbsource}" var="followers">
+                                                    <sql:query dataSource="jdbc/mydatabase" var="followers">
                                                     select user.ID,user.firstname,user.imagepath from newuser user 
                                                     right join ak_follower_detail ak on ak.followers_id=user.ID where user_id = ?;
                                                     <sql:param value="${userid}" />
@@ -464,7 +464,7 @@
                                             </c:when>
                                             <c:when test="${ParametrVariable eq 'Blog'}">
                                                 <center><div class=boxHeading> BLOG </div></center>
-                                                    <sql:query dataSource="${dbsource}" var="blog">
+                                                    <sql:query dataSource="jdbc/mydatabase" var="blog">
                                                     SELECT * FROM blog WHERE blog_posted_by = ?;
                                                     <sql:param value="${userid}"/>
                                                 </sql:query>

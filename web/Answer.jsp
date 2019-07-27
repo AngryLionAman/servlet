@@ -375,7 +375,7 @@
                                             SELECT DISTINCT q.id,q.question,q.q_id FROM question q 
                                             RIGHT JOIN question_topic_tag qtt ON qtt.question_id=q.q_id 
                                             WHERE tag_id IN (SELECT DISTINCT(tag_id) AS tag_id 
-                                            FROM question_topic_tag WHERE question_id = ?) AND q_id IS NOT NULL LIMIT 5;
+                                            FROM question_topic_tag WHERE question_id = ?) AND q_id IS NOT NULL LIMIT 10;
                                             <sql:param value="${param.Id}"/>
                                         </sql:query>
                                         <c:set scope="page" value="0" var="count"/>
@@ -398,7 +398,7 @@
                                 </div>
                                 <div>
                                     <sql:query dataSource="jdbc/mydatabase" var="random_question">
-                                        select q_id,question from question order by rand() limit 5;
+                                        select q_id,question from question order by rand() limit 10;
                                     </sql:query>
                                     <c:forEach items="${random_question.rows}" var="r_q">
                                         <a href="Answer.jsp?q=<c:out value="${fn:replace(r_q.question,' ','-')}"/>&Id=<c:out value="${r_q.q_id}"/>" ><c:out value="${r_q.question}"/></a><br><br>

@@ -21,13 +21,13 @@
     <c:out value="${param.question_id}"/><br>
     <c:out value="${param.comments}"/><br>
     <c:out value="${param.question}"/><br>
-    <sql:update dataSource="${dbsource}" var="insert_comment" >
+    <sql:update dataSource="jdbc/mydatabase" var="insert_comment" >
         INSERT INTO comments (user_id,q_id,comments)VALUES(?,?,?);
         <sql:param value="${param.session_active_user_id}"/>
         <sql:param value="${param.question_id}"/>
         <sql:param value="${param.comments}"/>
     </sql:update>
-    <sql:update dataSource="${dbsource}" var="notificaiton">
+    <sql:update dataSource="jdbc/mydatabase" var="notificaiton">
         INSERT INTO notification (user_id,notification_type,followers_id,question_id ) VALUES (?,?,?,?);
         <sql:param value="${param.id_of_user_who_posted_question}"/>
         <sql:param value="comment_on_question"/>

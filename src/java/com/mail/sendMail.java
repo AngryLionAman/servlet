@@ -17,7 +17,7 @@ public class sendMail {
     public boolean sendMail(String mailAdd,String pass) {
         String host = "mail.inquiryhere.com";
         final String user = "help@inquiryhere.com";//change accordingly  
-        final String password = "De5Ra@&IpNEh";//change accordingly  
+        final String password = "";//change accordingly  
 
         String to = mailAdd;//change accordingly  
 

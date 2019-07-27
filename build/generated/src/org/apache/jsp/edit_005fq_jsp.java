@@ -11,6 +11,7 @@ public final class edit_005fq_jsp extends org.apache.jasper.runtime.HttpJspBase
 
   private static java.util.List<String> _jspx_dependants;
 
+  private org.apache.jasper.runtime.TagHandlerPool _jspx_tagPool_sql_param_value_nobody;
   private org.apache.jasper.runtime.TagHandlerPool _jspx_tagPool_c_forEach_var_items;
   private org.apache.jasper.runtime.TagHandlerPool _jspx_tagPool_c_set_var_value_nobody;
   private org.apache.jasper.runtime.TagHandlerPool _jspx_tagPool_c_redirect_url_nobody;
@@ -25,6 +26,7 @@ public final class edit_005fq_jsp extends org.apache.jasper.runtime.HttpJspBase
   }
 
   public void _jspInit() {
+    _jspx_tagPool_sql_param_value_nobody = org.apache.jasper.runtime.TagHandlerPool.getTagHandlerPool(getServletConfig());
     _jspx_tagPool_c_forEach_var_items = org.apache.jasper.runtime.TagHandlerPool.getTagHandlerPool(getServletConfig());
     _jspx_tagPool_c_set_var_value_nobody = org.apache.jasper.runtime.TagHandlerPool.getTagHandlerPool(getServletConfig());
     _jspx_tagPool_c_redirect_url_nobody = org.apache.jasper.runtime.TagHandlerPool.getTagHandlerPool(getServletConfig());
@@ -34,6 +36,7 @@ public final class edit_005fq_jsp extends org.apache.jasper.runtime.HttpJspBase
   }
 
   public void _jspDestroy() {
+    _jspx_tagPool_sql_param_value_nobody.release();
     _jspx_tagPool_c_forEach_var_items.release();
     _jspx_tagPool_c_set_var_value_nobody.release();
     _jspx_tagPool_c_redirect_url_nobody.release();
@@ -352,6 +355,10 @@ public final class edit_005fq_jsp extends org.apache.jasper.runtime.HttpJspBase
         do {
           out.write("\n");
           out.write("                        select q_id,question from question where q_id=?;\n");
+          out.write("                        ");
+          if (_jspx_meth_sql_param_0((javax.servlet.jsp.tagext.JspTag) _jspx_th_sql_query_0, _jspx_page_context, _jspx_push_body_count_sql_query_0))
+            return true;
+          out.write("\n");
           out.write("                    ");
           int evalDoAfterBody = _jspx_th_sql_query_0.doAfterBody();
           if (evalDoAfterBody != javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_AGAIN)
@@ -372,6 +379,24 @@ public final class edit_005fq_jsp extends org.apache.jasper.runtime.HttpJspBase
       _jspx_th_sql_query_0.doFinally();
       _jspx_tagPool_sql_query_var_dataSource.reuse(_jspx_th_sql_query_0);
     }
+    return false;
+  }
+
+  private boolean _jspx_meth_sql_param_0(javax.servlet.jsp.tagext.JspTag _jspx_th_sql_query_0, PageContext _jspx_page_context, int[] _jspx_push_body_count_sql_query_0)
+          throws Throwable {
+    PageContext pageContext = _jspx_page_context;
+    JspWriter out = _jspx_page_context.getOut();
+    //  sql:param
+    org.apache.taglibs.standard.tag.rt.sql.ParamTag _jspx_th_sql_param_0 = (org.apache.taglibs.standard.tag.rt.sql.ParamTag) _jspx_tagPool_sql_param_value_nobody.get(org.apache.taglibs.standard.tag.rt.sql.ParamTag.class);
+    _jspx_th_sql_param_0.setPageContext(_jspx_page_context);
+    _jspx_th_sql_param_0.setParent((javax.servlet.jsp.tagext.Tag) _jspx_th_sql_query_0);
+    _jspx_th_sql_param_0.setValue((java.lang.Object) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${param.Id}", java.lang.Object.class, (PageContext)_jspx_page_context, null));
+    int _jspx_eval_sql_param_0 = _jspx_th_sql_param_0.doStartTag();
+    if (_jspx_th_sql_param_0.doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {
+      _jspx_tagPool_sql_param_value_nobody.reuse(_jspx_th_sql_param_0);
+      return true;
+    }
+    _jspx_tagPool_sql_param_value_nobody.reuse(_jspx_th_sql_param_0);
     return false;
   }
 

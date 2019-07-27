@@ -12,33 +12,13 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">
         <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
-        <%!
-            String WELCOME_NOTES = "";
-            String WELCOME_NOTES_DESCRIPTION = "";
-        %>
-        <%
-            String sl = request.getParameter("sl");
-            if (sl == null) {
-                sl = "en";
-            }
-            if (sl.equalsIgnoreCase("hi")) {
-                WELCOME_NOTES = "inquiryhere.com में आपकी रुचि के लिए धन्यवाद";
-                WELCOME_NOTES_DESCRIPTION = "प्रिय उपयोगकर्ता, अगर आपके पास INQUIRYHERE.COM के बारे में कोई प्रश्न और सुझाव है। तो आप inquiry@inquiryhere.com पर एक मेल छोड़ सकते हैं या आप सीधे अनुभाग से नीचे पोस्ट कर सकते हैं। हम जल्द से जल्द आपकी मदद करेंगे।";
-
-            } else {
-                WELCOME_NOTES = "Thanks for your interest in inquiryhere.com";
-                WELCOME_NOTES_DESCRIPTION = "Dear user, If you have any query and suggestion about inquiryhere.com then you can drop a mail on inquiry@inquiryhere.com or you can directly post from below section.We will help you as soon as possible.";
-            }
-        %>
-
+       
     </head>
 
     <body>
         <div class="main-page-wrapper">
 
-            <jsp:include page="header.jsp">
-                <jsp:param name="sl" value="<%=sl%>"/>
-            </jsp:include>
+            <jsp:include page="header.jsp"/>
             <div class="clear-fix"></div>
             <div class="bodydata">
                 <div class="container clear-fix">
@@ -52,10 +32,10 @@
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="themeBox" style="height:auto;">
                                             <div class="boxHeading">
-                                                <%=WELCOME_NOTES%>
+                                                Thanks for your interest in inquiryhere.com
                                             </div><BR>
                                             <div class="boxHeading">
-                                                <%=WELCOME_NOTES_DESCRIPTION%>    
+                                                Dear user, If you have any query and suggestion about inquiryhere.com then you can drop a mail on inquiry@inquiryhere.com or you can directly post from below section.We will help you as soon as possible  
                                             </div>
                                         </div>
                                     </div>
@@ -88,10 +68,7 @@
                 <div class="clear-fix"></div>
             </div>
             <div class="clear-fix"></div>
-            <%@include file="notificationhtml.jsp" %>
-            <jsp:include page="footer.jsp">
-                <jsp:param name="sl" value="<%=sl%>"/>
-            </jsp:include>
+            <jsp:include page="footer.jsp"/>
             <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
             <!-- Bootstrap JS -->
             <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
