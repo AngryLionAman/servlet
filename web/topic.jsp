@@ -22,7 +22,7 @@
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <script type="text/javascript">
             function take_value(el, _topic_id, id_of_user) {
-            <% if (session.getAttribute("email") == null) { %>
+            <% if (session.getAttribute("Session_id_of_user") == null) { %>
                 alert("Please login first");<%
                 } else {%>
                 if (el.value === "follow") {
@@ -55,10 +55,7 @@
             <div class="bodydata">
                 <div class="container clear-fix">
                     <div class="row">
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="themeBox" style="height:auto;">

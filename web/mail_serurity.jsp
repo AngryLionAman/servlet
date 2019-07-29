@@ -7,13 +7,13 @@
               param.session_id_of_user ne null}">
     <c:catch var="ex">
         <c:if test="${param.action eq 'hide'}">
-            <sql:update dataSource="${dbsource}" var="hide_finction">
+            <sql:update dataSource="jdbc/mydatabase" var="hide_finction">
                 UPDATE newuser SET email_s = '1' WHERE id=?;
                 <sql:param value="${param.session_id_of_user}"/>
             </sql:update> 
         </c:if>
         <c:if test="${param.action eq 'show'}">
-            <sql:update dataSource="${dbsource}" var="show_function">
+            <sql:update dataSource="jdbc/mydatabase" var="show_function">
                 UPDATE newuser SET email_s = '0' WHERE id=?;
                 <sql:param value="${param.session_id_of_user}"/>
             </sql:update>

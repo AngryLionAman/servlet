@@ -83,73 +83,71 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                                 <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="themeBox" style="height:auto;margin-bottom:0px;">
-                                            <p id="demo"></p>
-                                            <c:catch var="ex">
+                                    <div class="themeBox" style="height:auto;margin-bottom:0px;">
+                                        <p id="demo"></p>
+                                        <c:catch var="ex">
 
-                                                <c:if test="${not empty tab and not empty query}">
-                                                    <c:choose>
-                                                        <c:when test="${tab eq 'question'}">
-                                                            <center><div class=boxHeading>Question</div></center>
-                                                                <sql:query dataSource="jdbc/mydatabase" var="question">                                                            
-                                                                SELECT * FROM question WHERE lower(question) LIKE '%${query}%';
-                                                            </sql:query>
+                                            <c:if test="${not empty tab and not empty query}">
+                                                <c:choose>
+                                                    <c:when test="${tab eq 'question'}">
+                                                        <center><div class=boxHeading>Question</div></center>
+                                                            <sql:query dataSource="jdbc/mydatabase" var="question">                                                            
+                                                            SELECT * FROM question WHERE lower(question) LIKE '%${query}%';
+                                                        </sql:query>
 
-                                                            <c:forEach items="${question.rows}" var="q">
-                                                                <br><a href="Answer.jsp?q=<c:out value="${fn:replace(q.question,' ','-')}"/>&Id=<c:out value="${q.q_id}"/>" ><h6><c:out value="${q.question}"/> ?</h6></a><br>
-                                                            </c:forEach>
-                                                            <c:if test="${t_question eq 0}">
-                                                                No related question Found !!!!!!!!
-                                                            </c:if>  
-                                                        </c:when>
-                                                        <c:when test="${tab eq 'answer'}">
-                                                            <center><div class=boxHeading>Answer</div></center>
-                                                                <sql:query dataSource="jdbc/mydatabase" var="answer">
-                                                                Select q.question,q.q_id,ans.answer from question q right join answer ans on ans.q_id = q.q_id where lower(answer) LIKE '%${query}%';
-                                                            </sql:query>
-                                                            <c:forEach items="${answer.rows}" var="a">
-                                                                Q.<a href="Answer.jsp?q=<c:out value="${fn:replace(a.question,' ','-')}"/>&Id=<c:out value="${a.q_id}"/>" ><c:out value="${a.question}"/> ?</a>
-                                                                <br>Ans.<c:out value="${a.answer}" escapeXml="false"/><br>
-                                                            </c:forEach>
-                                                            <c:if test="${t_answer eq 0}">
-                                                                No related answer Found !!!!!!!!
-                                                            </c:if> 
-                                                        </c:when>
-                                                        <c:when test="${tab eq 'topic'}">
-                                                            <center><div class=boxHeading>Topic</div></center>
-                                                                <sql:query dataSource="jdbc/mydatabase" var="topic">
-                                                                SELECT * FROM topic WHERE lower(topic_name) LIKE '%${query}%';
-                                                            </sql:query>
-                                                            <c:forEach var="t" items="${topic.rows}">
-                                                                <br><a href="topic.jsp?t=<c:out value="${fn:replace(fun.convertStringUpperToLower(fn:trim(t.topic_name)),' ','-')}"/>&id=<c:out value="${t.unique_id}"/>"> <c:out value="${fun.convertStringUpperToLower(fn:trim(t.topic_name))}"/></a><br>
-                                                            </c:forEach>
-                                                            <c:if test="${t_topic eq 0}">
-                                                                No related topic Found !!!!!!!!
-                                                            </c:if> 
-                                                        </c:when>
-                                                        <c:when test="${tab eq 'profile'}">
-                                                            <center><div class=boxHeading>User Profile</div></center>
-                                                                <sql:query dataSource="jdbc/mydatabase" var="profile">
-                                                                SELECT * FROM newuser WHERE lower(firstname) LIKE '%${query}%';
-                                                            </sql:query>
-                                                            <c:forEach items="${profile.rows}" var="p">
-                                                                <br><a href="profile.jsp?user=<c:out value="${fn:replace(fun.convertStringUpperToLower(fn:trim(p.firstname)),' ','-')}"/>&ID=<c:out value="${p.ID}"/>"><c:out value="${fun.convertStringUpperToLower(fn:trim(p.firstname))}"/></a><br>
-                                                            </c:forEach>
-                                                            <c:if test="${t_profile eq 0}">
-                                                                No related profile Found !!!!!!!!
-                                                            </c:if> 
-                                                        </c:when>
-                                                    </c:choose>
-                                                </c:if>
-                                            </c:catch>
-                                            <c:if test="${ex ne null}">
-                                                ${ex}
+                                                        <c:forEach items="${question.rows}" var="q">
+                                                            <br><a href="Answer.jsp?q=<c:out value="${fn:replace(q.question,' ','-')}"/>&Id=<c:out value="${q.q_id}"/>" ><h6><c:out value="${q.question}"/> ?</h6></a><br>
+                                                        </c:forEach>
+                                                        <c:if test="${t_question eq 0}">
+                                                            No related question Found !!!!!!!!
+                                                        </c:if>  
+                                                    </c:when>
+                                                    <c:when test="${tab eq 'answer'}">
+                                                        <center><div class=boxHeading>Answer</div></center>
+                                                            <sql:query dataSource="jdbc/mydatabase" var="answer">
+                                                            Select q.question,q.q_id,ans.answer from question q right join answer ans on ans.q_id = q.q_id where lower(answer) LIKE '%${query}%';
+                                                        </sql:query>
+                                                        <c:forEach items="${answer.rows}" var="a">
+                                                            Q.<a href="Answer.jsp?q=<c:out value="${fn:replace(a.question,' ','-')}"/>&Id=<c:out value="${a.q_id}"/>" ><c:out value="${a.question}"/> ?</a>
+                                                            <br>Ans.<c:out value="${a.answer}" escapeXml="false"/><br>
+                                                        </c:forEach>
+                                                        <c:if test="${t_answer eq 0}">
+                                                            No related answer Found !!!!!!!!
+                                                        </c:if> 
+                                                    </c:when>
+                                                    <c:when test="${tab eq 'topic'}">
+                                                        <center><div class=boxHeading>Topic</div></center>
+                                                            <sql:query dataSource="jdbc/mydatabase" var="topic">
+                                                            SELECT * FROM topic WHERE lower(topic_name) LIKE '%${query}%';
+                                                        </sql:query>
+                                                        <c:forEach var="t" items="${topic.rows}">
+                                                            <br><a href="topic.jsp?t=<c:out value="${fn:replace(fun.convertStringUpperToLower(fn:trim(t.topic_name)),' ','-')}"/>&id=<c:out value="${t.unique_id}"/>"> <c:out value="${fun.convertStringUpperToLower(fn:trim(t.topic_name))}"/></a><br>
+                                                        </c:forEach>
+                                                        <c:if test="${t_topic eq 0}">
+                                                            No related topic Found !!!!!!!!
+                                                        </c:if> 
+                                                    </c:when>
+                                                    <c:when test="${tab eq 'profile'}">
+                                                        <center><div class=boxHeading>User Profile</div></center>
+                                                            <sql:query dataSource="jdbc/mydatabase" var="profile">
+                                                            SELECT * FROM newuser WHERE lower(firstname) LIKE '%${query}%';
+                                                        </sql:query>
+                                                        <c:forEach items="${profile.rows}" var="p">
+                                                            <br><a href="profile.jsp?user=<c:out value="${fn:replace(fun.convertStringUpperToLower(fn:trim(p.firstname)),' ','-')}"/>&ID=<c:out value="${p.ID}"/>"><c:out value="${fun.convertStringUpperToLower(fn:trim(p.firstname))}"/></a><br>
+                                                        </c:forEach>
+                                                        <c:if test="${t_profile eq 0}">
+                                                            No related profile Found !!!!!!!!
+                                                        </c:if> 
+                                                    </c:when>
+                                                </c:choose>
                                             </c:if>
-                                            <div class="clear-fix"></div>
-                                        </div>
+                                        </c:catch>
+                                        <c:if test="${ex ne null}">
+                                            ${ex}
+                                        </c:if>
+                                        <div class="clear-fix"></div>
                                     </div>
                                 </div>
                             </div>

@@ -105,77 +105,80 @@
                                 <h4>
                                     <div class="logotext">
                                         Inquiryhere.com
-                                        <div>
+                                    </div>
 
-                                            </h4>
-                                            </a>
+                                </h4>
+                            </a>
 
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 serachhere" style="display:inline-block;">
+                        <div style="overflow: hidden; padding-right: .5em;">
+                            <form action="search.jsp">
+                                <input type="text" style="width: 100%;" name="search" required="" >
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 float-right textalign-right">
+                        <a  href="index.jsp" class="helpicon" style="color: white; width: 50px;">Home</a>
+                        <a  href="login.jsp" class="helpicon" style="color: white; width: 50px;">Login</a>
+                    </div>
+                </div>
+            </header>
+            <div class="clear-fix"></div>
+            <div class="bodydata">
+                <div class="container clear-fix">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
+                        </div> 
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="themeBox" style="height:470px;">
+                                <%
+                                    String ErrorMsg = request.getParameter("Error");
+                                    if (ErrorMsg != null) {
+                                        out.println("<center><b style=color:red;>" + ErrorMsg + "</b></center>");
+                                    }
+                                %>
+                                <div class="boxHeading">
+                                    <form action="NewUser.jsp" method="post" name="newUser">
+                                        <label for="fname">First Name</label>                                                                   
+                                        <input type="text" id="fname" name="firstname" onkeypress="return onlyAlphabets(event, this);" required="">
+                                        <label for="fname">Email/Phone</label>
+                                        <div class="boxHeading">
+                                            <input type="text"  name="email" required="">
                                         </div>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 serachhere" style="display:inline-block;">
-                                        <div style="overflow: hidden; padding-right: .5em;">
-                                            <form action="SearchBar.jsp">
-                                                <input type="text" style="width: 100%;" name="search" required="" >
-                                            </form>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 float-right textalign-right">
-                                        <a  href="index.jsp" class="helpicon" style="color: white; width: 50px;">Home</a>
-                                        <a  href="Login.jsp" class="helpicon" style="color: white; width: 50px;">Login</a>
-                                    </div>
-                                    </div>
-                                    </header>
-                                    <div class="clear-fix"></div>
-                                    <div class="bodydata">
-                                        <div class="container clear-fix">
-                                            <div class="row">
-                                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12"></div>
-                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" align="center">                                                   
-                                                    <div class="row">                                                     
-                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="themeBox" style="height:470px;">
-                                                                <%
-                                                                    String ErrorMsg = request.getParameter("Error");
-                                                                    if (ErrorMsg != null) {
-                                                                        out.println("<center><b style=color:red;>" + ErrorMsg + "</b></center>");
-                                                                    }
-                                                                %>
-                                                                <div class="boxHeading">
-                                                                    <form action="NewUser.jsp" method="post" name="newUser">
-                                                                        <label for="fname">First Name</label>                                                                   
-                                                                        <input type="text" id="fname" name="firstname" onkeypress="return onlyAlphabets(event, this);" required="">
-                                                                        <label for="fname">Email/Phone</label>
-                                                                        <div class="boxHeading">
-                                                                            <input type="text"  name="email" required="">
-                                                                        </div>
-                                                                        <label for="lname">Password</label>
-                                                                        <div class="boxHeading">
-                                                                            <input type="password"  name="password" pattern=".{6,}" title="Six or more characters" required="">
-                                                                        </div> 
-                                                                        <br>
-                                                                        <button type="submit" class="button button1" data-toggle="modal"  >Create Account</button>
-                                                                    </form>
-                                                                    <form action="ForgotPassword.jsp" method="post" name="forgetPassword">
-                                                                        <button class="button button1" style="background-color: red;">Forget Password</button>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="clear-fix"></div>
-                                                    </div>
-                                                    <div class="clear-fix"></div>
-                                                </div>
-                                                <div class="clear-fix"></div>
-                                            </div>
-                                            <div class="clear-fix"></div>
-                                            <jsp:include page="footer.jsp"/>
-                                            <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
-                                            <!-- Bootstrap JS -->
-                                            <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
-                                            <!-- Bootstrap Select JS -->
-                                            <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
+                                        <label for="lname">Password</label>
+                                        <div class="boxHeading">
+                                            <input type="password"  name="password" pattern=".{6,}" title="Six or more characters" required="">
                                         </div> 
-                                        </body>
-                                        </html>
+                                        <br>
+                                        <center>
+                                            <button type="submit" class="button button1" data-toggle="modal"  >Create Account</button>
+                                        </center>
+                                    </form>
+
+                                </div>
+                                <center>
+                                    <div>
+                                        <form action="forgotpassword.jsp" method="post" name="forgetPassword">
+                                            <button class="button button1" style="background-color: red;">Forget Password</button>
+                                        </form>
+                                    </div>
+                                </center>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <jsp:include page="footer.jsp"/>
+        </div>
+        <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
+        <!-- Bootstrap JS -->
+        <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
+        <!-- Bootstrap Select JS -->
+        <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
+
+    </body>
+</html>

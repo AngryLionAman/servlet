@@ -3,8 +3,8 @@
 <%@page import="java.sql.*"%>
 <%@include file="site.jsp" %>
 <%
-    if (session.getAttribute("email") != null) {
-        String email = (String) session.getAttribute("email");
+    if (session.getAttribute("Session_id_of_user") != null) {
+        int SessionUserId = (Integer)session.getAttribute("Session_id_of_user");
         Connection connection = null;
         ResultSet resultSet = null;
         PreparedStatement preparedStatement = null;
@@ -30,8 +30,9 @@
             int TotalQuestionCount = 0;
             int TotalAnswerCount = 0;
             try {
-                String v = "SELECT * FROM newuser WHERE email = '" + email + "'";
+                String v = "SELECT * FROM newuser WHERE id = ?";
                 preparedStatement = connection.prepareStatement(v);
+                preparedStatement.setInt(1, SessionUserId);
                 resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     userId = resultSet.getInt("ID");

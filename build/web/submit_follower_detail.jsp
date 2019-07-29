@@ -1,8 +1,8 @@
 <%@page language="java"%>
 <%@page import="java.sql.*"%>
 <%@include file="site.jsp" %>
-<% if (session.getAttribute("email") == null) {
-        response.sendRedirect("Login.jsp");
+<% if (session.getAttribute("Session_id_of_user") == null) {
+        response.sendRedirect("login.jsp");
     }
 %>
 <%

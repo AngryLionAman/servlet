@@ -92,12 +92,12 @@
                                     </c:forEach>
                                     <%--For displaying Previous link --%>
                                     <c:if test="${pageNumber gt 1}">
-                                        <a href="quotes.jsp?p=${pageNumber - 1}">Previous</a>
+                                        <a href="quotes.jsp?p=${pageNumber - 1}&category=${category}">Previous</a>
                                     </c:if>
                                     <c:forEach begin="1" end="${numberOfPages}" var="i" >
                                         <c:choose>
                                             <c:when test="${i!=pageNumber}">
-                                                <a href="quotes.jsp?p=<c:out value="${i}"/>"><c:out value="${i}"/></a>
+                                                <a href="quotes.jsp?p=<c:out value="${i}&category=${category}"/>"><c:out value="${i}"/></a>
                                             </c:when>
                                             <c:otherwise>
                                                 <b style="color: red;"><c:out value="${i}"/></b>
@@ -106,7 +106,7 @@
                                     </c:forEach>  
                                     <%--For displaying Next link --%>
                                     <c:if test="${pageNumber lt numberOfPages}">
-                                        <a href="quotes.jsp?p=${pageNumber + 1}">Next</a>
+                                        <a href="quotes.jsp?p=${pageNumber + 1}&category=${category}">Next</a>
                                     </c:if>
                                 </c:catch>
                                 <c:if test="${ex ne null}">

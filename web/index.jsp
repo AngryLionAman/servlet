@@ -91,47 +91,8 @@
             <div class="bodydata">
                 <div class="container clear-fix">
                     <div class="row">
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <% // if (session.getAttribute("email") == null) {%>
-                            <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading">
-                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                        Followed Topic
-                                    </c:if>
-                                    <c:if test="${sessionScope.Session_id_of_user eq null}">
-                                        Topic you may like
-                                    </c:if>                                  
-                                </div>
-                                <div>
-                                    <ul>
-                                        <c:choose>
-                                            <c:when test="${sessionScope.Session_id_of_user ne null}">
-                                                <sql:query var="topic_by_user" dataSource="jdbc/mydatabase">
-                                                    select t.unique_id,t.topic_name,
-                                                    (select count(topic_id) from topic_followers_detail where topic_id = t.unique_id)as count 
-                                                    from topic t right join topic_followers_detail de on t.unique_id = de.topic_id 
-                                                    where user_or_followers_id =? and t.unique_id is not null and t.topic_name is not null LIMIT 5;
-                                                    <sql:param value="${sessionScope.Session_id_of_user}"></sql:param>
-                                                </sql:query>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <sql:query var="topic_by_user" dataSource="jdbc/mydatabase">
-                                                    SELECT t.unique_id AS unique_id,t.topic_name AS topic_name,
-                                                    (SELECT COUNT(user_or_followers_id) FROM topic_followers_detail WHERE topic_id = t.unique_id) AS count 
-                                                    FROM topic t where t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL ORDER BY RAND() LIMIT 5;
-                                                </sql:query>
-                                            </c:otherwise>
-                                        </c:choose>
-                                        <c:forEach var="topic" items="${topic_by_user.rows}">
-                                            <li><span title="Total followers of <c:out value="${function.convertStringUpperToLower(topic.topic_name)}"/> is <c:out value="${topic.count}"/>"><a href="topic.jsp?t=<c:out value="${fn:replace(topic.topic_name,' ','+')}"/>&id=<c:out value="${topic.unique_id}"/>"><c:out value="${function.convertStringUpperToLower(topic.topic_name)}"/></a> (<c:out value="${topic.count}"/>) </span></li>
-                                            </c:forEach>
 
-                                        <a href="FollowMoreTopic.jsp">Click here to more topic</a>
-                                    </ul>
-                                </div>
-                            </div> 
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="themeBox" style="height:200px;">
@@ -155,7 +116,7 @@
 
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                                    <c:if test="${empty param.iPageNo and empty param.cPageNo and param.p}">
+                                    <c:if test="${empty param.iPageNo and empty param.cPageNo and param.p eq null and param.page lt 2 or empty param.page}">
                                         <h4>Recent posted question</h4>
                                         <sql:query dataSource="jdbc/mydatabase" var="question">
                                             SELECT q.total_view,date(q.posted_time) as date,
@@ -286,270 +247,154 @@
                                                 </div>
 
                                             </c:forEach>
-                                            <%--For displaying Previous link --%>
-                                            <c:if test="${pageNumber gt 1}">
-                                                <a href="index.jsp?p=${pageNumber - 1}">Previous</a>
-                                            </c:if>
-                                            <c:forEach begin="1" end="${numberOfPages}" var="i">
-                                                <c:choose>
-                                                    <c:when test="${i!=pageNumber}">
-                                                        <a href="index.jsp?p=<c:out value="${i}"/>"><c:out value="${i}"/></a>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <b style="color: red;"><c:out value="${i}"/></b>
-                                                    </c:otherwise>        
-                                                </c:choose>       
-                                            </c:forEach>  
-                                            <%--For displaying Next link --%>
-                                            <c:if test="${pageNumber lt numberOfPages}">
-                                                <a href="index.jsp?p=${pageNumber + 1}">Next</a>
-                                            </c:if>
+                                            <div style="border-style: solid;">
+                                                <%--For displaying Previous link --%>
+                                                <c:if test="${pageNumber gt 1}">
+                                                    <a href="index.jsp?p=${pageNumber - 1}">Previous</a>
+                                                </c:if>
+                                                <c:forEach begin="1" end="${numberOfPages}" var="i">
+                                                    <c:choose>
+                                                        <c:when test="${i!=pageNumber}">
+                                                            <a href="index.jsp?p=<c:out value="${i}"/>"><c:out value="${i}"/></a>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <b style="color: red;"><c:out value="${i}"/></b>
+                                                        </c:otherwise>        
+                                                    </c:choose>       
+                                                </c:forEach>  
+                                                <%--For displaying Next link --%>
+                                                <c:if test="${pageNumber lt numberOfPages}">
+                                                    <a href="index.jsp?p=${pageNumber + 1}">Next</a>
+                                                </c:if> 
+                                            </div>
                                         </c:catch>
                                         <c:if test="${exp ne null}">
                                             ${exp}
                                         </c:if>
                                     </c:if>
-
-
+                                    <!--*******************************************-->
                                     <h4>Question you may like</h4>
-                                    <%
+                                    <c:catch var="exp">
+                                        <c:set var="rowsPerPage" value="10" />
+                                    <c:set var="pageNumber" value="1" />
+                                    <c:if test="${param.page ne null}">
+                                        <c:set var="pageNumber" value="${param.page}" />
+                                    </c:if>
 
-                                        Connection connection = null;
-                                        try {
-                                            if (connection == null || connection.isClosed()) {
-                                                try {
-                                                    Class.forName("com.mysql.jdbc.Driver");
-                                                } catch (ClassNotFoundException ex) {
-                                                    out.println("Exception in loading the class forname Driver" + ex);
-                                                }
-                                                connection = DriverManager.getConnection(DB_URL_, DB_USERNAME_, DB_PASSWORD_);
-                                            }
-                                    %>
+                                    <c:set var="start" value="${pageNumber*rowsPerPage-rowsPerPage}"/>
+                                    <c:set var="stop" value="${pageNumber*rowsPerPage-1}"/>
+                                        <sql:query dataSource="jdbc/mydatabase" var="totalQuestion">
+                                            select q.q_id,q.question,q.vote,q.total_view,q.posted_time,q.updated_time,
+                                            user.id,user.firstname,user.username from question q inner join newuser user on user.id = q.id order by rand();
+                                        </sql:query>
+                                            <c:set var="a">
+                                        <fmt:formatNumber value="${totalQuestion.rowCount/rowsPerPage}" maxFractionDigits="0"/>
+                                    </c:set>
 
-                                    <%
-                                        ResultSet rs1 = null;
-                                        ResultSet rs2 = null;
-                                        PreparedStatement ps1 = null;
-                                        PreparedStatement ps2 = null;
+                                    <c:set var="b" value="${totalQuestion.rowCount/rowsPerPage}" />
 
-                                        int showRows = 10;
-                                        int totalRecords = 5;
-                                        int totalRows = nullIntconvert(request.getParameter("totalRows"));
-                                        int totalPages = nullIntconvert(request.getParameter("totalPages"));
-                                        int iPageNo = nullIntconvert(request.getParameter("iPageNo"));
-                                        int cPageNo = nullIntconvert(request.getParameter("cPageNo"));
+                                    <c:choose>
+                                        <c:when test="${a==0}">
+                                            <c:set var="numberOfPages" value="1" scope="page"/>   
+                                        </c:when>
 
-                                        int startResult = 0;
-                                        int endResult = 0;
-                                        if (iPageNo == 0) {
-                                            iPageNo = 0;
-                                        } else {
-                                            iPageNo = Math.abs((iPageNo - 1) * showRows);
-                                        }
-                                        try {
-                                            Class.forName("com.mysql.jdbc.Driver");
-                                            connection = DriverManager.getConnection(DB_URL_, DB_USERNAME_, DB_PASSWORD_);
+                                        <c:when test="${b>a}">
+                                            <c:set var="xxx" value="${b%a}"/>
+                                            <c:if test="${xxx>0}">
+                                                <c:set var="numberOfPages" value="${b-xxx+1}" scope="page"/>   
+                                            </c:if>
+                                        </c:when>
 
-                                            String query1 = "SELECT SQL_CALC_FOUND_ROWS id,(SELECT firstname FROM newuser "
-                                                    + "WHERE id = question.id)AS firstname,q_id,(SELECT COUNT(*) FROM answer WHERE q_id = question.q_id) AS tac,"
-                                                    + "question,vote,total_view FROM question ORDER BY RAND() LIMIT " + iPageNo + "," + showRows + "";
-                                            ps1 = connection.prepareStatement(query1);
-                                            rs1 = ps1.executeQuery();
+                                        <c:when test="${a>=b}">
+                                            <c:set var="numberOfPages" value="${a}" scope="page"/>    
+                                        </c:when>
+                                    </c:choose>
+                                        <c:forEach var="tq" items="${totalQuestion.rows}" begin="${start}" end="${stop}">
+                                            <!--update question count..-->
+                                            <div class="themeBox" style="height:auto;">
+                                                <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #7aab87;">
+                                                    <a href="Answer.jsp?q=${tq.question}&Id=${tq.q_id}" >${tq.question} ?</a>
+                                                </div>
+                                                <div class="questionArea">
+                                                    <div class="postedBy">POSTED_BY :<a href="profile.jsp?user=${tq.username}&ID=${tq.id}"> ${tq.firstname}</a></div>
+                                                </div>
+                                                <a href="javascript:void(0)" onclick="return take_value(this, '${tq.q_id}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote');">Upvote(${tq.vote})</a>&nbsp;&nbsp;
+                                                <a href="javascript:void(0)" onclick="return take_value(this, '${tq.q_id}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote');">Downvote</a>&nbsp;&nbsp;
+                                                <a href="Answer.jsp?q=${tq.question}&Id=${tq.q_id}">Ans(totalAns)</a>&nbsp;&nbsp;
+                                                <a href="javascript:void(0)">View(${tq.total_view})</a>
+                                                <!-- Fetching the Comment on question -->
+                                                <div align="right">
+                                                    <p>question comment :-userName</p>                                              
+                                                </div>
+                                            </div>                                      
 
-                                            String query2 = "SELECT FOUND_ROWS() as cnt";
-                                            ps2 = connection.prepareStatement(query2);
-                                            rs2 = ps2.executeQuery();
-                                        } catch (Exception error) {
-                                            out.println("Error occer in :" + error);
-                                        }
-                                        try {
-                                            if (rs2.next()) {
-                                                totalRows = rs2.getInt("cnt");
-                                            }
-                                            String Username = null;
-                                            int userId = 0;
-                                            int Vote = 0;
-                                            int TotoalAnswerCount = 0;
-                                    %>
-                                    <form>
-
-                                        <input type="hidden" name="iPageNo" value="<%=iPageNo%>">
-                                        <input type="hidden" name="cPageNo" value="<%=cPageNo%>">
-                                        <input type="hidden" name="showRows" value="<%=showRows%>">
-                                        <%
-
-                                            while (rs1.next()) {
-                                                Username = rs1.getString("firstname");
-                                                userId = rs1.getInt("id");
-                                                Vote = rs1.getInt("vote");
-                                                TotoalAnswerCount = rs1.getInt("tac");
-                                                int total_count = (rs1.getInt("total_view") + 1);
-                                                PreparedStatement ps4 = null;
-                                                try {
-                                                    String countView = "UPDATE question SET total_view = total_view + 1 WHERE q_id =? ";
-                                                    ps4 = connection.prepareStatement(countView);
-                                                    ps4.setInt(1, rs1.getInt("q_id"));
-                                                    ps4.executeUpdate();
-
-                                                } catch (Exception msg) {
-                                                    out.println("Error in cound the view" + msg);
-                                                }
-                                                ps4.close();
-                                        %>
-                                        <div class="themeBox" style="height:auto;">
-
-                                            <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #7aab87;">
-                                                <a href="Answer.jsp?q=<%=rs1.getString("question").replaceAll(" ", "-")%>&Id=<%=rs1.getInt("q_id")%>" ><%=rs1.getString("question")%> ?</a>
-                                            </div>
-                                            <div class="questionArea">
-
-                                                <div class="postedBy">POSTED_BY :<a href="profile.jsp?user=<%=Username.replaceAll(" ", "+")%>&ID=<%=userId%>"> <%=firstName(Username)%></a></div>
-
-                                            </div>
-                                            <a href="javascript:void(0)" onclick="return take_value(this, '<%=rs1.getInt("q_id")%>', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote');">Upvote(<%=Vote%>)</a>&nbsp;&nbsp;
-                                            <a href="javascript:void(0)" onclick="return take_value(this, '<%=rs1.getInt("q_id")%>', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote');">Downvote</a>&nbsp;&nbsp;
-                                            <a href="Answer.jsp?q=<%=rs1.getString("question").replaceAll(" ", "-")%>&Id=<%=rs1.getInt("q_id")%>">Ans(<%=TotoalAnswerCount%>)</a>&nbsp;&nbsp;
-                                            <a href="javascript:void(0)">View(<%=total_count%>)</a>
-                                            <!-- Fetching the Comment on question -->
-                                            <div align="right">
-
-                                                <%
-                                                    try {
-                                                        PreparedStatement ps = null;
-                                                        ResultSet rs = null;
-                                                        String sql_question_comment = "SELECT unique_id,user_id,"
-                                                                + "(SELECT firstname FROM newuser WHERE id = comments.user_id )AS fullname,"
-                                                                + "q_id,comments,time FROM comments WHERE q_id = ? AND user_id IS NOT NULL AND q_id IS NOT NULL";
-                                                        ps = connection.prepareStatement(sql_question_comment);
-                                                        ps.setInt(1, rs1.getInt("q_id"));
-                                                        rs = ps.executeQuery();
-                                                        while (rs.next()) {
-                                                            String question_comments = rs.getString("comments");
-                                                            String userName = rs.getString("fullname");
-                                                            String time = rs.getString("time");
-                                                            int user_id = rs.getInt("user_id");
-
-                                                            out.println(question_comments + ":- ");
-                                                %>
-                                                <a href="profile.jsp?user=<%=userName.replaceAll(" ", "+")%>&ID=<%=user_id%>"><%=convertStringUpperToLower(userName)%></a>
-                                                <%
-                                                            out.println("(" + time + ") <br>_______________________________________<br>");
-                                                        }
-                                                        ps.close();
-                                                        rs.close();
-                                                    } catch (Exception msg) {
-                                                        out.println("Error in loading question comment: -" + msg);
-                                                    }
-                                                %>
-
-                                            </div>
-                                        </div>
-
-                                        <%
-                                                }
-                                            } catch (Exception e) {
-                                                out.println(e);
-
-                                            }
-                                        %>
-
-                                        <%
-                                            try {
-                                                if (totalRows < (iPageNo + showRows)) {
-                                                    endResult = totalRows;
-                                                } else {
-                                                    endResult = (iPageNo + showRows);
-                                                }
-                                                startResult = (iPageNo + 1);
-                                                totalPages = ((int) (Math.ceil((double) totalRows / showRows)));
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        %>
-                                        <table width="100%" cellpadding="0" cellspacing="0" border="1" >
-                                            <tr>
-                                                <td colspan="3">
-                                                    <div>
-                                                        <%
-                                                            int i = 0;
-                                                            int cPage = 0;
-                                                            if (totalRows != 0) {
-                                                                cPage = ((int) (Math.ceil((double) endResult / (totalRecords * showRows))));
-
-                                                                int prePageNo = (cPage * totalRecords) - ((totalRecords - 1) + totalRecords);
-                                                                if ((cPage * totalRecords) - (totalRecords) > 0) {
-                                                        %>
-                                                        <a href="index.jsp?iPageNo=<%=prePageNo%>&cPageNo=<%=prePageNo%>"> << Previous</a>
-                                                        <%
-                                                            }
-                                                            for (i = ((cPage * totalRecords) - (totalRecords - 1)); i <= (cPage * totalRecords); i++) {
-                                                                if (i == ((iPageNo / showRows) + 1)) {%>
-                                                        <a href="index.jsp?iPageNo=<%=i%>" style="cursor:pointer;color:red"><b><%=i%></b></a>
-                                                                <%
-                                                                } else if (i <= totalPages) {
-                                                                %>
-                                                        <a href="index.jsp?iPageNo=<%=i%>"><%=i%></a>
-                                                        <%
-                                                                }
-                                                            }
-                                                            if (totalPages > totalRecords && i < totalPages) {
-                                                        %>
-                                                        <a href="index.jsp?iPageNo=<%=i%>&cPageNo=<%=i%>"> >> Next</a>
-                                                        <%
-                                                                }
-                                                            }
-                                                        %>
-                                                        <b>Rows <%=startResult%> - <%=endResult%>, Total Rows <%=totalRows%> </b>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </form>
-                                    <%
-                                        try {
-                                            if (ps1 != null) {
-                                                ps1.close();
-                                            }
-                                            if (rs1 != null) {
-                                                rs1.close();
-                                            }
-
-                                            if (ps2 != null) {
-                                                ps2.close();
-                                            }
-                                            if (rs2 != null) {
-                                                rs2.close();
-                                            }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    %>
-                                    <%
-                                        } catch (Exception e) {
-                                            out.println("Error in main try block:-" + e);
-                                        } finally {
-
-                                            try {
-                                                if (connection != null || !connection.isClosed()) {
-                                                    try {
-                                                        connection.close();
-                                                    } catch (Exception e) {
-                                                        out.println("Exception in closing connection " + e);
-                                                    }
-                                                }
-                                            } catch (Exception msg) {
-                                                out.println("Error in connection con :" + msg);
-                                            }
-                                        }
-                                    %>
+                                        </c:forEach>
+                                            <%--For displaying Previous link --%>
+                                    <c:if test="${pageNumber gt 1}">
+                                        <a href="index.jsp?page=${pageNumber - 1}">Previous</a>
+                                    </c:if>
+                                    <c:forEach begin="1" end="${numberOfPages}" var="i">
+                                        <c:choose>
+                                            <c:when test="${i!=pageNumber}">
+                                                <a href="index.jsp?page=<c:out value="${i}"/>"><c:out value="${i}"/></a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <b style="color: red;"><c:out value="${i}"/></b>
+                                            </c:otherwise>        
+                                        </c:choose>       
+                                    </c:forEach>  
+                                    <%--For displaying Next link --%>
+                                    <c:if test="${pageNumber lt numberOfPages}">
+                                        <a href="index.jsp?page=${pageNumber + 1}">Next</a>
+                                    </c:if>
+                                    </c:catch>
+                                    <c:if test="${exp ne null}">
+                                        ${exp}
+                                    </c:if>                                    
                                     <div class="clear-fix"></div>
-
-
                                 </div>
                             </div>
 
                         </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" >
+
+                            <div class="themeBox" style="height:auto;">
+                                <div class="boxHeading">
+                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
+                                        Followed Topic
+                                    </c:if>
+                                    <c:if test="${sessionScope.Session_id_of_user eq null}">
+                                        Topic you may like
+                                    </c:if>                                  
+                                </div>
+                                <div>
+                                    <ul>
+                                        <c:choose>
+                                            <c:when test="${sessionScope.Session_id_of_user ne null}">
+                                                <sql:query var="topic_by_user" dataSource="jdbc/mydatabase">
+                                                    select t.unique_id,t.topic_name,
+                                                    (select count(topic_id) from topic_followers_detail where topic_id = t.unique_id)as count 
+                                                    from topic t right join topic_followers_detail de on t.unique_id = de.topic_id 
+                                                    where user_or_followers_id =? and t.unique_id is not null and t.topic_name is not null LIMIT 10;
+                                                    <sql:param value="${sessionScope.Session_id_of_user}"></sql:param>
+                                                </sql:query>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <sql:query var="topic_by_user" dataSource="jdbc/mydatabase">
+                                                    SELECT t.unique_id AS unique_id,t.topic_name AS topic_name,
+                                                    (SELECT COUNT(user_or_followers_id) FROM topic_followers_detail WHERE topic_id = t.unique_id) AS count 
+                                                    FROM topic t where t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL ORDER BY RAND() LIMIT 10;
+                                                </sql:query>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <c:forEach var="topic" items="${topic_by_user.rows}">
+                                            <li><span title="Total followers of <c:out value="${function.convertStringUpperToLower(topic.topic_name)}"/> is <c:out value="${topic.count}"/>"><a href="topic.jsp?t=<c:out value="${fn:replace(topic.topic_name,' ','+')}"/>&id=<c:out value="${topic.unique_id}"/>"><c:out value="${function.convertStringUpperToLower(topic.topic_name)}"/></a> (<c:out value="${topic.count}"/>) </span></li>
+                                            </c:forEach>
+
+                                        <a href="FollowMoreTopic.jsp">Click here to more topic</a>
+                                    </ul>
+                                </div>
+                            </div> 
                             <div class="themeBox" style="height:auto;">
                                 <div class="boxHeading">
                                     Fun Zone
@@ -566,10 +411,6 @@
                                     <jsp:include page="eduZoneList.jsp"></jsp:include>
                                     </div>
                                 </div>
-                                <div class="clear-fix"></div>
-                                <div class="clear-fix"></div>
-
-                                <div class="clear-fix"></div>
                             </div>
 
                             <div class="clear-fix"></div>

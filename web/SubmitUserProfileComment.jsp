@@ -9,13 +9,13 @@
               not empty param.comments and 
               param.sub ne null and 
               not empty param.sub}">
-    <sql:update dataSource="${dbsource}" var="commment">
+    <sql:update dataSource="jdbc/mydatabase" var="commment">
         INSERT INTO comments (user_id,userprofileid,comments)VALUES(?,?,?);
         <sql:param value="${param.session_userid}"/>
         <sql:param value="${param.OnCommentUserId}"/>
         <sql:param value="${param.comments}"/>
     </sql:update>
-    <sql:update dataSource="${dbsource}" var="noti">
+    <sql:update dataSource="jdbc/mydatabase" var="noti">
         INSERT INTO notification (user_id,notification_type,followers_id) VALUES (?,?,?);
         <sql:param value="${param.OnCommentUserId}"/>
         <sql:param value="comment_on_Profile"/>

@@ -17,10 +17,10 @@ import java.util.logging.Logger;
  */
 public class database {
 
-    String URL;
-    String userName;
-    String passWord;
-    Connection connection ;
+    private final String URL;
+    private final String userName;
+    private final String passWord;
+    Connection connection;
 
     public database() {
         URL = "jdbc:mysql://localhost/bharat?useUnicode=true&characterEncoding=utf-8";
@@ -37,7 +37,8 @@ public class database {
         }
         return connection;
     }
-    public void disconnect (){
+
+    public void disconnect() {
         try {
             connection.close();
         } catch (SQLException ex) {

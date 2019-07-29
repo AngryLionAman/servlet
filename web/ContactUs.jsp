@@ -32,8 +32,8 @@
                                         <div class="themeBox" style="height:auto;">
                                             <div class="boxHeading">
                                                 Thanks for your interest in Inquiryhere.com
-                                            </div>
-                                            <div class="boxHeading">
+                                            </div><br>
+                                            <div >
                                                 Dear user, If you have any query and suggestion about inquiryhere.com then you can drop a mail on inquiry@inquiryhere.com or you can directly post from below section.We will help you as soon as possible
                                             </div>
                                         </div>

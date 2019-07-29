@@ -58,7 +58,7 @@
 
                     <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 float-right textalign-right">
                         <a href="index.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 50px;">Home</a>
-                        <a  href="Login.jsp" class="helpicon" style="color: white; width: 50px;">Login</a>
+                        <a  href="login.jsp" class="helpicon" style="color: white; width: 50px;">Login</a>
                         <a  href="signup.jsp" class="helpicon" style="color: white; width: 50px;">Sign up</a>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                                     </c:if>
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="themeBox" style="height:270px;">
-                                            <form action="ForgotPassword.jsp" method="post" name="">
+                                            <form action="forgotpassword.jsp" method="post" name="">
                                                 <label for="fname">Email</label>
                                                 <div class="boxHeading">
                                                     <input type="text" id="fname" name="mail" required="">
@@ -122,12 +122,12 @@
             <c:set var="password" value="${f.password}"/> 
         </c:forEach>
         <c:if test="${found ne 1}">
-            <c:redirect url="ForgotPassword.jsp?msg=nf"/>
+            <c:redirect url="forgotpassword.jsp?msg=nf"/>
         </c:if>
         <c:if test="${found eq 1}">
             <jsp:useBean id="fun" class="com.mail.sendMail"/>
             <c:out value="${fun.sendMail(email, password)}" default="This is default message"/>
-            <c:redirect url="ForgotPassword.jsp?msg=sf"/>
+            <c:redirect url="forgotpassword.jsp?msg=sf"/>
         </c:if>
     </c:catch>
     <c:if test="${ex ne null}">

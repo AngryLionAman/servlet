@@ -6,13 +6,13 @@
               param.action ne null and 
               not empty param.action}">
     <c:if test="${param.action eq 'upvote'}">
-        <sql:update dataSource="${dbsource}" var="upvote">
+        <sql:update dataSource="jdbc/mydatabase" var="upvote">
             UPDATE question SET vote = vote+1 WHERE q_id =?;
             <sql:param value="${param.question_id}"/>
         </sql:update>
     </c:if>
     <c:if test="${param.action eq 'downvote'}">
-        <sql:update dataSource="${dbsource}" var="downvote">
+        <sql:update dataSource="jdbc/mydatabase" var="downvote">
             UPDATE question SET vote = vote-1 WHERE q_id =?;
             <sql:param value="${param.question_id}"/>
         </sql:update>
