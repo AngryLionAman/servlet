@@ -1,8 +1,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@page import="java.sql.Connection"%>
-<%@page import="java.sql.PreparedStatement"%>
-<%@page import="java.sql.DriverManager"%>
-<%@page import="java.sql.ResultSet"%>
+<%@page import="com.index.comments"%>
+<%@page import="com.index.commentPojo"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
@@ -276,41 +274,43 @@
                                     <h4>Question you may like</h4>
                                     <c:catch var="exp">
                                         <c:set var="rowsPerPage" value="10" />
-                                    <c:set var="pageNumber" value="1" />
-                                    <c:if test="${param.page ne null}">
-                                        <c:set var="pageNumber" value="${param.page}" />
-                                    </c:if>
+                                        <c:set var="pageNumber" value="1" />
+                                        <c:if test="${param.page ne null}">
+                                            <c:set var="pageNumber" value="${param.page}" />
+                                        </c:if>
 
-                                    <c:set var="start" value="${pageNumber*rowsPerPage-rowsPerPage}"/>
-                                    <c:set var="stop" value="${pageNumber*rowsPerPage-1}"/>
+                                        <c:set var="start" value="${pageNumber*rowsPerPage-rowsPerPage}"/>
+                                        <c:set var="stop" value="${pageNumber*rowsPerPage-1}"/>
                                         <sql:query dataSource="jdbc/mydatabase" var="totalQuestion">
                                             select q.q_id,q.question,q.vote,q.total_view,q.posted_time,q.updated_time,
-                                            user.id,user.firstname,user.username from question q inner join newuser user on user.id = q.id order by rand();
+                                            user.id,user.firstname,user.username from question q inner join newuser user on user.id = q.id ORDER BY RAND();
                                         </sql:query>
-                                            <c:set var="a">
-                                        <fmt:formatNumber value="${totalQuestion.rowCount/rowsPerPage}" maxFractionDigits="0"/>
-                                    </c:set>
+                                        <c:set var="a">
+                                            <fmt:formatNumber value="${totalQuestion.rowCount/rowsPerPage}" maxFractionDigits="0"/>
+                                        </c:set>
 
-                                    <c:set var="b" value="${totalQuestion.rowCount/rowsPerPage}" />
+                                        <c:set var="b" value="${totalQuestion.rowCount/rowsPerPage}" />
 
-                                    <c:choose>
-                                        <c:when test="${a==0}">
-                                            <c:set var="numberOfPages" value="1" scope="page"/>   
-                                        </c:when>
+                                        <c:choose>
+                                            <c:when test="${a==0}">
+                                                <c:set var="numberOfPages" value="1" scope="page"/>   
+                                            </c:when>
 
-                                        <c:when test="${b>a}">
-                                            <c:set var="xxx" value="${b%a}"/>
-                                            <c:if test="${xxx>0}">
-                                                <c:set var="numberOfPages" value="${b-xxx+1}" scope="page"/>   
-                                            </c:if>
-                                        </c:when>
+                                            <c:when test="${b>a}">
+                                                <c:set var="xxx" value="${b%a}"/>
+                                                <c:if test="${xxx>0}">
+                                                    <c:set var="numberOfPages" value="${b-xxx+1}" scope="page"/>   
+                                                </c:if>
+                                            </c:when>
 
-                                        <c:when test="${a>=b}">
-                                            <c:set var="numberOfPages" value="${a}" scope="page"/>    
-                                        </c:when>
-                                    </c:choose>
+                                            <c:when test="${a>=b}">
+                                                <c:set var="numberOfPages" value="${a}" scope="page"/>    
+                                            </c:when>
+                                        </c:choose>
+                                        <jsp:useBean class="com.index.totalAnswer" id="call" scope="page"/>
                                         <c:forEach var="tq" items="${totalQuestion.rows}" begin="${start}" end="${stop}">
                                             <!--update question count..-->
+                                            <c:set scope="page" var="questionForComment" value="${tq.q_id}"/>
                                             <div class="themeBox" style="height:auto;">
                                                 <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #7aab87;">
                                                     <a href="Answer.jsp?q=${tq.question}&Id=${tq.q_id}" >${tq.question} ?</a>
@@ -320,33 +320,45 @@
                                                 </div>
                                                 <a href="javascript:void(0)" onclick="return take_value(this, '${tq.q_id}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote');">Upvote(${tq.vote})</a>&nbsp;&nbsp;
                                                 <a href="javascript:void(0)" onclick="return take_value(this, '${tq.q_id}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote');">Downvote</a>&nbsp;&nbsp;
-                                                <a href="Answer.jsp?q=${tq.question}&Id=${tq.q_id}">Ans(totalAns)</a>&nbsp;&nbsp;
+                                                <a href="Answer.jsp?q=${tq.question}&Id=${tq.q_id}">Ans(${call.totalAnswer(tq.q_id)})</a>&nbsp;&nbsp;
                                                 <a href="javascript:void(0)">View(${tq.total_view})</a>
                                                 <!-- Fetching the Comment on question -->
                                                 <div align="right">
-                                                    <p>question comment :-userName</p>                                              
+                                                    <%
+                                                        comments cm = new comments();
+                                                        int questionId = (Integer)pageContext.getAttribute("questionForComment");
+                                                        for (commentPojo obj : cm.commentsOnQuestion(questionId)) {
+
+                                                    %>
+                                                    <p>
+                                                        <%=obj.getComment()%>:-
+                                                        <a href="profile.jsp?user=<%=obj.getUserUserName()%>&ID=<%=obj.getUserId()%>"><%=convertStringUpperToLower(obj.getUserFullName())%></a>
+                                                    </p>
+                                                    <%
+                                                        }
+                                                    %>                                           
                                                 </div>
                                             </div>                                      
 
                                         </c:forEach>
-                                            <%--For displaying Previous link --%>
-                                    <c:if test="${pageNumber gt 1}">
-                                        <a href="index.jsp?page=${pageNumber - 1}">Previous</a>
-                                    </c:if>
-                                    <c:forEach begin="1" end="${numberOfPages}" var="i">
-                                        <c:choose>
-                                            <c:when test="${i!=pageNumber}">
-                                                <a href="index.jsp?page=<c:out value="${i}"/>"><c:out value="${i}"/></a>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <b style="color: red;"><c:out value="${i}"/></b>
-                                            </c:otherwise>        
-                                        </c:choose>       
-                                    </c:forEach>  
-                                    <%--For displaying Next link --%>
-                                    <c:if test="${pageNumber lt numberOfPages}">
-                                        <a href="index.jsp?page=${pageNumber + 1}">Next</a>
-                                    </c:if>
+                                        <%--For displaying Previous link --%>
+                                        <c:if test="${pageNumber gt 1}">
+                                            <a href="index.jsp?page=${pageNumber - 1}">Previous</a>
+                                        </c:if>
+                                        <c:forEach begin="1" end="${numberOfPages}" var="i">
+                                            <c:choose>
+                                                <c:when test="${i!=pageNumber}">
+                                                    <a href="index.jsp?page=<c:out value="${i}"/>"><c:out value="${i}"/></a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <b style="color: red;"><c:out value="${i}"/></b>
+                                                </c:otherwise>        
+                                            </c:choose>       
+                                        </c:forEach>  
+                                        <%--For displaying Next link --%>
+                                        <c:if test="${pageNumber lt numberOfPages}">
+                                            <a href="index.jsp?page=${pageNumber + 1}">Next</a>
+                                        </c:if>
                                     </c:catch>
                                     <c:if test="${exp ne null}">
                                         ${exp}
