@@ -12,22 +12,28 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.sql.DataSource;
 
 /**
  *
  * @author inquiryhere.com
  */
 public class comments {
-    public List<commentPojo> commentsOnQuestion(int questionId) throws SQLException{
+
+    public List<commentPojo> commentsOnQuestion(int questionId) throws SQLException, ClassNotFoundException, Exception {
         List<commentPojo> list = new ArrayList<>();
         database db = new database();
-        try{
-            Connection con = db.connect();
+        DataSource dataSource = db.setUpPool();
+        Connection com = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            com = dataSource.getConnection();
             String sql = "select c.unique_id,c.comments,c.time,user.id,user.firstname,user.username from comments c right join newuser user on user.id = c.user_id where c.q_id = ?";
-            PreparedStatement ps = con.prepareStatement(sql);
+            ps = com.prepareStatement(sql);
             ps.setInt(1, questionId);
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()){
+            rs = ps.executeQuery();
+            while (rs.next()) {
                 int commentId = rs.getInt("c.unique_id");
                 String comment = rs.getString("c.comments");
                 String time = rs.getString("c.time");
@@ -36,8 +42,30 @@ public class comments {
                 String userUserName = rs.getString("user.username");
                 list.add(new commentPojo(commentId, comment, time, userId, userFullName, userUserName));
             }
-        }catch(SQLException msg){
+        } catch (SQLException msg) {
             throw msg;
+        } finally {
+            if (com != null) {
+                try {
+                    com.close();
+                } catch (SQLException sqlex) {
+                    // ignore -- as we can't do anything about it here
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException sqlex) {
+                    // ignore -- as we can't do anything about it here
+                }
+            }
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException sqlex) {
+                    // ignore -- as we can't do anything about it here
+                }
+            }
         }
         return list;
     }

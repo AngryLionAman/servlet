@@ -3,9 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.connect;
+
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.sql.DataSource;
+
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
@@ -16,9 +22,9 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  *
  * @author inquiryhere.com
  */
-public class database {
-    
-       // JDBC Driver Name & Database URL
+public class poolConnection {
+
+    // JDBC Driver Name & Database URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     static final String JDBC_DB_URL = "jdbc:mysql://localhost/bharat?useUnicode=true&characterEncoding=utf-8";
 
@@ -50,7 +56,51 @@ public class database {
     }
 
     // This Method Is Used To Print The Connection Pool Status
-   /* private void printDbStatus() {
+    private void printDbStatus() {
         System.out.println("Max.: " + getConnectionPool().getMaxActive() + "; Active: " + getConnectionPool().getNumActive() + "; Idle: " + getConnectionPool().getNumIdle());
-    }*/      
+    }
+
+    public static void main(String[] args) throws SQLException, Exception {
+        ResultSet rsObj = null;
+        Connection connObj = null;
+        PreparedStatement pstmtObj = null;
+        poolConnection jdbcObj = new poolConnection();
+        try {
+            DataSource dataSource = jdbcObj.setUpPool();
+            jdbcObj.printDbStatus();
+
+            // Performing Database Operation!
+            System.out.println("\n=====Making A New Connection Object For Db Transaction=====\n");
+            connObj = dataSource.getConnection();
+            jdbcObj.printDbStatus();
+
+            pstmtObj = connObj.prepareStatement("SELECT * FROM newuser limit 9");
+            rsObj = pstmtObj.executeQuery();
+            while (rsObj.next()) {
+                System.out.println("Username: " + rsObj.getString("username"));
+            }
+            System.out.println("\n=====Releasing Connection Object To Pool=====\n");
+        } catch (SQLException sqlException) {
+            throw sqlException;
+        } finally {
+            try {
+                // Closing ResultSet Object
+                if (rsObj != null) {
+                    rsObj.close();
+                }
+                // Closing PreparedStatement Object
+                if (pstmtObj != null) {
+                    pstmtObj.close();
+                }
+                // Closing Connection Object
+                if (connObj != null) {
+                    connObj.close();
+                }
+            } catch (SQLException sqlException) {
+                throw sqlException;
+            }
+        }
+        System.out.println("\n\nthis is final:-");
+        jdbcObj.printDbStatus();
+    }
 }

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -20,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
+import com.connect.database;
+import javax.sql.DataSource;
 
 @MultipartConfig(maxFileSize = 15000000)
 @WebServlet(name = "imageUpload", urlPatterns = {"/imageUpload"})
@@ -65,19 +66,20 @@ public class imageUpload extends HttpServlet {
                 //pw.print("<br>"+file.getAbsolutePath());
                 // pw.print("<br><img src='images\\" + part.getName() + ".jpg' alt='not found'/>");
                 try {
-                    Class.forName("com.mysql.jdbc.Driver");
-                    try (Connection cn = DriverManager.getConnection("jdbc:mysql://localhost/bharat", "root", null);
-                            Statement st = cn.createStatement()) {
-                        String p = "update newuser set imagepath = '" + fileName + "' where id = '" + UserEmail + "'";
-                        st.execute(p);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(imageUpload.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    //pw.print("Recored has been successfully updated");
-                    response.sendRedirect("UpdateUserProfile.jsp");
-                } catch (ClassNotFoundException msg) {
-                    pw.print(msg);
+                    database db = new database();
+                    DataSource dataSource = db.setUpPool();
+                    Connection cn = dataSource.getConnection();
+                    Statement st = cn.createStatement();
+                    String p = "update newuser set imagepath = '" + fileName + "' where id = '" + UserEmail + "'";
+                    st.execute(p);
+
+                } catch (SQLException | ClassNotFoundException ex) {
+                    Logger.getLogger(imageUpload.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(imageUpload.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                pw.print("Recored has been successfully updated");
+                //response.sendRedirect("UpdateUserProfile.jsp");
 
             }
         } catch (IOException | ServletException msg) {

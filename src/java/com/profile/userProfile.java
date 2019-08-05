@@ -9,6 +9,7 @@ import com.connect.database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import javax.sql.DataSource;
 
 /**
  *
@@ -17,28 +18,46 @@ import java.sql.SQLException;
 public class userProfile {
 
     public boolean saveUserProfile(String eMail, String higherQualification,
-            String bestAchievement, String Bio) throws SQLException {
+            String bestAchievement, String Bio) throws SQLException, ClassNotFoundException, Exception {
         database obj = new database();
-        try (Connection con = obj.connect()) {
+        DataSource dataSource = obj.setUpPool();
+        Connection con = dataSource.getConnection();
+        PreparedStatement preparedStatement = null;
+        try {
             String email = eMail;
             String HigherQualification = higherQualification;
             String BestAchievement = bestAchievement;
             String bio = Bio;
             try {
                 String UpdateQuiry = "update newuser set higher_edu = ?,best_achievement = ? ,bio = ? where email = ?";
-                try (PreparedStatement preparedStatement = con.prepareStatement(UpdateQuiry)) {
-                    preparedStatement.setString(1, HigherQualification);
-                    preparedStatement.setString(2, BestAchievement);
-                    preparedStatement.setString(3, bio);
-                    preparedStatement.setString(4, email);
-                    preparedStatement.executeUpdate();
-                    preparedStatement.close();
-                }
+                preparedStatement = con.prepareStatement(UpdateQuiry);
+                preparedStatement.setString(1, HigherQualification);
+                preparedStatement.setString(2, BestAchievement);
+                preparedStatement.setString(3, bio);
+                preparedStatement.setString(4, email);
+                preparedStatement.executeUpdate();
+                preparedStatement.close();
+
             } catch (SQLException msg) {
-                System.err.println(msg);
+                throw msg;
             }
-            obj.disconnect();
-            con.close();
+        } catch (SQLException msg) {
+            throw msg;
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException sqlex) {
+                    // ignore -- as we can't do anything about it here
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException sqlex) {
+                    // ignore -- as we can't do anything about it here
+                }
+            }
         }
         return true;
     }

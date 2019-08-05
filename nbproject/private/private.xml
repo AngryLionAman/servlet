@@ -4,10 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/F:/Project/inquiryhere/web/index.jsp</file>
-            <file>file:/F:/Project/inquiryhere/src/java/com/index/comments.java</file>
-            <file>file:/F:/Project/inquiryhere/web/testing/getComment.jsp</file>
-            <file>file:/F:/Project/inquiryhere/web/testing/returnList.jsp</file>
-            <file>file:/F:/Project/inquiryhere/src/java/com/index/commentPojo.java</file>
+            <file>file:/F:/Project/inquiryhere/web/testing/poolTesting.jsp</file>
+            <file>file:/F:/Project/inquiryhere/src/java/poolConnection.java</file>
+            <file>file:/F:/Project/inquiryhere/web/testing/sharedSameConnection.jsp</file>
+            <file>file:/F:/Project/inquiryhere/src/java/com/index/indexPage.java</file>
         </group>
     </open-files>
 </project-private>

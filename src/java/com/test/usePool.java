@@ -3,52 +3,57 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.followmoretopic;
+package com.test;
 
 import com.connect.database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.sql.DataSource;
 
 /**
  *
  * @author inquiryhere.com
  */
-public class totalQuestion {
+public class usePool {
 
-    public int totalQestion(int topicId) throws SQLException, ClassNotFoundException, Exception {
+    public List<String> user() throws Exception {
+        List<String> name = new ArrayList<>();
         database obj = new database();
-        DataSource dataSource = obj.setUpPool();
-        Connection com = null;
+        Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        int count = 0;
+        String username = null;
         try {
-            com = dataSource.getConnection();
-            String sql = "select count(q.question_id)as cnt from topic t left join question_topic_tag q on q.tag_id = t.unique_id where t.unique_id =?";
-            ps = com.prepareStatement(sql);
-            ps.setInt(1, topicId);
+            DataSource db = obj.setUpPool();
+            con = db.getConnection();
+            String sql = "select * from newuser limit 5";
+            ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
-
             while (rs.next()) {
-                count = rs.getInt("cnt");
-
+                
+                username = rs.getString("username");
+                name.add(username);
+                System.out.println(rs.getString("username"));
             }
-        } catch (SQLException msg) {
+
+        } catch (Exception msg) {
             throw msg;
         } finally {
-            if (com != null) {
+            if (ps != null) {
                 try {
-                    com.close();
+                    ps.close();
                 } catch (SQLException sqlex) {
                     // ignore -- as we can't do anything about it here
                 }
             }
-            if (ps != null) {
+
+            if (con != null) {
                 try {
-                    ps.close();
+                    con.close();
                 } catch (SQLException sqlex) {
                     // ignore -- as we can't do anything about it here
                 }
@@ -61,7 +66,8 @@ public class totalQuestion {
                 }
             }
         }
-        return count;
+        return name;
+
     }
 
 }

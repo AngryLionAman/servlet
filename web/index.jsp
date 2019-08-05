@@ -324,19 +324,12 @@
                                                 <a href="javascript:void(0)">View(${tq.total_view})</a>
                                                 <!-- Fetching the Comment on question -->
                                                 <div align="right">
-                                                    <%
-                                                        comments cm = new comments();
-                                                        int questionId = (Integer)pageContext.getAttribute("questionForComment");
-                                                        for (commentPojo obj : cm.commentsOnQuestion(questionId)) {
-
-                                                    %>
-                                                    <p>
-                                                        <%=obj.getComment()%>:-
-                                                        <a href="profile.jsp?user=<%=obj.getUserUserName()%>&ID=<%=obj.getUserId()%>"><%=convertStringUpperToLower(obj.getUserFullName())%></a>
-                                                    </p>
-                                                    <%
-                                                        }
-                                                    %>                                           
+                                                    <c:forEach items="${comm.commentsOnQuestion(tq.q_id)}" var="c">
+                                                        <p>
+                                                            ${c.comment}:-
+                                                            <a href="profile.jsp?user=${c.userUserName}&ID=${c.userId}">${c.userFullName}</a>
+                                                        </p>
+                                                    </c:forEach>
                                                 </div>
                                             </div>                                      
 
