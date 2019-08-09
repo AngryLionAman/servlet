@@ -20,8 +20,8 @@ public class DatabaseConnection {
     private String username = "root";
     private String password = null;
     //private String url = "jdbc:mysql://mysql3000.mochahost.com/cse13316_bharat?useUnicode=true&characterEncoding=utf-8";
-    //private String username = "cse13316_bharat";
-    //private String password = "c?GmSPOGpvcX";
+    //private String username = "";
+    //private String password = "";
 
     public DatabaseConnection() throws SQLException {
         try {
