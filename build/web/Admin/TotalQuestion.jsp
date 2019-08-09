@@ -70,7 +70,9 @@
                         preparedStatement1.close();
                         resultSet1.close();
                         out.println("</td>");
-                        out.println("<td><a href='edit_question_and_tag.jsp'>Edit</a></td>");
+                        %>
+                        <td><a href='edit_question_and_tag.jsp?question=<%=question%>&question_id=<%=q_id%>'>Edit</a></td>
+                        <%
                         out.println("</tr>");
                     }
                 } catch (Exception msg) {

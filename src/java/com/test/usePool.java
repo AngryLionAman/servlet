@@ -5,7 +5,7 @@
  */
 package com.test;
 
-import com.connect.database;
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,27 +22,32 @@ public class usePool {
 
     public List<String> user() throws Exception {
         List<String> name = new ArrayList<>();
-        database obj = new database();
+        DatabaseConnection connection = new DatabaseConnection();
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String username = null;
         try {
-            DataSource db = obj.setUpPool();
-            con = db.getConnection();
+            con = connection.getConnection();
             String sql = "select * from newuser limit 5";
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                
-                username = rs.getString("username");
+
+                String username = rs.getString("username");
                 name.add(username);
-                System.out.println(rs.getString("username"));
+                System.out.println(username);
             }
 
         } catch (Exception msg) {
             throw msg;
         } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException sqlex) {
+                    // ignore -- as we can't do anything about it here
+                }
+            }
             if (ps != null) {
                 try {
                     ps.close();
@@ -58,13 +63,7 @@ public class usePool {
                     // ignore -- as we can't do anything about it here
                 }
             }
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }
+
         }
         return name;
 

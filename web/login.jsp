@@ -13,7 +13,8 @@
         <c:if test="${sessionScope.Session_id_of_user ne null}">
             <c:redirect url="index.jsp?ref=login"/>
         </c:if>
-        <c:if test="${sessionScope.Session_id_of_user eq null}">
+        <c:catch var="ex">
+             <c:if test="${sessionScope.Session_id_of_user eq null}">
             <c:if test="${pageContext.request.cookies ne null and not empty pageContext.request.cookies}">
                 <c:forEach var="cookieVal" items="${pageContext.request.cookies}" > 
                     <c:if test="${cookieVal.name eq 'usernamecookie'}">
@@ -35,6 +36,11 @@
                 </jsp:forward>                    
             </c:if>
         </c:if>
+        </c:catch>
+        <c:if test="${ex ne null}">
+            ${ex}
+        </c:if>
+       
         <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 

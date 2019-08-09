@@ -48,28 +48,33 @@
             } catch (Exception e) {
                 out.println("Error in main try block:-" + e);
             } finally {
-                
-                if (connection != null || !connection.isClosed()) {
-                    try {
-                        connection.close();
-                    } catch (Exception e) {
-                        out.println("Exception in closing connection " + e);
-                    }
-                }
-                if (resultSet != null || !resultSet.isClosed()) {
+                 if (resultSet != null || !resultSet.isClosed()) {
                     try {
                         resultSet.close();
                     } catch (Exception e) {
                         out.println("Exception in closing resulatset " + e);
                     }
                 }
-                if (preparedStatement != null || !preparedStatement.isClosed()) {
+                  if (preparedStatement != null || !preparedStatement.isClosed()) {
                     try {
                         preparedStatement.close();
                     } catch (Exception e) {
                         out.println("Exception in closing preparedStatement " + e);
                     }
                 }
+                if (connection != null || !connection.isClosed()) {
+                    if(!connection.getAutoCommit()){
+                        connection.commit();
+                        connection.setAutoCommit(true);
+                    }
+                    try {
+                        connection.close();
+                    } catch (Exception e) {
+                        out.println("Exception in closing connection " + e);
+                    }
+                }
+               
+               
             }
             if (i == 1) {
                 session.setAttribute("email", email);

@@ -13,8 +13,14 @@
     </head>
     <body>
         <%
-        String question = request.getParameter("question");
-        int question_id = Integer.parseInt(request.getParameter("question_id"));
+            String question = null;
+            try {
+                question = request.getParameter("question");
+                int question_id = Integer.parseInt(request.getParameter("question_id"));
+            } catch (Exception msg) {
+                out.println(msg);
+            }
+
         %>
         <h1>Edit the shaprated question and tag here!!!!</h1>
         <div>
@@ -22,9 +28,9 @@
                 Question : <%=question%>
                 <br><br><br>Tag : <textbox name="tag" >tag,and athe ,tag</textbox>
             </div>
-                <div>
-                    
-                </div>
+            <div>
+
+            </div>
         </div>
     </body>
 </html>

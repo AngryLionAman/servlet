@@ -5,12 +5,11 @@
  */
 package com.followmoretopic;
 
-import com.connect.database;
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.sql.DataSource;
 
 /**
  *
@@ -19,14 +18,13 @@ import javax.sql.DataSource;
 public class totalQuestion {
 
     public int totalQestion(int topicId) throws SQLException, ClassNotFoundException, Exception {
-        database obj = new database();
-        DataSource dataSource = obj.setUpPool();
+        DatabaseConnection connection = new DatabaseConnection();
         Connection com = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         int count = 0;
         try {
-            com = dataSource.getConnection();
+            com = connection.getConnection();
             String sql = "select count(q.question_id)as cnt from topic t left join question_topic_tag q on q.tag_id = t.unique_id where t.unique_id =?";
             ps = com.prepareStatement(sql);
             ps.setInt(1, topicId);

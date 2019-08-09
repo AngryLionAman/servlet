@@ -3,29 +3,35 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <meta charset="UTF-8">
 <%@include file="site.jsp"%>
+<jsp:useBean class="com.header.headerData" id="userdetails" scope="page"/>
 <jsp:useBean class="com.string.name" id="fun" scope="page"/>
 <jsp:useBean class="com.security.validateUser" id="function" scope="page" />
-<c:if test="${sessionScope.Session_id_of_user eq null}">
-    <c:if test="${pageContext.request.cookies ne null and not empty pageContext.request.cookies}">
-        <c:forEach var="cookieVal" items="${pageContext.request.cookies}" > 
-            <c:if test="${cookieVal.name eq 'usernamecookie'}">
-                <c:set value="${cookieVal.value}" var="username" scope="page" />
-            </c:if>
-            <c:if test="${cookieVal.name eq 'passwordcookie'}">
-                <c:set value="${cookieVal.value}" var="password" scope="page" />
-            </c:if>
-        </c:forEach>
-    </c:if>
+<c:catch var="ex">
+    <c:if test="${sessionScope.Session_id_of_user eq null}">
+        <c:if test="${pageContext.request.cookies ne null and not empty pageContext.request.cookies}">
+            <c:forEach var="cookieVal" items="${pageContext.request.cookies}" > 
+                <c:if test="${cookieVal.name eq 'usernamecookie'}">
+                    <c:set value="${cookieVal.value}" var="username" scope="page" />
+                </c:if>
+                <c:if test="${cookieVal.name eq 'passwordcookie'}">
+                    <c:set value="${cookieVal.value}" var="password" scope="page" />
+                </c:if>
+            </c:forEach>
+        </c:if>
 
-    <c:if test="${username ne null and not empty username and password ne null and not empty password}">
-        <c:set scope="page" var="status" value="${function.validateUser(username, password)}"/>
-    </c:if> 
-    <c:if test="${status}">      
-        <jsp:include page="validate.jsp">
-            <jsp:param name="email" value="${username}"/>
-            <jsp:param name="password" value="${password}"/>
-        </jsp:include>        
+        <c:if test="${username ne null and not empty username and password ne null and not empty password}">
+            <c:set scope="page" var="status" value="${function.validateUser(username, password)}"/>
+        </c:if> 
+        <c:if test="${status}">      
+            <jsp:include page="validate.jsp">
+                <jsp:param name="email" value="${username}"/>
+                <jsp:param name="password" value="${password}"/>
+            </jsp:include>        
+        </c:if>
     </c:if>
+</c:catch>
+<c:if test="${ex ne null}">
+    ${ex}
 </c:if>
 <header class="home-page">
     <div class="container clear-fix">
@@ -81,16 +87,17 @@
             </c:if>
             <a href="index.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Home</a>
             <c:if test="${sessionScope.Session_id_of_user ne null}">
-                <sql:query dataSource="jdbc/mydatabase" var="user">
-                    SELECT * FROM newuser WHERE id =?;
-                    <sql:param value="${sessionScope.Session_id_of_user}"/>
-                </sql:query> 
-                <c:forEach var="userdetail" items="${user.rows}">
-                    <a href="logout.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
-                    <a href="profile.jsp?user=<c:out value="${userdetail.username}"/>&ID=<c:out value="${userdetail.id}"/>" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">
-                        <b><c:out value="${fun.firstName(userdetail.firstname)}"/></b>
-                    </a>             
-                </c:forEach>     
+                <c:catch var="m">
+                    <c:forEach var="u" items="${userdetails.headerUser(sessionScope.Session_id_of_user)}">
+                        <a href="logout.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
+                        <a href="profile.jsp?user=${u.userName}&ID=${u.userId}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">
+                            <b><c:out value="${fun.firstName(u.fullName)}"/></b>
+                        </a>             
+                    </c:forEach>    
+                </c:catch>
+                <c:if test="${m ne null}">
+                    ${m}
+                </c:if>
             </c:if>
         </div>
     </div>

@@ -1,5 +1,6 @@
 package com.image;
 
+import com.connect.DatabaseConnection;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
-import com.connect.database;
 import javax.sql.DataSource;
 
 @MultipartConfig(maxFileSize = 15000000)
@@ -66,14 +66,13 @@ public class imageUpload extends HttpServlet {
                 //pw.print("<br>"+file.getAbsolutePath());
                 // pw.print("<br><img src='images\\" + part.getName() + ".jpg' alt='not found'/>");
                 try {
-                    database db = new database();
-                    DataSource dataSource = db.setUpPool();
-                    Connection cn = dataSource.getConnection();
+                    DatabaseConnection connection = new DatabaseConnection();
+                    Connection cn = connection.getConnection();
                     Statement st = cn.createStatement();
                     String p = "update newuser set imagepath = '" + fileName + "' where id = '" + UserEmail + "'";
                     st.execute(p);
 
-                } catch (SQLException | ClassNotFoundException ex) {
+                } catch (SQLException ex) {
                     Logger.getLogger(imageUpload.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception ex) {
                     Logger.getLogger(imageUpload.class.getName()).log(Level.SEVERE, null, ex);

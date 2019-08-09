@@ -13,6 +13,7 @@
     </head>
     <body>
         <h1>Hello Aman, I hope you are doing good..</h1>
+        <b><a href="topic.jsp">Update the Topic</a><br><br>
         <b><a href="TotalRegistredUser.jsp">Total Registred User</a><br><br>
         <a href="TotalQuestion.jsp">Total Question</a><br><br>
         <a href="uploadJoke.jsp">Upload joke</a><br><br>

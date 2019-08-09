@@ -5,7 +5,7 @@
  */
 package com.test;
 
-import com.connect.database;
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,14 +21,14 @@ import javax.sql.DataSource;
 public class totalUser {
 
     public List<saveUser> totalUserDetails() throws SQLException, ClassNotFoundException, Exception {
-        database obj = new database();
-        DataSource dataSource = obj.setUpPool();
-        Connection con = dataSource.getConnection();
+        DatabaseConnection connection = new DatabaseConnection();
+        Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<saveUser> o = new ArrayList<>();
         try {
             String sql = "select * from newuser limit 10";
+            con = connection.getConnection();
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -40,9 +40,9 @@ public class totalUser {
         } catch (SQLException msg) {
             throw msg;
         } finally {
-            if (con != null) {
+            if (rs != null) {
                 try {
-                    con.close();
+                    rs.close();
                 } catch (SQLException msg) {
                 }
             }
@@ -52,9 +52,9 @@ public class totalUser {
                 } catch (SQLException msg) {
                 }
             }
-            if (rs != null) {
+            if (con != null) {
                 try {
-                    rs.close();
+                    con.close();
                 } catch (SQLException msg) {
                 }
             }

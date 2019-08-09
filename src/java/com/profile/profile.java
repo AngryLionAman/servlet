@@ -38,6 +38,8 @@ public class profile extends HttpServlet {
             //rd.forward(request, response);
         } catch (SQLException ex) {
             Logger.getLogger(profile.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(profile.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }

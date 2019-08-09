@@ -147,13 +147,12 @@
         <div class="main-page-wrapper">
             <!-- Header _________________________________ -->
             <jsp:include page="header.jsp"/>
-
             <div class="clear-fix"></div>
             <div class="bodydata">
                 <div class="container clear-fix">
                     <div class="row">
                         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                            <div >
+                            <div>
                                 <c:if test="${not empty param.Id}">
                                     <sql:query dataSource="jdbc/mydatabase" var="topic">
                                         select tag_id as unique_id,
@@ -363,7 +362,7 @@
                                         <c:forEach items="${related_question.rows}" var="rq" varStatus="loop">
                                             <c:if test="${rq.q_id ne param.Id}" >
                                                 <c:set scope="page" value="${loop.count}" var="count"/>
-                                                <a href="Answer.jsp?q=<c:out value="${fn:replace(rq.question,' ','-')}"/>&Id=<c:out value="${rq.q_id}"/>" ><c:out value="${rq.question}"/></a><br><br>
+                                                <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(rq.question,'|',''),' ','-')}"/>&Id=<c:out value="${rq.q_id}"/>" ><c:out value="${rq.question}"/></a><br><br>
                                             </c:if>                                            
                                         </c:forEach>
                                         <c:if test="${count eq 0}">
@@ -386,7 +385,7 @@
                                         select q_id,question from question order by rand() limit 20;
                                     </sql:query>
                                     <c:forEach items="${random_question.rows}" var="r_q">
-                                        <a href="Answer.jsp?q=<c:out value="${fn:replace(r_q.question,' ','-')}"/>&Id=<c:out value="${r_q.q_id}"/>" ><c:out value="${r_q.question}"/></a><br><br>
+                                        <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(r_q.question,'|',''),' ','-')}"/>&Id=<c:out value="${r_q.q_id}"/>" ><c:out value="${r_q.question}"/></a><br><br>
                                     </c:forEach>                             
                                 </div>
 

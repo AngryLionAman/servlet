@@ -1,0 +1,20 @@
+SMAP
+chat_jsp.java
+JSP
+*S JSP
+*F
++ 0 chat.jsp
+Admin/chat.jsp
++ 1 site.jsp
+Admin/site.jsp
+*L
+1,3:56
+2#1,5:12
+3#0,12:58
+15,26:71
+40,6:97
+46,18:104
+63,3:122
+66,21:126
+86,4:147
+*E

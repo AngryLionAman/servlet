@@ -1,0 +1,20 @@
+SMAP
+TotalQuestion_jsp.java
+JSP
+*S JSP
+*F
++ 0 TotalQuestion.jsp
+Admin/TotalQuestion.jsp
++ 1 site.jsp
+Admin/site.jsp
+*L
+5,7:59
+2#1,5:15
+11#0,36:65
+47,27:102
+73:129
+74:130,5
+75:135
+76,6:137
+81,5:143
+*E

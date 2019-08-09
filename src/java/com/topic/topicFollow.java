@@ -5,12 +5,11 @@
  */
 package com.topic;
 
-import com.connect.database;
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.sql.DataSource;
 
 /**
  *
@@ -19,15 +18,15 @@ import javax.sql.DataSource;
 public class topicFollow {
 
     public boolean topicFollw(int topicId, int userId) throws SQLException, ClassNotFoundException, Exception {
-        database obj = new database();
-        DataSource dataSource = obj.setUpPool();
-        Connection connection = dataSource.getConnection();
+        DatabaseConnection connection = new DatabaseConnection();
+        Connection con = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         boolean status = false;
         try {
             String sql = "select topic_id from topic_followers_detail where topic_id = ? and user_or_followers_id =?";
-            preparedStatement = connection.prepareStatement(sql);
+            con = connection.getConnection();
+            preparedStatement = con.prepareStatement(sql);
             preparedStatement.setInt(1, topicId);
             preparedStatement.setInt(2, userId);
             resultSet = preparedStatement.executeQuery();
@@ -37,9 +36,9 @@ public class topicFollow {
         } catch (SQLException msg) {
             throw msg;
         } finally {
-            if (connection != null) {
+            if (resultSet != null) {
                 try {
-                    connection.close();
+                    resultSet.close();
                 } catch (SQLException msg) {
                 }
             }
@@ -49,9 +48,9 @@ public class topicFollow {
                 } catch (SQLException msg) {
                 }
             }
-            if (resultSet != null) {
+            if (con != null) {
                 try {
-                    resultSet.close();
+                    con.close();
                 } catch (SQLException msg) {
                 }
             }

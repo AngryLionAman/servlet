@@ -5,11 +5,11 @@
  */
 package com.security;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import com.connect.database;
 import javax.sql.DataSource;
 
 /**
@@ -21,13 +21,13 @@ public class validateUser {
     public boolean validateUser(String username, String password) throws SQLException, ClassNotFoundException, Exception {
 
         boolean found = false;
-        database obj = new database();
-        DataSource dataSource = obj.setUpPool();
-        Connection connection = dataSource.getConnection();
+        DatabaseConnection con = new DatabaseConnection();
+        Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
             String v = "SELECT ID,email,password FROM newuser WHERE email = ?";
+            connection =con.getConnection();
             preparedStatement = connection.prepareStatement(v);
             preparedStatement.setString(1, username);
             resultSet = preparedStatement.executeQuery();
@@ -40,22 +40,26 @@ public class validateUser {
 
         } catch (SQLException e) {
             throw e;
-        }finally{
-            if(connection != null){
-                try{
-                    connection.close();
-                }catch(SQLException msg){}
-            }
-            if(preparedStatement != null){
-                try{
-                    preparedStatement.close();
-                }catch(SQLException msg){}
-            }
-            if(resultSet != null){
-                try{
+        } finally {
+            if (resultSet != null) {
+                try {
                     resultSet.close();
-                }catch(SQLException msg){}
+                } catch (SQLException msg) {
+                }
             }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException msg) {
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException msg) {
+                }
+            }
+
         }
 
         return found;
