@@ -101,10 +101,10 @@
                 <div class="container clear-fix">
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="padding-left:0px;">
                         <div class="logo float-left">
-                            <a href="#" style="vertical-align:middle;">
+                            <a href="index.jsp" style="vertical-align:middle;">
                                 <h4>
                                     <div class="logotext">
-                                        Inquiryhere.com
+                                        inquiryhere.com
                                     </div>
 
                                 </h4>
@@ -143,13 +143,13 @@
                                 %>
                                 <div class="boxHeading">
                                     <form action="NewUser.jsp" method="post" name="newUser">
-                                        <label for="fname">First Name</label>                                                                   
+                                        <label for="fname">Full Name &#8628;</label> <a href="help.jsp#fullname">&#10067;</a>                                                                  
                                         <input type="text" id="fname" name="firstname" onkeypress="return onlyAlphabets(event, this);" required="">
-                                        <label for="fname">Email/Phone</label>
+                                        <label for="fname">Email/Phone &#8628;</label><a href="help.jsp#emailorphone">&#10067;</a>
                                         <div class="boxHeading">
                                             <input type="text"  name="email" required="">
                                         </div>
-                                        <label for="lname">Password</label>
+                                        <label for="lname">Password &#8628;</label><a href="help.jsp#sign-up-password">&#10067;</a>
                                         <div class="boxHeading">
                                             <input type="password"  name="password" pattern=".{6,}" title="Six or more characters" required="">
                                         </div> 

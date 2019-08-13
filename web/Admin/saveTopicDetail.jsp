@@ -11,7 +11,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Saving Topic Detail</title>
     </head>
     <body>
         <h1>Updating the tag :  ${param.topic_name}!</h1>

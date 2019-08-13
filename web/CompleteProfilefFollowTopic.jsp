@@ -3,20 +3,17 @@
 <%@ include file="site.jsp" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <jsp:useBean id="fun" class="com.string.name" scope="page"></jsp:useBean>
-<c:if test="${sessionScope.Session_id_of_user eq null}">
+<%--<c:if test="${sessionScope.Session_id_of_user eq null}">
     <c:redirect url="signup.jsp"/>
-</c:if>
+</c:if>--%>
 <html lang="en">
     <head>        
         <meta charset="UTF-8">
         <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
         <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
         <title>Select Topic | Sign Up</title>
-
         <link rel="stylesheet" type="text/css" href="css/style.css">
         <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
@@ -27,7 +24,7 @@
                 <div class="container clear-fix">
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="padding-left:0px;">
                         <div class="logo float-left">
-                            <a href="#" style="vertical-align:middle;">
+                            <a href="index.jsp" style="vertical-align:middle;">
                                 <h4>
                                     <div class="logotext">
                                         inquiryhere.com
@@ -38,7 +35,7 @@
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 serachhere" style="display:inline-block;">
                         <div style="overflow: hidden; padding-right: .5em;">
-                            <form action="SearchBar.jsp">
+                            <form action="search.jsp">
                                 <input type="text" style="width: 100%;" name="search" required="" disabled="">
                             </form>
                         </div>
@@ -49,6 +46,9 @@
             <div class="bodydata">
                 <div class="container clear-fix">
                     <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            
+                        </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">                                                   
                             <div class="row">
                                 <center>                                                           

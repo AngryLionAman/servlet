@@ -128,9 +128,12 @@
                 from question_topic_tag where question_id =?;
                 <sql:param value="${param.Id}"/>
             </sql:query>
-            <c:forEach var="tagmgr" items="${tag.rows}">
-                <meta property="article:tag" content="<c:out value="${tagmgr.topic_name}"/>" />    
+            <c:set var="myVar" value="inquiryhere.com"/>
+            <c:forEach items="${tag.rows}" var="currentItem" varStatus="stat">
+                <meta property="article:tag" content="${currentItem.topic_name}"/>
+                <c:set var="myVar" value="${myVar},${currentItem.topic_name}"/>
             </c:forEach>
+            <meta name="keywords" content="${myVar}"/>
         </c:if>
 
         <meta property="og:url" content="https://www.inquiryhere.com/Answer.jsp">

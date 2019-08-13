@@ -29,7 +29,7 @@
             }
         </style>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Topic List</title>
     </head>
     <body>
         <h1>Display All topic and description</h1>

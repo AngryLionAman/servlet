@@ -134,11 +134,8 @@
                                         <!-- btn-info btn-lg -->
                                     </div>
                                     <div class="clear-fix"></div>
-
                                 </div>
-
                             </div>
-
 
                             <div class="row">
                                     <div class="tab">

@@ -97,7 +97,7 @@
 
                     <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 float-right textalign-right">
                         <a href="index.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Home</a>
-                        <a  href="signup.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Signup</a>                    
+                        <a  href="forgotpassword.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">forgot password</a>                    
                     </div>
                 </div>
 
@@ -107,9 +107,8 @@
                 <div class="container clear-fix">
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-
+                           
                         </div>
-
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <div class="row">
                                 <center>
@@ -135,21 +134,22 @@
                                             <% if (request.getParameter("URL") != null) {%>
                                             <input type="hidden" name="URL" value="<%=request.getParameter("URL")%>">
                                             <% }%> 
-
-                                            <label for="fname">Email</label>
+                                            <div  align="left">
+                                            <label for="fname">Email &#8628;</label><a href="help.jsp#email">&#10067;</a>
                                             <div class="boxHeading">
                                                 <input type="text"  name="email" required="" value="">
                                             </div>
-                                            <label for="lname">Password</label>
+                                            <label for="lname">Password &#8628;</label><a href="help.jsp#password">&#10067;</a>
                                             <div class="boxHeading">
                                                 <input type="password"  name="password" required="" value="">
                                             </div> 
+                                            </div>
                                             <br>
                                             <button type="submit" class="button button1" data-toggle="modal">Login</button>
                                         </form>
 
-                                        <form action="forgotpassword.jsp">
-                                            <button class="button button1" style="background-color: red;">Forget Password</button>
+                                        <form action="signup.jsp">
+                                            <button class="button button1">Create new account</button>
                                         </form>
                                     </div>
                                 </center>

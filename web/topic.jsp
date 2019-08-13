@@ -7,8 +7,20 @@
 <jsp:useBean class="com.topic.topicDetail" id="tDetail" scope="page"/>
 <html lang="en">
     <head>
+        <script>
+            function openCity(cityName) {
+                var i;
+                var x = document.getElementsByClassName("city");
+                for (i = 0; i < x.length; i++) {
+                    x[i].style.display = "none";
+                }
+                document.getElementById(cityName).style.display = "block";
+            }
+        </script>
 
         <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
         <meta charset="UTF-8">
 
         <!-- For IE -->
@@ -43,8 +55,7 @@
 
             <% }%>
             }
-        </script>
-
+        </script>        
     </head>
 
     <body>
@@ -76,13 +87,6 @@
                                     <c:if test="${ex ne null}">
                                         ${ex}
                                     </c:if>
-                                    <c:out value="${topicId}"/><br>
-                                    <c:out value="${topicName}"/><br>
-                                    <c:out value="${topicDescHindi}"/><br>
-                                    <c:out value="${topicDescEng}"/><br>
-                                    <c:out value="${topicImgUrl}"/><br>
-                                    <c:out value="${relatedQuestion}"/><br>
-                                    <c:out value="${totalFollowers}"/><br>
                                     <center> 
                                         <div class="boxHeading">
                                             <div class="row">
@@ -96,8 +100,7 @@
                                                                 <c:otherwise>
                                                                     <img src="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" alt="inquiryhere.com" height="100" width="100">
                                                                 </c:otherwise>
-                                                            </c:choose>
-                                                            
+                                                            </c:choose>                                                            
                                                         </div>
                                                         <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
                                                             <div>
@@ -122,9 +125,28 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12" style="border-style: groove; font-family: serif; font-size: 17px;">
-                                                    Java is a general-purpose programming language that is class-based, object-oriented, and designed to have as few implementation dependencies as possible
-                                                </div>
+                                                <c:if test="${topicDescEng ne null and not empty topicDescEng or topicDescHindi ne null and not empty topicDescHindi}">
+                                                    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12" align="left" style="border-style: groove; font-family: serif; font-size: 15px;">
+                                                        <div class="w3-bar w3-black">
+                                                            <c:if test="${topicDescEng ne null and not empty topicDescEng}">
+                                                                <button class="w3-bar-item w3-button" onclick="openCity('English')">English</button>
+                                                            </c:if>
+                                                            <c:if test="${topicDescHindi ne null and not empty topicDescHindi}">
+                                                                <button class="w3-bar-item w3-button" onclick="openCity('Hindi')">Hindi</button>
+                                                            </c:if>
+                                                        </div> 
+                                                        <c:if test="${topicDescEng ne null and not empty topicDescEng}">
+                                                            <div id="English" class="w3-container city">
+                                                                <p>${topicDescEng}</p>
+                                                            </div>
+                                                        </c:if>
+                                                        <c:if test="${topicDescHindi ne null and not empty topicDescHindi}">
+                                                            <div id="Hindi" class="w3-container city" style="display:none">
+                                                                <p>${topicDescHindi}</p> 
+                                                            </div>
+                                                        </c:if>
+                                                    </div>
+                                                </c:if>
                                             </div>                             
                                         </div>
                                     </center>
@@ -197,7 +219,6 @@
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-
                             <div class="themeBox" style="height:auto;">
                                 <div class="boxHeading">
                                     Related Topic

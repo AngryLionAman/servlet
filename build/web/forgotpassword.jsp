@@ -88,10 +88,12 @@
                                     </c:if>
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="themeBox" style="height:270px;">
-                                            <form action="forgotpassword.jsp" method="post" name="">
-                                                <label for="fname">Email</label>
+                                            <form action="forgotpassword.jsp" method="post" name="" >
+                                                <div align="left">
+                                                <label for="fname">Email  &#8628;</label><a href="help.jsp#f-pass-email">&#10067;</a>
+                                                </div>
                                                 <div class="boxHeading">
-                                                    <input type="text" id="fname" name="mail" required="">
+                                                    <input type="text" id="fname" name="mail" required="" placeholder="Enter valid email address....">
                                                 </div>  
                                                 <button class="button button1">Reset Password</button>
                                             </form>                                                                    

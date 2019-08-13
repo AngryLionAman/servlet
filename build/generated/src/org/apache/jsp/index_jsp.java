@@ -353,11 +353,8 @@ static {
       out.write("                                        <!-- btn-info btn-lg -->\n");
       out.write("                                    </div>\n");
       out.write("                                    <div class=\"clear-fix\"></div>\n");
-      out.write("\n");
       out.write("                                </div>\n");
-      out.write("\n");
       out.write("                            </div>\n");
-      out.write("\n");
       out.write("\n");
       out.write("                            <div class=\"row\">\n");
       out.write("                                    <div class=\"tab\">\n");
