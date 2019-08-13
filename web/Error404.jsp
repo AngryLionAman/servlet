@@ -14,6 +14,6 @@
     <body>
         <h1>Hello World!</h1>
         <b>This is 404 Error</b>
-		<h2>Added a new line in error404 file</h2>
+         File has been changed online
     </body>
 </html>
