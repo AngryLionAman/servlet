@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <!-- The rest of your web.xml content -->
+    <servlet-mapping>
+        <servlet-name>saveQuestion</servlet-name>
+        <url-pattern>/saveQuestion</url-pattern>
+    </servlet-mapping>
     <error-page>
         <error-code>404</error-code>
         <location>/Error404.jsp</location>
@@ -20,6 +24,10 @@
     <servlet>
         <servlet-name>saveAnswer</servlet-name>
         <servlet-class>com.answer.saveAnswer</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>saveQuestion</servlet-name>
+        <servlet-class>com.question.saveQuestion</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>profile</servlet-name>

@@ -73,7 +73,7 @@ public class saveAnswer extends HttpServlet {
             ps1.setInt(4, questionId);
             ps1.execute();
             
-            response.sendRedirect("Admin/admin/unanswerQuestion.jsp?msg=answer has been successfully saved!!");
+            response.sendRedirect("Admin/unanswerQuestion.jsp?msg=answer has been successfully saved!!");
 
         } catch (SQLException msg) {
             try {

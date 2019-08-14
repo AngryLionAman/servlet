@@ -33,6 +33,6 @@ public class Logout extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         session.invalidate();
-        response.sendRedirect("Admin/admin/visit.jsp?msg=Successfully logout");
+        response.sendRedirect("Admin/visit.jsp?msg=Successfully logout");
     }
 }
