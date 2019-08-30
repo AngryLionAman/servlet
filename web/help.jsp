@@ -1,5 +1,6 @@
 <html lang="en"><head>
         <meta charset="UTF-8">
+        <%@include file="googleAnalytics.jsp" %>
         <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
         <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">

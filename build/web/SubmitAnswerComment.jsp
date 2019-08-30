@@ -13,8 +13,14 @@
     request.setCharacterEncoding("UTF-8");
     response.setCharacterEncoding("UTF-8");
 %>
+Session active user : <c:out value="${param.session_active_user_id}"/><br>
+Id of user who posted question : <c:out value="${param.id_of_user_who_posted_question}"/><br>
+Answer  id : <c:out value="${param.answer_id}"/><br>
+question id <c:out value="${param.question_id}"/><br>
+question : <c:out value="${param.question}"/><br>
+comments : <c:out value="${param.comments}"/><br>
+Button value : <c:out value="${param.sub}"/><br>
 <c:if test="${not empty param.session_active_user_id and
-              not empty param.id_of_user_who_posted_question and
               not empty param.answer_id and
               not empty param.question_id and
               not empty param.question and
@@ -26,13 +32,15 @@
         <sql:param value="${param.answer_id}"/>
         <sql:param value="${param.comments}"/>
     </sql:update>
-    <sql:update dataSource="jdbc/mydatabase" var="save_notification">
-        INSERT INTO notification (user_id,notification_type,followers_id,question_id,ans_id ) VALUES (?,?,?,?,?);
-        <sql:param value="${param.id_of_user_who_posted_question}"/>
-        <sql:param value="comment_on_Answer"/>
-        <sql:param value="${param.session_active_user_id}"/>
-        <sql:param value="${param.answer_id}"/>
-        <sql:param value="${param.answer_id}"/>
-    </sql:update>
+    <c:if test="${not empty param.id_of_user_who_posted_question and param.id_of_user_who_posted_question ne null}">
+        <sql:update dataSource="jdbc/mydatabase" var="save_notification">
+            INSERT INTO notification (user_id,notification_type,followers_id,question_id,ans_id ) VALUES (?,?,?,?,?);
+            <sql:param value="${param.id_of_user_who_posted_question}"/>
+            <sql:param value="comment_on_Answer"/>
+            <sql:param value="${param.session_active_user_id}"/>
+            <sql:param value="${param.answer_id}"/>
+            <sql:param value="${param.answer_id}"/>
+        </sql:update>
+    </c:if>   
     <c:redirect url = "/Answer.jsp?q=${fn:replace(param.question,' ','-')}&Id=${param.question_id}"/>
 </c:if>

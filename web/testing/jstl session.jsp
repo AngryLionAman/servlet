@@ -13,6 +13,13 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
+          <script>
+            function confirmGo(m,u) {
+                if ( confirm(m) ) {
+                    window.location = u;
+                }
+            }
+        </script>
     </head>
     <body>
         <h1>Hello World!</h1>
@@ -39,9 +46,17 @@
             <th>email</th>
             <th colspan="2">Action</th>
         </tr>
+         <tr>
+                <td><c:out value="${row.id}"/>1</td>
+                <td><c:out value="${row.firstname}"/></td>
+                <td><c:out value="${row.email}"/></td>
+                <td><a href="update.jsp?id=<c:out value="${row.id}"/>">Update</a></td>
+                <td><a href="javascript:confirmGo('Sure to delete this record?','deletedb.jsp?id=<c:out value="${row.id}"/>')">Delete</a></td>
+
+            </tr>
         <c:forEach var="row" items="${result.rows}">
             <tr>
-                <td><c:out value="${row.id}"/></td>
+                <td><c:out value="${row.id}"/>1</td>
                 <td><c:out value="${row.firstname}"/></td>
                 <td><c:out value="${row.email}"/></td>
                 <td><a href="update.jsp?id=<c:out value="${row.id}"/>">Update</a></td>

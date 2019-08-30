@@ -5,6 +5,7 @@
 <%@page import="com.profile.userProfile" %>
 <html lang="en">
     <head>
+        <%@include file="googleAnalytics.jsp" %>
         <meta charset="UTF-8">       
         <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">

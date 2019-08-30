@@ -8,11 +8,15 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <%@include file="googleAnalytics.jsp" %>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
     </head>
     <body>
         <h1>Hello World!</h1>        
-        <b>This is 404 Error</b>
+        <h1>This is 404 Error</h1>
+        <h2>Page is missing or has been removed permanent</h2>
+        <h2>Please try to search different thing on this site or Contact to administrator</h2>
+        <h2>Thanks for you patience</h2>
     </body>
 </html>

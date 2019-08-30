@@ -6,7 +6,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="com.answer.saveAnswer"%>
 <c:if test="${sessionScope.adminUserId eq null}">
     <c:redirect url="visit.jsp?msg=Session is not valid"/>
@@ -17,14 +17,14 @@
     <head>
         <script src="../ckeditor/ckeditor.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="robots" content="noindex, nofollow" />
         <title>Unanswered question</title>
     </head>
     <body>
         <h1>Hello, <c:if test="${sessionScope.userName ne null}">
                 ${sessionScope.userName}
         </c:if>
-            <a href="adminModule.jsp">Home</a>  <a href="unanswerQuestion.jsp">Back</a> <a href="<%=request.getContextPath()%>/Logout">Logout</a>
-        </h1>
+            <a href="adminModule.jsp">Home</a> <a href="<%=request.getContextPath()%>/Logout">Logout</a>
         </h1>
         <c:choose>
             <c:when test="${param.qId ne null and not empty param.qId}">

@@ -7,6 +7,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <%@include file="googleAnalytics.jsp" %>
         <meta charset="UTF-8">
         <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -145,6 +146,55 @@
 
             </div>
         </div>
+          <div class="modal fade" id="myModal2" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <c:if test="${sessionScope.Session_id_of_user eq null}">
+                                <h4 class="modal-title">Post question as guest</h4>    
+                            </c:if>
+                            <c:if test="${sessionScope.Session_id_of_user ne null}">
+                                <h4 class="modal-title">Post your question here</h4>    
+                            </c:if>
+
+                        </div>
+                        <c:if test="${sessionScope.Session_id_of_user eq null}">
+                            <form name="submitquestion" method="get" action="<%=request.getContextPath()%>/guestSaveQuestion">
+                            </c:if>
+                            <c:if test="${sessionScope.Session_id_of_user ne null}">
+                                <form name="submitquestion" method="post" action="SubmitQuestion.jsp">
+                                    <input type="hidden" name="userid" value="<%=session.getAttribute("Session_id_of_user")%>">
+                                </c:if>                        
+                                <div class="modal-body">
+                                    <div>
+                                        <div>Put your question here <i style="color: red;">*</i></div>
+                                        <textarea type="text" class="anstext" name="question" placeholder="Ex: What is,How to.." required=""></textarea>
+                                    </div>
+                                    <div class="margintop20">
+                                        <div>Tag suggestion description <i style="color: red;">*</i></div>
+                                        <textarea type="text" class="anstext" name="tag_of_question" placeholder="Ex:Java,Database,c language" required=""></textarea>
+                                    </div>
+                                    <c:if test="${sessionScope.Session_id_of_user eq null}">
+                                        <div class="margintop20">
+                                            <div>Guest Name </div>
+                                            <textarea type="text" name="guestName" placeholder="Aman Kumar"></textarea>
+                                        </div>
+                                        <div class="margintop20">
+                                            <div>Guest Email (Will not display publicly) </div>
+                                            <textarea type="email" name="guestEmail" placeholder="email@gmail.com"></textarea>
+                                        </div>
+                                    </c:if>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn">POST</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">CLOSE</button>
+                                </div>
+                            </form>
+                    </div>
+                </div>
+            </div>
         <jsp:include page="footer.jsp"/>
         <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
         <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>

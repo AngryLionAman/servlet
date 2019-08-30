@@ -3,6 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html lang="en">
     <head>
+        <%@include file="googleAnalytics.jsp" %>
         <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
         <c:if test="${param.p_id eq null or empty param.p_id}">
             <c:redirect url="poem.jsp" />
@@ -18,17 +19,6 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">
         <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
-
-
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128307055-1"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag('js', new Date());
-            gtag('config', 'UA-128307055-1');
-        </script> 
         <c:catch var="ex">
             <c:if test="${param.p_id ne null and not empty param.p_id}">
                 <sql:query  var="poem" dataSource="jdbc/mydatabase">

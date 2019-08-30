@@ -44,8 +44,8 @@
         sl = "eng";
     }
     String firstname, password, email;
-    firstname = request.getParameter("firstname");
-    email = request.getParameter("email");
+    firstname = request.getParameter("firstname").trim();
+    email = request.getParameter("email").trim();
     password = request.getParameter("password");
     //userName = request.getParameter("userName");
 

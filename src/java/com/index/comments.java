@@ -27,14 +27,14 @@ public class comments {
         ResultSet rs = null;
         try {
             com = connection.getConnection();
-            String sql = "select c.unique_id,c.comments,c.time,user.id,user.firstname,user.username from comments c right join newuser user on user.id = c.user_id where c.q_id = ?";
+            String sql = "select c.unique_id,c.comments,date_format(c.time,\"%e %b %Y,%h:%i%p\") as date,user.id,user.firstname,user.username from comments c right join newuser user on user.id = c.user_id where c.q_id = ?";
             ps = com.prepareStatement(sql);
             ps.setInt(1, questionId);
             rs = ps.executeQuery();
             while (rs.next()) {
                 int commentId = rs.getInt("c.unique_id");
                 String comment = rs.getString("c.comments");
-                String time = rs.getString("c.time");
+                String time = rs.getString("date");
                 int userId = rs.getInt("user.id");
                 String userFullName = rs.getString("user.firstname");
                 String userUserName = rs.getString("user.username");

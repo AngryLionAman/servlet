@@ -78,7 +78,7 @@ public class topicDetals {
         return list;
     }
 
-    public List<topicPojo> randomTopic() throws Exception {
+    public List<topicPojo> randomTopic(int Limit) throws Exception {
         indexPageExtraFunction function = new indexPageExtraFunction();
         List<topicPojo> list = new ArrayList<>();
         DatabaseConnection connection = new DatabaseConnection();
@@ -86,9 +86,10 @@ public class topicDetals {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            String sql = "SELECT unique_id,topic_name FROM topic where unique_id IS NOT NULL AND topic_name IS NOT NULL ORDER BY RAND() LIMIT 15";
+            String sql = "SELECT unique_id,topic_name FROM topic where unique_id IS NOT NULL AND topic_name IS NOT NULL ORDER BY RAND() LIMIT ?";
             con = connection.getConnection();
             ps = con.prepareStatement(sql);
+            ps.setInt(1, Limit);
             rs = ps.executeQuery();
             while (rs.next()) {
                 String topicName = rs.getString("topic_name");

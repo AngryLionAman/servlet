@@ -15,7 +15,7 @@ public class name {
         try {
             if (str != null && str.length() > 0 && !(str.trim()).equals("null") && !str.equals("") && !str.equals(" ")) {
 
-                String[] final_word = str.split("\\s");
+                String[] final_word = str.trim().split("\\s");
                 return final_word[0].substring(0, 1).toUpperCase() + final_word[0].substring(1).toLowerCase();
             } else {
                 return null;

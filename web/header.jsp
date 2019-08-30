@@ -1,7 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<meta charset="UTF-8">
 <%@include file="site.jsp"%>
 <jsp:useBean class="com.header.headerData" id="userdetails" scope="page"/>
 <jsp:useBean class="com.string.name" id="fun" scope="page"/>
@@ -72,8 +71,8 @@
         </div>
 
 
-        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 float-right textalign-right">
-            <a href="help.jsp" class="helpicon"  style="color: white;padding-left: 10px;padding-right: 30px;">Help</a>           
+        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 float-right textalign-right">          
+            <a href="#" data-toggle="modal" data-target="#myModal2" class="helpicon"  style="color: white;background-color: red; padding-left: 10px;padding-right: 80px; white-space: nowrap;">Ask Question</a>           
             <c:if test="${sessionScope.Session_id_of_user eq null}">  
                 <%
                     String url = request.getRequestURL().toString();

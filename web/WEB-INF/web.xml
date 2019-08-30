@@ -1,14 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <!-- The rest of your web.xml content -->
+    <servlet>
+        <servlet-name>updateQuestion</servlet-name>
+        <servlet-class>com.admin.question.updateQuestion</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>deleteQuestionById</servlet-name>
+        <servlet-class>com.admin.question.deleteQuestionById</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MyApp</servlet-name>
+        <url-pattern>/fbhome</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>saveQuestion</servlet-name>
         <url-pattern>/saveQuestion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>deleteTopic</servlet-name>
+        <url-pattern>/deleteTopic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>guestSaveQuestion</servlet-name>
+        <url-pattern>/guestSaveQuestion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>updateQuestion</servlet-name>
+        <url-pattern>/updateQuestion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>deleteQuestionById</servlet-name>
+        <url-pattern>/deleteQuestionById</url-pattern>
     </servlet-mapping>
     <error-page>
         <error-code>404</error-code>
         <location>/Error404.jsp</location>
     </error-page>
+    <servlet>
+        <servlet-name>MyApp</servlet-name>
+        <servlet-class>com.tech.facebook.MyApp</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>profile</servlet-name>
         <servlet-class>com.profile.profile</servlet-class>
@@ -28,6 +60,14 @@
     <servlet>
         <servlet-name>saveQuestion</servlet-name>
         <servlet-class>com.question.saveQuestion</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>deleteTopic</servlet-name>
+        <servlet-class>com.topic.deleteTopic</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>guestSaveQuestion</servlet-name>
+        <servlet-class>com.question.guestSaveQuestion</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>profile</servlet-name>

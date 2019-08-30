@@ -10,7 +10,7 @@ import java.net.URLEncoder;
 public class CreateFBConnection {
     public static final String APP_ID = "484385559013956";
     public static final String APP_SECRET = "b9354b9069915d00fa557314e15e84d4";
-    public static final String REDIRECT_URI = "http://localhost:8080/inquiryhere/fbhome.jsp";
+    public static final String REDIRECT_URI = "http://localhost:8084/inquiryhere/fbhome.jsp";
     String accessToken = "";
     public String getFBAuthUrl() {
         String fbLoginUrl = "";
@@ -22,6 +22,7 @@ public class CreateFBConnection {
                     + URLEncoder.encode(CreateFBConnection.REDIRECT_URI,
                             "UTF-8") + "&scope=email";
         } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
         return fbLoginUrl;
     }
@@ -36,6 +37,7 @@ public class CreateFBConnection {
                             "UTF-8") + "&client_secret=" + APP_SECRET
                     + "&code=" + code;
         } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
         return fbGraphUrl;
     }

@@ -38,6 +38,9 @@ public class saveQuestion extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         DatabaseConnection databaseConnection = null;
         try {
@@ -60,11 +63,8 @@ public class saveQuestion extends HttpServlet {
             String question = request.getParameter("question").trim();
             String questionTag = request.getParameter("tag_of_question");
             int userId = Integer.parseInt(request.getParameter("userId"));
-            out.print(question);
-            out.println(questionTag);
             out.println(userId);
             if ((question != null && question.length() > 0) && (questionTag != null && questionTag.length() > 0) && userId != 0) {
-                out.print("Inside the if condition");
                 String sql = "insert into question(id,question,vote) values(?,?,?)";
                 con = databaseConnection.getConnection();
                 ps = con.prepareStatement(sql);
@@ -74,7 +74,7 @@ public class saveQuestion extends HttpServlet {
                 boolean done = ps.execute();
                 if (done) {
                     out.print("Got some problem");
-                }else{
+                } else {
                     out.print("saved !!!!");
                 }
                 /**
@@ -146,10 +146,10 @@ public class saveQuestion extends HttpServlet {
                     }
                 }
 
-            }else{
+            } else {
                 out.print("bad argument..");
             }
-            response.sendRedirect("Admin/postQuestion.jsp?msg=Question has been stored successfully!!!");
+            //response.sendRedirect("Admin/postQuestion.jsp?msg=Question has been stored successfully!!!");
         } catch (NumberFormatException | SQLException msg) {
             try {
                 out.println(msg);
@@ -228,6 +228,7 @@ public class saveQuestion extends HttpServlet {
 
                 }
             }
+            response.sendRedirect("Admin/postQuestion.jsp?msg=Question has been stored successfully!!!");
         }
     }
 }

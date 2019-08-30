@@ -8,4 +8,5 @@ if(arg != null){
 }
 %>
 <%=url%><br>
-<%=arg%>
+<%=arg%><br>
+${pageContext.request}

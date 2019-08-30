@@ -22,13 +22,16 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="robots" content="noindex, nofollow" />
         <title>Admin Module</title>
     </head>
     <body>
         <h1>Hello, ${fullName} <a href="<%=request.getContextPath()%>/Logout">Logout</a></h1>
         <ol>
             <li><a href="unanswerQuestion.jsp">Unanswered question</a></li><br><br>
-            <li><a href="postQuestion.jsp">Post a question</a></li>
+            <li><a href="postQuestion.jsp">Post a question</a></li><br><br>
+            <li><a href="topic.jsp">Update the Topic</a></li><br><br>
+            <li><a href="modifyQuestion.jsp">Update question and related tag</a></li><br><br>
         </ol>
     </body>
 </html>

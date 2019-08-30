@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<jsp:useBean class="com.string.name" id="word" scope="page"/>
 <%@include file="validator.jsp" %>
 <%@include file="site.jsp" %>
 <%---------------Programming with jstl  ---------------------------%>
@@ -68,7 +69,7 @@
         <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <c:forEach var="user_name" items="${usersql.rows}">
-            <title><c:out value="${user_name.firstname}"/> | inquiryHere.com</title>
+            <title><c:out value="${word.convertStringUpperToLower(user_name.firstname)}"/> - inquiryhere.com</title>
         </c:forEach>
 
 
@@ -177,7 +178,7 @@
                                             <table class="profiledetails">
                                                 <tr>
                                                     <td>Name </td>
-                                                    <td>: <c:out value="${user.firstname}"/></td>
+                                                    <td>: <c:out value="${word.convertStringUpperToLower(user.firstname)}"/></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Mail Id/Phone </td>
@@ -394,13 +395,18 @@
                                                     SELECT * FROM question WHERE id = ?;
                                                     <sql:param value="${userid}" />                                                                                                  
                                                 </sql:query>
-                                                <c:forEach items="${question.rows}" var="q">
+                                                    <c:set scope="page" value="0" var="count"/>
+                                                    <c:forEach items="${question.rows}" var="q" varStatus="loop">
+                                                        <c:set scope="page" value="${loop.count}" var="count"/>
                                                     <br>Q. <a href="Answer.jsp?q=<c:out value="${fn:replace(q.question,' ','-')}"/>&Id=<c:out value="${q.q_id}"/>" ><c:out value="${q.question}"/> ?</a>
                                                     &nbsp;&nbsp;&nbsp;&nbsp; 
                                                     <c:if test="${sessionScope.Session_id_of_user ne null and q.id eq sessionScope.Session_id_of_user}">
                                                         <a href="edit_q.jsp?Id=<c:out value="${q.q_id}"/>">edit</a>
                                                     </c:if>  
                                                 </c:forEach>
+                                                    <c:if test="${count eq 0}">
+                                                        <font style="color: red;">User not posted any question yet!!!</font>
+                                                    </c:if>
                                             </c:when>
                                             <c:when test="${ParametrVariable eq 'Answer'}">
                                                 <center><div class=boxHeading> ANSWER </div></center>
@@ -410,7 +416,9 @@
                                                     on q.q_id = ans.q_id where Answer_by_id = ?;
                                                     <sql:param value="${userid}"/>
                                                 </sql:query>
+                                                    <c:set scope="page" value="0" var="count"/>
                                                 <c:forEach items="${answer.rows}" var="ans">
+                                                    <c:set scope="page" value="${loop.count}" var="count"/>
                                                     <br> Q. <a href="Answer.jsp?q=<c:out value="${fn:replace(ans.question,' ','-')}"/>&Id=<c:out value="${ans.q_id}"/>" ><c:out value="${ans.question}"/> ?</a>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
                                                     <c:if test="${sessionScope.Session_id_of_user ne null and ans.Answer_by_id eq sessionScope.Session_id_of_user}">
@@ -418,6 +426,9 @@
                                                     </c:if>
                                                     <br>Ans.</b>&nbsp;&nbsp;&nbsp;&nbsp;<c:out value="${ans.short_ans}" escapeXml="false"/>  <a href="Answer.jsp?Id=<c:out value="${ans.q_id}"/>&q=<c:out value="${fn:replace(ans.question,' ','-')}"/>"> Continue Reading</a>
                                                 </c:forEach>
+                                                     <c:if test="${count eq 0}">
+                                                        <font style="color: red;">User not given any answer yet!!!</font>
+                                                    </c:if>
                                             </c:when>
                                             <c:when test="${ParametrVariable eq 'Topic'}">
                                                 <center><div class=boxHeading>TOPIC FOLLOWED </div></center>
@@ -427,9 +438,14 @@
                                                     where user_or_followers_id= ? and t.unique_id is not null and t.topic_name is not null;
                                                     <sql:param value="${userid}"/>
                                                 </sql:query>
+                                                    <c:set scope="page" value="0" var="count"/>
                                                 <c:forEach items="${topic.rows}" var="t" >
+                                                    <c:set scope="page" value="${loop.count}" var="count"/>
                                                     <br><a href="topic.jsp?t=<c:out value="${fn:replace(t.topic_name,' ','-')}"/>&id=<c:out value="${t.unique_id}"/>">&nbsp;&nbsp;&nbsp;&nbsp;<c:out value="${t.topic_name}"/></a>
                                                 </c:forEach>   
+                                                     <c:if test="${count eq 0}">
+                                                        <font style="color: red;">User not followed any topic yet!!!</font>
+                                                    </c:if>
                                                 <br><a href=FollowMoreTopic.jsp> Follow more topic</a>  
                                             </c:when>
                                             <c:when test="${ParametrVariable eq 'Following'}">
@@ -439,12 +455,17 @@
                                                     right join ak_follower_detail ak on ak.user_id=user.ID where followers_id = ?;
                                                     <sql:param value="${userid}"/>
                                                 </sql:query>
+                                                    <c:set scope="page" value="0" var="count"/>
                                                 <c:forEach items="${Following.rows}" var="follow">
+                                                    <c:set scope="page" value="${loop.count}" var="count"/>
                                                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                                         <img src="images/<c:out value="${follow.imagepath}"/>" alt="" style="width:100%; border:1px solid #ddd;margin-top:20px;">
                                                         <a href="profile.jsp?user=<c:out value="${fn:replace(follow.firstname,' ','-')}"/>&ID=<c:out value="${follow.ID}"/>"><c:out value="${follow.firstname}"/></a>
                                                     </div> 
                                                 </c:forEach>
+                                                 <c:if test="${count eq 0}">
+                                                        <font style="color: red;">User not following any user yet!!!</font>
+                                                    </c:if>
                                                 <br><a href=UserProfile.jsp> FOLLOW MORE USER </a>
                                             </c:when>
                                             <c:when test="${ParametrVariable eq 'Followers'}">
@@ -454,12 +475,17 @@
                                                     right join ak_follower_detail ak on ak.followers_id=user.ID where user_id = ?;
                                                     <sql:param value="${userid}" />
                                                 </sql:query>
+                                                    <c:set scope="page" value="0" var="count"/>
                                                 <c:forEach items="${followers.rows}" var="followers" >
+                                                    <c:set scope="page" value="${loop.count}" var="count"/>
                                                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                                         <img src="images/<c:out value="${followers.imagepath}"/>" alt="" style="width:100%; border:1px solid #ddd;margin-top:20px;">
                                                         <a href="profile.jsp?user=<c:out value="${fn:replace(followers.firstname,' ','-')}"/>&ID=<c:out value="${followers.ID}"/>"><c:out value="${followers.firstname}"/></a>
                                                     </div>
                                                 </c:forEach>
+                                                 <c:if test="${count eq 0}">
+                                                        <font style="color: red;">User don't have any followers yet yet!!!</font>
+                                                    </c:if>
                                                 <br><a href=UserProfile.jsp> FOLLOW MORE USER </a>
                                             </c:when>
                                             <c:when test="${ParametrVariable eq 'Blog'}">
@@ -468,9 +494,14 @@
                                                     SELECT * FROM blog WHERE blog_posted_by = ?;
                                                     <sql:param value="${userid}"/>
                                                 </sql:query>
+                                                    <c:set scope="page" value="0" var="count"/>
                                                 <c:forEach items="${blog.rows}" var="blog">
+                                                    <c:set scope="page" value="${loop.count}" var="count"/>
                                                     <br><a href="D_Blog.jsp?sub=<c:out value="${fn:replace(blog.blog_subject,' ','-')}"/>&Blog_Id=<c:out value="${blog.blog_id}"/>"><c:out value="${blog.blog_subject}"/></a>
                                                 </c:forEach> 
+                                                     <c:if test="${count eq 0}">
+                                                        <font style="color: red;">User not posted any blog yet!!!</font>
+                                                    </c:if>
                                                 <br><a href=WriteBlogHere.jsp> BLOG ABOUT SOMETHING </a>
                                             </c:when>
                                         </c:choose>
@@ -485,6 +516,55 @@
             </div>
            
         </div> <!-- /.main-page-wrapper -->
+          <div class="modal fade" id="myModal2" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <c:if test="${sessionScope.Session_id_of_user eq null}">
+                                <h4 class="modal-title">Post question as guest</h4>    
+                            </c:if>
+                            <c:if test="${sessionScope.Session_id_of_user ne null}">
+                                <h4 class="modal-title">Post your question here</h4>    
+                            </c:if>
+
+                        </div>
+                        <c:if test="${sessionScope.Session_id_of_user eq null}">
+                            <form name="submitquestion" method="get" action="<%=request.getContextPath()%>/guestSaveQuestion">
+                            </c:if>
+                            <c:if test="${sessionScope.Session_id_of_user ne null}">
+                                <form name="submitquestion" method="post" action="SubmitQuestion.jsp">
+                                    <input type="hidden" name="userid" value="<%=session.getAttribute("Session_id_of_user")%>">
+                                </c:if>                        
+                                <div class="modal-body">
+                                    <div>
+                                        <div>Put your question here <i style="color: red;">*</i></div>
+                                        <textarea type="text" class="anstext" name="question" placeholder="Ex: What is,How to.." required=""></textarea>
+                                    </div>
+                                    <div class="margintop20">
+                                        <div>Tag suggestion description <i style="color: red;">*</i></div>
+                                        <textarea type="text" class="anstext" name="tag_of_question" placeholder="Ex:Java,Database,c language" required=""></textarea>
+                                    </div>
+                                    <c:if test="${sessionScope.Session_id_of_user eq null}">
+                                        <div class="margintop20">
+                                            <div>Guest Name </div>
+                                            <textarea type="text" name="guestName" placeholder="Aman Kumar"></textarea>
+                                        </div>
+                                        <div class="margintop20">
+                                            <div>Guest Email (Will not display publicly) </div>
+                                            <textarea type="email" name="guestEmail" placeholder="email@gmail.com"></textarea>
+                                        </div>
+                                    </c:if>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn">POST</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">CLOSE</button>
+                                </div>
+                            </form>
+                    </div>
+                </div>
+            </div>
          <jsp:include page="footer.jsp"/>
             <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
 

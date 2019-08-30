@@ -13,27 +13,16 @@ public class recentQuestionPojo {
 
     int totalView;
     String date;
+    int days;
     int questionId;
     String question;
     int vote;
     String fullName;
     String userName;
+    String userType;
     String higherEdu;
     int userId;
     int totalAnswer;
-
-    public recentQuestionPojo(int totalView, String date, int questionId, String question, int vote, String fullName, String userName, String higherEdu, int userId, int totalAnswer) {
-        this.totalView = totalView;
-        this.date = date;
-        this.questionId = questionId;
-        this.question = question;
-        this.vote = vote;
-        this.fullName = fullName;
-        this.userName = userName;
-        this.higherEdu = higherEdu;
-        this.userId = userId;
-        this.totalAnswer = totalAnswer;
-    }
 
     public int getTotalView() {
         return totalView;
@@ -41,6 +30,10 @@ public class recentQuestionPojo {
 
     public String getDate() {
         return date;
+    }
+
+    public int getDays() {
+        return days;
     }
 
     public int getQuestionId() {
@@ -63,6 +56,10 @@ public class recentQuestionPojo {
         return userName;
     }
 
+    public String getUserType() {
+        return userType;
+    }
+
     public String getHigherEdu() {
         return higherEdu;
     }
@@ -73,5 +70,20 @@ public class recentQuestionPojo {
 
     public int getTotalAnswer() {
         return totalAnswer;
+    }
+
+    public recentQuestionPojo(int totalView, String date, int days, int questionId, String question, int vote, String fullName, String userName, String userType, String higherEdu, int userId, int totalAnswer) {
+        this.totalView = totalView;
+        this.date = date;
+        this.days = days;
+        this.questionId = questionId;
+        this.question = question;
+        this.vote = vote;
+        this.fullName = fullName;
+        this.userName = userName;
+        this.userType = userType;
+        this.higherEdu = higherEdu;
+        this.userId = userId;
+        this.totalAnswer = totalAnswer;
     }
 }

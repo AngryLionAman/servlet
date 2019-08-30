@@ -1,12 +1,19 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<jsp:useBean class="com.string.name" id="beanclass"  scope="page" />
+<jsp:useBean class="com.string.name" id="word" scope="page" />
+<jsp:useBean class="com.answer.time" id="dateTIme" scope="page" />
+<jsp:useBean class="com.answer.getAnswer" id="ans" scope="page" />
+<jsp:useBean class="com.answer.comments" id="commentOnAnswer" scope="page" />
+<jsp:useBean class="com.index.indexPage" id="Question" scope="page" />
+<jsp:useBean class="com.index.comments" id="comment" scope="page"/>
+<jsp:useBean class="com.answer.SEO" id="SEO" scope="page" />
+<jsp:useBean class="com.question.getQuestion" id="related" scope="page" />
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="site.jsp" %>
 <html lang="en">
     <head>
-
+        <%@include file="googleAnalytics.jsp" %>
         <meta charset="UTF-8">
         <meta http-equiv="content-type" content="text/html" charset="utf-8">
         <style type="text/css">
@@ -43,17 +50,6 @@
             }
         </script>
         <script src="ckeditor/ckeditor.js"></script>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128307055-1"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag('js', new Date());
-            gtag('config', 'UA-128307055-1');
-        </script> 
-
-
         <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -101,39 +97,29 @@
             <c:redirect url = "/?ref=idnotfound"/>
         </c:if>
         <c:if test="${not empty param.Id}">
-            <sql:update dataSource="jdbc/mydatabase" var="update">
-                UPDATE question SET total_view = total_view + 1 WHERE q_id =?;
-                <sql:param value="${param.Id}"/>
-            </sql:update>
-            <sql:query var="seo" dataSource="jdbc/mydatabase">
-                SELECT q.q_id AS q_id,q.question AS question,SUBSTRING(a.answer,1,500) AS answer 
-                FROM question q LEFT JOIN answer a on q.q_id = a.q_id WHERE q.q_id = ? limit 1;
-                <sql:param value="${param.Id}"/>
-            </sql:query>
-            <c:forEach var="h_seo" items="${seo.rows}">
-                <title><c:out value="${h_seo.question}"/>- inquiryhere.com</title>    
-                <meta property="og:title" content="<c:out value="${h_seo.question}"/>" />
-                <c:if test="${not empty h_seo.answer}">
-                    <meta property="og:description" content="<c:out value="${h_seo.answer}"/>"/>
-                    <meta property="description" content="<c:out value="${h_seo.answer}"/>"/>
-                </c:if>
-                <c:if test="${empty h_seo.answer}">
-                    <meta property="og:description" content="<c:out value="${h_seo.question}"/>"/>
-                    <meta property="description" content="<c:out value="${h_seo.question}"/>"/>
-                </c:if>
-            </c:forEach>
-            <sql:query dataSource="jdbc/mydatabase" var="tag">
-                select tag_id as unique_id,
-                (select topic_name from topic where unique_id = question_topic_tag.tag_id)topic_name
-                from question_topic_tag where question_id =?;
-                <sql:param value="${param.Id}"/>
-            </sql:query>
-            <c:set var="myVar" value="inquiryhere.com"/>
-            <c:forEach items="${tag.rows}" var="currentItem" varStatus="stat">
-                <meta property="article:tag" content="${currentItem.topic_name}"/>
-                <c:set var="myVar" value="${myVar},${currentItem.topic_name}"/>
-            </c:forEach>
-            <meta name="keywords" content="${myVar}"/>
+            <c:catch var="ex">
+                <c:forEach var="h_seo" items="${SEO.getTitleAndDescripiton(param.Id)}">
+                    <title><c:out value="${h_seo.questionTitle}"/>- inquiryhere.com</title>    
+                    <meta property="og:title" content="<c:out value="${h_seo.questionTitle}"/>" />
+                    <c:if test="${not empty h_seo.questionDescription and h_seo.questionDescription ne null}">
+                        <meta property="og:description" content="<c:out value="${h_seo.questionDescription}"/>"/>
+                        <meta property="description" content="<c:out value="${h_seo.questionDescription}"/>"/>
+                    </c:if>
+                    <c:if test="${empty h_seo.questionDescription or h_seo.questionDescription eq null}">
+                        <meta property="og:description" content="<c:out value="${h_seo.questionTitle}"/>"/>
+                        <meta property="description" content="<c:out value="${h_seo.questionTitle}"/>"/>
+                    </c:if>
+                </c:forEach>
+                <c:set var="myVar" value="inquiryhere.com"/>
+                <c:forEach items="${SEO.getQuestionTag(param.Id)}" var="currentItem" varStatus="stat">
+                    <meta property="article:tag" content="${currentItem}"/>
+                    <c:set var="myVar" value="${myVar},${currentItem}"/>
+                </c:forEach>
+                <meta name="keywords" content="${myVar}"/>
+            </c:catch>
+            <c:if test="${ex ne null}">
+                ${ex}
+            </c:if>           
         </c:if>
 
         <meta property="og:url" content="https://www.inquiryhere.com/Answer.jsp">
@@ -142,13 +128,9 @@
         <meta property="og:type" content="website">
         <meta property="og:locale" content="en_US">
         <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
-
     </head>
-
     <body>
-
         <div class="main-page-wrapper">
-            <!-- Header _________________________________ -->
             <jsp:include page="header.jsp"/>
             <div class="clear-fix"></div>
             <div class="bodydata">
@@ -156,18 +138,11 @@
                     <div class="row">
                         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                             <div>
-                                <c:if test="${not empty param.Id}">
-                                    <sql:query dataSource="jdbc/mydatabase" var="topic">
-                                        select tag_id as unique_id,
-                                        (select topic_name from topic where unique_id = question_topic_tag.tag_id) topic_name 
-                                        from question_topic_tag  where question_id =?;
-                                        <sql:param value="${param.Id}"/>
-                                    </sql:query>  
+                                <c:if test="${not empty param.Id}">                                    
                                     <c:set scope="page" var="count_tag" value="0"/>
-
-                                    <c:forEach items="${topic.rows}" var="tag" varStatus="loop">
+                                    <c:forEach items="${SEO.getQuestionTagWithId(param.Id)}" var="tag" varStatus="loop">
                                         <c:set scope="page" var="count_tag" value="${loop.count}"/>
-                                        <a style="font-size: 15pt;color: #000210;background: #f0f0f0; border-radius: 5px;padding-top: 0px;padding-bottom: 0px;padding-left: 1px;padding-right: 2px;" href="topic.jsp?t=${fn:replace(tag.topic_name,' ','-')}&id=${tag.tag_id}">${beanclass.convertStringUpperToLower(tag.topic_name)}</a>
+                                        <a style="font-size: 15pt;color: #000210;background: #f0f0f0; border-radius: 5px;padding-top: 0px;padding-bottom: 0px;padding-left: 1px;padding-right: 2px;" href="topic.jsp?t=${fn:replace(tag.value,' ','-')}&id=${tag.key}">${word.convertStringUpperToLower(tag.value)}</a>
                                     </c:forEach>
                                     <c:if test="${count_tag eq 0}">
                                         <c:out value=""/><!--old code: if question has no tag...-->
@@ -178,111 +153,113 @@
                             <div class="row">
                                 <!-- Displaying question and detail section-->
                                 <c:if test="${not empty param.Id}">
-                                    <sql:query dataSource="jdbc/mydatabase" var="question">
-                                        SELECT user.id,user.higher_edu,user.firstname,q.question,q.q_id,q.id,q.total_view,q.vote,date(q.posted_time) as date 
-                                        FROM newuser user RIGHT JOIN question q on user.id=q.id where q_id = ?;  
-                                        <sql:param value="${param.Id}"/>
-                                    </sql:query>
-                                    <c:forEach items="${question.rows}" var="q">
-                                        <c:set scope="page" var="user_id_who_asked_question" value="${q.id}"/>
-                                        <c:set scope="page" var="current_q_string" value="${q.question}"/>
-                                        <div class="themeBox" style="height:auto;">
-                                            <div align="left" style="font-size: 20px;font-family: serif;">
-                                                <a href="profile.jsp?user=<c:out value="${fn:replace(q.firstname,' ','-')}"/>&ID=<c:out value="${q.id}"/>"><c:out value="${beanclass.convertStringUpperToLower(q.firstname)}"/></a>
-                                                <c:if test="${not empty q.higher_edu}">
-                                                    <c:out value="${q.higher_edu}"/>
-                                                </c:if>,
-                                                <c:out value="${q.date}"/>
-                                            </div>
-                                            <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #7aab87;">
-
-                                                <h1 style="font-size: 20px; ">Ques :<c:out value="${q.question}"/> ?</h1> 
-                                                <c:set var="quesTion" value="${q.question}"/>
-
-                                            </div>
-                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${q.q_id}"/>', 'upvote', 'question');" >Upvote(<c:out value="${q.vote}"/>)</a> &nbsp;&nbsp; 
-                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${q.q_id}"/>', 'downvote', 'question');" >Downvote</a> &nbsp;&nbsp;
-                                            <a href="javascript:void(0)" value="Comment" onclick="showCommentBox()">Comment</a>&nbsp;&nbsp;
-
-                                            View(<c:out value="${q.total_view}"/>)
-                                            <form action="SubmitQuestionComment.jsp" method="get" name="q_com">
-                                                <div class="hidden" id="comment">
-                                                    <input type="hidden" name="session_active_user_id" value="<c:out value="${sessionScope.Session_id_of_user}"/>">
-                                                    <input type="hidden" name="id_of_user_who_posted_question" value="<c:out value="${q.id}"/>">
-                                                    <input type="hidden" name="question_id" value="<c:out value="${q.q_id}"/>">
-                                                    <input type="hidden" name="question" value="<c:out value="${q.question}"/>">
-                                                    <textarea name="comments" rows="3" cols="30" required=""></textarea>
-                                                    <input type="submit" name="sub" value="Send Comment">
+                                    <c:catch var="exp">
+                                        <c:forEach var="q" items="${Question.getQuestion(param.Id)}">
+                                            <c:set scope="page" value="${q.question}" var="current_q_string"/>
+                                            <div class="themeBox" style="height:auto;">
+                                                <div align="left" style="font-size: 15px;font-family: serif;">
+                                                    <c:if test="${q.userType eq 'guest'}">
+                                                        Posted by  <i style="color: red;">${q.userName}</i>
+                                                    </c:if>
+                                                    <c:if test="${q.userType ne 'guest'}">
+                                                        <c:set scope="page" value="${q.userId}" var="user_id_who_asked_question"/>                                                        
+                                                        Posted by <a href="profile.jsp?user=${q.userName}&ID=${q.userId}"> ${word.convertStringUpperToLower(q.fullName)}</a>
+                                                        <c:if test="${not empty q.higherEdu}">
+                                                            (${q.higherEdu})
+                                                        </c:if> 
+                                                    </c:if>   ,
+                                                    <c:choose>
+                                                        <c:when test="${q.days eq 0}">
+                                                            Posted Today
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            Posted ${q.days} days ago
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </div>
-                                            </form>
-                                        </div>
-                                    </c:forEach> 
+                                                <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #ffffcc; " >
+                                                    <h1 style="font-size: 20px;">${q.question}</h1>
+                                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
+                                                        <c:if test="${q.userId eq sessionScope.Session_id_of_user}">
+                                                            <a href="edit_q.jsp?Id=${q.questionId}&q=${q.question}"/>edit</a>
+                                                        </c:if>
+                                                    </c:if>                                                   
+                                                </div>
+                                                <div class="questionArea">
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
+                                                    <a href="javascript:void(0)" value="Comment" onclick="showCommentBox()">Comment</a>&nbsp;&nbsp;
+                                                    <a href="javascript:void(0)">View(${q.totalView})</a>
+                                                    <form action="SubmitQuestionComment.jsp" method="get" name="q_com">
+                                                        <div class="hidden" id="comment">
+                                                            <input type="hidden" name="session_active_user_id" value="<c:out value="${sessionScope.Session_id_of_user}"/>">
+                                                            <input type="hidden" name="id_of_user_who_posted_question" value="<c:out value="${q.userId}"/>">
+                                                            <input type="hidden" name="question_id" value="<c:out value="${q.questionId}"/>">
+                                                            <input type="hidden" name="question" value="<c:out value="${q.question}"/>">
+                                                            <textarea name="comments" rows="3" cols="30" required=""></textarea>
+                                                            <input type="submit" name="sub" value="Send Comment">
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
+                                    </c:catch>
+                                    <c:if test="${exp ne null}">
+                                        ${exp}
+                                    </c:if>   
                                 </c:if>
 
                                 <!-- Comment on question -->
-                                <c:if test="${not empty param.Id}">
-                                    <sql:query var="question_comment" dataSource="jdbc/mydatabase">
-                                        SELECT unique_id,user_id,(SELECT firstname FROM newuser WHERE id = comments.user_id )AS fullname,
-                                        q_id,comments,time FROM comments WHERE q_id = ? AND user_id IS NOT NULL AND q_id IS NOT NULL;
-                                        <sql:param value="${param.Id}"/>
-                                    </sql:query>
-                                    <div align="right">
-                                        <c:forEach items="${question_comment.rows}" var="comment">
-                                            <c:out value="${comment.time}"/>,<c:out value="${comment.comments}"/>
-                                            <a href="profile.jsp?user=<c:out value="${fn:replace(comment.fullname,' ','-')}"/>&ID=<c:out value="${comment.user_id}"/>"><c:out value="${beanclass.convertStringUpperToLower(comment.fullname)}"/></a><br>
-                                        </c:forEach>
-                                    </div>
+                                <c:if test="${not empty param.Id}">                                    
+                                    <c:forEach items="${comment.commentsOnQuestion(param.Id)}" var="c">
+                                        <div align="right" style="border-style: groove;">
+                                            ${c.comment} :-
+                                            <a href="profile.jsp?user=${c.userUserName}&ID=${c.userId}">${word.convertStringUpperToLower(c.userFullName)}</a> ${c.time} 
+                                        </div>
+                                    </c:forEach>                                    
                                 </c:if>
                                 <div class="boxHeading marginbot10">Answer:</div>
                                 <!-- Answer of a question -->
                                 <c:if test="${not empty param.Id}">
-                                    <sql:query var="answer" dataSource="jdbc/mydatabase">
-                                        SELECT user.firstname,ans.answer,ans.a_id,ans.Answer_by_id,ans.total_view,ans.vote 
-                                        FROM newuser user RIGHT JOIN answer ans on user.id = ans.Answer_by_id where q_id = ? 
-                                        and a_id is not null order by vote desc;
-                                        <sql:param value="${param.Id}"/>
-                                    </sql:query>
                                     <c:set scope="page" var="ans_count" value="0"/>
-                                    <c:forEach items="${answer.rows}" var="ans" varStatus="loop">
-                                        <sql:update dataSource="jdbc/mydatabase" var="store_view">
-                                            UPDATE answer SET total_view = total_view + 1 WHERE a_id =?;
-                                            <sql:param value="${ans.a_id}"/>
-                                        </sql:update>
+                                    <c:forEach items="${ans.getAnswerById(param.Id)}" var="a" varStatus="loop">
                                         <div class="themeBox" style="height:auto;">
+                                            <div style="padding: 5px; background-color: #BCC6CC; display: inline-block;">
+                                                Answer By : <a href="profile.jsp?user=<c:out value="${a.userName}"/>&ID=${a.userId}"><c:out value="${word.convertStringUpperToLower(a.fullName)}"/></a> 
+                                            </div>
+                                            <c:if test="${sessionScope.Session_id_of_user ne null}">                                                
+                                                <c:if test="${a.userId eq sessionScope.Session_id_of_user}">
+                                                    <div style="padding: 5px; background-color: #BCC6CC; display: inline-block;" align="right">
+                                                        <a href="edit_a.jsp?q=${quesTion}&q_id=<c:out value="${param.Id}"/>&ans_id=<c:out value="${a.answerId}"/>&ans_by_id=<c:out value="${a.userId}"/>">Edit</a>
+                                                    </div>
+                                                </c:if>
+                                            </c:if>
+                                            <br><br>
                                             <div class="boxHeading marginbot10" style="font-size: 15px;font-family: Arial, Helvetica, sans-serif;">
-                                                <c:out value="${ans.answer}" escapeXml="false"/>
+                                                <c:out value="${a.answer}" escapeXml="false"/>
                                                 <c:set scope="page" var="ans_count" value="${loop.count}"/>
                                             </div>
-                                            <div class="questionArea">
-                                                <div class="postedBy">Answer By :<a href="profile.jsp?user=<c:out value="${fn:replace(ans.firstname,' ','-')}"/>&ID=<c:out value="${ans.Answer_by_id}"/>"><c:out value="${beanclass.convertStringUpperToLower(ans.firstname)}"/></a> 
-                                                    &nbsp;&nbsp;&nbsp;&nbsp;
-                                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                                        <c:if test="${ans.Answer_by_id eq sessionScope.Session_id_of_user}">
-                                                            <a href="edit_a.jsp?q=${quesTion}&q_id=<c:out value="${param.Id}"/>&ans_id=<c:out value="${ans.a_id}"/>&ans_by_id=<c:out value="${ans.Answer_by_id}"/>">Edit</a>
-                                                        </c:if>
-                                                    </c:if>
-                                                </div>
-                                            </div>
-                                            <a href="javascript:void(0)" onclick="this.style.color = 'red'; return take_value(this, '<c:out value="${ans.a_id}"/>', 'upvote', 'answer');" >Upvote(<c:out value="${ans.vote}"/>)</a>&nbsp;&nbsp; 
-                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${ans.a_id}"/>', 'downvote', 'answer');" >Downvote</a>&nbsp;&nbsp;
-                                            <a href="javascript:void(0)" value="Comment" onclick="showAns<c:out value="${ans.a_id}"/>CommentBox()">Comment</a>&nbsp;&nbsp;
-                                            <a href="javascript:void(0)">View(<c:out value="${ans.total_view}"/>)</a>
-                                            <form action="SubmitAnswerComment.jsp" method="get">
-                                                <div class="hidden" id="Anscomment<c:out value="${ans.a_id}"/>">
+                                            <a href="javascript:void(0)" onclick="this.style.color = 'red'; return take_value(this, '<c:out value="${a.answerId}"/>', 'upvote', 'answer');" >Upvote(<c:out value="${a.vote}"/>)</a>&nbsp;&nbsp; 
+                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${a.answerId}"/>', 'downvote', 'answer');" >Downvote</a>&nbsp;&nbsp;
+                                            <a href="javascript:void(0)" value="Comment" onclick="showAns<c:out value="${a.answerId}"/>CommentBox()">Comment</a>&nbsp;&nbsp;
+                                            <a href="javascript:void(0)">View(<c:out value="${a.totalView}"/>)</a>
+
+                                            <div class="hidden" id="Anscomment<c:out value="${a.answerId}"/>">
+                                                <form action="SubmitAnswerComment.jsp" method="get">
                                                     <input type="hidden" name="session_active_user_id" value="<c:out value="${sessionScope.Session_id_of_user}"/>">
                                                     <input type="hidden" name="id_of_user_who_posted_question" value="<c:out value="${user_id_who_asked_question}"/>">
-                                                    <input type="hidden" name="answer_id" value="<c:out value="${ans.a_id}"/>">
+                                                    <input type="hidden" name="answer_id" value="<c:out value="${a.answerId}"/>">
                                                     <input type="hidden" name="question_id" value="<c:out value="${param.Id}"/>">
                                                     <input type="hidden" name="question" value="<c:out value="${current_q_string}"/>">
                                                     <textarea name="comments" rows="3" cols="30" required=""></textarea>
                                                     <input type="submit" name="sub" value="Send Comment">
-                                                </div>
-                                            </form>
+                                                </form>
+                                            </div>
 
                                             <script type="text/javascript">
-                                                function showAns<c:out value="${ans.a_id}"/>CommentBox() {
+                                                function showAns<c:out value="${a.answerId}"/>CommentBox() {
                                                 <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                                    var div = document.getElementById('Anscomment<c:out value="${ans.a_id}"/>');
+                                                    var div = document.getElementById('Anscomment<c:out value="${a.answerId}"/>');
                                                     div.className = 'visible';
                                                 </c:if>
                                                 <c:if test="${sessionScope.Session_id_of_user eq null}">
@@ -292,17 +269,17 @@
                                             </script>
                                         </div>
                                         <!-- Comment on Answer -->
-                                        <div align="right">
-                                            <sql:query dataSource="jdbc/mydatabase" var="ans_comment">
-                                                SELECT unique_id,user_id,(SELECT firstname FROM newuser WHERE id = comments.user_id )AS fullname,
-                                                ans_id,comments,time FROM comments WHERE ans_id = ? AND user_id IS NOT NULL AND ans_id IS NOT NULL;
-                                                <sql:param value="${ans.a_id}"/>
-                                            </sql:query>
-                                            <c:forEach var="cmt" items="${ans_comment.rows}">
-                                                <c:out value="${cmt.time}" />, <c:out value="${cmt.comments}" />
-                                                <a href="profile.jsp?user=<c:out value="${fn:replace(cmt.fullname,' ','-')}"/>&ID=<c:out value="${cmt.user_id}"/>"><c:out value="${beanclass.convertStringUpperToLower(cmt.fullname)}"/></a><br>
-                                            </c:forEach>                                               
-                                        </div>
+
+                                        <c:catch var="exp">
+                                            <c:forEach var="cmt" items="${commentOnAnswer.getAnswerCommentByAnswerid(a.answerId)}">
+                                                <div align="right" style="border-style: groove;">
+                                                    ${cmt.comments} : <a href="profile.jsp?user=${cmt.userName}&ID=${cmt.commentPostedById}"><c:out value="${word.convertStringUpperToLower(cmt.fullName)}"/></a> ${cmt.date}
+                                                </div>
+                                            </c:forEach>   
+                                        </c:catch>
+                                        <c:if test="${exp ne null}">
+                                            ${exp}
+                                        </c:if>
                                     </c:forEach>
                                     <c:if test="${ans_count eq 0}" >
                                         <div class="themeBox" style="height:auto;">
@@ -340,10 +317,7 @@
                                         <input type="submit" name="Post" value="Submit"> 
                                     </c:if>                               
                                 </form>
-
-
                                 <div class="clear-fix"></div>
-
                             </div>
 
                         </div>
@@ -354,28 +328,19 @@
                                 </div>
                                 <div>
                                     <c:if test="${not empty param.Id}">
-                                        <sql:query dataSource="jdbc/mydatabase" var="related_question">
-                                            SELECT DISTINCT q.id,q.question,q.q_id FROM question q 
-                                            RIGHT JOIN question_topic_tag qtt ON qtt.question_id=q.q_id 
-                                            WHERE tag_id IN (SELECT DISTINCT(tag_id) AS tag_id 
-                                            FROM question_topic_tag WHERE question_id = ?) AND q_id IS NOT NULL LIMIT 20;
-                                            <sql:param value="${param.Id}"/>
-                                        </sql:query>
                                         <c:set scope="page" value="0" var="count"/>
-                                        <c:forEach items="${related_question.rows}" var="rq" varStatus="loop">
-                                            <c:if test="${rq.q_id ne param.Id}" >
+                                        <c:forEach items="${related.getRelatedQuestionById(param.Id)}" var="rq" varStatus="loop">
+                                            
                                                 <c:set scope="page" value="${loop.count}" var="count"/>
-                                                <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(rq.question,'|',''),' ','-')}"/>&Id=<c:out value="${rq.q_id}"/>" ><c:out value="${rq.question}"/></a><br><br>
-                                            </c:if>                                            
+                                                <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(rq.value,'|',''),' ','-')}"/>&Id=${rq.key}" >${rq.value}</a><br><br>
+                                                                                     
                                         </c:forEach>
                                         <c:if test="${count eq 0}">
                                             <c:out value="No related question found"/>
                                         </c:if>
                                     </c:if>
                                 </div>
-
                             </div>
-
                         </div>
                         <div class="clear-fix"></div>
                         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
@@ -384,11 +349,8 @@
                                     Question you may like
                                 </div>
                                 <div>
-                                    <sql:query dataSource="jdbc/mydatabase" var="random_question">
-                                        select q_id,question from question order by rand() limit 20;
-                                    </sql:query>
-                                    <c:forEach items="${random_question.rows}" var="r_q">
-                                        <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(r_q.question,'|',''),' ','-')}"/>&Id=<c:out value="${r_q.q_id}"/>" ><c:out value="${r_q.question}"/></a><br><br>
+                                    <c:forEach items="${related.getRandomQuestion()}" var="r_q">
+                                        <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(r_q.value,'|',''),' ','-')}"/>&Id=<c:out value="${r_q.key}"/>" ><c:out value="${r_q.value}"/></a><br><br>
                                     </c:forEach>                             
                                 </div>
 

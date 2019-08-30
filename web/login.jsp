@@ -4,6 +4,7 @@
 <%@include file="site.jsp" %>
 <html lang="en">
     <head>
+        <%@include file="googleAnalytics.jsp" %>
         <meta charset="UTF-8">
         <%
             request.setCharacterEncoding("UTF-8");
@@ -87,9 +88,9 @@
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 serachhere" style="display:inline-block;">
                         <div style="overflow: hidden; padding-right: .5em;">
-                            <form action="SearchBar.jsp">
+                            <form action="search.jsp">
                                 <div class="col-md-9">
-                                    <input type="text" style="width: 100%;"  name="search" required="" >
+                                    <input type="text" style="width: 100%;"  name="q" required="" >
                                 </div>
                             </form>
                         </div>

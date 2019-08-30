@@ -36,6 +36,9 @@ public class saveAnswer extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         String answer = request.getParameter("answer");
         int questionId = Integer.parseInt(request.getParameter("qId"));
         int userId = Integer.parseInt(request.getParameter("userId"));
@@ -72,7 +75,7 @@ public class saveAnswer extends HttpServlet {
             ps1.setInt(3, userId);
             ps1.setInt(4, questionId);
             ps1.execute();
-            
+
             response.sendRedirect("Admin/unanswerQuestion.jsp?msg=answer has been successfully saved!!");
 
         } catch (SQLException msg) {
