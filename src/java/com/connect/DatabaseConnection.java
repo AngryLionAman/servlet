@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 /**
  *
- * @author Deny Prasetyo
+ * @author Aman Kumar
  */
 public class DatabaseConnection {
 
@@ -19,9 +19,6 @@ public class DatabaseConnection {
     private String url = "jdbc:mysql://localhost/bharat?useUnicode=true&characterEncoding=utf-8";
     private String username = "root";
     private String password = null;
-    //private String url = "jdbc:mysql://mysql3000.mochahost.com/cse13316_bharat?useUnicode=true&characterEncoding=utf-8";
-    //private String username = "";
-    //private String password = "";
 
     public DatabaseConnection() throws SQLException {
         try {
