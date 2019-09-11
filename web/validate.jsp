@@ -97,7 +97,7 @@
                     response.sendRedirect("index.jsp");
                 }
             } else {
-                response.sendRedirect("Login.jsp?ref=valid");
+                response.sendRedirect("login.jsp?ref=valid");
             }
         } catch (Exception e) {
             out.println(e.getMessage());

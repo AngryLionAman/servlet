@@ -10,6 +10,7 @@
 <jsp:useBean class="com.index.comments" id="comment" scope="page"/>
 <jsp:useBean class="com.index.topicDetals" id="topic" scope="page"/>
 <jsp:useBean class="com.string.name" id="function" scope="page"/>
+<jsp:useBean class="com.advertise.displayAds" id="ads" scope="page"/>
 <html lang="en">
     <style>
         body {font-family: Arial;}
@@ -50,16 +51,15 @@
         <%@include file="googleAnalytics.jsp" %>
         <meta charset="UTF-8">
         <!-- For IE -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <!-- For Resposive Device -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="content-type" content="text/html" charset="utf-8">
         <title>INQUIRYHERE.COM | HOME PAGE</title>
         <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
 
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <!-- responsive style sheet -->
+        <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
+
         <meta property="og:description" content="india's first question answer based social media where experts give 
               you advise and suggestion related to your query .you can ask and share the 
               information which you want to explore.our motive is to be specific according to your demand" />
@@ -71,9 +71,7 @@
         <meta property="og:url" content="https://www.inquiryhere.com/">
         <meta property="og:site_name" content="inquiryhere.com" />
 
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <!-- responsive style sheet -->
-        <link rel="stylesheet" type="text/css" href="css/responsive.css">
+
         <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
         <script type="text/javascript">
@@ -103,7 +101,13 @@
         <style>
             a { color: black; } /* CSS link color */
         </style>
-
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({
+                google_ad_client: "ca-pub-8778688755733551",
+                enable_page_level_ads: true
+            });
+        </script>
     </head>
 
     <body>
@@ -120,12 +124,15 @@
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                             <div class="themeBox">
                                 <div class="row">
-
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                        Also Read
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
                                         <ul>
                                             <li><a href="search.jsp?q=Class 12">Class 12</a></li>
                                             <li><a href="search.jsp?q=Class 11">Class 11</a></li>
                                             <li><a href="search.jsp?q=Class 10">Class 10</a></li>
+                                            <li><a href="search.jsp?q=Class 9">Class 9</a></li>
                                             <li><a href="search.jsp?q=Hindi">Hindi</a></li>
                                             <li><a href="search.jsp?q=English">English</a></li>                                            
                                             <li><a href="search.jsp?q=Political science">Political science</a></li>
@@ -133,9 +140,8 @@
                                             <li><a href="search.jsp?q=Social science">Social science</a></li>
                                         </ul> 
                                     </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
                                         <ul>
-                                            
                                             <li><a href="search.jsp?q=Math">Math</a></li>
                                             <li><a href="search.jsp?q=Physics">Physics</a></li>
                                             <li><a href="search.jsp?q=Chemistry">Chemistry</a></li>
@@ -153,26 +159,31 @@
                                     <div class="boxHeading">
                                         Post something
                                     </div>
-                                    <div><textarea type="text" class="anstext" placeholder="Post you question here" data-toggle="modal" data-target="#myModal" readonly=""></textarea></div>
+                                    <div><textarea type="text" class="anstext" placeholder="Post you question here" data-toggle="modal" data-target="#myModal2" readonly=""></textarea></div>
 
                                     <div class="float-right margintop20" style="vertical-align:bottom">
-                                        <button type="button" class="btn" data-toggle="modal" data-target="#myModal">POST</button>
+                                        <button type="button" class="btn" data-toggle="modal" data-target="#myModal2">POST</button>
                                         <!-- btn-info btn-lg -->
                                     </div>
                                     <div class="clear-fix"></div>
                                 </div>
                             </div>
-
+                            <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js"></script>
+                            <amp-auto-ads type="adsense" data-ad-client="ca-pub-8778688755733551"></amp-auto-ads>
                             <div class="row">
                                 <div class="tab">
-                                    <a href="?tab=recent"> <button class="tablinks">Recent</button></a>
+                                    <a href="<%=request.getContextPath()%>?tab=recent"> <button class="tablinks">Recent</button></a>
                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                        <a href="?tab=related"><button class="tablinks">Related</button></a>   
+                                        <a href="<%=request.getContextPath()%>?tab=related"><button class="tablinks">Related</button></a>   
                                     </c:if>                                         
-                                    <a href="?tab=all"><button class="tablinks">All</button></a>   
+                                    <a href="getAllQuestion"><button class="tablinks">All</button></a>   
+                                    <a href="unanswered"><button class="tablinks">Unanswered</button></a>   
                                 </div>
                                 <c:if test="${param.tab eq null or empty param.tab}">
                                     <c:set var="tab" value="recent" scope="page"/>
+                                </c:if>
+                                <c:if test="${requestScope.tab ne null}">
+                                    <c:set var="tab" value="${requestScope.tab}" scope="page"/>
                                 </c:if>
                                 <c:if test="${param.tab ne null and not empty param.tab}">
                                     <c:choose>
@@ -241,6 +252,7 @@
                                                 </div>
                                             </c:forEach>
                                         </c:catch>
+
                                         <c:if test="${rcExp ne null}">
                                             ${rcExp}
                                         </c:if>                                        
@@ -309,7 +321,7 @@
                                 <c:if test="${tab eq 'all'}"> 
                                     <h4>Question you may like</h4>                                                                                          
                                     <c:catch var="exp">
-                                        <c:forEach var="q" items="${Question.questionYouMayLike()}">
+                                        <c:forEach var="q" items="${list}">
                                             <div class="themeBox" style="height:auto;">
                                                 <div align="left" style="font-size: 15px;font-family: serif;">
                                                     <c:if test="${q.userType eq 'guest'}">
@@ -353,19 +365,120 @@
                                                 </div>
                                             </div>
                                         </c:forEach>
+                                        <c:catch var="msg">
+                                            <c:set value="1" var="pageNo"/>
+                                            <c:if test="${param.p ne null}">
+                                                <c:set value="${param.p}" var="pageNo"/>
+                                            </c:if>
+                                            <c:if test="${pageNo gt 1}">
+                                                <a href="getAllQuestion?p=${pageNo - 1}">Pre</a>&nbsp;
+                                            </c:if>
+                                            <c:if test="${totalNumberOfpage <= 15}">
+                                                <c:forEach begin="1" end="${totalNumberOfpage}" step="1" varStatus="loop">
+                                                    <a href="getAllQuestion?p=${loop.count}">${loop.count}</a>&nbsp;
+                                                </c:forEach>
+                                            </c:if>
+                                            <c:if test="${totalNumberOfpage > 15}">
+                                                <c:forEach begin="1" end="8" step="1" varStatus="loop">
+                                                    <a href="getAllQuestion?p=${loop.count}">${loop.count}</a>&nbsp;
+                                                </c:forEach>
+                                                ......
+                                                <c:set scope="page" value="${totalNumberOfpage - 8}" var="startFrom"/>
+                                                <c:forEach begin="${startFrom}" end="${totalNumberOfpage}" step="1">
+                                                    <a href="getAllQuestion?p=${startFrom}">${startFrom}</a>&nbsp;
+                                                    <c:set scope="page" value="${startFrom + 1}" var="startFrom"/>
+                                                </c:forEach>
+                                            </c:if>
+                                            <c:if test="${pageNo lt totalNumberOfpage}">
+                                                <a href="getAllQuestion?p=${pageNo + 1}">Next</a>&nbsp;
+                                            </c:if>
+                                        </c:catch>
+                                        <c:if test="${msg ne null}">
+                                            ${msg}
+                                        </c:if>
                                     </c:catch>
                                     <c:if test="${exp ne null}">
                                         ${exp}
                                     </c:if>   
                                 </c:if>
                                 <!---------------------------->
+                                <!--*******************Unanswered question************************-->
+                                <c:if test="${tab eq 'unanswered'}"> 
+                                    <h4>Please feel free to answer this question</h4>                                                                                          
+                                    <c:catch var="exp">
+                                        <c:set scope="page" value="0" var="count"/>
+                                        <c:forEach var="q" items="${list}" varStatus="loop">
+                                            <c:set scope="page" value="${loop.count}" var="count"/>
+                                            <div class="themeBox" style="height:auto;">
+                                                <div align="left" style="font-size: 15px;font-family: serif;">
+                                                    <c:if test="${q.userType eq 'guest'}">
+                                                        Posted by  <i style="color: red;">${function.convertStringUpperToLower(q.userName)}</i>
+                                                    </c:if>
+                                                    <c:if test="${q.userType ne 'guest'}">
+                                                        Posted by <a href="profile.jsp?user=${q.userName}&ID=${q.userId}"> ${function.convertStringUpperToLower(q.fullName)}</a>
+                                                        <c:if test="${not empty q.higherEdu}">
+                                                            (${q.higherEdu})
+                                                        </c:if> 
+                                                    </c:if>   ,
+                                                    <c:choose>
+                                                        <c:when test="${q.days eq 0}">
+                                                            Posted Today
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            Posted ${q.days} days ago
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                                <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #ffffcc; " >
+                                                    <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >${q.question} ?</a>
+                                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
+                                                        <c:if test="${q.userId eq sessionScope.Session_id_of_user}">
+                                                            <a href="edit_q.jsp?Id=${q.questionId}&q=${q.question}"/>edit</a>
+                                                        </c:if>
+                                                    </c:if>                                                   
+                                                </div>
+                                                <div class="questionArea">
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
+                                                    <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >Ans(${q.totalAnswer})</a>&nbsp;&nbsp;
+                                                    <a href="javascript:void(0)">View(${q.totalView})</a>
+                                                    <!-- Comment on question -->
+                                                    <c:forEach items="${comment.commentsOnQuestion(q.questionId)}" var="c">
+                                                        <div align="right" style="border-style: groove;">
+                                                            ${c.comment}:-
+                                                            <a href="profile.jsp?user=${c.userUserName}&ID=${c.userId}">${function.convertStringUpperToLower(c.userFullName)}</a>,${c.time}
+                                                        </div>
+                                                    </c:forEach>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
+                                        <c:if test="${count eq 0}">
+                                            <br><br><font style="color: green; font-size: 20px;align-content: center;">Hurry !!! We don't have any unanswered question</font>
+                                        </c:if>
+                                    </c:catch>
+                                    <c:if test="${exp ne null}">
+                                        ${exp}
+                                    </c:if>   
+                                </c:if>
+                                <!---------------------------->
+                                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                                <!-- just down the recent question post -->
+                                <ins class="adsbygoogle"
+                                     style="display:block"
+                                     data-ad-format="fluid"
+                                     data-ad-layout-key="-6t+ed+2i-1n-4w"
+                                     data-ad-client="ca-pub-8778688755733551"
+                                     data-ad-slot="9252283301"></ins>
+                                <script>
+                                                        (adsbygoogle = window.adsbygoogle || []).push({});
+                                </script>
                                 <div class="clear-fix"></div>
                             </div>
 
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" >
                             <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading">
+                                <div class="boxHeading" style="text-align: center; background-color: gold;">
                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
                                         Followed Topic
                                     </c:if>
@@ -377,16 +490,29 @@
                                     <ul>
                                         <c:choose>
                                             <c:when test="${sessionScope.Session_id_of_user ne null}">
-                                                <c:forEach var="t" items="${topic.userFollowedTopic(sessionScope.Session_id_of_user)}">
+                                                <c:set scope="page" value="0" var="count"/>
+                                                <c:forEach var="t" items="${topic.userFollowedTopic(sessionScope.Session_id_of_user)}" varStatus="loop">
+                                                    <c:set scope="page" value="${loop.count}" var="count"/>
                                                     <li>
-                                                        <span title="Total followers of <c:out value="${function.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}"><a href="topic.jsp?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>"><c:out value="${function.convertStringUpperToLower(t.topicName)}"/></a> (<c:out value="${t.totalFollowers}"/>) </span>
+                                                        <span title="Total followers of <c:out value="${function.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}">
+                                                            <a href="topic.jsp?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>">
+                                                                <c:out value="${function.convertStringUpperToLower(t.topicName)}"/>
+                                                            </a> (<c:out value="${t.totalFollowers}"/>) 
+                                                        </span>
                                                     </li>
                                                 </c:forEach>
+                                                <c:if test="${count eq 0}">
+                                                    You are not following any topic or may something went wrong.Please follow at least five topic.
+                                                </c:if>
                                             </c:when>
                                             <c:otherwise>
                                                 <c:forEach var="t" items="${topic.randomTopic(15)}">
                                                     <li>
-                                                        <span title="Total followers of <c:out value="${function.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}"><a href="topic.jsp?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>"><c:out value="${function.convertStringUpperToLower(t.topicName)}"/></a> (<c:out value="${t.totalFollowers}"/>) </span>
+                                                        <span title="Total followers of <c:out value="${function.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}">
+                                                            <a href="topic.jsp?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>">
+                                                                <c:out value="${function.convertStringUpperToLower(t.topicName)}"/>
+                                                            </a> (<c:out value="${t.totalFollowers}"/>) 
+                                                        </span>
                                                     </li>
                                                 </c:forEach>
                                             </c:otherwise>
@@ -396,7 +522,7 @@
                                 </div>
                             </div> 
                             <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading">
+                                <div class="boxHeading" style="text-align: center; background-color: gold;">
                                     Fun Zone
                                 </div>
                                 <div>
@@ -404,11 +530,23 @@
                                 </div>
                             </div>
                             <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading">
+                                <div class="boxHeading" style="text-align: center; background-color: gold;">
                                     Education Zone
                                 </div>
                                 <div>
                                     <jsp:include page="eduZoneList.jsp"/>
+                                </div>
+                            </div>
+                            <div class="themeBox" style="height:auto;">
+                                <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                    Shortcut Key
+                                </div>
+                                <div>
+                                    <ul>
+                                        <li><a href="UserProfile.jsp">Complete User List</a></li>
+                                        <li><a href="FollowMoreTopic.jsp">Complete Topic List</a></li>
+                                        <li><a href="WriteBlogHere.jsp">Write a Blog</a></li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -467,11 +605,8 @@
                 </div>
             </div>
             <jsp:include page="footer.jsp"/>
-            <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
-            <!-- Bootstrap JS -->
-            <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
-            <!-- Bootstrap Select JS -->
-            <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
-        </div> <!-- /.main-page-wrapper -->
+            <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>            <!-- Bootstrap JS -->
+            <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>            <!-- Bootstrap Select JS -->
+            <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>        </div> <!-- /.main-page-wrapper -->
     </body>
 </html>

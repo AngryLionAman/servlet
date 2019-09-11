@@ -15,6 +15,8 @@
  */
 package com.topic;
 
+import java.util.Objects;
+
 /**
  *
  * @author inquiryhere.com
@@ -65,6 +67,55 @@ public class topicPojo {
         this.descEng = descEng;
         this.totalFollowers = totalFollowers;
         this.relatedQuestion = relatedQuestion;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 11 * hash + Objects.hashCode(this.topicName);
+        hash = 11 * hash + this.topicId;
+        hash = 11 * hash + Objects.hashCode(this.imageUrl);
+        hash = 11 * hash + Objects.hashCode(this.descHindi);
+        hash = 11 * hash + Objects.hashCode(this.descEng);
+        hash = 11 * hash + this.totalFollowers;
+        hash = 11 * hash + this.relatedQuestion;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final topicPojo other = (topicPojo) obj;
+        if (this.topicId != other.topicId) {
+            return false;
+        }
+        if (this.totalFollowers != other.totalFollowers) {
+            return false;
+        }
+        if (this.relatedQuestion != other.relatedQuestion) {
+            return false;
+        }
+        if (!Objects.equals(this.topicName, other.topicName)) {
+            return false;
+        }
+        if (!Objects.equals(this.imageUrl, other.imageUrl)) {
+            return false;
+        }
+        if (!Objects.equals(this.descHindi, other.descHindi)) {
+            return false;
+        }
+        if (!Objects.equals(this.descEng, other.descEng)) {
+            return false;
+        }
+        return true;
     }
    
 }

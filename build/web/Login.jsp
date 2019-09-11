@@ -42,16 +42,10 @@
             ${ex}
         </c:if>
        
-        <!-- For IE -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-        <!-- For Resposive Device -->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <title>Login | InquiryHere.com</title>
-
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <!-- responsive style sheet -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"><!-- For IE --> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- For Resposive Device -->
+        <title>Login | inquiryhere.com</title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <style>
             input[type=text] {
@@ -131,7 +125,7 @@
                                     </c:if>
 
                                     <div class="themeBox" style="height:300px;">
-                                        <form action="validate.jsp" method="post" name="form_name">
+                                        <form action="<%=request.getContextPath()%>/validate" method="post" name="form_name">
                                             <% if (request.getParameter("URL") != null) {%>
                                             <input type="hidden" name="URL" value="<%=request.getParameter("URL")%>">
                                             <% }%> 
@@ -150,7 +144,7 @@
                                         </form>
 
                                         <form action="signup.jsp">
-                                            <button class="button button1">Create new account</button>
+                                            <button class="button button1" >Create new account</button>
                                         </form>
                                     </div>
                                 </center>

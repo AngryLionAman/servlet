@@ -4,8 +4,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Progress Report</title>
-        <!--meta http-equiv="refresh" content="3"-->
+        <title>Progress Report</title>        <!--meta http-equiv="refresh" content="3"-->
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
             * {

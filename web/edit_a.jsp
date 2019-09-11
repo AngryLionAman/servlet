@@ -3,6 +3,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html lang="en">
     <head>
+        <%@include file="googleAnalytics.jsp" %>
         <%  //need to validate here
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
@@ -11,15 +12,6 @@
         <meta http-equiv="content-type" content="text/html" charset="utf-8">
           
         <script src="ckeditor/ckeditor.js"></script>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128307055-1"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag('js', new Date());
-            gtag('config', 'UA-128307055-1');
-        </script> 
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">

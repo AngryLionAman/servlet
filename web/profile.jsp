@@ -48,7 +48,8 @@
 <%-----------------------------------------------------------------------%>
 <!DOCTYPE html>
 <html lang="en">
-    <head>         
+    <head>     
+        <%@include file="googleAnalytics.jsp" %>
         <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
         <meta charset="UTF-8">
         <script type="text/javascript">
@@ -62,35 +63,20 @@
             }
         </script>
 
-        <meta charset="UTF-8">
-        <!-- For IE -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-        <!-- For Resposive Device -->
+        <meta charset="UTF-8">        <!-- For IE -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <c:forEach var="user_name" items="${usersql.rows}">
             <title><c:out value="${word.convertStringUpperToLower(user_name.firstname)}"/> - inquiryhere.com</title>
         </c:forEach>
 
-
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <!-- responsive style sheet -->
+        <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <meta property="og:url" content="https://www.inquiryhere.com/" />
         <meta property="og:title" content="Explore the world with your knowladge" />
         <meta property="og:description" content="Explore the world with your knowladge. inquiryhere.com" />
         <meta property="og:type" content="website">
         <meta property="og:locale" content="en_US">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128307055-1"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag('js', new Date());
-
-            gtag('config', 'UA-128307055-1');
-        </script> 
         <script type="text/javascript">
 
             function take_value(el, user_id, id_of_user) {

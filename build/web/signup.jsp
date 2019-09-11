@@ -102,7 +102,7 @@
                 <div class="container clear-fix">
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="padding-left:0px;">
                         <div class="logo float-left">
-                            <a href="index.jsp" style="vertical-align:middle;">
+                            <a href="index.jsp?ref=signup" style="vertical-align:middle;">
                                 <h4>
                                     <div class="logotext">
                                         inquiryhere.com
@@ -116,7 +116,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 serachhere" style="display:inline-block;">
                         <div style="overflow: hidden; padding-right: .5em;">
                             <form action="search.jsp">
-                                <input type="text" style="width: 100%;" name="search" required="" >
+                                <input type="text" style="width: 100%;" name="q" required="" >
                             </form>
                         </div>
                     </div>

@@ -6,17 +6,11 @@
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
-        <meta charset="UTF-8">       
-        <!-- For IE -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-        <!-- For Resposive Device -->
+        <meta charset="UTF-8">               <!-- For IE -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
         <title>Update User Profile | inquiryHere.com</title>
-
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <!-- responsive style sheet -->
+        <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <style>
             input[type=text] {
@@ -51,8 +45,7 @@
         </style>
     </head>
     <body>
-        <div class="main-page-wrapper">
-            <jsp:include page="header.jsp"/>
+        <jsp:include page="header.jsp"/>
             <c:catch var="ex">
                 <c:if test="${sessionScope.Session_id_of_user eq null}">
                     <c:redirect url="login.jsp"/>
@@ -61,6 +54,7 @@
             <c:if test="${ex ne null}">
                 ${ex}
             </c:if>
+        <div class="main-page-wrapper">
             <div class="clear-fix"></div>
             <div class="bodydata">
                 <div class="container clear-fix">
@@ -151,7 +145,6 @@
             </div>
             <div class="clear-fix"></div>
         </div>
-        <div class="clear-fix"></div>
         <jsp:include page="footer.jsp"/>
         <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
         <!-- Bootstrap JS -->

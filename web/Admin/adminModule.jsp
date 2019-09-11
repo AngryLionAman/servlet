@@ -32,6 +32,7 @@
             <li><a href="postQuestion.jsp">Post a question</a></li><br><br>
             <li><a href="topic.jsp">Update the Topic</a></li><br><br>
             <li><a href="modifyQuestion.jsp">Update question and related tag</a></li><br><br>
+            <li><a href="advertise.jsp">Add a product</a></li><br><br>
         </ol>
     </body>
 </html>

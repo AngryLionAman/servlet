@@ -6,6 +6,7 @@
         <c:if test="${sessionScope.Session_id_of_user eq null}">
             <c:redirect url="login.jsp"/>
         </c:if>
+        <%@include file="googleAnalytics.jsp" %>
         <meta charset="UTF-8">
         <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">

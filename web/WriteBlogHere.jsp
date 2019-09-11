@@ -7,18 +7,12 @@
     <head>
         <%@include file="googleAnalytics.jsp" %>
         <script src="ckeditor/ckeditor.js"></script>
-        <meta charset="UTF-8">
-        <!-- For IE -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <!-- For Resposive Device -->
+        <meta charset="UTF-8">        <!-- For IE -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <title>Blog | inquiryhere.com</title>
-
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <!-- responsive style sheet -->
+        <title>Blog - inquiryhere.com</title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
-
     </head>
 
     <body>

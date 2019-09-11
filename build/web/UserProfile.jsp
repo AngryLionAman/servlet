@@ -12,15 +12,10 @@
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
-        <meta charset="UTF-8">       
-
-        <!-- For IE -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-        <!-- For Resposive Device -->
+        <meta charset="UTF-8">               <!-- For IE -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <title>User Profie</title>
+        <title>User Profie - inquiryhere.com</title>
         <meta property="og:description" content="india first knowledge based social media where experts give you advise and suggestion related to your query .you can ask and share the information which you want to explore.our motive is to be specific according to your demand" />
         <meta property="og:image" content="https://www.inquiryhere.com/images/logo/inquiryhere_Logo.PNG" />
         <meta property="og:type" content="website">
@@ -28,11 +23,8 @@
         <meta property="og:title" content="india first knowledge based social media platform where experts give you advise and suggestion related to your query" />
         <meta property="og:url" content="https://www.inquiryhere.com/">
         <meta property="og:site_name" content="https://www.inquiryhere.com/" />
-
-        <!-- Main style sheet -->
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <!-- responsive style sheet -->
-        <link rel="stylesheet" type="text/css" href="css/responsive.css">
+        <link rel="stylesheet" type="text/css" href="css/style.css">  <!-- Main style sheet -->        
+        <link rel="stylesheet" type="text/css" href="css/responsive.css"><!-- responsive style sheet -->
         <script type="text/javascript">
 
             function take_value(el, user_id, id_of_user) {

@@ -7,26 +7,11 @@
     <head>
         <%@include file="googleAnalytics.jsp" %>
         <script src="ckeditor/ckeditor.js"></script>
-        <meta charset="UTF-8">
-        <!-- For IE -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-        <!-- For Resposive Device -->
+        <meta charset="UTF-8">        <!-- For IE -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <!-- responsive style sheet -->
+        <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128307055-1"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag('js', new Date());
-            gtag('config', 'UA-128307055-1');
-        </script> 
-
-
         <c:catch var="ex">
             <c:if test="${param.Blog_Id eq null or empty param.Blog_Id}">
                 <c:redirect url="blog.jsp"/>

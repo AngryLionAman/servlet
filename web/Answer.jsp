@@ -9,6 +9,7 @@
 <jsp:useBean class="com.index.comments" id="comment" scope="page"/>
 <jsp:useBean class="com.answer.SEO" id="SEO" scope="page" />
 <jsp:useBean class="com.question.getQuestion" id="related" scope="page" />
+<jsp:useBean class="com.advertise.displayAds" id="ads" scope="page"/>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="site.jsp" %>
 <html lang="en">
@@ -49,14 +50,10 @@
 
             }
         </script>
-        <script src="ckeditor/ckeditor.js"></script>
-        <!-- For IE -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-        <!-- For Resposive Device -->
+        <script src="ckeditor/ckeditor.js"></script>        <!-- For IE -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <!-- responsive style sheet -->
+        <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <script type="text/javascript">
             function take_value(el, question_answer_id, action, section) {
@@ -100,6 +97,7 @@
             <c:catch var="ex">
                 <c:forEach var="h_seo" items="${SEO.getTitleAndDescripiton(param.Id)}">
                     <title><c:out value="${h_seo.questionTitle}"/>- inquiryhere.com</title>    
+                    <c:set scope="page" value="${h_seo.questionTitle}" var="quesTion"/>
                     <meta property="og:title" content="<c:out value="${h_seo.questionTitle}"/>" />
                     <c:if test="${not empty h_seo.questionDescription and h_seo.questionDescription ne null}">
                         <meta property="og:description" content="<c:out value="${h_seo.questionDescription}"/>"/>
@@ -322,18 +320,37 @@
 
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                             <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                Advertise&nbsp;<a href="ads.jsp" style="size: 10px; font-size: 10px;">(Click here to Advertise with us)</a>
+                            </div>
+                            <div>
+                                <c:catch var="ex">
+                                    <c:forEach items="${ads.displayRandomAds()}" var="a">
+                                        <a href="${a.forwardUrl}" target="_blank"> 
+                                            <img src="images/ads/${a.imageName}" height="${a.imageHeight}" width="${a.imageWidth}" alt="${a.imageAlt}">
+                                        </a>
+                                    </c:forEach>
+                                </c:catch>
+                                <c:if test="${ex ne null}">
+                                    ${ex}
+                                </c:if>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                             <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading">
+                                <div class="boxHeading" style="text-align: center; background-color: gold;">
                                     Related Question
                                 </div>
                                 <div>
                                     <c:if test="${not empty param.Id}">
                                         <c:set scope="page" value="0" var="count"/>
                                         <c:forEach items="${related.getRelatedQuestionById(param.Id)}" var="rq" varStatus="loop">
-                                            
-                                                <c:set scope="page" value="${loop.count}" var="count"/>
-                                                <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(rq.value,'|',''),' ','-')}"/>&Id=${rq.key}" >${rq.value}</a><br><br>
-                                                                                     
+
+                                            <c:set scope="page" value="${loop.count}" var="count"/>
+                                            <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(rq.value,'|',''),' ','-')}"/>&Id=${rq.key}" >${rq.value}</a><br><br>
+
                                         </c:forEach>
                                         <c:if test="${count eq 0}">
                                             <c:out value="No related question found"/>
@@ -345,7 +362,7 @@
                         <div class="clear-fix"></div>
                         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                             <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading">
+                                <div class="boxHeading" style="text-align: center; background-color: gold;">
                                     Question you may like
                                 </div>
                                 <div>
@@ -356,20 +373,31 @@
 
                             </div>
                         </div>
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                            <!-- just down the recent question post -->
+                            <ins class="adsbygoogle"
+                                 style="display:block"
+                                 data-ad-format="fluid"
+                                 data-ad-layout-key="-6t+ed+2i-1n-4w"
+                                 data-ad-client="ca-pub-8778688755733551"
+                                 data-ad-slot="9252283301"></ins>
+                            <script>
+                                                (adsbygoogle = window.adsbygoogle || []).push({});
+                            </script>
+                        </div>
                         <div class="clear-fix"></div>
                     </div>
                     <div class="clear-fix"></div>
                 </div>
                 <div class="clear-fix"></div>
             </div>
+
             <div class="clear-fix"></div>
             <jsp:include page="footer.jsp"/>
-            <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
-            <!-- Bootstrap JS -->
-            <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
-            <!-- Bootstrap Select JS -->
+            <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>            <!-- Bootstrap JS -->
+            <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>            <!-- Bootstrap Select JS -->
             <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
         </div> <!-- /.main-page-wrapper -->
-
     </body>
 </html>

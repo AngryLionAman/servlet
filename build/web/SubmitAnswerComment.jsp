@@ -13,13 +13,6 @@
     request.setCharacterEncoding("UTF-8");
     response.setCharacterEncoding("UTF-8");
 %>
-Session active user : <c:out value="${param.session_active_user_id}"/><br>
-Id of user who posted question : <c:out value="${param.id_of_user_who_posted_question}"/><br>
-Answer  id : <c:out value="${param.answer_id}"/><br>
-question id <c:out value="${param.question_id}"/><br>
-question : <c:out value="${param.question}"/><br>
-comments : <c:out value="${param.comments}"/><br>
-Button value : <c:out value="${param.sub}"/><br>
 <c:if test="${not empty param.session_active_user_id and
               not empty param.answer_id and
               not empty param.question_id and

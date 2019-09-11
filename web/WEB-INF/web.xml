@@ -9,6 +9,26 @@
         <servlet-name>deleteQuestionById</servlet-name>
         <servlet-class>com.admin.question.deleteQuestionById</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>page</servlet-name>
+        <servlet-class>pagination.page</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>saveAdvertise</servlet-name>
+        <servlet-class>com.advertise.saveAdvertise</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>getAllQuestion</servlet-name>
+        <servlet-class>com.question.getAllQuestion</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>unanswered</servlet-name>
+        <servlet-class>com.question.unanswered</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>validate</servlet-name>
+        <servlet-class>com.login.validate</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MyApp</servlet-name>
         <url-pattern>/fbhome</url-pattern>
@@ -32,6 +52,26 @@
     <servlet-mapping>
         <servlet-name>deleteQuestionById</servlet-name>
         <url-pattern>/deleteQuestionById</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>page</servlet-name>
+        <url-pattern>/page</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>saveAdvertise</servlet-name>
+        <url-pattern>/saveAdvertise</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getAllQuestion</servlet-name>
+        <url-pattern>/getAllQuestion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>unanswered</servlet-name>
+        <url-pattern>/unanswered</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>validate</servlet-name>
+        <url-pattern>/validate</url-pattern>
     </servlet-mapping>
     <error-page>
         <error-code>404</error-code>

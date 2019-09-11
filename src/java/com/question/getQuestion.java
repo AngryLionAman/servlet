@@ -28,6 +28,51 @@ import java.util.HashMap;
  */
 public class getQuestion {
 
+    public HashMap<Integer, String> getRandomQuestionByLimit(int limit) throws SQLException {
+        HashMap<Integer, String> map = new HashMap<>();
+        DatabaseConnection dc = new DatabaseConnection();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            String sql = "select q_id as questionid,question from question order by rand() limit ?";
+            con = dc.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, limit);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                int questionId = rs.getInt("questionid");
+                String question = rs.getString("question");
+                map.putIfAbsent(questionId, question);
+            }
+        } catch (SQLException msg) {
+            throw msg;
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException msg) {
+
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException msg) {
+
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException msg) {
+
+                }
+            }
+        }
+        return map;
+
+    }
     public HashMap<Integer, String> getRandomQuestion() throws SQLException {
         HashMap<Integer, String> map = new HashMap<>();
         DatabaseConnection dc = new DatabaseConnection();
