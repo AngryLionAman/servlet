@@ -9,7 +9,6 @@
 <jsp:useBean class="com.index.comments" id="comment" scope="page"/>
 <jsp:useBean class="com.answer.SEO" id="SEO" scope="page" />
 <jsp:useBean class="com.question.getQuestion" id="related" scope="page" />
-<jsp:useBean class="com.advertise.displayAds" id="ads" scope="page"/>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="site.jsp" %>
 <html lang="en">
@@ -50,10 +49,14 @@
 
             }
         </script>
-        <script src="ckeditor/ckeditor.js"></script>        <!-- For IE -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
+        <script src="ckeditor/ckeditor.js"></script>
+        <!-- For IE -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <script type="text/javascript">
             function take_value(el, question_answer_id, action, section) {
@@ -97,7 +100,6 @@
             <c:catch var="ex">
                 <c:forEach var="h_seo" items="${SEO.getTitleAndDescripiton(param.Id)}">
                     <title><c:out value="${h_seo.questionTitle}"/>- inquiryhere.com</title>    
-                    <c:set scope="page" value="${h_seo.questionTitle}" var="quesTion"/>
                     <meta property="og:title" content="<c:out value="${h_seo.questionTitle}"/>" />
                     <c:if test="${not empty h_seo.questionDescription and h_seo.questionDescription ne null}">
                         <meta property="og:description" content="<c:out value="${h_seo.questionDescription}"/>"/>
@@ -122,7 +124,7 @@
 
         <meta property="og:url" content="https://www.inquiryhere.com/Answer.jsp">
         <meta property="og:site_name" content="inquiryhere.com" />
-        <meta property="og:image" content="https://www.inquiryhere.com/images/logo/inquiryhere_Logo.PNG" />
+        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
         <meta property="og:type" content="website">
         <meta property="og:locale" content="en_US">
         <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
@@ -147,7 +149,6 @@
                                     </c:if>
                                 </c:if>
                             </div>
-
                             <div class="row">
                                 <!-- Displaying question and detail section-->
                                 <c:if test="${not empty param.Id}">
@@ -216,6 +217,15 @@
                                         </div>
                                     </c:forEach>                                    
                                 </c:if>
+                                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                                <!-- just down the question and just up the answer on the answer page -->
+                                <ins class="adsbygoogle"
+                                     style="display:inline-block;width:728px;height:50px"
+                                     data-ad-client="ca-pub-8778688755733551"
+                                     data-ad-slot="2387926821"></ins>
+                                <script>
+                                                        (adsbygoogle = window.adsbygoogle || []).push({});
+                                </script>
                                 <div class="boxHeading marginbot10">Answer:</div>
                                 <!-- Answer of a question -->
                                 <c:if test="${not empty param.Id}">
@@ -228,7 +238,7 @@
                                             <c:if test="${sessionScope.Session_id_of_user ne null}">                                                
                                                 <c:if test="${a.userId eq sessionScope.Session_id_of_user}">
                                                     <div style="padding: 5px; background-color: #BCC6CC; display: inline-block;" align="right">
-                                                        <a href="edit_a.jsp?q=${quesTion}&q_id=<c:out value="${param.Id}"/>&ans_id=<c:out value="${a.answerId}"/>&ans_by_id=<c:out value="${a.userId}"/>">Edit</a>
+                                                        <a href="edit_a.jsp?q=${current_q_string}&q_id=<c:out value="${param.Id}"/>&ans_id=<c:out value="${a.answerId}"/>&ans_by_id=<c:out value="${a.userId}"/>">Edit</a>
                                                     </div>
                                                 </c:if>
                                             </c:if>
@@ -237,7 +247,8 @@
                                                 <c:out value="${a.answer}" escapeXml="false"/>
                                                 <c:set scope="page" var="ans_count" value="${loop.count}"/>
                                             </div>
-                                            <a href="javascript:void(0)" onclick="this.style.color = 'red'; return take_value(this, '<c:out value="${a.answerId}"/>', 'upvote', 'answer');" >Upvote(<c:out value="${a.vote}"/>)</a>&nbsp;&nbsp; 
+                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';
+                                                    return take_value(this, '<c:out value="${a.answerId}"/>', 'upvote', 'answer');" >Upvote(<c:out value="${a.vote}"/>)</a>&nbsp;&nbsp; 
                                             <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${a.answerId}"/>', 'downvote', 'answer');" >Downvote</a>&nbsp;&nbsp;
                                             <a href="javascript:void(0)" value="Comment" onclick="showAns<c:out value="${a.answerId}"/>CommentBox()">Comment</a>&nbsp;&nbsp;
                                             <a href="javascript:void(0)">View(<c:out value="${a.totalView}"/>)</a>
@@ -320,57 +331,52 @@
 
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                             <div class="boxHeading" style="text-align: center; background-color: gold;">
-                                Advertise&nbsp;<a href="ads.jsp" style="size: 10px; font-size: 10px;">(Click here to Advertise with us)</a>
-                            </div>
-                            <div>
-                                <c:catch var="ex">
-                                    <c:forEach items="${ads.displayRandomAds()}" var="a">
-                                        <a href="${a.forwardUrl}" target="_blank"> 
-                                            <img src="images/ads/${a.imageName}" height="${a.imageHeight}" width="${a.imageWidth}" alt="${a.imageAlt}">
-                                        </a>
-                                    </c:forEach>
-                                </c:catch>
-                                <c:if test="${ex ne null}">
-                                    ${ex}
-                                </c:if>
-                            </div>
+                            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                            <!-- just up of the related question -->
+                            <ins class="adsbygoogle"
+                                 style="display:block"
+                                 data-ad-client="ca-pub-8778688755733551"
+                                 data-ad-slot="9342130252"
+                                 data-ad-format="auto"
+                                 data-full-width-responsive="true"></ins>
+                            <script>
+                                                (adsbygoogle = window.adsbygoogle || []).push({});
+                            </script>
                         </div>
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="themeBox" style="height:auto;">
+                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                        Related Question
+                                    </div>
+                                    <div>
+                                        <c:if test="${not empty param.Id}">
+                                            <c:set scope="page" value="0" var="count"/>
+                                            <c:forEach items="${related.getRelatedQuestionById(param.Id)}" var="rq" varStatus="loop">
 
+                                                <c:set scope="page" value="${loop.count}" var="count"/>
+                                                <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(rq.value,'|',''),' ','-')}"/>&Id=${rq.key}" >${rq.value}</a><br><br>
 
-                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                            <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading" style="text-align: center; background-color: gold;">
-                                    Related Question
-                                </div>
-                                <div>
-                                    <c:if test="${not empty param.Id}">
-                                        <c:set scope="page" value="0" var="count"/>
-                                        <c:forEach items="${related.getRelatedQuestionById(param.Id)}" var="rq" varStatus="loop">
-
-                                            <c:set scope="page" value="${loop.count}" var="count"/>
-                                            <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(rq.value,'|',''),' ','-')}"/>&Id=${rq.key}" >${rq.value}</a><br><br>
-
-                                        </c:forEach>
-                                        <c:if test="${count eq 0}">
-                                            <c:out value="No related question found"/>
+                                            </c:forEach>
+                                            <c:if test="${count eq 0}">
+                                                <c:out value="No related question found"/>
+                                            </c:if>
                                         </c:if>
-                                    </c:if>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="clear-fix"></div>
-                        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                            <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading" style="text-align: center; background-color: gold;">
-                                    Question you may like
-                                </div>
-                                <div>
-                                    <c:forEach items="${related.getRandomQuestion()}" var="r_q">
-                                        <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(r_q.value,'|',''),' ','-')}"/>&Id=<c:out value="${r_q.key}"/>" ><c:out value="${r_q.value}"/></a><br><br>
-                                    </c:forEach>                             
-                                </div>
+                            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                <div class="themeBox" style="height:auto;">
+                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                        Question you may like
+                                    </div>
+                                    <div>
+                                        <c:forEach items="${related.getRandomQuestion()}" var="r_q">
+                                            <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(r_q.value,'|',''),' ','-')}"/>&Id=<c:out value="${r_q.key}"/>" ><c:out value="${r_q.value}"/></a><br><br>
+                                        </c:forEach>                             
+                                    </div>
 
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
@@ -395,9 +401,13 @@
 
             <div class="clear-fix"></div>
             <jsp:include page="footer.jsp"/>
-            <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>            <!-- Bootstrap JS -->
-            <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>            <!-- Bootstrap Select JS -->
+            <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
+            <!-- Bootstrap JS -->
+            <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
+            <!-- Bootstrap Select JS -->
             <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
         </div> <!-- /.main-page-wrapper -->
+        <!-- Go to www.addthis.com/dashboard to customize your tools -->
+        <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5d7cae45521c6629"></script>
     </body>
 </html>

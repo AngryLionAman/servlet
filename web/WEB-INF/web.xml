@@ -29,6 +29,10 @@
         <servlet-name>validate</servlet-name>
         <servlet-class>com.login.validate</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>getFunData</servlet-name>
+        <servlet-class>com.fun.getFunData</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MyApp</servlet-name>
         <url-pattern>/fbhome</url-pattern>
@@ -72,6 +76,10 @@
     <servlet-mapping>
         <servlet-name>validate</servlet-name>
         <url-pattern>/validate</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getFunData</servlet-name>
+        <url-pattern>/fun</url-pattern>
     </servlet-mapping>
     <error-page>
         <error-code>404</error-code>

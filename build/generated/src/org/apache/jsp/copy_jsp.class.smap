@@ -1,0 +1,15 @@
+SMAP
+copy_jsp.java
+JSP
+*S JSP
+*F
++ 0 copy.jsp
+copy.jsp
++ 1 site.jsp
+site.jsp
+*L
+1,5:59
+2#1,5:15
+5#0:63
+7,30:65
+*E

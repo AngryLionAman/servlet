@@ -5,6 +5,7 @@
 <%@include file="site.jsp" %>
 <html lang="en">
     <head>
+        <%@include file="googleAnalytics.jsp" %>
         <meta charset="UTF-8">  
         <%
             if (session.getAttribute("Session_id_of_user") != null) {
@@ -13,7 +14,7 @@
         %>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Forger Password | InquiryHere.com</title>
+        <title>Forger Password | inquiryhere.com</title>
         <link rel="stylesheet" type="text/css" href="css/style.css">
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <style>

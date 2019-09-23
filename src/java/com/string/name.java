@@ -33,7 +33,7 @@ public class name {
             char[] c = sentence.toCharArray();
             String str1 = "";
             //If you don't use the '=' (equals) then will missed the last char
-            for (int i = 0; i < sentence.length(); i++) {
+            for (int i = 0; i < sentence.length(); i++) {//If String having the extra white space
                 if ((c[i] == ' ' && c[i + 1] != ' ') || (c[i] != ' ')) {
                     str1 += c[i];
                 }

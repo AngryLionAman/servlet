@@ -159,10 +159,10 @@
                                     <div class="boxHeading">
                                         Post something
                                     </div>
-                                    <div><textarea type="text" class="anstext" placeholder="Post you question here" data-toggle="modal" data-target="#myModal2" readonly=""></textarea></div>
+                                    <div><textarea type="text" class="anstext" placeholder="Post you question here" data-toggle="modal" data-target="#myModal" readonly=""></textarea></div>
 
                                     <div class="float-right margintop20" style="vertical-align:bottom">
-                                        <button type="button" class="btn" data-toggle="modal" data-target="#myModal2">POST</button>
+                                        <button type="button" class="btn" data-toggle="modal" data-target="#myModal">POST</button>
                                         <!-- btn-info btn-lg -->
                                     </div>
                                     <div class="clear-fix"></div>
@@ -170,6 +170,15 @@
                             </div>
                             <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js"></script>
                             <amp-auto-ads type="adsense" data-ad-client="ca-pub-8778688755733551"></amp-auto-ads>
+                            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                            <!-- just down the question and just up the answer on the answer page -->
+                            <ins class="adsbygoogle"
+                                 style="display:inline-block;width:728px;height:50px"
+                                 data-ad-client="ca-pub-8778688755733551"
+                                 data-ad-slot="2387926821"></ins>
+                            <script>
+                                        (adsbygoogle = window.adsbygoogle || []).push({});
+                            </script>
                             <div class="row">
                                 <div class="tab">
                                     <a href="<%=request.getContextPath()%>?tab=recent"> <button class="tablinks">Recent</button></a>
@@ -477,6 +486,23 @@
 
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" >
+                            <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                Advertise&nbsp;<a href="ads.jsp" style="size: 10px; font-size: 10px;">(Click here to Advertise with us)</a>
+                            </div>
+                            <div>
+                                <c:catch var="ex">
+                                    <c:forEach items="${ads.displayRandomAds()}" var="a">
+                                        <a href="${a.forwardUrl}" target="_blank"> 
+                                            <img src="images/ads/${a.imageName}" height="${a.imageHeight}" width="${a.imageWidth}" alt="${a.imageAlt}">
+                                        </a>
+                                    </c:forEach>
+                                </c:catch>
+                                <c:if test="${ex ne null}">
+                                    ${ex}
+                                </c:if>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" >
                             <div class="themeBox" style="height:auto;">
                                 <div class="boxHeading" style="text-align: center; background-color: gold;">
                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
@@ -537,6 +563,16 @@
                                     <jsp:include page="eduZoneList.jsp"/>
                                 </div>
                             </div>
+                            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                            <ins class="adsbygoogle"
+                                 style="display:block"
+                                 data-ad-format="fluid"
+                                 data-ad-layout-key="-6t+ed+2i-1n-4w"
+                                 data-ad-client="ca-pub-8778688755733551"
+                                 data-ad-slot="9252283301"></ins>
+                            <script>
+                                                                                    (adsbygoogle = window.adsbygoogle || []).push({});
+                            </script>
                             <div class="themeBox" style="height:auto;">
                                 <div class="boxHeading" style="text-align: center; background-color: gold;">
                                     Shortcut Key

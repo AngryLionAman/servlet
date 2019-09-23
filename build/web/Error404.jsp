@@ -18,5 +18,7 @@
         <h2>Page is missing or has been removed permanent</h2>
         <h2>Please try to search different thing on this site or Contact to administrator</h2>
         <h2>Thanks for you patience</h2>
+        <h2><a href="index.jsp">Click here </a>to index page</h2>
+        <h2>Or, <a href="ContactUs.jsp">Click here to repost this problem</a></h2>
     </body>
 </html>
