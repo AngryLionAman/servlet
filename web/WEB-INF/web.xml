@@ -33,6 +33,22 @@
         <servlet-name>getFunData</servlet-name>
         <servlet-class>com.fun.getFunData</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>saveFunData</servlet-name>
+        <servlet-class>com.fun.saveFunData</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>saveOptionalQuestion</servlet-name>
+        <servlet-class>com.optionalQuestion.saveOptionalQuestion</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>displayOptionalQuestion</servlet-name>
+        <servlet-class>com.optionalQuestion.displayOptionalQuestion</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>updateVoteOfAnswerById</servlet-name>
+        <servlet-class>com.optionalQuestion.updateVoteOfAnswerById</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MyApp</servlet-name>
         <url-pattern>/fbhome</url-pattern>
@@ -80,6 +96,22 @@
     <servlet-mapping>
         <servlet-name>getFunData</servlet-name>
         <url-pattern>/fun</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>saveFunData</servlet-name>
+        <url-pattern>/saveFunData</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>saveOptionalQuestion</servlet-name>
+        <url-pattern>/saveOptionalQuestion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>displayOptionalQuestion</servlet-name>
+        <url-pattern>/optionalquestion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>updateVoteOfAnswerById</servlet-name>
+        <url-pattern>/updateVoteOfAnswerById</url-pattern>
     </servlet-mapping>
     <error-page>
         <error-code>404</error-code>

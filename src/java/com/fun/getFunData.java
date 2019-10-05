@@ -120,7 +120,9 @@ public class getFunData extends HttpServlet {
                     totalNumberOfpage = totalNumberOfpage + 1;
                 }
                 request.setAttribute("list", list);
-                request.setAttribute("totalNumberOfpage", (int) totalNumberOfpage);
+                if (_category.equalsIgnoreCase("all") && _type.equalsIgnoreCase("all") && _basedOn.equalsIgnoreCase("all")) {
+                   request.setAttribute("totalNumberOfpage", (int) totalNumberOfpage); 
+                }
                 request.getRequestDispatcher("fun.jsp").forward(request, response);
             } catch (SQLException msg) {
                 throw msg;

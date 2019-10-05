@@ -11,6 +11,7 @@
 <jsp:useBean class="com.index.topicDetals" id="topic" scope="page"/>
 <jsp:useBean class="com.string.name" id="function" scope="page"/>
 <jsp:useBean class="com.advertise.displayAds" id="ads" scope="page"/>
+<jsp:useBean class="com.fun.helpingFunction" id="fun" scope="page"/>
 <html lang="en">
     <style>
         body {font-family: Arial;}
@@ -63,7 +64,7 @@
         <meta property="og:description" content="india's first question answer based social media where experts give 
               you advise and suggestion related to your query .you can ask and share the 
               information which you want to explore.our motive is to be specific according to your demand" />
-        <meta property="og:image" content="https://www.inquiryhere.com/images/logo/inquiryhere_Logo.PNG" />
+        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
         <meta property="og:type" content="website">
         <meta property="og:locale" content="en_US">
         <meta property="og:title" content="india first knowledge based social media platform where experts give
@@ -124,33 +125,33 @@
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                             <div class="themeBox">
                                 <div class="row">
-                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
-                                        Also Read
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
-                                        <ul>
-                                            <li><a href="search.jsp?q=Class 12">Class 12</a></li>
-                                            <li><a href="search.jsp?q=Class 11">Class 11</a></li>
-                                            <li><a href="search.jsp?q=Class 10">Class 10</a></li>
-                                            <li><a href="search.jsp?q=Class 9">Class 9</a></li>
-                                            <li><a href="search.jsp?q=Hindi">Hindi</a></li>
-                                            <li><a href="search.jsp?q=English">English</a></li>                                            
-                                            <li><a href="search.jsp?q=Political science">Political science</a></li>
-                                            <li><a href="search.jsp?q=Biology">Biology</a></li>
-                                            <li><a href="search.jsp?q=Social science">Social science</a></li>
-                                        </ul> 
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
-                                        <ul>
-                                            <li><a href="search.jsp?q=Math">Math</a></li>
-                                            <li><a href="search.jsp?q=Physics">Physics</a></li>
-                                            <li><a href="search.jsp?q=Chemistry">Chemistry</a></li>
-                                            <li><a href="search.jsp?q=Civics">Civics</a></li>
-                                            <li><a href="search.jsp?q=History">History</a></li>
-                                            <li><a href="search.jsp?q=gk">GK</a></li>
-                                        </ul> 
-                                    </div>
+                                <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                    Also Read
                                 </div>
+                                <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
+                                    <ul>
+                                        <li><a href="search.jsp?q=Class 12">Class 12</a></li>
+                                        <li><a href="search.jsp?q=Class 11">Class 11</a></li>
+                                        <li><a href="search.jsp?q=Class 10">Class 10</a></li>
+                                        <li><a href="search.jsp?q=Class 9">Class 9</a></li>
+                                        <li><a href="search.jsp?q=Hindi">Hindi</a></li>
+                                        <li><a href="search.jsp?q=English">English</a></li>                                            
+                                        <li><a href="search.jsp?q=Political science">Political science</a></li>
+                                        <li><a href="search.jsp?q=Biology">Biology</a></li>
+                                        <li><a href="search.jsp?q=Social science">Social science</a></li>
+                                    </ul> 
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
+                                    <ul>
+                                        <li><a href="search.jsp?q=Math">Math</a></li>
+                                        <li><a href="search.jsp?q=Physics">Physics</a></li>
+                                        <li><a href="search.jsp?q=Chemistry">Chemistry</a></li>
+                                        <li><a href="search.jsp?q=Civics">Civics</a></li>
+                                        <li><a href="search.jsp?q=History">History</a></li>
+                                        <li><a href="search.jsp?q=gk">GK</a></li>
+                                    </ul> 
+                                </div>
+                            </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -177,7 +178,7 @@
                                  data-ad-client="ca-pub-8778688755733551"
                                  data-ad-slot="2387926821"></ins>
                             <script>
-                                        (adsbygoogle = window.adsbygoogle || []).push({});
+            (adsbygoogle = window.adsbygoogle || []).push({});
                             </script>
                             <div class="row">
                                 <div class="tab">
@@ -246,7 +247,8 @@
                                                         </c:if>                                                   
                                                     </div>
                                                     <div class="questionArea">
-                                                        <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
+                                                        <a href="javascript:void(0)" onclick="this.style.color = 'red';
+                                                                return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
                                                         <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
                                                         <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >Ans(${q.totalAnswer})</a>&nbsp;&nbsp;
                                                         <a href="javascript:void(0)">View(${q.totalView})</a>
@@ -503,6 +505,7 @@
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" >
+                            <div class="row">
                             <div class="themeBox" style="height:auto;">
                                 <div class="boxHeading" style="text-align: center; background-color: gold;">
                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
@@ -552,15 +555,16 @@
                                     Fun Zone
                                 </div>
                                 <div>
-                                    <jsp:include page="funZoneList.jsp"/>
-                                </div>
-                            </div>
-                            <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading" style="text-align: center; background-color: gold;">
-                                    Education Zone
-                                </div>
-                                <div>
-                                    <jsp:include page="eduZoneList.jsp"/>
+                                    <ul>
+                                        <c:catch var="msg">
+                                            <c:forEach items="${fun.CategoryDetail()}" var="m">
+                                                <li><a href="fun?category=${m}">${function.convertStringUpperToLower(m)}</a></li>
+                                                </c:forEach>
+                                            </c:catch>
+                                            <c:if test="${msg ne null}">
+                                                ${msg}
+                                            </c:if>
+                                    </ul>
                                 </div>
                             </div>
                             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -571,7 +575,7 @@
                                  data-ad-client="ca-pub-8778688755733551"
                                  data-ad-slot="9252283301"></ins>
                             <script>
-                                                                                    (adsbygoogle = window.adsbygoogle || []).push({});
+                                                        (adsbygoogle = window.adsbygoogle || []).push({});
                             </script>
                             <div class="themeBox" style="height:auto;">
                                 <div class="boxHeading" style="text-align: center; background-color: gold;">
@@ -582,12 +586,14 @@
                                         <li><a href="UserProfile.jsp">Complete User List</a></li>
                                         <li><a href="FollowMoreTopic.jsp">Complete Topic List</a></li>
                                         <li><a href="WriteBlogHere.jsp">Write a Blog</a></li>
+                                        <li><a href="optionalquestion">Read Objective Question</a></li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
                         <div class="clear-fix"></div>
+                    </div>
                     </div>
                     <div class="clear-fix"></div>
                 </div>

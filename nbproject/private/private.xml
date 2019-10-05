@@ -3,10 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Project/inquiryhere.com/web/help.jsp</file>
-            <file>file:/D:/Project/inquiryhere.com/web/c/sidebar.jsp</file>
-            <file>file:/D:/Project/inquiryhere.com/web/Answer.jsp</file>
-            <file>file:/D:/Project/inquiryhere.com/web/c/intro.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/question/getAllQuestion.java</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/fun/saveFunData.java</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/fun/funPojo.java</file>
+            <file>file:/D:/Project/inquiryhere.com/web/index.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/fun/getFunData.java</file>
+            <file>file:/D:/Project/inquiryhere.com/web/Admin/postQuestion.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/web/uploadfun.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/web/fun.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/fun/helpingFunction.java</file>
         </group>
     </open-files>
 </project-private>

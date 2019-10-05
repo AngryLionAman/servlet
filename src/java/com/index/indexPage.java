@@ -147,7 +147,7 @@ public class indexPage {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            String sql = "SELECT q.total_view,date(q.posted_time) as date,q.q_id,q.question,q.vote,user.firstname,user.username,user.user_type,user.higher_edu,user.ID as u_ide FROM question q RIGHT JOIN newuser user ON user.id = q.id WHERE q.q_id IS NOT NULL AND q.question IS NOT NULL ORDER BY q_id DESC LIMIT 10";
+            String sql = "SELECT q.total_view,date(q.posted_time) as date,q.q_id,q.question,q.vote,user.firstname,user.username,user.user_type,user.higher_edu,user.ID as u_ide FROM question q RIGHT JOIN newuser user ON user.id = q.id WHERE q.q_id IS NOT NULL AND q.question IS NOT NULL ORDER BY q_id DESC LIMIT 20";
             con = connection.getConnection();
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();

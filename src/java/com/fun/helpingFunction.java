@@ -36,7 +36,7 @@ public class helpingFunction {
         ResultSet rs = null;
         try{
             con = dc.getConnection();
-            String sql = "select distinct category from fun";
+            String sql = "select distinct category from fun where category is not null";
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
             while(rs.next()){

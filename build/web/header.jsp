@@ -52,8 +52,9 @@
                 if (a === null || a === "", a.trim() === "")
                 {
                     return false;
-                } else {
-                    var a = document.forms["Form"]["search"].value;
+                } else
+                {
+                    var a = document.forms["Form"]["q"].value;
                     var http = new XMLHttpRequest();
                     http.open("POST", "<%=DB_AJAX_PATH%>/submit_searched_queary.jsp?searched_queary=" + a, true);
                     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
