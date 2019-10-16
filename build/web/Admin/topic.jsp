@@ -79,6 +79,7 @@
                 <tr>
                     <th>unique_id</th>
                     <th>topic_name</th>
+                    <th>Crawl</th>
                     <th>desc_hindi</th>
                     <th>desc_english</th>
                     <th>image_url</th>
@@ -88,6 +89,7 @@
                     <tr>
                         <td>${t.unique_id}</td>
                         <td>${t.topic_name}</td>
+                        <td>${t.crawl}</td>
                         <td>${t.desc_hindi}</td>
                         <td>${t.desc_english}</td>
                         <td>${t.image_url}</td>

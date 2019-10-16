@@ -15,14 +15,24 @@
  */
 package com.test;
 
+import java.util.Scanner;
+
 /**
  *
  * @author AngryLion
  */
 public class Boy {
-    public static void main(String[] args){
-        Girl call = new Girl();
-        String response = call.Girl("Hello Priya");
-        System.err.println("Response : - "+response);
+
+    public static void main(String[] args) {
+        
+        while (true) {
+            Girl call = new Girl();
+            Scanner input = new Scanner(System.in);
+            System.out.println("Message :- ");
+            String message = input.nextLine();
+            String response = call.Girl(message);
+            System.err.println("Response : - " + response);
+        }
+
     }
 }

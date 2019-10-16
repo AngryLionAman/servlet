@@ -22,15 +22,17 @@
             ${param.topic_desc_hindi}<br>
             ${param.topic_desc_eng}<br>
             ${param.topic_url}<br>
+            ${param.crawl}<br>
             <c:if test="${param.topic_name ne null}">
                 <sql:update var="name" dataSource="jdbc/mydatabase">
-                    update topic set topic_name = ? ,desc_hindi=? ,desc_english=? ,image_url=? where 
+                    update topic set topic_name = ? ,desc_hindi=? ,desc_english=? ,image_url=? ,crawl=? where 
                     unique_id = ?;
 
                     <sql:param value="${param.topic_name}"/>
                     <sql:param value="${param.topic_desc_hindi}"/>
                     <sql:param value="${param.topic_desc_eng}"/>
                     <sql:param value="${param.topic_url}"/>
+                    <sql:param value="${param.crawl}"/>
                     <sql:param value="${param.topicId}"/>
                 </sql:update>
                 <c:if test="${name>=1}">

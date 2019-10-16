@@ -28,8 +28,20 @@ public class topicPojo {
     String imageUrl;
     String descHindi;
     String descEng;
+    boolean crawl;
     int totalFollowers;
     int relatedQuestion;
+
+    public topicPojo(String topicName, int topicId, String imageUrl, String descHindi, String descEng, boolean crawl, int totalFollowers, int relatedQuestion) {
+        this.topicName = topicName;
+        this.topicId = topicId;
+        this.imageUrl = imageUrl;
+        this.descHindi = descHindi;
+        this.descEng = descEng;
+        this.crawl = crawl;
+        this.totalFollowers = totalFollowers;
+        this.relatedQuestion = relatedQuestion;
+    }
 
     public String getTopicName() {
         return topicName;
@@ -51,6 +63,10 @@ public class topicPojo {
         return descEng;
     }
 
+    public boolean isCrawl() {
+        return crawl;
+    }
+
     public int getTotalFollowers() {
         return totalFollowers;
     }
@@ -59,26 +75,17 @@ public class topicPojo {
         return relatedQuestion;
     }
 
-    public topicPojo(String topicName, int topicId, String imageUrl, String descHindi, String descEng, int totalFollowers, int relatedQuestion) {
-        this.topicName = topicName;
-        this.topicId = topicId;
-        this.imageUrl = imageUrl;
-        this.descHindi = descHindi;
-        this.descEng = descEng;
-        this.totalFollowers = totalFollowers;
-        this.relatedQuestion = relatedQuestion;
-    }
-
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 11 * hash + Objects.hashCode(this.topicName);
-        hash = 11 * hash + this.topicId;
-        hash = 11 * hash + Objects.hashCode(this.imageUrl);
-        hash = 11 * hash + Objects.hashCode(this.descHindi);
-        hash = 11 * hash + Objects.hashCode(this.descEng);
-        hash = 11 * hash + this.totalFollowers;
-        hash = 11 * hash + this.relatedQuestion;
+        hash = 61 * hash + Objects.hashCode(this.topicName);
+        hash = 61 * hash + this.topicId;
+        hash = 61 * hash + Objects.hashCode(this.imageUrl);
+        hash = 61 * hash + Objects.hashCode(this.descHindi);
+        hash = 61 * hash + Objects.hashCode(this.descEng);
+        hash = 61 * hash + (this.crawl ? 1 : 0);
+        hash = 61 * hash + this.totalFollowers;
+        hash = 61 * hash + this.relatedQuestion;
         return hash;
     }
 
@@ -95,6 +102,9 @@ public class topicPojo {
         }
         final topicPojo other = (topicPojo) obj;
         if (this.topicId != other.topicId) {
+            return false;
+        }
+        if (this.crawl != other.crawl) {
             return false;
         }
         if (this.totalFollowers != other.totalFollowers) {
@@ -117,5 +127,5 @@ public class topicPojo {
         }
         return true;
     }
-   
+    
 }

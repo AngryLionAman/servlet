@@ -49,9 +49,10 @@ public class topicDetail {
                 String imageUrl = rs.getString("image_url");
                 String descHindi = rs.getString("desc_hindi");
                 String descEng = rs.getString("desc_english");
+                boolean crawl = rs.getBoolean("crawl");
                 int totalFollowers = function.totalFollowersOfTopic(topicId);
                 int relatedQuestion = function.totalRelatedQuestion(topicId);
-                list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, totalFollowers, relatedQuestion));
+                list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, crawl, totalFollowers, relatedQuestion));
             }
         } catch (Exception msg) {
             throw msg;

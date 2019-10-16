@@ -16,10 +16,8 @@
 package com.optionalQuestion;
 
 import com.connect.DatabaseConnection;
-import com.fun.funPojo;
 import com.fun.getFunData;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

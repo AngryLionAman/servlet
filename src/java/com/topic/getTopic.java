@@ -38,7 +38,7 @@ public class getTopic {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            String sql = "select DISTINCT t.unique_id,t.topic_name,t.image_url,t.desc_hindi,t.desc_english from topic t right join question_topic_tag qtt on t.unique_id=qtt.tag_id where question_id IN (select question_id from question_topic_tag where tag_id=?)group by t.unique_id limit 30";
+            String sql = "select DISTINCT t.unique_id,t.topic_name,t.image_url,t.desc_hindi,t.desc_english,t.crawl from topic t right join question_topic_tag qtt on t.unique_id=qtt.tag_id where question_id IN (select question_id from question_topic_tag where tag_id=?)group by t.unique_id limit 30";
             con = connection.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, topicid);
@@ -51,13 +51,14 @@ public class getTopic {
                 String imageUrl = rs.getString("image_url");
                 String descHindi = rs.getString("desc_hindi");
                 String descEng = rs.getString("desc_english");
+                boolean crawl = rs.getBoolean("crawl");
                 int totalFollowers = function.totalFollowersOfTopic(topicId);
                 int relatedQuestion = function.totalRelatedQuestion(topicId);
                 if (list.isEmpty()) {
-                    list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, totalFollowers, relatedQuestion));
+                    list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, crawl, totalFollowers, relatedQuestion));
                 } else {
-                    if (!list.contains(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, totalFollowers, relatedQuestion))) {
-                        list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, totalFollowers, relatedQuestion));
+                    if (!list.contains(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, crawl, totalFollowers, relatedQuestion))) {
+                        list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, crawl, totalFollowers, relatedQuestion));
                     }
                 }
 
@@ -79,10 +80,10 @@ public class getTopic {
                     int totalFollowers = function.totalFollowersOfTopic(topicId);
                     int relatedQuestion = function.totalRelatedQuestion(topicId);
                     if (list.isEmpty()) {
-                        list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, totalFollowers, relatedQuestion));
+                        list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, true, totalFollowers, relatedQuestion));
                     } else {
-                        if (!list.contains(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, totalFollowers, relatedQuestion))) {
-                            list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, totalFollowers, relatedQuestion));
+                        if (!list.contains(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, true, totalFollowers, relatedQuestion))) {
+                            list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, true, totalFollowers, relatedQuestion));
                         }
                     }
                 }

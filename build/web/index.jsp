@@ -13,41 +13,6 @@
 <jsp:useBean class="com.advertise.displayAds" id="ads" scope="page"/>
 <jsp:useBean class="com.fun.helpingFunction" id="fun" scope="page"/>
 <html lang="en">
-    <style>
-        body {font-family: Arial;}
-
-        /* Style the tab */
-        .tab {
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: white;
-        }
-
-        /* Style the buttons inside the tab */
-        .tab button {
-            background-color: inherit;
-            color: black;
-            font-family: serif;
-            float: left;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-            font-size: 17px;
-        }
-
-        /* Change background color of buttons on hover */
-        .tab button:hover {
-            background-color: #ddd;
-        }
-
-        /* Create an active/current tablink class */
-        .tab button.active {
-            background-color: #ccc;
-        }
-
-    </style>
     <head>  
         <%@include file="googleAnalytics.jsp" %>
         <meta charset="UTF-8">
@@ -56,7 +21,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="content-type" content="text/html" charset="utf-8">
         <title>INQUIRYHERE.COM | HOME PAGE</title>
-        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
+        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png" />
+        <link rel="canonical" href="https://www.inquiryhere.com" />
 
         <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
@@ -71,9 +37,6 @@
               you advise and suggestion related to your query" />
         <meta property="og:url" content="https://www.inquiryhere.com/">
         <meta property="og:site_name" content="inquiryhere.com" />
-
-
-        <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
         <script type="text/javascript">
             function take_value(el, question_id, sUserid, action) {
@@ -101,6 +64,37 @@
         </script>
         <style>
             a { color: black; } /* CSS link color */
+            /* Style the tab */
+            .tab {
+                overflow: hidden;
+                border: 1px solid #ccc;
+                background-color: white;
+            }
+
+            /* Style the buttons inside the tab */
+            .tab button {
+                background-color: inherit;
+                color: black;
+                font-family: serif;
+                float: left;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+                font-size: 17px;
+            }
+
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+                background-color: #ddd;
+            }
+
+            /* Create an active/current tablink class */
+            .tab button.active {
+                background-color: #ccc;
+            }
+
         </style>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <script>
@@ -125,33 +119,33 @@
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                             <div class="themeBox">
                                 <div class="row">
-                                <div class="boxHeading" style="text-align: center; background-color: gold;">
-                                    Also Read
+                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                        Also Read
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
+                                        <ul>
+                                            <li><a href="search.jsp?q=Class 12">Class 12</a></li>
+                                            <li><a href="search.jsp?q=Class 11">Class 11</a></li>
+                                            <li><a href="search.jsp?q=Class 10">Class 10</a></li>
+                                            <li><a href="search.jsp?q=Class 9">Class 9</a></li>
+                                            <li><a href="search.jsp?q=Hindi">Hindi</a></li>
+                                            <li><a href="search.jsp?q=English">English</a></li>                                            
+                                            <li><a href="search.jsp?q=Political science">Political science</a></li>
+                                            <li><a href="search.jsp?q=Biology">Biology</a></li>
+                                            <li><a href="search.jsp?q=Social science">Social science</a></li>
+                                        </ul> 
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
+                                        <ul>
+                                            <li><a href="search.jsp?q=Math">Math</a></li>
+                                            <li><a href="search.jsp?q=Physics">Physics</a></li>
+                                            <li><a href="search.jsp?q=Chemistry">Chemistry</a></li>
+                                            <li><a href="search.jsp?q=Civics">Civics</a></li>
+                                            <li><a href="search.jsp?q=History">History</a></li>
+                                            <li><a href="search.jsp?q=gk">GK</a></li>
+                                        </ul> 
+                                    </div>
                                 </div>
-                                <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
-                                    <ul>
-                                        <li><a href="search.jsp?q=Class 12">Class 12</a></li>
-                                        <li><a href="search.jsp?q=Class 11">Class 11</a></li>
-                                        <li><a href="search.jsp?q=Class 10">Class 10</a></li>
-                                        <li><a href="search.jsp?q=Class 9">Class 9</a></li>
-                                        <li><a href="search.jsp?q=Hindi">Hindi</a></li>
-                                        <li><a href="search.jsp?q=English">English</a></li>                                            
-                                        <li><a href="search.jsp?q=Political science">Political science</a></li>
-                                        <li><a href="search.jsp?q=Biology">Biology</a></li>
-                                        <li><a href="search.jsp?q=Social science">Social science</a></li>
-                                    </ul> 
-                                </div>
-                                <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
-                                    <ul>
-                                        <li><a href="search.jsp?q=Math">Math</a></li>
-                                        <li><a href="search.jsp?q=Physics">Physics</a></li>
-                                        <li><a href="search.jsp?q=Chemistry">Chemistry</a></li>
-                                        <li><a href="search.jsp?q=Civics">Civics</a></li>
-                                        <li><a href="search.jsp?q=History">History</a></li>
-                                        <li><a href="search.jsp?q=gk">GK</a></li>
-                                    </ul> 
-                                </div>
-                            </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -160,10 +154,10 @@
                                     <div class="boxHeading">
                                         Post something
                                     </div>
-                                    <div><textarea type="text" class="anstext" placeholder="Post you question here" data-toggle="modal" data-target="#myModal" readonly=""></textarea></div>
+                                    <div><textarea type="text" class="anstext" placeholder="Post you question here" data-toggle="modal" data-target="#myModal2" readonly=""></textarea></div>
 
                                     <div class="float-right margintop20" style="vertical-align:bottom">
-                                        <button type="button" class="btn" data-toggle="modal" data-target="#myModal">POST</button>
+                                        <button type="button" class="btn" data-toggle="modal" data-target="#myModal2">POST</button>
                                         <!-- btn-info btn-lg -->
                                     </div>
                                     <div class="clear-fix"></div>
@@ -239,7 +233,7 @@
                                                         </c:choose>
                                                     </div>
                                                     <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #ffffcc; " >
-                                                        <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >${q.question} ?</a>
+                                                        <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >${function.convertStringUpperToLower(q.question)} ?</a>
                                                         <c:if test="${sessionScope.Session_id_of_user ne null}">
                                                             <c:if test="${q.userId eq sessionScope.Session_id_of_user}">
                                                                 <a href="edit_q.jsp?Id=${q.questionId}&q=${q.question}"/>edit</a>
@@ -247,8 +241,7 @@
                                                         </c:if>                                                   
                                                     </div>
                                                     <div class="questionArea">
-                                                        <a href="javascript:void(0)" onclick="this.style.color = 'red';
-                                                                return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
+                                                        <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
                                                         <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
                                                         <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >Ans(${q.totalAnswer})</a>&nbsp;&nbsp;
                                                         <a href="javascript:void(0)">View(${q.totalView})</a>
@@ -298,7 +291,7 @@
                                                     </c:choose>
                                                 </div>
                                                 <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #ffffcc; " >
-                                                    <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >${q.question} ?</a>
+                                                    <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >${function.convertStringUpperToLower(q.question)} ?</a>
                                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
                                                         <c:if test="${q.userId eq sessionScope.Session_id_of_user}">
                                                             <a href="edit_q.jsp?Id=${q.questionId}&q=${q.question}"/>edit</a>
@@ -506,146 +499,100 @@
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" >
                             <div class="row">
-                            <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading" style="text-align: center; background-color: gold;">
-                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                        Followed Topic
-                                    </c:if>
-                                    <c:if test="${sessionScope.Session_id_of_user eq null}">
-                                        Topic you may like
-                                    </c:if>                                  
-                                </div>
-                                <div>
-                                    <ul>
-                                        <c:choose>
-                                            <c:when test="${sessionScope.Session_id_of_user ne null}">
-                                                <c:set scope="page" value="0" var="count"/>
-                                                <c:forEach var="t" items="${topic.userFollowedTopic(sessionScope.Session_id_of_user)}" varStatus="loop">
-                                                    <c:set scope="page" value="${loop.count}" var="count"/>
-                                                    <li>
-                                                        <span title="Total followers of <c:out value="${function.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}">
-                                                            <a href="topic.jsp?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>">
-                                                                <c:out value="${function.convertStringUpperToLower(t.topicName)}"/>
-                                                            </a> (<c:out value="${t.totalFollowers}"/>) 
-                                                        </span>
-                                                    </li>
-                                                </c:forEach>
-                                                <c:if test="${count eq 0}">
-                                                    You are not following any topic or may something went wrong.Please follow at least five topic.
+                                <div class="themeBox" style="height:auto;">
+                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                        <c:if test="${sessionScope.Session_id_of_user ne null}">
+                                            Followed Topic
+                                        </c:if>
+                                        <c:if test="${sessionScope.Session_id_of_user eq null}">
+                                            Topic you may like
+                                        </c:if>                                  
+                                    </div>
+                                    <div>
+                                        <ul>
+                                            <c:choose>
+                                                <c:when test="${sessionScope.Session_id_of_user ne null}">
+                                                    <c:set scope="page" value="0" var="count"/>
+                                                    <c:forEach var="t" items="${topic.userFollowedTopic(sessionScope.Session_id_of_user)}" varStatus="loop">
+                                                        <c:set scope="page" value="${loop.count}" var="count"/>
+                                                        <li>
+                                                            <span title="Total followers of <c:out value="${function.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}">
+                                                                <a href="topic.jsp?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>">
+                                                                    <c:out value="${function.convertStringUpperToLower(t.topicName)}"/>
+                                                                </a> (<c:out value="${t.totalFollowers}"/>) 
+                                                            </span>
+                                                        </li>
+                                                    </c:forEach>
+                                                    <c:if test="${count eq 0}">
+                                                        You are not following any topic or may something went wrong.Please follow at least five topic.
+                                                    </c:if>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:forEach var="t" items="${topic.randomTopic(15)}">
+                                                        <li>
+                                                            <span title="Total followers of <c:out value="${function.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}">
+                                                                <a href="topic.jsp?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>">
+                                                                    <c:out value="${function.convertStringUpperToLower(t.topicName)}"/>
+                                                                </a> (<c:out value="${t.totalFollowers}"/>) 
+                                                            </span>
+                                                        </li>
+                                                    </c:forEach>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            <a href="FollowMoreTopic.jsp">Click here to more topic</a>
+                                        </ul>
+                                    </div>
+                                </div> 
+                                <div class="themeBox" style="height:auto;">
+                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                        Fun Zone
+                                    </div>
+                                    <div>
+                                        <ul>
+                                            <c:catch var="msg">
+                                                <c:forEach items="${fun.CategoryDetail()}" var="m">
+                                                    <li><a href="fun?category=${m}">${function.convertStringUpperToLower(m)}</a></li>
+                                                    </c:forEach>
+                                                </c:catch>
+                                                <c:if test="${msg ne null}">
+                                                    ${msg}
                                                 </c:if>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <c:forEach var="t" items="${topic.randomTopic(15)}">
-                                                    <li>
-                                                        <span title="Total followers of <c:out value="${function.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}">
-                                                            <a href="topic.jsp?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>">
-                                                                <c:out value="${function.convertStringUpperToLower(t.topicName)}"/>
-                                                            </a> (<c:out value="${t.totalFollowers}"/>) 
-                                                        </span>
-                                                    </li>
-                                                </c:forEach>
-                                            </c:otherwise>
-                                        </c:choose>
-                                        <a href="FollowMoreTopic.jsp">Click here to more topic</a>
-                                    </ul>
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div> 
-                            <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading" style="text-align: center; background-color: gold;">
-                                    Fun Zone
-                                </div>
-                                <div>
-                                    <ul>
-                                        <c:catch var="msg">
-                                            <c:forEach items="${fun.CategoryDetail()}" var="m">
-                                                <li><a href="fun?category=${m}">${function.convertStringUpperToLower(m)}</a></li>
-                                                </c:forEach>
-                                            </c:catch>
-                                            <c:if test="${msg ne null}">
-                                                ${msg}
-                                            </c:if>
-                                    </ul>
-                                </div>
-                            </div>
-                            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                            <ins class="adsbygoogle"
-                                 style="display:block"
-                                 data-ad-format="fluid"
-                                 data-ad-layout-key="-6t+ed+2i-1n-4w"
-                                 data-ad-client="ca-pub-8778688755733551"
-                                 data-ad-slot="9252283301"></ins>
-                            <script>
+                                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                                <ins class="adsbygoogle"
+                                     style="display:block"
+                                     data-ad-format="fluid"
+                                     data-ad-layout-key="-6t+ed+2i-1n-4w"
+                                     data-ad-client="ca-pub-8778688755733551"
+                                     data-ad-slot="9252283301"></ins>
+                                <script>
                                                         (adsbygoogle = window.adsbygoogle || []).push({});
-                            </script>
-                            <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading" style="text-align: center; background-color: gold;">
-                                    Shortcut Key
-                                </div>
-                                <div>
-                                    <ul>
-                                        <li><a href="UserProfile.jsp">Complete User List</a></li>
-                                        <li><a href="FollowMoreTopic.jsp">Complete Topic List</a></li>
-                                        <li><a href="WriteBlogHere.jsp">Write a Blog</a></li>
-                                        <li><a href="optionalquestion">Read Objective Question</a></li>
-                                    </ul>
+                                </script>
+                                <div class="themeBox" style="height:auto;">
+                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                        Shortcut Key
+                                    </div>
+                                    <div>
+                                        <ul>
+                                            <li><a href="UserProfile.jsp">Complete User List</a></li>
+                                            <li><a href="FollowMoreTopic.jsp">Complete Topic List</a></li>
+                                            <li><a href="WriteBlogHere.jsp">Write a Blog</a></li>
+                                            <li><a href="optionalquestion">Read Objective Question</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="clear-fix"></div>
-                    </div>
+                            <div class="clear-fix"></div>
+                        </div>
                     </div>
                     <div class="clear-fix"></div>
                 </div>
                 <div class="clear-fix"></div>
             </div>
             <div class="clear-fix"></div>
-
-
-            <div class="modal fade" id="myModal" role="dialog">
-                <div class="modal-dialog">
-
-                    <!-- Modal content-->
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Post your question here</h4>
-                        </div>
-                        <%if (session.getAttribute("Session_id_of_user") != null) {%>
-                        <form name="submitquestion" method="post" action="SubmitQuestion.jsp">
-                            <input type="hidden" name="userid" value="<%=session.getAttribute("Session_id_of_user")%>">
-                            <div class="modal-body">
-                                <div>
-                                    <div>Put your question here</div>
-                                    <textarea type="text" class="anstext" name="question" placeholder="Ex: What is,How to.." required=""></textarea>
-                                </div>
-                                <div class="margintop20">
-                                    <div>Tag suggestion description </div>
-                                    <textarea type="text" class="anstext" name="tag_of_question" placeholder="Ex:Java,Database,c language" required=""></textarea></div>
-                                <!-- <p>Some text in the modal.</p> -->
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn">POST</button>
-                                <button type="button" class="btn btn-default" data-dismiss="modal">CLOSE</button>
-                            </div>
-                        </form>
-                        <%} else {%>
-                        <div class="modal-body">
-                            <div>
-                                <div><h4 style="color: red;">Please login first!!!</h4></div>
-                                <div><a href="login.jsp">Click here to login</a></div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">                                                    
-                            <button type="button" class="btn btn-default" data-dismiss="modal">CLOSE</button>
-                        </div>
-
-                        <% }%>
-                    </div>
-
-                </div>
-            </div>
             <jsp:include page="footer.jsp"/>
             <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>            <!-- Bootstrap JS -->
             <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>            <!-- Bootstrap Select JS -->

@@ -49,6 +49,14 @@
         <servlet-name>updateVoteOfAnswerById</servlet-name>
         <servlet-class>com.optionalQuestion.updateVoteOfAnswerById</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>notification</servlet-name>
+        <servlet-class>com.notifications.notification</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>saveAnswerComment</servlet-name>
+        <servlet-class>com.comments.saveAnswerComment</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MyApp</servlet-name>
         <url-pattern>/fbhome</url-pattern>
@@ -113,6 +121,14 @@
         <servlet-name>updateVoteOfAnswerById</servlet-name>
         <url-pattern>/updateVoteOfAnswerById</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>notification</servlet-name>
+        <url-pattern>/inbox</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>saveAnswerComment</servlet-name>
+        <url-pattern>/saveAnswerComment</url-pattern>
+    </servlet-mapping>
     <error-page>
         <error-code>404</error-code>
         <location>/Error404.jsp</location>
@@ -153,13 +169,6 @@
         <servlet-name>profile</servlet-name>
         <url-pattern>/profile</url-pattern>
     </servlet-mapping>
-    <context-param>
-        <description>Location to store uploaded file</description>
-        <param-name>file-upload</param-name>
-        <param-value>
-            C:\data
-        </param-value>
-    </context-param>
     <servlet-mapping>
         <servlet-name>UploadServlet</servlet-name>
         <url-pattern>/UploadServlet</url-pattern>

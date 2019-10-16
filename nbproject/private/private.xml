@@ -3,15 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/question/getAllQuestion.java</file>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/fun/saveFunData.java</file>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/fun/funPojo.java</file>
+            <file>file:/D:/Project/inquiryhere.com/web/Answer.jsp</file>
             <file>file:/D:/Project/inquiryhere.com/web/index.jsp</file>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/fun/getFunData.java</file>
-            <file>file:/D:/Project/inquiryhere.com/web/Admin/postQuestion.jsp</file>
-            <file>file:/D:/Project/inquiryhere.com/web/uploadfun.jsp</file>
-            <file>file:/D:/Project/inquiryhere.com/web/fun.jsp</file>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/fun/helpingFunction.java</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/answer/SEO.java</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/answer/SEOPojo.java</file>
+            <file>file:/D:/Project/inquiryhere.com/web/testing/linkRegularExpression.jsp</file>
         </group>
     </open-files>
 </project-private>

@@ -39,7 +39,6 @@
         int question_id = resultSet.getInt("question_id");
         int blog_id = resultSet.getInt("blog_id");
         String question = resultSet.getString("question");
-        //String answer = resultSet.getString("answer");
         int userId = resultSet.getInt("followers_id");//who created the notification
         String userFirstName = convertStringUpperToLower(resultSet.getString("firstname"));
         String notification_type = resultSet.getString("notification_type");

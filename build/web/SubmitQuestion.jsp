@@ -15,11 +15,6 @@
             <sql:param value="${fn:trim(param.question)}"/>
             <sql:param value="0"/>
         </sql:update>
-        <sql:update dataSource="jdbc/mydatabase" var="updated_notification_list">
-            INSERT INTO notification(notification_type,followers_id)VALUES(?,?);
-            <sql:param value="submit_question"/>
-            <sql:param value="${param.userid}"/>
-        </sql:update>
         <sql:query dataSource="jdbc/mydatabase" var="get_question_id">
             select * from question where question= ?;
             <sql:param value="${fn:trim(param.question)}" />

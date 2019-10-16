@@ -10,15 +10,11 @@
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
-        <meta charset="UTF-8">
-        <!-- For IE -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-        <!-- For Resposive Device -->
+        <meta charset="UTF-8">        <!-- For IE -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <title>Search | inquiryhere.com</title>
-
+        <title>Search By inquiryhere.com</title>
+<link rel="canonical" href="https://www.inquiryhere.com/search.jsp" />
         <link rel="stylesheet" type="text/css" href="css/style.css">
         <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">

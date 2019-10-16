@@ -20,9 +20,15 @@ package com.answer;
  * @author AngryLion
  */
 public class SEOPojo {
-    int questionId ;
+
+    int questionId;
     String questionTitle;
     String questionDescription;
+    String imageLinkResult;
+
+    public String getImageLinkResult() {
+        return imageLinkResult;
+    }
 
     public int getQuestionId() {
         return questionId;
@@ -34,6 +40,13 @@ public class SEOPojo {
 
     public String getQuestionDescription() {
         return questionDescription;
+    }
+
+    public SEOPojo(int questionId, String questionTitle, String questionDescription, String imageLinkResult) {
+        this.questionId = questionId;
+        this.questionTitle = questionTitle;
+        this.questionDescription = questionDescription;
+        this.imageLinkResult = imageLinkResult;
     }
 
     public SEOPojo(int questionId, String questionTitle, String questionDescription) {

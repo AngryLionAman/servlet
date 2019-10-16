@@ -49,14 +49,10 @@
 
             }
         </script>
-        <script src="ckeditor/ckeditor.js"></script>
-        <!-- For IE -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-        <!-- For Resposive Device -->
+        <script src="ckeditor/ckeditor.js"></script>        <!-- For IE -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <!-- responsive style sheet -->
+        <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <script type="text/javascript">
             function take_value(el, question_answer_id, action, section) {
@@ -109,6 +105,14 @@
                         <meta property="og:description" content="<c:out value="${h_seo.questionTitle}"/>"/>
                         <meta property="description" content="<c:out value="${h_seo.questionTitle}"/>"/>
                     </c:if>
+                    <c:choose>
+                        <c:when test="${not empty h_seo.imageLinkResult and h_seo.imageLinkResult ne null}">
+                            <meta property="og:image" content="${h_seo.imageLinkResult}" />                          
+                        </c:when>
+                        <c:otherwise>
+                            <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />    
+                        </c:otherwise>
+                    </c:choose>
                 </c:forEach>
                 <c:set var="myVar" value="inquiryhere.com"/>
                 <c:forEach items="${SEO.getQuestionTag(param.Id)}" var="currentItem" varStatus="stat">
@@ -122,12 +126,11 @@
             </c:if>           
         </c:if>
 
+        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">   
         <meta property="og:url" content="https://www.inquiryhere.com/Answer.jsp">
         <meta property="og:site_name" content="inquiryhere.com" />
-        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
         <meta property="og:type" content="website">
         <meta property="og:locale" content="en_US">
-        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
     </head>
     <body>
         <div class="main-page-wrapper">
@@ -177,7 +180,7 @@
                                                     </c:choose>
                                                 </div>
                                                 <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #ffffcc; " >
-                                                    <h1 style="font-size: 20px;">${q.question}</h1>
+                                                    <h1 style="font-size: 20px;">${word.convertStringUpperToLower(q.question)}</h1>
                                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
                                                         <c:if test="${q.userId eq sessionScope.Session_id_of_user}">
                                                             <a href="edit_q.jsp?Id=${q.questionId}&q=${q.question}"/>edit</a>
@@ -247,14 +250,13 @@
                                                 <c:out value="${a.answer}" escapeXml="false"/>
                                                 <c:set scope="page" var="ans_count" value="${loop.count}"/>
                                             </div>
-                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';
-                                                    return take_value(this, '<c:out value="${a.answerId}"/>', 'upvote', 'answer');" >Upvote(<c:out value="${a.vote}"/>)</a>&nbsp;&nbsp; 
+                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${a.answerId}"/>', 'upvote', 'answer');" >Upvote(<c:out value="${a.vote}"/>)</a>&nbsp;&nbsp; 
                                             <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${a.answerId}"/>', 'downvote', 'answer');" >Downvote</a>&nbsp;&nbsp;
                                             <a href="javascript:void(0)" value="Comment" onclick="showAns<c:out value="${a.answerId}"/>CommentBox()">Comment</a>&nbsp;&nbsp;
                                             <a href="javascript:void(0)">View(<c:out value="${a.totalView}"/>)</a>
 
                                             <div class="hidden" id="Anscomment<c:out value="${a.answerId}"/>">
-                                                <form action="SubmitAnswerComment.jsp" method="get">
+                                                <form action="<%=request.getContextPath()%>/saveAnswerComment" method="post">
                                                     <input type="hidden" name="session_active_user_id" value="<c:out value="${sessionScope.Session_id_of_user}"/>">
                                                     <input type="hidden" name="id_of_user_who_posted_question" value="<c:out value="${user_id_who_asked_question}"/>">
                                                     <input type="hidden" name="answer_id" value="<c:out value="${a.answerId}"/>">

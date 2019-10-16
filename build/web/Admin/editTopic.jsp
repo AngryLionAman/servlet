@@ -25,7 +25,6 @@
         <c:forEach items="${topic.topic(param.id)}" var="t">
             <h1>Edit Topic : ${t.topicName}</h1>
             <h3>Topic Id :- <b style="color: green;">${t.topicId}</b></h3>
-            <h3>Total related question :- <b style="color: green;">${t.relatedQuestion}</b> &nbsp;<a href="?display=all&id=${t.topicId}&p=${param.p}">Display All Question</a></h3>
             <h3>Total followers :- <b style="color: green;">${t.totalFollowers}</b></h3>
             <form action="saveTopicDetail.jsp" name="saveTopicDetail">            
                 <input name="p" value="${param.p}" type="hidden"/>
@@ -35,11 +34,15 @@
                     <img src="<c:out value="${t.imageUrl}"/>" alt="Image" height="100" width="100"></h3>
                 <h3>Desc Hindi :- <textarea rows="10" cols="60" name="topic_desc_hindi" placeholder="This is description in hindi">${t.descHindi}</textarea></h3>
                 <h3>Desc English :- <textarea rows="10" cols="60" name="topic_desc_eng" placeholder="This is description in englsih">${t.descEng}</textarea></h3>
-                <input type="submit" value="Update">
+                Crawl Status status :
+                <select name="crawl">
+                    <option value="1" selected="">Display</option>
+                    <option value="0">Not Display</option>
+                </select><br><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="Update">
             </form>    
         </c:forEach>
         <br><br>
-        <c:if test="${param.display ne null and not empty param.display}">
         <sql:query dataSource="jdbc/mydatabase" var="relatedQuestion">
             select q.id,q.question,q.q_id from question q right join question_topic_tag qtt on qtt.question_id=q.q_id where tag_id=?;
             <sql:param value="${param.id}"/>
@@ -58,17 +61,15 @@
                     <td>${q.id}</td>
                     <td><c:forEach items="${tag.getQuestionTag(q.q_id)}" var="t">
                             ${t},&nbsp;
-                    </c:forEach>
+                        </c:forEach>
                     </td>
                 </tr>
             </c:forEach>
         </table>
-
-    </c:if>
-    <br><br>
-    <form name="delete" action="<%=request.getContextPath()%>/deleteTopic" method="get">
-        <input type="hidden" name="topicId" value="${param.id}">
-        <input type="submit" value="delete">
-    </form>
-</body>
+        <br><br>
+        <form name="delete" action="<%=request.getContextPath()%>/deleteTopic" method="get">
+            <input type="hidden" name="topicId" value="${param.id}">
+            <input type="submit" value="delete">
+        </form>
+    </body>
 </html>

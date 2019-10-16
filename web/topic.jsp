@@ -25,19 +25,70 @@
         <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-        <meta charset="UTF-8">
-
-        <!-- For IE -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-        <!-- For Resposive Device -->
+        <meta charset="UTF-8">        <!-- For IE -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>Topic | inquiryhere.com</title>
-
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <!-- responsive style sheet -->
+        <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
+        <%--
+        Getting the data from database
+        --%>
+
+        <c:catch var="ex">
+            <c:if test="${param.id ne null and not empty param.id}">                                                                   
+                <c:forEach items="${tDetail.topic(param.id)}" var="td">
+                    <c:set value="${td.topicId}" var="topicId"/>
+                    <c:set value="${td.topicName}" var="topicName"/>
+                    <c:set value="${td.descHindi}" var="topicDescHindi"/>
+                    <c:set value="${td.descEng}" var="topicDescEng"/>
+                    <c:set value="${td.imageUrl}" var="topicImgUrl"/>
+                    <c:set value="${td.crawl}" var="crawl"/>
+                    <c:set value="${td.relatedQuestion}" var="relatedQuestion"/>
+                    <c:set value="${td.totalFollowers}" var="totalFollowers"/>
+                </c:forEach>
+            </c:if>
+        </c:catch>
+        <c:if test="${ex ne null}">
+            ${ex}
+        </c:if>
+
+        <%--
+       Meta tag For the SEO
+        --%>
+        <title>${word.convertStringUpperToLower(topicName)} Topic | inquiryhere.com</title>
+        <c:catch var="exe">
+            <c:choose>
+                <c:when test="${topicDescEng ne null and not empty topicDescEng}">
+                    <meta property="og:description" content="${topicDescEng}" />
+                </c:when>
+                <c:when test="${topicDescHindi ne null and not empty topicDescHindi}">
+                    <meta property="og:description" content="${topicDescHindi}" />
+                </c:when>
+            </c:choose>
+            <c:if test="${not crawl}">
+                <meta name="robots" content="noindex, nofollow" />
+            </c:if>
+            <c:choose>
+                <c:when test="${topicImgUrl ne null and not empty topicImgUrl}">
+                    <meta property="og:image" content="${topicImgUrl}" />  
+                    <link rel="icon" href="${topicImgUrl}" type="image/png">
+                </c:when>
+                <c:otherwise>
+                    <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
+                    <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
+                </c:otherwise>
+            </c:choose>
+        </c:catch>
+        <c:if test="${exe ne null}">
+            ${exe}
+        </c:if>
+
+        <meta property="og:type" content="website">
+        <meta property="og:locale" content="en_US">
+        <meta property="og:url" content="https://www.inquiryhere.com/topic.jsp">
+        <meta property="og:site_name" content="www.inquiryhere.com" />
+
         <script type="text/javascript">
             function take_value(el, _topic_id, id_of_user) {
             <% if (session.getAttribute("Session_id_of_user") == null) { %>
@@ -75,22 +126,6 @@
                         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                             <div class="row">
                                 <div class="themeBox" style="height:auto;">
-                                    <c:catch var="ex">
-                                        <c:if test="${param.id ne null and not empty param.id}">                                                                   
-                                            <c:forEach items="${tDetail.topic(param.id)}" var="td">
-                                                <c:set value="${td.topicId}" var="topicId"/>
-                                                <c:set value="${td.topicName}" var="topicName"/>
-                                                <c:set value="${td.descHindi}" var="topicDescHindi"/>
-                                                <c:set value="${td.descEng}" var="topicDescEng"/>
-                                                <c:set value="${td.imageUrl}" var="topicImgUrl"/>
-                                                <c:set value="${td.relatedQuestion}" var="relatedQuestion"/>
-                                                <c:set value="${td.totalFollowers}" var="totalFollowers"/>
-                                            </c:forEach>
-                                        </c:if>
-                                    </c:catch>
-                                    <c:if test="${ex ne null}">
-                                        ${ex}
-                                    </c:if>
                                     <center> 
                                         <div class="boxHeading">
                                             <div class="row">

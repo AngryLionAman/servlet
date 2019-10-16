@@ -90,7 +90,8 @@
                 <c:catch var="m">
                     <c:forEach var="u" items="${userdetails.headerUser(sessionScope.Session_id_of_user)}">
                         <a href="logout.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
-                        <a href="profile.jsp?user=${u.userName}&ID=${u.userId}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">
+                        <a href="<%=request.getContextPath()%>/inbox?ID=${u.userId}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 10px;">Inbox</a>
+                        <a href="profile.jsp?user=${u.userName}&ID=${u.userId}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 20px;">
                             <b><c:out value="${fun.firstName(u.fullName)}"/></b>
                         </a>             
                     </c:forEach>    

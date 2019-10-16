@@ -68,7 +68,7 @@ public class guestSaveQuestion extends HttpServlet {
                 questionValidation = false;
             }
             if (tagofQuestion == null || tagofQuestion.isEmpty()) {
-                msg += "<br>Answer can't be empty";
+                msg += "<br>Tag can't be empty";
                 questionTagValidation = false;
             }
             if (questionValidation && questionTagValidation) {

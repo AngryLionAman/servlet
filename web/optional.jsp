@@ -8,7 +8,8 @@
         <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>        
         <meta http-equiv="X-UA-Compatible" content="IE=edge"><!-- For IE -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- For Resposive Device -->
-        <title>Upload Objective Question</title>
+        <title>Upload Objective Question - inquiryhere.com</title>
+        <link rel="canonical" href="https://www.inquiryhere.com/optional.jsp" />
         <link rel="stylesheet" type="text/css" href="css/style.css">        
         <link rel="stylesheet" type="text/css" href="css/responsive.css"><!-- responsive style sheet -->
         <script src="ckeditor/ckeditor.js"></script>
