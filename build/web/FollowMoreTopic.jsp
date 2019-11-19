@@ -4,7 +4,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@include file="site.jsp" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:useBean class="com.followmoretopic.totalQuestion" id="fun" scope="page"/>
 <jsp:useBean class="com.string.name" id="word" scope="page"/>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +13,14 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Follow More Topic | inquiryere.com </title>        <!-- Main style sheet -->
+        <meta property="og:url" content="https://www.inquiryhere.com/FollowMoreTopic.jsp">
+        <meta property="og:site_name" content="inquiryhere.com" />
+        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Follow some topic and get the best result" />
+        <meta property="og:description" content="Follow some topic and get the notification if someone posted question realted to your intrest"/>
+        <meta property="og:locale" content="en_US">
+        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
         <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <script type="text/javascript">
@@ -50,103 +57,64 @@
                         <div class="themeBox" style="height:auto;margin-bottom:0px;">
                             <div class="boxHeading">
                                 Topic, may you like
-                            </div>
-                            <c:catch var="ex">
-                                <c:set var="rowsPerPage" value="100" />
-                                <c:set var="pageNumber" value="1" />
-                                <c:if test="${param.p ne null}">
-                                    <c:set var="pageNumber" value="${param.p}" />
-                                </c:if>
-
-                                <c:set var="start" value="${pageNumber*rowsPerPage-rowsPerPage}"/>
-                                <c:set var="stop" value="${pageNumber*rowsPerPage-1}"/>
-
-                                <sql:query var="topic" dataSource="jdbc/mydatabase" >
-                                    select t.unique_id,t.topic_name,t.image_url,count(tf.user_or_followers_id)as count from topic t left join topic_followers_detail tf on tf.topic_id = t.unique_id group by t.unique_id order by rand();
-                                </sql:query>
-
-                                <c:set var="a">
-                                    <fmt:formatNumber value="${topic.rowCount/rowsPerPage}" maxFractionDigits="0"/>
-                                </c:set>
-
-                                <c:set var="b" value="${topic.rowCount/rowsPerPage}" />
-
-                                <c:choose>
-                                    <c:when test="${a==0}">
-                                        <c:set var="numberOfPages" value="1" scope="page"/>   
-                                    </c:when>
-
-                                    <c:when test="${b>a}">
-                                        <c:set var="xxx" value="${b%a}"/>
-                                        <c:if test="${xxx>0}">
-                                            <c:set var="numberOfPages" value="${b-xxx+1}" scope="page"/>   
-                                        </c:if>
-                                    </c:when>
-
-                                    <c:when test="${a>=b}">
-                                        <c:set var="numberOfPages" value="${a}" scope="page"/>    
-                                    </c:when>
-                                </c:choose>
+                            </div> 
+                            <c:catch var="ex">                       
                                 <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-                                    <c:forEach var="t" items="${topic.rows}" begin="${start}" end="${stop}">
+                                    <c:forEach var="t" items="${list}">
                                         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-4" style="border-style: solid;">
-                                            <c:set var="totalQuestion" value="${fun.totalQestion(t.unique_id)}"/>
-                                            <span title="Totoal followers of ${t.topic_name} is ${t.count} and total question asked related this topic is ${totalQuestion} ">
-                                                <a href=topic.jsp?t=${fn:replace(t.topic_name, ' ', '-')}&id=${t.unique_id}>
+                                            <c:set var="totalQuestion" value="${t.totalQuestion}"/>
+                                            <span title="Totoal followers of ${t.topicName} is ${t.totalFollowers} and total question asked related this topic is ${totalQuestion} ">
+                                                <a href=topic?t=${fn:replace(t.topicName, ' ', '-')}&id=${t.topicId}>
                                                     <c:choose>
-                                                        <c:when test="${t.image_url ne null or not empty t.image_url}">
-                                                            <img src="${t.image_url}" alt="inquiryhere.com" height="100" width="100">
+                                                        <c:when test="${t.imageUrl ne null or not empty t.imageUrl}">
+                                                            <img src="${t.imageUrl}" alt="inquiryhere.com" height="100" width="100">
                                                         </c:when>
                                                         <c:otherwise>
                                                             <img src="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" alt="inquiryhere.com" height="100" width="100">
                                                         </c:otherwise>
                                                     </c:choose> 
-                                                            ${word.convertStringUpperToLower(t.topic_name)}(${totalQuestion})(${t.count})
+                                                    ${word.convertStringUpperToLower(t.topicName)}(${t.totalFollowers})(${t.totalQuestion})
                                                 </a> 
-                                            </span>
-                                            <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                                <sql:query dataSource="jdbc/mydatabase" var="found">
-                                                    SELECT count(*) as cnt FROM topic_followers_detail where topic_id = ? and user_or_followers_id = ? limit 1;
-                                                    <sql:param value="${t.unique_id}"/>
-                                                    <sql:param value="${sessionScope.Session_id_of_user}"/>
-                                                </sql:query>
-                                                <c:forEach items="${found.rows}" var="f" varStatus="loop">
-                                                    <c:set value="${f.cnt}" var="count"/>
-                                                </c:forEach>
-                                                <c:if test="${count eq 1}">
-                                                    <input type="button" value="Unfollow" id="myButton1" onclick="return take_value(this, '${t.unique_id}', '${sessionScope.Session_id_of_user}');" />
-                                                </c:if>
-                                                <c:if test="${count ne 1}">
-                                                    <input type="button" value="follow" id="myButton1" onclick="return take_value(this, '${t.unique_id}', '${sessionScope.Session_id_of_user}');" />
-                                                </c:if>
-                                            </c:if>
-                                            <c:if test="${sessionScope.Session_id_of_user eq null}">
-                                                <input type="button" value="follow" id="myButton1" onclick="alert('Please Login To Follow');" />
-                                            </c:if>
+                                            </span>                                            
                                         </div>
                                     </c:forEach>
-                                </div>
+                                    <c:catch var="msg">
+                                        <c:set value="1" var="pageNo"/>
+                                        <c:if test="${param.p ne null}">
+                                            <c:set value="${param.p}" var="pageNo"/>
+                                        </c:if>
+                                        <c:if test="${pageNo gt 1}">
+                                            <a href="moretopic?p=${pageNo - 1}">Pre</a>&nbsp;
+                                        </c:if>
+                                        <c:if test="${totalNumberOfpage <= 15}">
+                                            <c:forEach begin="1" end="${totalNumberOfpage}" step="1" varStatus="loop">
+                                                <a href="moretopic?p=${loop.count}">${loop.count}</a>&nbsp;
+                                            </c:forEach>
+                                        </c:if>
+                                        <c:if test="${totalNumberOfpage > 15}">
+                                            <c:forEach begin="1" end="8" step="1" varStatus="loop">
+                                                <a href="moretopic?p=${loop.count}">${loop.count}</a>&nbsp;
+                                            </c:forEach>
+                                            ......
+                                            <c:set scope="page" value="${totalNumberOfpage - 8}" var="startFrom"/>
+                                            <c:forEach begin="${startFrom}" end="${totalNumberOfpage}" step="1">
+                                                <a href="moretopic?p=${startFrom}">${startFrom}</a>&nbsp;
+                                                <c:set scope="page" value="${startFrom + 1}" var="startFrom"/>
+                                            </c:forEach>
+                                        </c:if>
+                                        <c:if test="${pageNo lt totalNumberOfpage}">
+                                            <a href="moretopic?p=${pageNo + 1}">Next</a>&nbsp;
+                                        </c:if>
+                                    </c:catch>
+                                    <c:if test="${msg ne null}">
+                                        ${msg}
+                                    </c:if>
+                                    <c:if test="${list eq null or empty list}">
+                                        <c:out value="Click here if you not get the all topic"/>
+                                        <a href="<%=request.getContextPath()%>/moretopic">Get the all topic detail</a>
+                                    </c:if>
+                                </div>  
 
-                                <div class="clear-fix" style="border-style: solid;border-width: 1px;">
-                                    <%--For displaying Previous link --%>
-                                    <c:if test="${pageNumber gt 1}">
-                                        <a href="FollowMoreTopic.jsp?p=${pageNumber - 1}">Previous</a>
-                                    </c:if>
-                                    <c:forEach begin="1" end="${numberOfPages}" var="i">
-                                        <c:choose>
-                                            <c:when test="${i!=pageNumber}">
-                                                <a href="FollowMoreTopic.jsp?p=<c:out value="${i}"/>"><c:out value="${i}"/></a>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <b style="color: red;"><c:out value="${i}"/></b>
-                                            </c:otherwise>        
-                                        </c:choose>       
-                                    </c:forEach>  
-                                    <%--For displaying Next link --%>
-                                    <c:if test="${pageNumber lt numberOfPages}">
-                                        <a href="FollowMoreTopic.jsp?p=${pageNumber + 1}">Next</a>
-                                    </c:if>
-                                </div>   
 
                             </c:catch>
                             <c:if test="${ex ne null}">

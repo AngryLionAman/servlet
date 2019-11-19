@@ -17,6 +17,7 @@ package com.login;
 
 import com.connect.DatabaseConnection;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,7 +41,7 @@ public class validate extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
+        PrintWriter pw = response.getWriter();
         String email = request.getParameter("email").trim();
         String password = request.getParameter("password");
         if (email != null && !email.isEmpty() && password != null && !password.isEmpty()) {
@@ -66,6 +67,7 @@ public class validate extends HttpServlet {
                     }
 
                 } catch (SQLException msg) {
+                    pw.print(msg);
                     throw msg;
                 } finally {
                     if (rs != null) {
@@ -105,20 +107,18 @@ public class validate extends HttpServlet {
                             } catch (Exception msg) {
                                 throw msg;
                             }
-                            if (request.getParameter("URL") != null) {
-                                request.getRequestDispatcher(request.getParameter("URL")).forward(request, response);
-                            } else {
-                                response.sendRedirect("index.jsp");
-                            }
+                            response.sendRedirect("index.jsp");
                         } else {
                             response.sendRedirect("login.jsp?ref=valid");
                         }
                     } catch (Exception msg) {
-
+                        pw.print(msg);
+                        throw msg;
                     }
                 }
 
             } catch (SQLException ex) {
+                pw.print(ex);
                 Logger.getLogger(validate.class.getName()).log(Level.SEVERE, null, ex);
             }
 

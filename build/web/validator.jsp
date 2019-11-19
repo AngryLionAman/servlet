@@ -7,8 +7,7 @@
                 return final_word[0].substring(0, 1).toUpperCase() + final_word[0].substring(1).toLowerCase();
             } else {
                 return null;
-            }
-
+            } 
         } catch (Exception msg) {
             return msg.toString();
         }

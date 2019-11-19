@@ -37,7 +37,7 @@ public class displayNotification {
         ResultSet resultSet = null;
         try {
             con = dc.getConnection();
-            String sql = "SELECT unique_id,user_id,user_email,notification_type,followers_id,(SELECT firstname FROM newuser WHERE id = notification.followers_id)AS firstname,question_id,(SELECT question FROM question WHERE q_id = notification.question_id)AS QUESTION,ans_id,blog_id,time FROM notification WHERE user_id = ? ORDER BY unique_id DESC LIMIT 10";
+            String sql = "SELECT unique_id,user_id,user_email,notification_type,followers_id,(SELECT firstname FROM newuser WHERE id = notification.followers_id)AS firstname,question_id,(SELECT question FROM question WHERE q_id = notification.question_id)AS QUESTION,ans_id,blog_id,time FROM notification WHERE user_id = ? ORDER BY unique_id DESC LIMIT 20";
             ps = con.prepareStatement(sql);
             ps.setInt(1, UserId);
             resultSet = ps.executeQuery();

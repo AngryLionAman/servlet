@@ -57,6 +57,62 @@
         <servlet-name>saveAnswerComment</servlet-name>
         <servlet-class>com.comments.saveAnswerComment</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>saveQuestionComment</servlet-name>
+        <servlet-class>com.comments.saveQuestionComment</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>vote</servlet-name>
+        <servlet-class>com.comments.vote.vote</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>moretopic</servlet-name>
+        <servlet-class>com.topic.moretopic</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>topic</servlet-name>
+        <servlet-class>com.topic.topic</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>blog</servlet-name>
+        <servlet-class>com.blog.blog</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>saveBlogComment</servlet-name>
+        <servlet-class>com.comments.saveBlogComment</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>textads</servlet-name>
+        <servlet-class>com.advertise.textads</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>saveblog</servlet-name>
+        <servlet-class>com.blog.saveblog</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>createNewUser</servlet-name>
+        <servlet-class>com.user.createNewUser</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>FollowTopicAtAcountCreation</servlet-name>
+        <servlet-class>com.topic.FollowTopicAtAcountCreation</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>saveFollowedTopic</servlet-name>
+        <servlet-class>com.topic.saveFollowedTopic</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>save_answer</servlet-name>
+        <servlet-class>com.answer.saveAnswer.save_answer_servlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>save_answer_servlet</servlet-name>
+        <servlet-class>com.answer.user.saveanswer.save_answer_servlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>savequestion</servlet-name>
+        <servlet-class>com.question.user.savequestion</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MyApp</servlet-name>
         <url-pattern>/fbhome</url-pattern>
@@ -128,6 +184,62 @@
     <servlet-mapping>
         <servlet-name>saveAnswerComment</servlet-name>
         <url-pattern>/saveAnswerComment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>saveQuestionComment</servlet-name>
+        <url-pattern>/answer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>vote</servlet-name>
+        <url-pattern>/vote</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>moretopic</servlet-name>
+        <url-pattern>/moretopic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>topic</servlet-name>
+        <url-pattern>/topic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>blog</servlet-name>
+        <url-pattern>/blog</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>saveBlogComment</servlet-name>
+        <url-pattern>/saveBlogComment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>textads</servlet-name>
+        <url-pattern>/textads</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>saveblog</servlet-name>
+        <url-pattern>/saveblog</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>createNewUser</servlet-name>
+        <url-pattern>/createNewUser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FollowTopicAtAcountCreation</servlet-name>
+        <url-pattern>/FollowTopicAtAcountCreation</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>saveFollowedTopic</servlet-name>
+        <url-pattern>/saveFollowedTopic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>save_answer</servlet-name>
+        <url-pattern>/save_answer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>save_answer_servlet</servlet-name>
+        <url-pattern>/save_answer_servlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>savequestion</servlet-name>
+        <url-pattern>/savequestion</url-pattern>
     </servlet-mapping>
     <error-page>
         <error-code>404</error-code>

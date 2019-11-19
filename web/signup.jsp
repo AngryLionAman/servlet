@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
@@ -5,7 +6,7 @@
         <%@include file="site.jsp" %>
 
         <%
-            if (session.getAttribute("Session_id_of_useril") != null) {
+            if (session.getAttribute("Session_id_of_user") != null) {
                 response.sendRedirect("index.jsp");
             }
         %>
@@ -16,7 +17,15 @@
         <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>SignUp | InquiryHere.com</title>
+        <title>Signup - inquiryhere.com</title>
+        <meta property="og:url" content="https://www.inquiryhere.com/signup.jsp">
+        <meta property="og:site_name" content="www.inquiryhere.com" />
+        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Create an account" />
+        <meta property="og:description" content="Creata an account and get every thing at one place"/>
+        <meta property="og:locale" content="en_US">
+        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
 
         <link rel="stylesheet" type="text/css" href="css/style.css">
         <!-- responsive style sheet -->
@@ -135,6 +144,11 @@
 
                         </div> 
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <c:if test="${message ne null}">
+                                <div class="themeBox" style="font-family: serif;font-variant-position: super;font-size: 25px;text-align: center;background-color: green;color: white;">
+                                        ${message}
+                                    </div>
+                            </c:if>
                             <div class="themeBox" style="height:470px;">
                                 <%
                                     String ErrorMsg = request.getParameter("Error");
@@ -143,7 +157,7 @@
                                     }
                                 %>
                                 <div class="boxHeading">
-                                    <form action="NewUser.jsp" method="post" name="newUser">
+                                    <form action="createNewUser" method="post" name="newUser">
                                         <label for="fname">Full Name &#8628;</label> <a href="help.jsp#fullname">&#10067;</a>                                                                  
                                         <input type="text" id="fname" name="firstname" onkeypress="return onlyAlphabets(event, this);" required="">
                                         <label for="fname">Email/Phone &#8628;</label><a href="help.jsp#emailorphone">&#10067;</a>

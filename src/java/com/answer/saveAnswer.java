@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author inquiryhere.com
  */
 public class saveAnswer extends HttpServlet {
+    //this methode is used for admin panel
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

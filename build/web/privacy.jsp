@@ -4,7 +4,15 @@
         <meta charset="UTF-8">        <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Privacy | InquiryHere.com</title>
+        <title>Privacy -  inquiryhere.com</title>
+        <meta property="og:url" content="https://www.inquiryhere.com/privacy.jsp">
+        <meta property="og:site_name" content="inquiryhere.com" />
+        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="privacy and policy" />
+        <meta property="og:description" content="inquiryhere always care about the user privacy and we naver go against the user privacy"/>
+        <meta property="og:locale" content="en_US">
+        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
         <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>

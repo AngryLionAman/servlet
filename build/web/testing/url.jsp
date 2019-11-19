@@ -9,4 +9,6 @@ if(arg != null){
 %>
 <%=url%><br>
 <%=arg%><br>
-${pageContext.request}
+${pageContext.request}<br>
+<%=request.getContextPath()%><br>
+<a href="<%=request.getContextPath()%>">home page</a>

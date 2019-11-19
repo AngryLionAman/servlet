@@ -13,10 +13,10 @@
 
             </div>
             <c:if test="${sessionScope.Session_id_of_user eq null}">
-                <form name="submitquestion" method="get" action="<%=request.getContextPath()%>/guestSaveQuestion">
+                <form name="form_name_guest_submitquestion" method="get" action="<%=request.getContextPath()%>/guestSaveQuestion">
                 </c:if>
                 <c:if test="${sessionScope.Session_id_of_user ne null}">
-                    <form name="submitquestion" method="post" action="SubmitQuestion.jsp">
+                    <form name="form_name_submitquestion" method="post" action="savequestion">
                         <input type="hidden" name="userid" value="<%=session.getAttribute("Session_id_of_user")%>">
                     </c:if>                        
                     <div class="modal-body">

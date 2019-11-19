@@ -6,6 +6,14 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Contect Us | inquiryhere.com</title>
+        <meta property="og:url" content="https://www.inquiryhere.com/ContactUs.jsp">
+        <meta property="og:site_name" content="www.inquiryhere.com" />
+        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="If you have and query or suggestion please contac us" />
+        <meta property="og:description" content="if you have any query or suggestion, please let us know. Our community always feel happy to help you.we are for you and for the better world"/>
+        <meta property="og:locale" content="en_US">
+        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
         <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
     </head>

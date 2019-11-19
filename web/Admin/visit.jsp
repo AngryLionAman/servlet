@@ -18,8 +18,8 @@
 
     <center>
         <h1>Hello Admin 
-            <c:if test="${param.msg ne null and not empty param.msg}">
-                : ${param.msg}
+            <c:if test="${message ne null}">
+                , ${message}
             </c:if>
         </h1>
         <form action="" method="post">

@@ -27,7 +27,7 @@ public class comments {
         ResultSet rs = null;
         try {
             com = connection.getConnection();
-            String sql = "select c.unique_id,c.comments,date_format(c.time,\"%e %b %Y,%h:%i%p\") as date,user.id,user.firstname,user.username from comments c right join newuser user on user.id = c.user_id where c.q_id = ?";
+            String sql = "select c.unique_id,c.comments,date_format(c.time,\"%e %b %Y,%h:%i%p\") as date,user.id,user.firstname,user.username from comments c right join newuser user on user.id = c.user_id where c.q_id = ? order by 1 desc";
             ps = com.prepareStatement(sql);
             ps.setInt(1, questionId);
             rs = ps.executeQuery();

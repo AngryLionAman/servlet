@@ -9,6 +9,8 @@
 <jsp:useBean class="com.index.comments" id="comment" scope="page"/>
 <jsp:useBean class="com.answer.SEO" id="SEO" scope="page" />
 <jsp:useBean class="com.question.getQuestion" id="related" scope="page" />
+<c:set scope="session" value="${null}" var="userIdForNotification"/>
+<jsp:useBean class="java.util.ArrayList" id="userIdForNotification" scope="session"/>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="site.jsp" %>
 <html lang="en">
@@ -55,48 +57,36 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <script type="text/javascript">
-            function take_value(el, question_answer_id, action, section) {
-            <% if (session.getAttribute("email") == null) { %>
-                alert("Please login first");<%
-                } else {%>
-                el.onclick = function (event) {
-                    event.preventDefault();
-                };
-                if (action === "upvote" && section === "answer") {
+            function take_value(el, question_answer_id, Activer_user_id, action, section) {
+                //alert(el.value + "," + question_answer_id + "," + Activer_user_id + "," + action + "," + section);
+                if (question_answer_id !== "" && Activer_user_id !== "" && action !== "" && section !== "") {
+                    el.onclick = function (event) {
+                        event.preventDefault();
+                    };
                     var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_answer_vote.jsp?question_answer_id=" + question_answer_id + "&action=upvote&section=answer", true);
+                    http.open("POST", "<%=request.getContextPath()%>/vote?question_answer_id=" + question_answer_id + "&activetUserId=" + Activer_user_id + "&action=" + action + "&section=" + section, true);
                     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                     http.send();
+                } else {
+                    alert('Please Login To Vote');
                 }
-                if (action === "downvote" && section === "answer") {
-                    var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_answer_vote.jsp?question_answer_id=" + question_answer_id + "&action=downvote&section=answer", true);
-                    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    http.send();
-                }
-                if (action === "upvote" && section === "question") {
-                    var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_answer_vote.jsp?question_answer_id=" + question_answer_id + "&action=upvote&section=question", true);
-                    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    http.send();
-                }
-                if (action === "downvote" && section === "question") {
-                    var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_answer_vote.jsp?question_answer_id=" + question_answer_id + "&action=downvote&section=question", true);
-                    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    http.send();
-                }
-            <% }%>
             }
         </script>        
-        <c:if test="${empty param.Id or param.Id eq null}">
+        <c:if test="${Id ne null}">
+            <c:set scope="page" value="${Id}" var="questionId"/>
+        </c:if>
+        <c:if test="${not empty param.Id or param.Id ne null}">
+            <c:set scope="page" value="${param.Id}" var="questionId"/>
+        </c:if>
+        <c:if test="${empty questionId or questionId eq null}">
             <c:redirect url = "/?ref=idnotfound"/>
         </c:if>
-        <c:if test="${not empty param.Id}">
+        <c:if test="${questionId ne null}">
             <c:catch var="ex">
-                <c:forEach var="h_seo" items="${SEO.getTitleAndDescripiton(param.Id)}">
+                <c:forEach var="h_seo" items="${SEO.getTitleAndDescripiton(questionId)}">
                     <title><c:out value="${h_seo.questionTitle}"/>- inquiryhere.com</title>    
                     <meta property="og:title" content="<c:out value="${h_seo.questionTitle}"/>" />
+                    <meta property="og:url" content="<c:out value="${h_seo.questionTitle}"/>">
                     <c:if test="${not empty h_seo.questionDescription and h_seo.questionDescription ne null}">
                         <meta property="og:description" content="<c:out value="${h_seo.questionDescription}"/>"/>
                         <meta property="description" content="<c:out value="${h_seo.questionDescription}"/>"/>
@@ -115,7 +105,7 @@
                     </c:choose>
                 </c:forEach>
                 <c:set var="myVar" value="inquiryhere.com"/>
-                <c:forEach items="${SEO.getQuestionTag(param.Id)}" var="currentItem" varStatus="stat">
+                <c:forEach items="${SEO.getQuestionTag(questionId)}" var="currentItem" varStatus="stat">
                     <meta property="article:tag" content="${currentItem}"/>
                     <c:set var="myVar" value="${myVar},${currentItem}"/>
                 </c:forEach>
@@ -127,10 +117,11 @@
         </c:if>
 
         <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">   
-        <meta property="og:url" content="https://www.inquiryhere.com/Answer.jsp">
+
         <meta property="og:site_name" content="inquiryhere.com" />
         <meta property="og:type" content="website">
         <meta property="og:locale" content="en_US">
+
     </head>
     <body>
         <div class="main-page-wrapper">
@@ -141,11 +132,12 @@
                     <div class="row">
                         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                             <div>
-                                <c:if test="${not empty param.Id}">                                    
+
+                                <c:if test="${questionId ne null}">                                    
                                     <c:set scope="page" var="count_tag" value="0"/>
-                                    <c:forEach items="${SEO.getQuestionTagWithId(param.Id)}" var="tag" varStatus="loop">
+                                    <c:forEach items="${SEO.getQuestionTagWithId(questionId)}" var="tag" varStatus="loop">
                                         <c:set scope="page" var="count_tag" value="${loop.count}"/>
-                                        <a style="font-size: 15pt;color: #000210;background: #f0f0f0; border-radius: 5px;padding-top: 0px;padding-bottom: 0px;padding-left: 1px;padding-right: 2px;" href="topic.jsp?t=${fn:replace(tag.value,' ','-')}&id=${tag.key}">${word.convertStringUpperToLower(tag.value)}</a>
+                                        <a style="font-size: 15pt;color: #000210;background: #f0f0f0; border-radius: 5px;padding-top: 0px;padding-bottom: 0px;padding-left: 1px;padding-right: 2px;" href="topic?t=${fn:replace(tag.value,' ','-')}&id=${tag.key}">${word.convertStringUpperToLower(tag.value)}</a>
                                     </c:forEach>
                                     <c:if test="${count_tag eq 0}">
                                         <c:out value=""/><!--old code: if question has no tag...-->
@@ -153,10 +145,10 @@
                                 </c:if>
                             </div>
                             <div class="row">
-                                <!-- Displaying question and detail section-->
-                                <c:if test="${not empty param.Id}">
+                                <!-- Displaying question and details section-->
+                                <c:if test="${not empty questionId}">
                                     <c:catch var="exp">
-                                        <c:forEach var="q" items="${Question.getQuestion(param.Id)}">
+                                        <c:forEach var="q" items="${Question.getQuestion(questionId)}">
                                             <c:set scope="page" value="${q.question}" var="current_q_string"/>
                                             <div class="themeBox" style="height:auto;">
                                                 <div align="left" style="font-size: 15px;font-family: serif;">
@@ -166,6 +158,7 @@
                                                     <c:if test="${q.userType ne 'guest'}">
                                                         <c:set scope="page" value="${q.userId}" var="user_id_who_asked_question"/>                                                        
                                                         Posted by <a href="profile.jsp?user=${q.userName}&ID=${q.userId}"> ${word.convertStringUpperToLower(q.fullName)}</a>
+                                                        <c:set value="${userIdForNotification.add(q.userId)}" var="notNeed"/> 
                                                         <c:if test="${not empty q.higherEdu}">
                                                             (${q.higherEdu})
                                                         </c:if> 
@@ -188,11 +181,11 @@
                                                     </c:if>                                                   
                                                 </div>
                                                 <div class="questionArea">
-                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
-                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote', 'question');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'downvote', 'question');" >Downvote</a>&nbsp;&nbsp; 
                                                     <a href="javascript:void(0)" value="Comment" onclick="showCommentBox()">Comment</a>&nbsp;&nbsp;
                                                     <a href="javascript:void(0)">View(${q.totalView})</a>
-                                                    <form action="SubmitQuestionComment.jsp" method="get" name="q_com">
+                                                    <form action="<%=request.getContextPath()%>/answer" method="post" name="q_com">
                                                         <div class="hidden" id="comment">
                                                             <input type="hidden" name="session_active_user_id" value="<c:out value="${sessionScope.Session_id_of_user}"/>">
                                                             <input type="hidden" name="id_of_user_who_posted_question" value="<c:out value="${q.userId}"/>">
@@ -212,11 +205,15 @@
                                 </c:if>
 
                                 <!-- Comment on question -->
-                                <c:if test="${not empty param.Id}">                                    
-                                    <c:forEach items="${comment.commentsOnQuestion(param.Id)}" var="c">
+                                <c:if test="${questionId ne null}">                                    
+                                    <c:forEach items="${comment.commentsOnQuestion(questionId)}" var="c">
                                         <div align="right" style="border-style: groove;">
                                             ${c.comment} :-
                                             <a href="profile.jsp?user=${c.userUserName}&ID=${c.userId}">${word.convertStringUpperToLower(c.userFullName)}</a> ${c.time} 
+
+                                            <c:if test="${!userIdForNotification.contains(c.userId)}">
+                                                <c:out value="${userIdForNotification.add(c.userId)}"></c:out>
+                                            </c:if>
                                         </div>
                                     </c:forEach>                                    
                                 </c:if>
@@ -225,23 +222,27 @@
                                 <ins class="adsbygoogle"
                                      style="display:inline-block;width:728px;height:50px"
                                      data-ad-client="ca-pub-8778688755733551"
-                                     data-ad-slot="2387926821"></ins>
+                                     data-ad-slot="2387926821">                                         
+                                </ins>
                                 <script>
                                                         (adsbygoogle = window.adsbygoogle || []).push({});
                                 </script>
                                 <div class="boxHeading marginbot10">Answer:</div>
                                 <!-- Answer of a question -->
-                                <c:if test="${not empty param.Id}">
+                                <c:if test="${not empty questionId}">
                                     <c:set scope="page" var="ans_count" value="0"/>
-                                    <c:forEach items="${ans.getAnswerById(param.Id)}" var="a" varStatus="loop">
+                                    <c:forEach items="${ans.getAnswerById(questionId)}" var="a" varStatus="loop">
                                         <div class="themeBox" style="height:auto;">
                                             <div style="padding: 5px; background-color: #BCC6CC; display: inline-block;">
                                                 Answer By : <a href="profile.jsp?user=<c:out value="${a.userName}"/>&ID=${a.userId}"><c:out value="${word.convertStringUpperToLower(a.fullName)}"/></a> 
+                                                <c:if test="${not userIdForNotification.contains(a.userId)}">
+                                                    <c:set value=" ${userIdForNotification.add(a.userId)}" var="notuserd"/>                                                      
+                                                </c:if>
                                             </div>
                                             <c:if test="${sessionScope.Session_id_of_user ne null}">                                                
                                                 <c:if test="${a.userId eq sessionScope.Session_id_of_user}">
                                                     <div style="padding: 5px; background-color: #BCC6CC; display: inline-block;" align="right">
-                                                        <a href="edit_a.jsp?q=${current_q_string}&q_id=<c:out value="${param.Id}"/>&ans_id=<c:out value="${a.answerId}"/>&ans_by_id=<c:out value="${a.userId}"/>">Edit</a>
+                                                        <a href="edit_a.jsp?q=${current_q_string}&q_id=<c:out value="${questionId}"/>&ans_id=<c:out value="${a.answerId}"/>&ans_by_id=<c:out value="${a.userId}"/>">Edit</a>
                                                     </div>
                                                 </c:if>
                                             </c:if>
@@ -250,8 +251,8 @@
                                                 <c:out value="${a.answer}" escapeXml="false"/>
                                                 <c:set scope="page" var="ans_count" value="${loop.count}"/>
                                             </div>
-                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${a.answerId}"/>', 'upvote', 'answer');" >Upvote(<c:out value="${a.vote}"/>)</a>&nbsp;&nbsp; 
-                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${a.answerId}"/>', 'downvote', 'answer');" >Downvote</a>&nbsp;&nbsp;
+                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${a.answerId}"/>', '${sessionScope.Session_id_of_user}', 'upvote', 'answer');" >Upvote(<c:out value="${a.vote}"/>)</a>&nbsp;&nbsp; 
+                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${a.answerId}"/>', '${sessionScope.Session_id_of_user}', 'downvote', 'answer');" >Downvote</a>&nbsp;&nbsp;
                                             <a href="javascript:void(0)" value="Comment" onclick="showAns<c:out value="${a.answerId}"/>CommentBox()">Comment</a>&nbsp;&nbsp;
                                             <a href="javascript:void(0)">View(<c:out value="${a.totalView}"/>)</a>
 
@@ -260,7 +261,7 @@
                                                     <input type="hidden" name="session_active_user_id" value="<c:out value="${sessionScope.Session_id_of_user}"/>">
                                                     <input type="hidden" name="id_of_user_who_posted_question" value="<c:out value="${user_id_who_asked_question}"/>">
                                                     <input type="hidden" name="answer_id" value="<c:out value="${a.answerId}"/>">
-                                                    <input type="hidden" name="question_id" value="<c:out value="${param.Id}"/>">
+                                                    <input type="hidden" name="question_id" value="<c:out value="${questionId}"/>">
                                                     <input type="hidden" name="question" value="<c:out value="${current_q_string}"/>">
                                                     <textarea name="comments" rows="3" cols="30" required=""></textarea>
                                                     <input type="submit" name="sub" value="Send Comment">
@@ -285,6 +286,9 @@
                                             <c:forEach var="cmt" items="${commentOnAnswer.getAnswerCommentByAnswerid(a.answerId)}">
                                                 <div align="right" style="border-style: groove;">
                                                     ${cmt.comments} : <a href="profile.jsp?user=${cmt.userName}&ID=${cmt.commentPostedById}"><c:out value="${word.convertStringUpperToLower(cmt.fullName)}"/></a> ${cmt.date}
+                                                    <c:if test="${not userIdForNotification.contains(cmt.commentPostedById)}">
+                                                        ${userIdForNotification.add(cmt.commentPostedById)}
+                                                    </c:if>
                                                 </div>
                                             </c:forEach>   
                                         </c:catch>
@@ -301,13 +305,14 @@
                                     </c:if>
                                 </c:if>
 
-                                <form name="submitAnswer" method="post" action="SubmitAnswer.jsp">
+                                <form name="Form_name" method="post" action="save_answer_servlet">
                                     <%
                                         String URL = request.getRequestURL() + "?" + request.getQueryString();
                                     %> 
                                     <input type="hidden" name="question" value="<c:out value="${current_q_string}"/>">
                                     <input type="hidden" name="_id_of_user" value="<c:out value="${sessionScope.Session_id_of_user}"/>">
-                                    <input type="hidden" name="q_id" value="${param.Id}">                                        
+                                    <input type="hidden" name="id_of_user_who_posted_question" value="<c:out value="${user_id_who_asked_question}"/>">
+                                    <input type="hidden" name="q_id" value="${questionId}">                                        
                                     <input type="hidden" name="URL" value="<%=URL%>">
                                     <c:if test="${sessionScope.Session_id_of_user eq null}">
                                         <textarea class="ckeditor" name="answer" required="" disabled="" >Please Login to answer........</textarea>
@@ -352,9 +357,9 @@
                                         Related Question
                                     </div>
                                     <div>
-                                        <c:if test="${not empty param.Id}">
+                                        <c:if test="${not empty questionId}">
                                             <c:set scope="page" value="0" var="count"/>
-                                            <c:forEach items="${related.getRelatedQuestionById(param.Id)}" var="rq" varStatus="loop">
+                                            <c:forEach items="${related.getRelatedQuestionById(questionId)}" var="rq" varStatus="loop">
 
                                                 <c:set scope="page" value="${loop.count}" var="count"/>
                                                 <a href="Answer.jsp?q=<c:out value="${fn:replace(fn:replace(rq.value,'|',''),' ','-')}"/>&Id=${rq.key}" >${rq.value}</a><br><br>
@@ -403,10 +408,8 @@
 
             <div class="clear-fix"></div>
             <jsp:include page="footer.jsp"/>
-            <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>
-            <!-- Bootstrap JS -->
-            <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>
-            <!-- Bootstrap Select JS -->
+            <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>           <!-- Bootstrap JS -->
+            <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>            <!-- Bootstrap Select JS -->
             <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
         </div> <!-- /.main-page-wrapper -->
         <!-- Go to www.addthis.com/dashboard to customize your tools -->

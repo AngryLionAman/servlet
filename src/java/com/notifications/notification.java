@@ -45,12 +45,12 @@ public class notification extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             displayNotification n = new displayNotification();
             response.setContentType("text/html;charset=UTF-8");
-            int userId = getInput(request.getParameter("ID"));
+            int userId = getInput(request.getParameter("id"));
             Object noti = n.notification(userId);
             request.setAttribute("notification", noti);
             request.getRequestDispatcher("inbox.jsp").forward(request, response);

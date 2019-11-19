@@ -15,11 +15,11 @@
 <html lang="en">
     <head>  
         <%@include file="googleAnalytics.jsp" %>
-        <meta charset="UTF-8">
-        <!-- For IE -->
+        <meta charset="UTF-8">        <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="content-type" content="text/html" charset="utf-8">
+        <meta name="robots" content="noindex, nofollow" />
         <title>INQUIRYHERE.COM | HOME PAGE</title>
         <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png" />
         <link rel="canonical" href="https://www.inquiryhere.com" />
@@ -27,16 +27,15 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
 
-        <meta property="og:description" content="india's first question answer based social media where experts give 
-              you advise and suggestion related to your query .you can ask and share the 
-              information which you want to explore.our motive is to be specific according to your demand" />
+        <meta property="og:description" content="India's First Question Answer Based Social Media, Where Experts Give You Advise And Suggestion Related To Your Query. You can ask and share the information which you want to explore.our motive is to be specific according to your demand" />
+        <meta property="description" content="India's First Question Answer Based Social Media, Where Experts Give You Advise And Suggestion Related To Your Query. You can ask and share the information which you want to explore.our motive is to be specific according to your demand" />
         <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
+        <meta property="image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
         <meta property="og:type" content="website">
         <meta property="og:locale" content="en_US">
-        <meta property="og:title" content="india first knowledge based social media platform where experts give
-              you advise and suggestion related to your query" />
+        <meta property="og:title" content="India's First Question Answer Based Social Media, Where Experts Give You Advise And Suggestion Related To Your Query" />
         <meta property="og:url" content="https://www.inquiryhere.com/">
-        <meta property="og:site_name" content="inquiryhere.com" />
+        <meta property="og:site_name" content="www.inquiryhere.com" />
 
         <script type="text/javascript">
             function take_value(el, question_id, sUserid, action) {
@@ -109,9 +108,14 @@
         <div class="main-page-wrapper">
             <jsp:include page="header.jsp"/>
             <div class="clear-fix" align="center" style="font-size: 20px;color: green;background-color: yellow;">
-                <c:if test="${param.msg ne null and not empty param.msg}">
-                    ${param.msg}
-                </c:if>
+                <c:choose>
+                    <c:when test="${param.ref eq 'f_t'}">
+                        ${"Thanks for choosing inquiryhere.com, We always work for you"}
+                    </c:when>
+                    <c:when test="${param.msg ne null and not empty param.msg}">
+                        ${param.msg}
+                    </c:when>
+                </c:choose>
             </div>
             <div class="bodydata">
                 <div class="container clear-fix">
@@ -517,7 +521,7 @@
                                                         <c:set scope="page" value="${loop.count}" var="count"/>
                                                         <li>
                                                             <span title="Total followers of <c:out value="${function.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}">
-                                                                <a href="topic.jsp?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>">
+                                                                <a href="topic?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>">
                                                                     <c:out value="${function.convertStringUpperToLower(t.topicName)}"/>
                                                                 </a> (<c:out value="${t.totalFollowers}"/>) 
                                                             </span>
@@ -531,7 +535,7 @@
                                                     <c:forEach var="t" items="${topic.randomTopic(15)}">
                                                         <li>
                                                             <span title="Total followers of <c:out value="${function.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}">
-                                                                <a href="topic.jsp?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>">
+                                                                <a href="topic?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>">
                                                                     <c:out value="${function.convertStringUpperToLower(t.topicName)}"/>
                                                                 </a> (<c:out value="${t.totalFollowers}"/>) 
                                                             </span>
@@ -539,7 +543,7 @@
                                                     </c:forEach>
                                                 </c:otherwise>
                                             </c:choose>
-                                            <a href="FollowMoreTopic.jsp">Click here to more topic</a>
+                                            <a href="moretopic">Click here to more topic</a>
                                         </ul>
                                     </div>
                                 </div> 
@@ -577,7 +581,8 @@
                                     <div>
                                         <ul>
                                             <li><a href="UserProfile.jsp">Complete User List</a></li>
-                                            <li><a href="FollowMoreTopic.jsp">Complete Topic List</a></li>
+                                            <li><a href="moretopic">Complete Topic List</a></li>
+                                            <li><a href="blog">Read Blog</a></li>
                                             <li><a href="WriteBlogHere.jsp">Write a Blog</a></li>
                                             <li><a href="optionalquestion">Read Objective Question</a></li>
                                         </ul>

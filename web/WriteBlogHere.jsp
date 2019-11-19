@@ -11,6 +11,14 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Blog - inquiryhere.com</title>
+        <meta property="og:url" content="https://www.inquiryhere.com/WriteBlogHere.jsp">
+        <meta property="og:site_name" content="inquiryhere.com" />
+        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Write your story and get applause by the audience" />
+        <meta property="og:description" content="Write your story and get applause by the audience"/>
+        <meta property="og:locale" content="en_US">
+        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
         <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
     </head>
@@ -31,7 +39,8 @@
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <form name="submitquestion" method="post" action="Submitblog.jsp">
+                                    <form name="submitquestion" method="get" action="saveblog">
+                                        <input type="hidden" name="Session_id_of_user" value="${sessionScope.Session_id_of_user}"/>
                                         <div class="boxHeading marginbot10">
                                             <div class="themeBox" style="height:auto;">
                                                 Write Blog Subject :

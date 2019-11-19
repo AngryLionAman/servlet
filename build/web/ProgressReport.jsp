@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -79,17 +80,33 @@
                 select * from question order by q_id desc limit 10;
             </sql:query>
             <c:forEach var="l" items="${lq.rows}">
-                <c:out value="${l.question}"/>(${l.total_view})<br><br>
+                <c:out value="${l.question}"/>(${l.total_view}),${l. posted_time}<br><br>
             </c:forEach>
 
 
             <h2>Most 10 viewed question</h2>
             <sql:query var="mvq" dataSource="jdbc/mydatabase">
-                select q_id,question,total_view from question order by total_view desc limit 10;
+                select q_id,question,total_view,posted_time from question order by total_view desc limit 10;
             </sql:query>
             <c:forEach var="mq" items="${mvq.rows}">
-                ${mq.question} (${mq.total_view})<br><br>
+                ${mq.question} (${mq.total_view}), ${mq.posted_time}<br><br>
             </c:forEach>
+
+
+            <h2>Most 10 viewed answer</h2>
+            <c:catch var="ms">
+                <sql:query var="mva" dataSource="jdbc/mydatabase">
+                     select q_id, a_id , total_view , postedtime from answer order by total_view desc limit 10;
+                </sql:query>
+                    question id, answer id ,  totla view<br>
+                <c:forEach var="mq" items="${mva.rows}">
+                    ${mq.q_id}, ${mq.a_id}, (${mq.total_view}), ${mq.postedtime}<br><br>
+                </c:forEach>
+            </c:catch>
+            <c:if test="${ms ne null}">
+                ${ms}
+            </c:if>
+
 
 
             <h2>Last 10 user created</h2>
@@ -97,16 +114,16 @@
                 select * from newuser order by id desc limit 10;
             </sql:query>
             <c:forEach var="l" items="${lu.rows}">
-                <c:out value="${l.firstname}"/>(${l.total_view})<br><br>
+                <c:out value="${l.firstname}"/>(${l.total_view}), ${l.date_time}<br><br>
             </c:forEach>
 
 
             <h2>Most 10 viewed Profile</h2>
             <sql:query var="mvf" dataSource="jdbc/mydatabase">
-                select firstname,total_view from newuser order by total_view desc limit 10;
+                select firstname,total_view,date_time from newuser order by total_view desc limit 10;
             </sql:query>
             <c:forEach var="mf" items="${mvf.rows}">
-                ${mf.firstname} (${mf.total_view})<br><br>
+                ${mf.firstname} (${mf.total_view}), ${mf.date_time}<br><br>
             </c:forEach>
 
 
@@ -149,7 +166,7 @@
                     <c:otherwise>
                         Undefined
                     </c:otherwise>
-                </c:choose>, Commented By Id - ${c.user_id}<br><br>
+                </c:choose>, Commented By Id - ${c.user_id},${c.time}<br><br>
             </c:forEach>
         </c:catch>
         <c:if test="${msg ne null}">

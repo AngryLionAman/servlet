@@ -14,7 +14,15 @@
         %>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Forger Password | inquiryhere.com</title>
+        <title>Forger Password | inquiryhere.com</title>        
+        <meta property="og:url" content="https://www.inquiryhere.com/forgotpassword.jsp">
+        <meta property="og:site_name" content="inquiryhere.com" />
+        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Forgot password, Don't worry" />
+        <meta property="og:description" content="Enter your registered email and get your password"/>
+        <meta property="og:locale" content="en_US">
+        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
         <link rel="stylesheet" type="text/css" href="css/style.css">
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <style>
@@ -76,22 +84,22 @@
                                 <center>
                                     <c:if test="${param.msg ne null or not empty param.msg}">
                                         <c:choose>
-                                        <c:when test="${param.msg eq 'nf'}">
-                                            <center><b style=color:red;>Email Not found</b></center>
-                                        </c:when>
-                                        <c:when test="${param.msg eq 'ef'}">
-                                            <center><b style=color:red;>Email found</b></center>
-                                        </c:when>
-                                        <c:when test="${param.msg eq 'sf'}">
-                                            <center><b style=color:red;>Your password has been successfully sent to your mail</b></center>
-                                        </c:when>
-                                    </c:choose> 
-                                    </c:if>
+                                            <c:when test="${param.msg eq 'nf'}">
+                                                <center><b style=color:red;>Email Not found</b></center>
+                                                </c:when>
+                                                <c:when test="${param.msg eq 'ef'}">
+                                                <center><b style=color:red;>Email found</b></center>
+                                                </c:when>
+                                                <c:when test="${param.msg eq 'sf'}">
+                                                <center><b style=color:red;>Your password has been successfully sent to your mail</b></center>
+                                                </c:when>
+                                            </c:choose> 
+                                        </c:if>
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="themeBox" style="height:270px;">
                                             <form action="forgotpassword.jsp" method="post" name="" >
                                                 <div align="left">
-                                                <label for="fname">Email  &#8628;</label><a href="help.jsp#f-pass-email">&#10067;</a>
+                                                    <label for="fname">Email  &#8628;</label><a href="help.jsp#f-pass-email">&#10067;</a>
                                                 </div>
                                                 <div class="boxHeading">
                                                     <input type="text" id="fname" name="mail" required="" placeholder="Enter valid email address....">

@@ -3,6 +3,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@include file="site.jsp" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<jsp:useBean class="com.fun.helpingFunction" id="fun" scope="page"/>
+<jsp:useBean class="com.string.name" id="function" scope="page"/>
+<jsp:useBean class="com.string.regularExpression" id="reg" scope="page"/>
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
@@ -13,42 +16,40 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <c:catch var="ex">
-            <c:if test="${param.Blog_Id eq null or empty param.Blog_Id}">
-                <c:redirect url="blog.jsp"/>
+            <c:if test="${blogByBlogId eq null}">
+                <c:choose>
+                    <c:when test="${param.id ne null and not empty param.id}">
+                        <c:redirect url="blog?id=${param.id}"/> 
+                    </c:when>
+                    <c:otherwise>
+                        <c:redirect url="blog"/>
+                    </c:otherwise>   
+                </c:choose>                             
             </c:if>
-            <c:if test="${param.Blog_Id ne null and not empty param.Blog_Id}">
-                <sql:query var="blog" dataSource="jdbc/mydatabase">
-                    SELECT b.blog_subject,b.total_view,b.blog_id,b.blog,
-                    user.firstname,user.username,user.id FROM blog b right join newuser user on b.blog_posted_by = user.Id  
-                    WHERE blog_id = ?;
-                    <sql:param value="${param.Blog_Id}"/>
-                </sql:query>
-                <c:forEach items="${blog.rows}" var="blog">
-                    <c:set value="${blog.blog_id}" var="blogId"/>
-                    <c:set value="${blog.blog_subject}" var="blogSub"/>
-                    <c:set value="${blog.blog}" var="blogDes"/>
-                    <c:set value="${blog.total_view}" var="blogView"/>
-                    <c:set value="${blog.firstname}" var="fullName"/>
-                    <c:set value="${blog.username}" var="userName"/>
-                    <c:set value="${blog.id}" var="userId"/>
-                    <sql:update dataSource="jdbc/mydatabase" var="iView">
-                        UPDATE blog SET total_view = total_view + 1 WHERE blog_id =?;
-                        <sql:param value="${blog.blog_id}"/>
-                    </sql:update>
-                    <title>${blog.blog_subject}</title>
-                    <meta property="og:title" content="${blog.blog_subject}" />
-                    <meta property="og:description" content="<c:out value="${fn:substring(blog.blog, 0, 300)}" escapeXml="false"/>"/>
+            <c:if test="${blogByBlogId ne null}">
+
+                <c:forEach items="${blogByBlogId}" var="blog">
+                    <c:set value="${blog.uniqueId}" var="blogId"/>
+                    <c:set value="${blog.subject}" var="blogSub"/>
+                    <c:set value="${blog.desc}" var="blogDes"/>
+                    <c:set value="${blog.view}" var="blogView"/>
+                    <c:set value="${blog.fullName}" var="fullName"/>
+                    <c:set value="${blog.userName}" var="userName"/>
+                    <c:set value="${blog.userId}" var="userId"/>                  
+
                 </c:forEach>
             </c:if>
         </c:catch>
         <c:if test="${ex ne null}">
             ${ex}
         </c:if>
-
+        <title>${blogSub}</title>
+        <meta property="og:title" content="${blogSub} - inquiryhere.com" />
+        <meta property="og:description" content="<c:out value="${fn:substring(blogDes, 0, 300)}" escapeXml="false"/>"/>
 
         <meta property="og:url" content="https://www.inquiryhere.com/">
         <meta property="og:site_name" content="https://www.inquiryhere.com/" />
-        <meta property="og:image" content="https://www.inquiryhere.com/images/logo/inquiryhere_Logo.PNG" />
+        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
         <meta property="og:type" content="website">
         <meta property="og:locale" content="en_US">
         <script type="text/javascript">
@@ -99,77 +100,106 @@
 
                             <div class="row">
 
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="themeBox" style="height:auto;">
 
-                                    <div class="themeBox" style="height:auto;">
-
-                                        <div class="boxHeading marginbot10">
-
-                                            [ ${blogView} ]  Subject :  ${blogSub}
-                                        </div>
+                                    <div class="boxHeading marginbot10">
+                                        [ ${blogView} ]  Subject :  ${blogSub}
+                                    </div>
+                                    <c:if test="${userName ne null}">
                                         <div class="questionArea">
 
                                             <div class="postedBy">Posted by :<a href="profile.jsp?user=${userName}&ID=${userId}">${fullName}</a></div>
 
                                         </div>
-                                    </div>
-                                    <div class="boxHeading marginbot10">Description</div>
+                                    </c:if>
 
-                                    <div class="themeBox" style="height:auto;">
-                                        <div class="boxHeading marginbot10" style="font-size: 15px;font-family: Arial, Helvetica, sans-serif;">
-                                            ${blogDes}
-                                        </div>
-                                    </div>
+                                </div>
+                                <div class="boxHeading marginbot10">Description</div>
 
-                                    <div class="clear-fix"></div>
-                                    Comments....<br>
-                                    <div align="right">
-                                        <sql:query dataSource="jdbc/mydatabase" var="comment">
-                                            SELECT unique_id,user_id,(SELECT firstname FROM newuser WHERE id = user_id )AS fullname,q_id,comments,time FROM comments WHERE blog_id = ? ;
-                                            <sql:param value="${blogId}"/>
-                                        </sql:query>
-                                        <c:forEach items="${comment.rows}" var="cmt">
-                                            <c:out value="${cmt.comments}"/>:
-                                            <c:choose>
-                                                <c:when test="${cmt.fullname eq null or empty cmt.fullname}">
-                                                    <font color="green"> <c:out value="Guest User"/> </font>  
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <a href="profile.jsp?user=${cmt.fullname}&ID=${cmt.user_id}">${cmt.fullname}</a>    
-                                                </c:otherwise>  
-                                            </c:choose>                                                                                     
-                                            <br>________________________________<br>
-                                        </c:forEach>
+                                <div class="themeBox" style="height:auto;">
+                                    <div class="boxHeading marginbot10" style="font-size: 15px;font-family: Arial, Helvetica, sans-serif;">
+                                        ${blogDes}
+                                    </div>
+                                </div>
 
+                                <div class="clear-fix"></div>
+                                Comments....<br>
+                                <div align="right">
+                                    <sql:query dataSource="jdbc/mydatabase" var="comment">
+                                        SELECT unique_id,user_id,(SELECT firstname FROM newuser WHERE id = user_id )AS fullname,q_id,comments,time FROM comments WHERE blog_id = ? ;
+                                        <sql:param value="${blogId}"/>
+                                    </sql:query>
+                                    <c:forEach items="${comment.rows}" var="cmt">
+                                        <c:out value="${cmt.comments}"/>:
+                                        <c:choose>
+                                            <c:when test="${cmt.fullname eq null or empty cmt.fullname}">
+                                                <font color="green"> <c:out value="Guest User"/> </font>  
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a href="profile.jsp?user=${cmt.fullname}&ID=${cmt.user_id}">${cmt.fullname}</a>    
+                                            </c:otherwise>  
+                                        </c:choose>                                                                                     
+                                        <br>________________________________<br>
+                                    </c:forEach>
+                                </div>
+
+                                <form action="saveBlogComment" method="get">
+                                    <input type="hidden" name="blogSub" value="${blogSub}">
+                                    <input type="hidden" name="blog_id" value="${blogId}">
+                                    <input type="hidden" name="sessionUserId" value="${sessionScope.Session_id_of_user}">
+                                    <input type="hidden" name="bloggerUserId" value="${userId}">
+                                    <textarea name="comments" rows="3" cols="30" required="" placeholder="What you think..."></textarea>
+                                    <input type="submit" name="sub" value="Send Comment">
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" >
+                            <div class="row">
+                                <div class="themeBox" style="height:auto;">
+                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                        Also Read
                                     </div>
-                                    <%
-                                        if (session.getAttribute("Session_id_of_user") == null) {
-                                    %>
-                                    <div align="center">
-                                        <button type="submit" class="button button1" onclick="showCommentBox()">Comment as Guest</button> 
+                                    <div>
+                                        <c:catch var="msg">
+                                            <c:forEach items="${blogByLimit}" var="m">
+                                                <a href="blog?sub=${reg.removeSpacialChar(m.subject)}&id=${m.uniqueId}">${m.subject}</a><br><br>
+                                            </c:forEach>
+                                        </c:catch>
+                                        <c:if test="${msg ne null}">
+                                            ${msg}
+                                        </c:if>
                                     </div>
-                                    <form action="saveBlogComment.jsp" method="get">
-                                        <div class="hidden" id="comment">
-                                            <input type="hidden" name="blogSub" value="${blogSub}">
-                                            <input type="hidden" name="blog_id" value="${blogId}">
-                                            <input type="hidden" name="bloggerUserId" value="${userId}">
-                                            <textarea name="comments" rows="3" cols="30" required="" placeholder="What you think..."></textarea>
-                                            <input type="submit" name="sub" value="Send Comment">
-                                        </div>
-                                    </form>
-                                    <div align="center">
-                                        <button type="submit" class="button button1" onclick="location.href = 'login.jsp?URL=D_Blog.jsp?Blog_Id=${blogId}';" >Login to comment</button> 
+                                </div>
+                                <div class="themeBox" style="height:auto;">
+                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                        Fun Zone
                                     </div>
-                                    <% } else {%>
-                                    <form action="saveBlogComment.jsp" method="get">
-                                        <input type="hidden" name="blogSub" value="${blogSub}">
-                                        <input type="hidden" name="blog_id" value="${blogId}">
-                                        <input type="hidden" name="sessionUserId" value="${sessionScope.Session_id_of_user}">
-                                        <input type="hidden" name="bloggerUserId" value="${userId}">
-                                        <textarea name="comments" rows="3" cols="30" required="" placeholder="What you think..."></textarea>
-                                        <input type="submit" name="sub" value="Send Comment">
-                                    </form>
-                                    <% }%>
+                                    <div>
+                                        <ul>
+                                            <c:catch var="msg">
+                                                <c:forEach items="${fun.CategoryDetail()}" var="m">
+                                                    <li><a href="fun?category=${m}">${function.convertStringUpperToLower(m)}</a></li>
+                                                    </c:forEach>
+                                                </c:catch>
+                                                <c:if test="${msg ne null}">
+                                                    ${msg}
+                                                </c:if>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="themeBox" style="height:auto;">
+                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                        Shortcut Key
+                                    </div>
+                                    <div>
+                                        <ul>
+                                            <li><a href="UserProfile.jsp">Complete User List</a></li>
+                                            <li><a href="moretopic">Complete Topic List</a></li>
+                                            <li><a href="blog">Read Blog</a></li>
+                                            <li><a href="WriteBlogHere.jsp">Write a Blog</a></li>
+                                            <li><a href="optionalquestion">Read Objective Question</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>

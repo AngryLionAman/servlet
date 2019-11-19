@@ -6,6 +6,14 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Advertise - inquiryhere.com</title>
+        <meta property="og:url" content="https://www.inquiryhere.com/Answer.jsp">
+        <meta property="og:site_name" content="www.inquiryhere.com" />
+        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Who among the following was awarded the Hindu prize in fiction category for the year 2018 ?" />
+        <meta property="og:description" content="al Hindu Lit for Life in Chennai, Tamil Nadu. It has increased the Aad Vinayak Verma of Hindu Young Wo"/>
+        <meta property="og:locale" content="en_US">
+        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
         <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">       
     </head>

@@ -36,9 +36,11 @@ public class getTopic {
         List<topicPojo> list = new ArrayList<>();
         Connection con = null;
         PreparedStatement ps = null;
+        PreparedStatement ps1 = null;
         ResultSet rs = null;
+        ResultSet rs1 = null;
         try {
-            String sql = "select DISTINCT t.unique_id,t.topic_name,t.image_url,t.desc_hindi,t.desc_english,t.crawl from topic t right join question_topic_tag qtt on t.unique_id=qtt.tag_id where question_id IN (select question_id from question_topic_tag where tag_id=?)group by t.unique_id limit 30";
+            String sql = "select DISTINCT t.unique_id,t.topic_name,t.image_url,t.desc_hindi,t.desc_english,t.crawl from topic t right join question_topic_tag qtt on t.unique_id=qtt.tag_id where question_id IN (select question_id from question_topic_tag where tag_id=?) and t.unique_id is not null and t.topic_name is not null and t.image_url is not null group by t.unique_id limit 30";
             con = connection.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, topicid);
@@ -49,8 +51,8 @@ public class getTopic {
                 String topicName = rs.getString("topic_name");
                 int topicId = rs.getInt("unique_id");
                 String imageUrl = rs.getString("image_url");
-                String descHindi = rs.getString("desc_hindi");
-                String descEng = rs.getString("desc_english");
+                String descHindi = rs.getString("desc_hindi") == null ? "" : rs.getString("desc_hindi");
+                String descEng = rs.getString("desc_english") == null ? "" : rs.getString("desc_english");
                 boolean crawl = rs.getBoolean("crawl");
                 int totalFollowers = function.totalFollowersOfTopic(topicId);
                 int relatedQuestion = function.totalRelatedQuestion(topicId);
@@ -66,17 +68,17 @@ public class getTopic {
             if (count < 30) {
                 //Override everything
                 int limit = 30 - count;
-                sql = "select DISTINCT t.unique_id,t.topic_name,t.image_url,t.desc_hindi,desc_english from topic t order by rand() limit ?";
-                ps = con.prepareStatement(sql);
-                ps.setInt(1, limit);
-                rs = ps.executeQuery();
-                while (rs.next()) {
+                String sql1 = "select DISTINCT t.unique_id,t.topic_name,t.image_url,t.desc_hindi,desc_english from topic t order by rand() limit ?";
+                ps1 = con.prepareStatement(sql1);
+                ps1.setInt(1, limit);
+                rs1 = ps1.executeQuery();
+                while (rs1.next()) {
                     count++;
-                    String topicName = rs.getString("topic_name");
-                    int topicId = rs.getInt("unique_id");
-                    String imageUrl = rs.getString("image_url");
-                    String descHindi = rs.getString("desc_hindi");
-                    String descEng = rs.getString("desc_english");
+                    String topicName = rs1.getString("topic_name");
+                    int topicId = rs1.getInt("unique_id");
+                    String imageUrl = rs1.getString("image_url");
+                    String descHindi = rs1.getString("desc_hindi") == null ? "" : rs1.getString("desc_hindi");
+                    String descEng = rs1.getString("desc_english") == null ? "" : rs1.getString("desc_english");
                     int totalFollowers = function.totalFollowersOfTopic(topicId);
                     int relatedQuestion = function.totalRelatedQuestion(topicId);
                     if (list.isEmpty()) {
@@ -97,9 +99,21 @@ public class getTopic {
                 } catch (SQLException msg) {
                 }
             }
+            if (rs1 != null) {
+                try {
+                    rs1.close();
+                } catch (SQLException msg) {
+                }
+            }
             if (ps != null) {
                 try {
                     ps.close();
+                } catch (SQLException msg) {
+                }
+            }
+            if (ps1 != null) {
+                try {
+                    ps1.close();
                 } catch (SQLException msg) {
                 }
             }

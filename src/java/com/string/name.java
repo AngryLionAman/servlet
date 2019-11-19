@@ -27,9 +27,12 @@ public class name {
     }
 
     public String convertStringUpperToLower(String sentence) {
+        if(sentence.isEmpty()){
+            return "String Not Found";
+        }
         String finalSentenct = "";
         try {
-            sentence = sentence.trim();            
+            sentence = sentence.trim();
             char[] c = sentence.toCharArray();
             String str1 = "";
             //If you don't use the '=' (equals) then will missed the last char
@@ -48,6 +51,26 @@ public class name {
             finalSentenct = finalSentenct.trim();
 
 //end of the script
+        } catch (Exception msg) {
+            finalSentenct = msg.toString();
+        }
+        return finalSentenct;
+    }
+
+    public String removeWhiteSpace(String sentence) {
+        String finalSentenct;
+        try {
+            sentence = sentence.trim().replaceAll("\n", "");
+            char[] c = sentence.toCharArray();
+            String str1 = "";
+            //If you don't use the '=' (equals) then will missed the last char
+            for (int i = 0; i < sentence.length(); i++) {//If String having the extra white space
+                if ((c[i] == ' ' && c[i + 1] != ' ') || (c[i] != ' ')) {
+                    str1 += c[i];
+                }
+            }
+
+            finalSentenct = str1.trim();
         } catch (Exception msg) {
             finalSentenct = msg.toString();
         }

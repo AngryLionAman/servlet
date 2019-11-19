@@ -15,36 +15,44 @@
             <c:redirect url="index.jsp?ref=login"/>
         </c:if>
         <c:catch var="ex">
-             <c:if test="${sessionScope.Session_id_of_user eq null}">
-            <c:if test="${pageContext.request.cookies ne null and not empty pageContext.request.cookies}">
-                <c:forEach var="cookieVal" items="${pageContext.request.cookies}" > 
-                    <c:if test="${cookieVal.name eq 'usernamecookie'}">
-                        <c:set value="${cookieVal.value}" var="username" scope="page" />
-                    </c:if>
-                    <c:if test="${cookieVal.name eq 'passwordcookie'}">
-                        <c:set value="${cookieVal.value}" var="password" scope="page" />
-                    </c:if>
-                </c:forEach>
-            </c:if>
+            <c:if test="${sessionScope.Session_id_of_user eq null}">
+                <c:if test="${pageContext.request.cookies ne null and not empty pageContext.request.cookies}">
+                    <c:forEach var="cookieVal" items="${pageContext.request.cookies}" > 
+                        <c:if test="${cookieVal.name eq 'usernamecookie'}">
+                            <c:set value="${cookieVal.value}" var="username" scope="page" />
+                        </c:if>
+                        <c:if test="${cookieVal.name eq 'passwordcookie'}">
+                            <c:set value="${cookieVal.value}" var="password" scope="page" />
+                        </c:if>
+                    </c:forEach>
+                </c:if>
 
-            <c:if test="${username ne null and not empty username and password ne null and not empty password}">
-                <c:set scope="page" var="status" value="${function.validateUser(username, password)}"/>
-            </c:if> 
-            <c:if test="${status}">  
-                <jsp:forward page="validate.jsp">
-                    <jsp:param name="email" value="${username}"/>
-                    <jsp:param name="password" value="${password}"/>
-                </jsp:forward>                    
+                <c:if test="${username ne null and not empty username and password ne null and not empty password}">
+                    <c:set scope="page" var="status" value="${function.validateUser(username, password)}"/>
+                </c:if> 
+                <c:if test="${status}">  
+                    <jsp:forward page="validate.jsp">
+                        <jsp:param name="email" value="${username}"/>
+                        <jsp:param name="password" value="${password}"/>
+                    </jsp:forward>                    
+                </c:if>
             </c:if>
-        </c:if>
         </c:catch>
         <c:if test="${ex ne null}">
             ${ex}
         </c:if>
-       
+
         <meta http-equiv="X-UA-Compatible" content="IE=edge"><!-- For IE --> 
         <meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- For Resposive Device -->
-        <title>Login | inquiryhere.com</title>
+        <title>Login | inquiryhere.com</title>        
+        <meta property="og:url" content="https://www.inquiryhere.com/login.jsp">
+        <meta property="og:site_name" content="www.inquiryhere.com" />
+        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Login with bihari Google" />
+        <meta property="og:description" content="After login you get that place where you get all data at one place"/>
+        <meta property="og:locale" content="en_US">
+        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
         <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <style>
@@ -102,7 +110,7 @@
                 <div class="container clear-fix">
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                           
+
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <div class="row">
@@ -126,18 +134,15 @@
 
                                     <div class="themeBox" style="height:300px;">
                                         <form action="<%=request.getContextPath()%>/validate" method="post" name="form_name">
-                                            <% if (request.getParameter("URL") != null) {%>
-                                            <input type="hidden" name="URL" value="<%=request.getParameter("URL")%>">
-                                            <% }%> 
                                             <div  align="left">
-                                            <label for="fname">Email &#8628;</label><a href="help.jsp#email">&#10067;</a>
-                                            <div class="boxHeading">
-                                                <input type="text"  name="email" required="" value="">
-                                            </div>
-                                            <label for="lname">Password &#8628;</label><a href="help.jsp#password">&#10067;</a>
-                                            <div class="boxHeading">
-                                                <input type="password"  name="password" required="" value="">
-                                            </div> 
+                                                <label for="fname">Email &#8628;</label><a href="help.jsp#email">&#10067;</a>
+                                                <div class="boxHeading">
+                                                    <input type="text"  name="email" required="" value="">
+                                                </div>
+                                                <label for="lname">Password &#8628;</label><a href="help.jsp#password">&#10067;</a>
+                                                <div class="boxHeading">
+                                                    <input type="password"  name="password" required="" value="">
+                                                </div> 
                                             </div>
                                             <br>
                                             <button type="submit" class="button button1" data-toggle="modal">Login</button>

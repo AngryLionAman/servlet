@@ -35,7 +35,7 @@ public class comments {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            String sql = "SELECT unique_id as commentid,comments,date_format(time,\"%e %b %Y,%h:%i%p\") as date,user_id as commentpostedbyid, newuser.username as username,newuser.firstname as fullname FROM comments inner join newuser on newuser.id = comments.user_id WHERE ans_id = ?";
+            String sql = "SELECT unique_id as commentid,comments,date_format(time,\"%e %b %Y,%h:%i%p\") as date,user_id as commentpostedbyid, newuser.username as username,newuser.firstname as fullname FROM comments inner join newuser on newuser.id = comments.user_id WHERE ans_id = ? order by 1 desc";
             con = dc.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, answerId);

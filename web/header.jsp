@@ -17,7 +17,6 @@
                 </c:if>
             </c:forEach>
         </c:if>
-
         <c:if test="${username ne null and not empty username and password ne null and not empty password}">
             <c:set scope="page" var="status" value="${function.validateUser(username, password)}"/>
         </c:if> 
@@ -71,26 +70,28 @@
             </div>
         </div>
 
-
+        <form id="myform" method="post" action="<%=request.getContextPath()%>/inbox?id=${sessionScope.Session_id_of_user}"></form>
         <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 float-right textalign-right">          
             <a href="#" data-toggle="modal" data-target="#myModal2" class="helpicon"  style="color: white;background-color: red; padding-left: 10px;padding-right: 80px; white-space: nowrap;">Ask Question</a>           
             <c:if test="${sessionScope.Session_id_of_user eq null}">  
-                <%
+                <%--
                     String url = request.getRequestURL().toString();
                     String arg = request.getQueryString();
                     if (arg != null) {
                         url = url + "?" + request.getQueryString();
                     }
-                %>                
+                --%>                
                 <a href="signup.jsp" class="helpicon"  style="color: white;padding-left: 10px;padding-right: 30px;">SIgnUp</a>
-                <a href="login.jsp?URL=<%=url%>" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Login</a>
+                <a href="login.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Login</a>
             </c:if>
+
             <a href="index.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Home</a>
             <c:if test="${sessionScope.Session_id_of_user ne null}">
                 <c:catch var="m">
                     <c:forEach var="u" items="${userdetails.headerUser(sessionScope.Session_id_of_user)}">
                         <a href="logout.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
-                        <a href="<%=request.getContextPath()%>/inbox?ID=${u.userId}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 10px;">Inbox</a>
+
+                        <a href="" onclick="document.getElementById('myform').submit(); return false;" class="helpicon" style="color: white;padding-left: 10px;padding-right: 10px;">Inbox</a>
                         <a href="profile.jsp?user=${u.userName}&ID=${u.userId}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 20px;">
                             <b><c:out value="${fun.firstName(u.fullName)}"/></b>
                         </a>             

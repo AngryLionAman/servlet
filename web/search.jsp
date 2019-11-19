@@ -14,9 +14,16 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Search By inquiryhere.com</title>
-<link rel="canonical" href="https://www.inquiryhere.com/search.jsp" />
-        <link rel="stylesheet" type="text/css" href="css/style.css">
-        <!-- responsive style sheet -->
+        <meta property="og:url" content="https://www.inquiryhere.com/search.jsp">
+        <meta property="og:site_name" content="inquiryhere.com" />
+        <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Google of Bihar" />
+        <meta property="og:description" content="Search here and get the best result by inquiryhere"/>
+        <meta property="og:locale" content="en_US">
+        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">
+        <link rel="canonical" href="https://www.inquiryhere.com/search.jsp" />
+        <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <style>
             .a_link{
@@ -67,7 +74,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                
+
                                 <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                                     <div class="row">
                                         <c:catch var="exp_msg">
@@ -121,7 +128,7 @@
                                                         <c:set value="0" var="result" scope="page"/>
                                                         <c:forEach var="t" items="${search.getTopicByQuearyAndLimit(query, search.set(5))}">
                                                             <c:set value="${loop.count}" var="result" scope="page"/>
-                                                        <a href="topic.jsp?t=<c:out value="${fn:replace(fun.convertStringUpperToLower(fn:trim(t.topicName)),' ','-')}"/>&id=<c:out value="${t.topicId}"/>"> 
+                                                        <a href="topic?t=<c:out value="${fn:replace(fun.convertStringUpperToLower(fn:trim(t.topicName)),' ','-')}"/>&id=<c:out value="${t.topicId}"/>"> 
                                                             <c:if test="${t.imageLink ne null}">
                                                                 <img src="${t.imageLink}" alt="${t.topicName}" width="100" height="100">
                                                             </c:if>
@@ -204,7 +211,7 @@
                                                                 <c:set value="0" var="result" scope="page"/>
                                                                 <c:forEach var="t" items="${search.getTopicByQuearyAndLimit(query, search.set('all'))}">
                                                                     <c:set value="${loop.count}" var="result" scope="page"/>
-                                                                <a href="topic.jsp?t=<c:out value="${fn:replace(fun.convertStringUpperToLower(fn:trim(t.topicName)),' ','-')}"/>&id=<c:out value="${t.topicId}"/>"> 
+                                                                <a href="topic?t=<c:out value="${fn:replace(fun.convertStringUpperToLower(fn:trim(t.topicName)),' ','-')}"/>&id=<c:out value="${t.topicId}"/>"> 
                                                                     <c:if test="${t.imageLink ne null}">
                                                                         <img src="${t.imageLink}" alt="${t.topicName}" width="100" height="100">
                                                                     </c:if>
