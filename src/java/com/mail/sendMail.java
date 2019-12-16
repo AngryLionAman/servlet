@@ -14,6 +14,13 @@ import javax.mail.internet.*;
  * @author inquiryhere.com
  */
 public class sendMail {
+
+    /**
+     *
+     * @param mailAdd
+     * @param pass
+     * @return
+     */
     public boolean sendMail(String mailAdd,String pass) {
         String host = "inquiryhere.com";
         final String user = "help@inquiryhere.com";

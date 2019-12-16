@@ -5,11 +5,14 @@
  */
 package com.followmoretopic;
 
-import com.connect.DatabaseConnection;
+import com.connect.PoolConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  *
@@ -17,29 +20,39 @@ import java.sql.SQLException;
  */
 public class totalQuestion {
 
+    /**
+     *
+     * @param topicId
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws Exception
+     */
     public int totalQestion(int topicId) throws SQLException, ClassNotFoundException, Exception {
-        DatabaseConnection connection = new DatabaseConnection();
-        Connection com = null;
+
+        PoolConnection pc = new PoolConnection();
+        DataSource ds = pc.setUpPool();
+
+        Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        int count = 0;
+
         try {
-            com = connection.getConnection();
+            con = ds.getConnection();
             String sql = "select count(q.question_id)as cnt from topic t left join question_topic_tag q on q.tag_id = t.unique_id where t.unique_id =?";
-            ps = com.prepareStatement(sql);
+            ps = con.prepareStatement(sql);
             ps.setInt(1, topicId);
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                count = rs.getInt("cnt");
-
+                return rs.getInt("cnt");
             }
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(totalQuestion.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
-            if (com != null) {
+            if (rs != null) {
                 try {
-                    com.close();
+                    rs.close();
                 } catch (SQLException sqlex) {
                     // ignore -- as we can't do anything about it here
                 }
@@ -51,15 +64,14 @@ public class totalQuestion {
                     // ignore -- as we can't do anything about it here
                 }
             }
-            if (rs != null) {
+            if (con != null) {
                 try {
-                    rs.close();
+                    con.close();
                 } catch (SQLException sqlex) {
                     // ignore -- as we can't do anything about it here
                 }
             }
         }
-        return count;
+        return 0;
     }
-
 }

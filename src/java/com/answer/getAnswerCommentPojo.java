@@ -28,30 +28,63 @@ public class getAnswerCommentPojo {
     String userName;
     String fullName;
 
+    /**
+     *
+     * @return
+     */
     public int getCommentId() {
         return commentId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getComments() {
         return comments;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDate() {
         return date;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getCommentPostedById() {
         return commentPostedById;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUserName() {
         return userName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getFullName() {
         return fullName;
     }
 
+    /**
+     *
+     * @param commentId
+     * @param comments
+     * @param date
+     * @param commentPostedById
+     * @param userName
+     * @param fullName
+     */
     public getAnswerCommentPojo(int commentId, String comments, String date, int commentPostedById, String userName, String fullName) {
         this.commentId = commentId;
         this.comments = comments;

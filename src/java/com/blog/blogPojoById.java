@@ -29,6 +29,16 @@ public class blogPojoById {
     String userName;
     String fullName;
 
+    /**
+     *
+     * @param uniqueId
+     * @param subject
+     * @param desc
+     * @param view
+     * @param userId
+     * @param userName
+     * @param fullName
+     */
     public blogPojoById(int uniqueId, String subject, String desc, int view, int userId, String userName, String fullName) {
         this.uniqueId = uniqueId;
         this.subject = subject;
@@ -39,30 +49,58 @@ public class blogPojoById {
         this.fullName = fullName;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getUniqueId() {
         return uniqueId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSubject() {
         return subject;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDesc() {
         return desc;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getView() {
         return view;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getUserId() {
         return userId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUserName() {
         return userName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getFullName() {
         return fullName;
     }

@@ -29,14 +29,20 @@ import java.util.List;
  */
 public class uQuestion {
 
-    public List<uQuestionPojo> question() throws SQLException {
+    /**
+     *
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public List<uQuestionPojo> question() throws SQLException, ClassNotFoundException {
         List<uQuestionPojo> list = new ArrayList<>();
         DatabaseConnection con = new DatabaseConnection();
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            String sql = "select q_id as qId,posted_time as Date,question,(SELECT COUNT(a_id)as cnt FROM answer WHERE q_id = question.q_id group by q_id)as cnt,newuser.id as userId,firstname as userFullName from question inner join newuser on newuser.id = question.id group by q_id having cnt is null order by q_id";
+            String sql = "select q_id as qId,posted_time as Date,question,(SELECT COUNT(a_id)as cnt FROM answer WHERE q_id = question.q_id group by q_id)as cnt,newuser.id as userId,firstname as userFullName from question inner join newuser on newuser.id = question.id group by q_id having cnt is null order by q_id desc";
             connection = con.getConnection();
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();

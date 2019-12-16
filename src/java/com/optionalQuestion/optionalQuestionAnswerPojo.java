@@ -25,20 +25,38 @@ public class optionalQuestionAnswerPojo {
     String option;
     int vote;
 
+    /**
+     *
+     * @param aId
+     * @param option
+     * @param vote
+     */
     public optionalQuestionAnswerPojo(int aId, String option, int vote) {
         this.aId = aId;
         this.option = option;
         this.vote = vote;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getaId() {
         return aId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getOption() {
         return option;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getVote() {
         return vote;
     }

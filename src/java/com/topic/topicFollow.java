@@ -17,6 +17,15 @@ import java.sql.SQLException;
  */
 public class topicFollow {
 
+    /**
+     *
+     * @param topicId
+     * @param userId
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws Exception
+     */
     public boolean topicFollw(int topicId, int userId) throws SQLException, ClassNotFoundException, Exception {
         DatabaseConnection connection = new DatabaseConnection();
         Connection con = null;

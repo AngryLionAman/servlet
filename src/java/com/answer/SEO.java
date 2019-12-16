@@ -23,6 +23,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,14 +34,25 @@ import java.util.regex.Pattern;
  */
 public class SEO {
 
-    public HashMap<Integer, String> getQuestionTagWithId(int qId) throws SQLException {
-        DatabaseConnection dc = new DatabaseConnection();
+    /**
+     *
+     * @param qId
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public HashMap<Integer, String> getQuestionTagWithId(int qId) throws SQLException, ClassNotFoundException, Exception {
+
+        DatabaseConnection ds = new DatabaseConnection();
+
         HashMap<Integer, String> map = new HashMap<>();
+
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+
         try {
-            con = dc.getConnection();
+            con = ds.getConnection();
             String sql = "select tag_id as unique_id,(select topic_name from topic where unique_id = question_topic_tag.tag_id)topic_name from question_topic_tag where question_id =?";
             ps = con.prepareStatement(sql);
             ps.setInt(1, qId);
@@ -49,8 +62,9 @@ public class SEO {
                 String questionTag = rs.getString("topic_name");
                 map.put(questionTagId, questionTag);
             }
+            return map;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(SEO.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -74,17 +88,28 @@ public class SEO {
                 }
             }
         }
-        return map;
+        return null;
     }
 
-    public List<String> getQuestionTag(int qId) throws SQLException {
-        DatabaseConnection dc = new DatabaseConnection();
+    /**
+     *
+     * @param qId
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public List<String> getQuestionTag(int qId) throws SQLException, Exception {
+
+        DatabaseConnection ds = new DatabaseConnection();
+
         List<String> list = new ArrayList<>();
+
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+
         try {
-            con = dc.getConnection();
+            con = ds.getConnection();
             String sql = "select tag_id as unique_id,(select topic_name from topic where unique_id = question_topic_tag.tag_id)topic_name from question_topic_tag where question_id =?";
             ps = con.prepareStatement(sql);
             ps.setInt(1, qId);
@@ -93,8 +118,9 @@ public class SEO {
                 String questionTag = rs.getString("topic_name");
                 list.add(questionTag);
             }
+            return list;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(SEO.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -118,10 +144,18 @@ public class SEO {
                 }
             }
         }
-        return list;
+        return null;
     }
 
-    public List<SEOPojo> getTitleAndDescripiton(int qId) throws SQLException {
+    /**
+     *
+     * @param qId
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public List<SEOPojo> getTitleAndDescripiton(int qId) throws SQLException, ClassNotFoundException, Exception {
+
         Pattern pattern = Pattern.compile(
                 "\\b(((ht|f)tp(s?)\\:\\/\\/|~\\/|\\/)|www.)"
                 + "(\\w+:\\w+@)?(([-\\w]+\\.)+(com|org|net|gov"
@@ -134,14 +168,17 @@ public class SEO {
                 + "([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)*)*"
                 + "(#([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)?\\b");
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection ds = new DatabaseConnection();
+
         List<SEOPojo> list = new ArrayList<>();
+
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+
         try {
             String sql = "SELECT q.q_id AS q_id,q.question AS question,SUBSTRING(a.answer,1,500) AS answer,a.answer as imageLinkHtml FROM question q LEFT JOIN answer a on q.q_id = a.q_id WHERE q.q_id = ? limit 1";
-            con = dc.getConnection();
+            con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, qId);
             rs = ps.executeQuery();
@@ -168,8 +205,9 @@ public class SEO {
                 }
 
             }
+            return list;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(SEO.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -193,6 +231,6 @@ public class SEO {
                 }
             }
         }
-        return list;
+        return null;
     }
 }

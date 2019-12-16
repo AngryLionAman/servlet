@@ -22,6 +22,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -29,19 +31,21 @@ import java.util.List;
  */
 public class getAnswer {
 
-    private void updateAnswerCountByOne(int answerId) throws SQLException {
-        DatabaseConnection dc = new DatabaseConnection();
+    private void updateAnswerCountByOne(int answerId) throws SQLException, ClassNotFoundException, Exception {
+        
+        DatabaseConnection ds = new DatabaseConnection();
+        
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             String sql = "UPDATE answer SET total_view = total_view + 1 WHERE a_id =?";
-            con = dc.getConnection();
+            con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, answerId);
             ps.execute();
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -67,15 +71,24 @@ public class getAnswer {
         }
     }
 
-    public List<getAnswerPojo> getAnswerById(int qId) throws SQLException {
+    /**
+     *
+     * @param qId
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public List<getAnswerPojo> getAnswerById(int qId) throws SQLException, ClassNotFoundException, Exception {
         List<getAnswerPojo> list = new ArrayList<>();
-        DatabaseConnection dc = new DatabaseConnection();
+        
+        DatabaseConnection ds = new DatabaseConnection();
+        
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             String sql = "SELECT ans.Answer_by_id as userid,user.username as username,user.firstname as fullname,ans.answer as answer,ans.a_id as answerid,ans.total_view as totalview,ans.vote as vote FROM newuser user RIGHT JOIN answer ans on user.id = ans.Answer_by_id where q_id = ? and a_id is not null order by vote desc";
-            con = dc.getConnection();
+            con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, qId);
             rs = ps.executeQuery();
@@ -85,13 +98,14 @@ public class getAnswer {
                 String fullName = rs.getString("fullname");
                 String answer = rs.getString("answer");
                 int answerId = rs.getInt("answerid");
-                updateAnswerCountByOne(answerId);
+                //updateAnswerCountByOne(answerId); to avoide the exception
                 int totalView = rs.getInt("totalview");
                 int vote = rs.getInt("vote");
                 list.add(new getAnswerPojo(userId, userName, fullName, answer, answerId, totalView, vote));
             }
+            return list;
         } catch (SQLException msg) {
-            throw msg;
+           Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -115,6 +129,6 @@ public class getAnswer {
                 }
             }
         }
-        return list;
+        return null;
     }
 }

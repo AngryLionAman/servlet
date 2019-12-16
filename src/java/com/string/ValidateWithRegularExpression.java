@@ -15,6 +15,8 @@
  */
 package com.string;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,15 +26,26 @@ import java.util.regex.Pattern;
  */
 public class ValidateWithRegularExpression {
 
+    /**
+     *
+     * @param args
+     * @return
+     */
     public boolean validateEamil(String args) {
         try {
             String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
             return args.matches(ePattern);
         } catch (Exception msg) {
-            throw msg;
+            Logger.getLogger(ValidateWithRegularExpression.class.getName()).log(Level.SEVERE, args, msg);
         }
+        return false;
     }
 
+    /**
+     *
+     * @param agrs
+     * @return
+     */
     public boolean validateFullName(String agrs) {
         int length = agrs.length();
         if (length < 25) { //If the name length is too long
@@ -46,12 +59,22 @@ public class ValidateWithRegularExpression {
         return false;
     }
 
+    /**
+     *
+     * @param agrs
+     * @return
+     */
     public boolean validateMobileNumber(String agrs) {
 
         String pattern = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}";
         return agrs.matches(pattern);
     }
 
+    /**
+     *
+     * @param args
+     * @return
+     */
     public boolean validatePassword(String args) {
         return args.length() >= 6;
     }

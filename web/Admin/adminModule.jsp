@@ -10,14 +10,20 @@
 <c:if test="${sessionScope.adminUserId eq null}">
     <c:redirect url="visit.jsp?msg=Session is not valid"/>
 </c:if>
-<c:if test="${sessionScope.adminUserId ne null}">    
-    <c:forEach items="${user.userDetail(sessionScope.adminUserId)}" var="u">
-        <c:set value="${u.userId}" var="id" scope="page"/>
-        <c:set value="${u.userName}" var="userName" scope="session"/>
-        <c:set value="${u.fullName}" var="fullName" scope="page"/>
-        <c:set value="${u.eMail}" var="eMail" scope="page"/>
-    </c:forEach>
+<c:catch var="m">
+    <c:if test="${sessionScope.adminUserId ne null}">    
+        <c:forEach items="${user.userDetail(sessionScope.adminUserId)}" var="u">
+            <c:set value="${u.userId}" var="id" scope="page"/>
+            <c:set value="${u.userName}" var="userName" scope="session"/>
+            <c:set value="${u.fullName}" var="fullName" scope="page"/>
+            <c:set value="${u.eMail}" var="eMail" scope="page"/>
+        </c:forEach>
+    </c:if>
+</c:catch>
+<c:if test="${m ne null}">
+    ${m}
 </c:if>
+
 <!DOCTYPE html>
 <html>
     <head>

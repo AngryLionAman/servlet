@@ -32,6 +32,14 @@ import javax.servlet.http.HttpServletResponse;
  * @author AngryLion
  */
 public class deleteQuestionById extends HttpServlet {
+
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -51,10 +59,12 @@ public class deleteQuestionById extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(deleteQuestionById.class.getName()).log(Level.SEVERE, null, ex);
             }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(deleteQuestionById.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
-    private boolean deleteQuestionById(int questionId) throws SQLException{
+    private boolean deleteQuestionById(int questionId) throws SQLException, ClassNotFoundException{
         boolean status = false;
         DatabaseConnection dc = new DatabaseConnection();
         Connection con = null;

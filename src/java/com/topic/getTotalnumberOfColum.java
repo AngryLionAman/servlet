@@ -20,6 +20,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -27,20 +29,28 @@ import java.sql.SQLException;
  */
 public class getTotalnumberOfColum {
 
-    public int totalNumberOfPageOfTopicByTopicId(int topicId, int recordPerPage) throws SQLException {
+    /**
+     *
+     * @param topicId
+     * @param recordPerPage
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public int totalNumberOfPageOfTopicByTopicId(int topicId, int recordPerPage) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection connection = new DatabaseConnection();
 
-        Connection com = null;
+        Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         float totalNumberOfpage = 0;
 
         try {
-            com = connection.getConnection();
+            con = connection.getConnection();
             String sql = "select count(*) as cnt from question q right join question_topic_tag qtt on qtt.question_id = q.q_id where tag_id = ?";
-            ps = com.prepareStatement(sql);
+            ps = con.prepareStatement(sql);
             ps.setInt(1, topicId);
             rs = ps.executeQuery();
 
@@ -53,37 +63,46 @@ public class getTotalnumberOfColum {
             if (totalNumberOfpage > newnumber) {
                 totalNumberOfpage = totalNumberOfpage + 1;
             }
+            return (int) totalNumberOfpage;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(getTotalnumberOfColum.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
-            if (com != null) {
-                try {
-                    com.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }
-            if (rs != null) {
+             if (rs != null) {
                 try {
                     rs.close();
                 } catch (SQLException sqlex) {
                     // ignore -- as we can't do anything about it here
                 }
             }
+              if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException sqlex) {
+                    // ignore -- as we can't do anything about it here
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException sqlex) {
+                    // ignore -- as we can't do anything about it here
+                }
+            }           
         }
-        return (int) totalNumberOfpage;
+        return 0;  
     }
 
-    public int totalNumberOfColumnOfTopic(int recordPerPage) throws SQLException {
+    /**
+     *
+     * @param recordPerPage
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws Exception
+     */
+    public int totalNumberOfColumnOfTopic(int recordPerPage) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection connection = new DatabaseConnection();
+        DatabaseConnection ds = new DatabaseConnection();
 
         Connection com = null;
         PreparedStatement ps = null;
@@ -92,46 +111,45 @@ public class getTotalnumberOfColum {
         float totalNumberOfpage = 0;
 
         try {
-            com = connection.getConnection();
+            com = ds.getConnection();
             String sql = "select count(*) as cnt from topic";
             ps = com.prepareStatement(sql);
             rs = ps.executeQuery();
 
             while (rs.next()) {
                 totalNumberOfpage = rs.getInt("cnt");
-
             }
             totalNumberOfpage = totalNumberOfpage / recordPerPage;
             int newnumber = (int) totalNumberOfpage;
             if (totalNumberOfpage > newnumber) {
                 totalNumberOfpage = totalNumberOfpage + 1;
             }
+            return (int) totalNumberOfpage;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(getTotalnumberOfColum.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
-            if (com != null) {
-                try {
-                    com.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }
-            if (rs != null) {
+             if (rs != null) {
                 try {
                     rs.close();
                 } catch (SQLException sqlex) {
                     // ignore -- as we can't do anything about it here
                 }
             }
+              if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException sqlex) {
+                    // ignore -- as we can't do anything about it here
+                }
+            }
+            if (com != null) {
+                try {
+                    com.close();
+                } catch (SQLException sqlex) {
+                    // ignore -- as we can't do anything about it here
+                }
+            }           
         }
-        return (int) totalNumberOfpage;
+        return 0; 
     }
-
 }

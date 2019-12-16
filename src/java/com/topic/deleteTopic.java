@@ -33,6 +33,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class deleteTopic extends HttpServlet {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -40,7 +47,7 @@ public class deleteTopic extends HttpServlet {
         DatabaseConnection dc = null;
         try {
             dc = new DatabaseConnection();
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(deleteTopic.class.getName()).log(Level.SEVERE, null, ex);
         }
         Connection con = null;

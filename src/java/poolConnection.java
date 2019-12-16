@@ -34,6 +34,11 @@ public class poolConnection {
 
     private static GenericObjectPool gPool = null;
 
+    /**
+     *
+     * @return
+     * @throws Exception
+     */
     @SuppressWarnings("unused")
     public DataSource setUpPool() throws Exception {
         Class.forName(JDBC_DRIVER);
@@ -51,6 +56,10 @@ public class poolConnection {
         return new PoolingDataSource(gPool);
     }
 
+    /**
+     *
+     * @return
+     */
     public GenericObjectPool getConnectionPool() {
         return gPool;
     }
@@ -60,6 +69,12 @@ public class poolConnection {
         System.out.println("Max.: " + getConnectionPool().getMaxActive() + "; Active: " + getConnectionPool().getNumActive() + "; Idle: " + getConnectionPool().getNumIdle());
     }
 
+    /**
+     *
+     * @param args
+     * @throws SQLException
+     * @throws Exception
+     */
     public static void main(String[] args) throws SQLException, Exception {
         ResultSet rsObj = null;
         Connection connObj = null;

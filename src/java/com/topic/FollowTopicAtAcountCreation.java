@@ -31,6 +31,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class FollowTopicAtAcountCreation extends HttpServlet {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -39,7 +46,7 @@ public class FollowTopicAtAcountCreation extends HttpServlet {
             Map<Integer, String> SelectSomeTopic = topic.SelectSomeTopic();
             request.setAttribute("topic", SelectSomeTopic);
             request.getRequestDispatcher("CompleteProfilefFollowTopic.jsp").forward(request, response);
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(FollowTopicAtAcountCreation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

@@ -12,6 +12,10 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+/**
+ *
+ * @author AngryLion
+ */
 public class UploadServlet extends HttpServlet {
    
    private boolean isMultipart;
@@ -20,13 +24,23 @@ public class UploadServlet extends HttpServlet {
    private final int maxMemSize = 4 * 1024;
    private File file ;
 
-   @Override
+    /**
+     *
+     */
+    @Override
    public void init( ){
       // Get the file location where it would be stored.
       filePath = getServletContext().getInitParameter("file-upload"); 
    }
    
-   @Override
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+    @Override
    public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, java.io.IOException {
    
@@ -105,7 +119,14 @@ public class UploadServlet extends HttpServlet {
          }
       }
       
-   @Override
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+    @Override
       public void doGet(HttpServletRequest request, HttpServletResponse response)
          throws ServletException, java.io.IOException {
 

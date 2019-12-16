@@ -32,6 +32,17 @@ public class topicPojo {
     int totalFollowers;
     int relatedQuestion;
 
+    /**
+     *
+     * @param topicName
+     * @param topicId
+     * @param imageUrl
+     * @param descHindi
+     * @param descEng
+     * @param crawl
+     * @param totalFollowers
+     * @param relatedQuestion
+     */
     public topicPojo(String topicName, int topicId, String imageUrl, String descHindi, String descEng, boolean crawl, int totalFollowers, int relatedQuestion) {
         this.topicName = topicName;
         this.topicId = topicId;
@@ -43,34 +54,66 @@ public class topicPojo {
         this.relatedQuestion = relatedQuestion;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTopicName() {
         return topicName;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTopicId() {
         return topicId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getImageUrl() {
         return imageUrl;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDescHindi() {
         return descHindi;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDescEng() {
         return descEng;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isCrawl() {
         return crawl;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTotalFollowers() {
         return totalFollowers;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getRelatedQuestion() {
         return relatedQuestion;
     }

@@ -46,6 +46,11 @@ public class topic extends HttpServlet {
         return pageno;
     }
 
+    /**
+     *
+     * @param topicId
+     * @return
+     */
     public int getInputInt(String topicId) {
         int id = 0;
         if (topicId == null) {
@@ -60,6 +65,13 @@ public class topic extends HttpServlet {
         return id;
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -69,7 +81,7 @@ public class topic extends HttpServlet {
         if (request.getParameter("id") == null) {
 
             topicId = 0;
-            
+
         } else {
 
             topicId = getInputInt(request.getParameter("id"));
@@ -95,7 +107,7 @@ public class topic extends HttpServlet {
 
                 int totalNumberOfpage = colum.totalNumberOfPageOfTopicByTopicId(topicId, recoredPerPage);
 
-                List<topicPojo> topicDetailByRefId = topic.getTopicDetailByRefId(topicId);
+                HashMap<Integer, String> topicDetailByRefId = topic.getTopicDetailByRefId(topicId);
 
                 request.setAttribute("topicDetailForSeo", topicDetailForSeo);
 
@@ -108,21 +120,12 @@ public class topic extends HttpServlet {
                 request.getRequestDispatcher("topic.jsp").forward(request, response);
 
             } catch (Exception msg) {
-
-                try {
-
-                    throw msg;
-
-                } catch (Exception ex) {
-
-                    Logger.getLogger(topic.class.getName()).log(Level.SEVERE, null, ex);
-
-                }
+                Logger.getLogger(topic.class.getName()).log(Level.SEVERE, null, msg);
             }
         } else {
             request.setAttribute("message", "You have hitted the bad url");
 
-            request.getRequestDispatcher("topic.jsp").forward(request, response);
+            request.getRequestDispatcher("Error404.jsp").forward(request, response);
         }
 
     }

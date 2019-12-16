@@ -27,6 +27,14 @@ public class allTopicPojo {
     int totalQuestion;
     int totalFollowers;
 
+    /**
+     *
+     * @param topicId
+     * @param topicName
+     * @param imageUrl
+     * @param totalQuestion
+     * @param totalFollowers
+     */
     public allTopicPojo(int topicId, String topicName, String imageUrl, int totalQuestion, int totalFollowers) {
         this.topicId = topicId;
         this.topicName = topicName;
@@ -35,22 +43,42 @@ public class allTopicPojo {
         this.totalFollowers = totalFollowers;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTopicId() {
         return topicId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTopicName() {
         return topicName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getImageUrl() {
         return imageUrl;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTotalQuestion() {
         return totalQuestion;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTotalFollowers() {
         return totalFollowers;
     }

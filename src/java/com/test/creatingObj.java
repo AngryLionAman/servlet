@@ -26,11 +26,20 @@ public class creatingObj {
     String name;
     int id;
 
+    /**
+     *
+     * @param name
+     * @param id
+     */
     public creatingObj(String name, int id) {
         this.name = name;
         this.id = id;
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         List<creatingObj> list = new ArrayList<>();
         for (int i = 0; i < 100000; i++) {

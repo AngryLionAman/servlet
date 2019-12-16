@@ -2,9 +2,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@include file="site.jsp" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:useBean class="com.string.name" id="word" scope="page"/>
+<jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
+<jsp:useBean class="com.topic.topicFollow" id="topic" scope="page"/>
+<c:if test="${list eq null}">
+    <c:redirect url="moretopic"/>
+</c:if>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -24,29 +27,24 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">        <!-- responsive style sheet -->
         <link rel="stylesheet" type="text/css" href="css/responsive.css">
         <script type="text/javascript">
-            function take_value(el, _topic_id, id_of_user) {
-            <% if (session.getAttribute("Session_id_of_user") == null) { %>
-                alert("Please login first or refresh the page!!");<%
-                } else {%>
-                if (el.value === "follow") {
-                    el.value = "followed";
-                    var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_follow_topic.jsp?val_topic=" + _topic_id + "&val2_topic=" + id_of_user + "&action=follow", true);
-                    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    http.send();
-
-                } else {
-                    el.value = "follow";
-                    var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_follow_topic.jsp?val_topic=" + _topic_id + "&val2_topic=" + id_of_user + "&action=delete", true);
-                    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    http.send();
-
+            function follow_topic(el, _topic_id, id_of_user) {
+                if (_topic_id !== "" && id_of_user !== "") {
+                    if (el.value === "follow") {
+                        el.value = "followed";
+                        var http = new XMLHttpRequest();
+                        http.open("POST", "followTopicServlet?topicId=" + _topic_id + "&userId=" + id_of_user + "&action=follow", true);
+                        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        http.send();
+                    } else {
+                        el.value = "follow";
+                        var http = new XMLHttpRequest();
+                        http.open("POST", "followTopicServlet?topicId=" + _topic_id + "&userId=" + id_of_user + "&action=unfollow", true);
+                        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        http.send();
+                    }
                 }
-
-            <% }%>
             }
-        </script>
+        </script>   
     </head>
     <body>
         <jsp:include page="header.jsp"/>
@@ -60,6 +58,7 @@
                             </div> 
                             <c:catch var="ex">                       
                                 <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                                    
                                     <c:forEach var="t" items="${list}">
                                         <div class="col-lg-2 col-md-2 col-sm-4 col-xs-4" style="border-style: solid;">
                                             <c:set var="totalQuestion" value="${t.totalQuestion}"/>
@@ -75,8 +74,29 @@
                                                     </c:choose> 
                                                     ${word.convertStringUpperToLower(t.topicName)}(${t.totalFollowers})(${t.totalQuestion})
                                                 </a> 
-                                            </span>                                            
+                                            </span>  
+                                            <c:catch var="exc">
+                                                <c:choose>
+                                                    <c:when test="${sessionScope.Session_id_of_user ne null}">
+                                                        <c:choose>
+                                                            <c:when test="${topic.topicFollw(t.topicId, sessionScope.Session_id_of_user)}">
+                                                                <input type="button" value="Unfollow" onclick="return follow_topic(this, '${t.topicId}', '${sessionScope.Session_id_of_user}');" />
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <input type="button" value="follow" onclick="return follow_topic(this, '${t.topicId}', '${sessionScope.Session_id_of_user}');" />
+                                                            </c:otherwise>
+                                                        </c:choose>                                                                        
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <input type="button" value="follow" onclick="alert('Please Login to follow')" />
+                                                    </c:otherwise>
+                                                </c:choose>  
+                                            </c:catch>
+                                            <c:if test="${exc ne null}">
+                                                ${exc}
+                                            </c:if> 
                                         </div>
+
                                     </c:forEach>
                                     <c:catch var="msg">
                                         <c:set value="1" var="pageNo"/>
@@ -114,8 +134,6 @@
                                         <a href="<%=request.getContextPath()%>/moretopic">Get the all topic detail</a>
                                     </c:if>
                                 </div>  
-
-
                             </c:catch>
                             <c:if test="${ex ne null}">
                                 ${ex}

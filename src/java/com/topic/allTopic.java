@@ -24,15 +24,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author AngryLion
  */
 public class allTopic {
-    
-    public List<allTopicPojo> topic(int pageNo,int recordPerPage) throws SQLException, Exception {
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+
+    /**
+     *
+     * @param pageNo
+     * @param recordPerPage
+     * @return
+     * @throws SQLException
+     * @throws Exception
+     */
+    public List<allTopicPojo> topic(int pageNo, int recordPerPage) throws SQLException, Exception {
+        
+        DatabaseConnection ds = new DatabaseConnection();
+        
         totalQuestion q = new totalQuestion();
         indexPageExtraFunction function = new indexPageExtraFunction();
         List<allTopicPojo> list = new ArrayList<>();
@@ -41,7 +53,7 @@ public class allTopic {
         ResultSet rs = null;
         int startPage = (pageNo * recordPerPage) - recordPerPage;
         try {
-            con = dc.getConnection();
+            con = ds.getConnection();
             String sql = "select unique_id,topic_name,image_url from topic limit ?,?";
             ps = con.prepareStatement(sql);
             ps.setInt(1, startPage);
@@ -55,9 +67,9 @@ public class allTopic {
                 int totalFollowers = function.totalFollowersOfTopic(topicId);
                 list.add(new allTopicPojo(topicId, topicName, imageUrl, totalQuestion, totalFollowers));
             }
-            
+            return list;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(allTopic.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -78,6 +90,6 @@ public class allTopic {
                 }
             }
         }
-        return list;
+        return null;
     }
 }

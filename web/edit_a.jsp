@@ -10,7 +10,7 @@
         %>
         <meta charset="UTF-8">
         <meta http-equiv="content-type" content="text/html" charset="utf-8">
-          
+
         <script src="ckeditor/ckeditor.js"></script>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -21,9 +21,12 @@
     <body>
         <div class="main-page-wrapper">
             <jsp:include page="header.jsp"/>
-              <c:if test="${sessionScope.Session_id_of_user eq null}">
-            <c:redirect url="login.jsp"/>
-        </c:if>   
+            <c:if test="${sessionScope.Session_id_of_user eq null}">
+                <c:redirect url="login.jsp"/>
+            </c:if>   
+            <c:if test="${answerid eq null}">
+                <c:redirect url="index?ref=Invalid url"/>
+            </c:if>
             <div class="clear-fix"></div>
             <div class="bodydata">
                 <div class="container clear-fix">
@@ -35,30 +38,14 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="themeBox" style="height:auto;">
                                         <div class="boxHeading marginbot10">
-                                            <c:catch var="ex">
-                                                <c:if test="${param.ans_id ne null and not empty param.ans_id}">
-                                                    <sql:query dataSource="jdbc/mydatabase" var="answer">
-                                                        select a_id,answer from answer where a_id =?;
-                                                        <sql:param value="${param.ans_id}"/>
-                                                    </sql:query>
-                                                    <c:forEach var="ans" items="${answer.rows}">
-                                                        <c:set value="${ans.answer}" var="qAnswer"/>
-                                                        <c:set value="${ans.a_id}" var="answerId"/>
-                                                    </c:forEach>
-                                                </c:if>
-                                            </c:catch>
-                                            <c:if test="${ex ne null}">
-                                                ${ex}
-                                            </c:if>                                       
-
-                                            Ques : ${param.q} ?
+                                            Ques : ${question} ?
                                         </div>                                    
                                     </div>
                                     <div class="boxHeading marginbot10">Answer:</div>
-                                    <form name="submitquestion" method="post" action="update_a.jsp">
-                                        <input type="hidden" name="answer_id" value="${answerId}">
-                                        <input type="hidden" name="question_id" value="${param.q_id}">
-                                        <textarea class="ckeditor" name="answer" required="" >${qAnswer}</textarea>
+                                    <form name="form_name_submitquestion" method="post" action="saveUpdatedAnswer">
+                                        <input type="hidden" name="answer_id" value="${answerid}">
+                                        <input type="hidden" name="question_id" value="${id}">
+                                        <textarea class="ckeditor" name="answer" required="" >${answer}</textarea>
                                         <input type="submit" name="Post" value="Submit"> 
                                     </form>
                                     <div class="clear-fix"></div>

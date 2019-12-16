@@ -1,17 +1,11 @@
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ include file="site.jsp" %>
-<%@ include file="validator.jsp" %>
 <%@ page isErrorPage="true" errorPage="error.jsp" %>        
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:useBean class="com.index.indexPage" id="Question" scope="page"/>
 <jsp:useBean class="com.index.comments" id="comment" scope="page"/>
-<jsp:useBean class="com.index.topicDetals" id="topic" scope="page"/>
-<jsp:useBean class="com.string.name" id="function" scope="page"/>
-<jsp:useBean class="com.advertise.displayAds" id="ads" scope="page"/>
-<jsp:useBean class="com.fun.helpingFunction" id="fun" scope="page"/>
+<jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
+
 <html lang="en">
     <head>  
         <%@include file="googleAnalytics.jsp" %>
@@ -38,29 +32,21 @@
         <meta property="og:site_name" content="www.inquiryhere.com" />
 
         <script type="text/javascript">
-            function take_value(el, question_id, sUserid, action) {
-                if (question_id.length > 0 && question_id !== null && sUserid !== null && sUserid.length > 0 && action !== null) {
+            function take_value(el, question_answer_id, Activer_user_id, action, section) {
+                //alert(el.value + "," + question_answer_id + "," + Activer_user_id + "," + action + "," + section);
+                if (question_answer_id !== "" && Activer_user_id !== "" && action !== "" && section !== "") {
                     el.onclick = function (event) {
                         event.preventDefault();
                     };
-                    if (action === "upvote") {
-                        var http = new XMLHttpRequest();
-                        http.open("POST", "<%=DB_AJAX_PATH%>/submit_question_vote.jsp?question_id=" + question_id + "&action=upvote", true);
-                        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                        http.send();
-                    }
-                    if (action === "downvote") {
-                        var http = new XMLHttpRequest();
-                        http.open("POST", "<%=DB_AJAX_PATH%>/submit_question_vote.jsp?question_id=" + question_id + "&action=downvote", true);
-                        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                        http.send();
-                    }
+                    var http = new XMLHttpRequest();
+                    http.open("POST", "vote?question_answer_id=" + question_answer_id + "&activetUserId=" + Activer_user_id + "&action=" + action + "&section=" + section, true);
+                    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    http.send();
                 } else {
-                    alert("please login first!!!");
+                    alert('Please Login To Vote');
                 }
-
             }
-        </script>
+        </script>  
         <style>
             a { color: black; } /* CSS link color */
             /* Style the tab */
@@ -105,18 +91,16 @@
     </head>
 
     <body>
+
         <div class="main-page-wrapper">
+
             <jsp:include page="header.jsp"/>
-            <div class="clear-fix" align="center" style="font-size: 20px;color: green;background-color: yellow;">
-                <c:choose>
-                    <c:when test="${param.ref eq 'f_t'}">
-                        ${"Thanks for choosing inquiryhere.com, We always work for you"}
-                    </c:when>
-                    <c:when test="${param.msg ne null and not empty param.msg}">
-                        ${param.msg}
-                    </c:when>
-                </c:choose>
-            </div>
+
+            <c:if test="${message ne null}">
+                <div class="clear-fix" align="center" style="font-size: 20px;color: green;background-color: yellow;">
+                    ${message}
+                </div>
+            </c:if>
             <div class="bodydata">
                 <div class="container clear-fix">
                     <div class="row">
@@ -128,25 +112,25 @@
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
                                         <ul>
-                                            <li><a href="search.jsp?q=Class 12">Class 12</a></li>
-                                            <li><a href="search.jsp?q=Class 11">Class 11</a></li>
-                                            <li><a href="search.jsp?q=Class 10">Class 10</a></li>
-                                            <li><a href="search.jsp?q=Class 9">Class 9</a></li>
-                                            <li><a href="search.jsp?q=Hindi">Hindi</a></li>
-                                            <li><a href="search.jsp?q=English">English</a></li>                                            
-                                            <li><a href="search.jsp?q=Political science">Political science</a></li>
-                                            <li><a href="search.jsp?q=Biology">Biology</a></li>
-                                            <li><a href="search.jsp?q=Social science">Social science</a></li>
+                                            <li><a href="search?q=Class 12&ref=i">Class 12</a></li>
+                                            <li><a href="search?q=Class 11&ref=i">Class 11</a></li>
+                                            <li><a href="search?q=Class 10&ref=i">Class 10</a></li>
+                                            <li><a href="search?q=Class 9&ref=i">Class 9</a></li>
+                                            <li><a href="search?q=Hindi&ref=i">Hindi</a></li>
+                                            <li><a href="search?q=English&ref=i">English</a></li>                                            
+                                            <li><a href="search?q=Political science&ref=i">Political science</a></li>
+                                            <li><a href="search?q=Biology&ref=i">Biology</a></li>
+                                            <li><a href="search?q=Social science&ref=i">Social science</a></li>
                                         </ul> 
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
                                         <ul>
-                                            <li><a href="search.jsp?q=Math">Math</a></li>
-                                            <li><a href="search.jsp?q=Physics">Physics</a></li>
-                                            <li><a href="search.jsp?q=Chemistry">Chemistry</a></li>
-                                            <li><a href="search.jsp?q=Civics">Civics</a></li>
-                                            <li><a href="search.jsp?q=History">History</a></li>
-                                            <li><a href="search.jsp?q=gk">GK</a></li>
+                                            <li><a href="search?q=Math&ref=i">Math</a></li>
+                                            <li><a href="search?q=Physics&ref=i">Physics</a></li>
+                                            <li><a href="search?q=Chemistry&ref=i">Chemistry</a></li>
+                                            <li><a href="search?q=Civics&ref=i">Civics</a></li>
+                                            <li><a href="search?q=History&ref=i">History</a></li>
+                                            <li><a href="search?q=gk&ref=i">GK</a></li>
                                         </ul> 
                                     </div>
                                 </div>
@@ -180,106 +164,25 @@
                             </script>
                             <div class="row">
                                 <div class="tab">
-                                    <a href="<%=request.getContextPath()%>?tab=recent"> <button class="tablinks">Recent</button></a>
+                                    <a href="index?tab=recent"> <button class="tablinks">Recent</button></a>
                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                        <a href="<%=request.getContextPath()%>?tab=related"><button class="tablinks">Related</button></a>   
+                                        <a href="index?tab=related"><button class="tablinks">Related</button></a>   
                                     </c:if>                                         
-                                    <a href="getAllQuestion"><button class="tablinks">All</button></a>   
-                                    <a href="unanswered"><button class="tablinks">Unanswered</button></a>   
+                                    <a href="index?tab=allquestion"><button class="tablinks">All</button></a>   
+                                    <a href="index?tab=unanswered"><button class="tablinks">Unanswered</button></a>   
                                 </div>
-                                <c:if test="${param.tab eq null or empty param.tab}">
-                                    <c:set var="tab" value="recent" scope="page"/>
-                                </c:if>
-                                <c:if test="${requestScope.tab ne null}">
-                                    <c:set var="tab" value="${requestScope.tab}" scope="page"/>
-                                </c:if>
-                                <c:if test="${param.tab ne null and not empty param.tab}">
-                                    <c:choose>
-                                        <c:when test="${param.tab eq 'recent'}">
-                                            <c:set var="tab" value="recent" scope="page"/>
-                                        </c:when>
-                                        <c:when test="${param.tab eq 'related'}">
-                                            <c:set var="tab" value="related" scope="page"/>
-                                        </c:when>
-                                        <c:when test="${param.tab eq 'all'}">
-                                            <c:set var="tab" value="all" scope="page"/>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <c:set var="tab" value="all" scope="page"/>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </c:if>
                                 <!---------------------------------------------------------------------->
-                                <c:if test="${tab eq 'recent'}">
-                                    <c:if test="${empty param.iPageNo and empty param.cPageNo and param.p eq null and param.page lt 2 or empty param.page}">
-                                        <h4>Recent posted question</h4>
-                                        <c:catch var="rcExp">
-                                            <c:forEach var="q" items="${Question.recentPostQuestion()}">
-                                                <div class="themeBox" style="height:auto;">
-                                                    <div align="left" style="font-size: 15px;font-family: serif;">
-                                                        <c:if test="${q.userType eq 'guest'}">
-                                                            Posted by  <i style="color: red;">${function.convertStringUpperToLower(q.userName)}</i>
-                                                        </c:if>
-                                                        <c:if test="${q.userType ne 'guest'}">
-                                                            Posted by <a href="profile.jsp?user=${q.userName}&ID=${q.userId}"> ${function.convertStringUpperToLower(q.fullName)}</a>
-                                                            <c:if test="${not empty q.higherEdu}">
-                                                                (${q.higherEdu})
-                                                            </c:if> 
-                                                        </c:if>
-                                                        ,
-                                                        <c:choose>
-                                                            <c:when test="${q.days eq 0}">
-                                                                Posted Today
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                Posted ${q.days} days ago
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </div>
-                                                    <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #ffffcc; " >
-                                                        <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >${function.convertStringUpperToLower(q.question)} ?</a>
-                                                        <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                                            <c:if test="${q.userId eq sessionScope.Session_id_of_user}">
-                                                                <a href="edit_q.jsp?Id=${q.questionId}&q=${q.question}"/>edit</a>
-                                                            </c:if>
-                                                        </c:if>                                                   
-                                                    </div>
-                                                    <div class="questionArea">
-                                                        <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
-                                                        <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
-                                                        <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >Ans(${q.totalAnswer})</a>&nbsp;&nbsp;
-                                                        <a href="javascript:void(0)">View(${q.totalView})</a>
-                                                        <!-- Comment on question -->
-                                                        <c:forEach items="${comment.commentsOnQuestion(q.questionId)}" var="c">
-                                                            <div align="right" style="border-style: groove;">
-                                                                ${c.comment}:-
-                                                                <a href="profile.jsp?user=${c.userUserName}&ID=${c.userId}">${function.convertStringUpperToLower(c.userFullName)}</a>,${c.time}
-                                                            </div>
-                                                        </c:forEach>
-                                                    </div>
-                                                </div>
-                                            </c:forEach>
-                                        </c:catch>
-
-                                        <c:if test="${rcExp ne null}">
-                                            ${rcExp}
-                                        </c:if>                                        
-                                    </c:if>
-                                </c:if>
-                                <!--------------------------------------------------->
-                                <c:if test="${sessionScope.Session_id_of_user ne null and tab eq 'related'}">
-                                    <h4>Related question</h4>  
-                                    <c:catch var="REexp">
-                                        <c:set scope="page" value="0" var="count"/>
-                                        <c:forEach var="q" items="${Question.relatedQuestion(sessionScope.Session_id_of_user)}" varStatus="loop">
-                                            <c:set scope="page" value="${loop.count}" var="count"/>
+                                <c:if test="${recentPostQuestion ne null and not empty recentPostQuestion}">
+                                    <h4>Recent posted question</h4>
+                                    <c:catch var="rcExp">
+                                        <c:forEach var="q" items="${recentPostQuestion}">
                                             <div class="themeBox" style="height:auto;">
                                                 <div align="left" style="font-size: 15px;font-family: serif;">
                                                     <c:if test="${q.userType eq 'guest'}">
-                                                        Posted by  <i style="color: red;">${function.convertStringUpperToLower(q.userName)}</i>
+                                                        Posted by  <i style="color: red;">${word.convertStringUpperToLower(q.userName)}</i>
                                                     </c:if>
                                                     <c:if test="${q.userType ne 'guest'}">
-                                                        Posted by <a href="profile.jsp?user=${q.userName}&ID=${q.userId}"> ${function.convertStringUpperToLower(q.fullName)}</a>
+                                                        Posted by <a href="profile?user=${q.userName}&id=${q.userId}&ref=ire"> ${word.convertStringUpperToLower(q.fullName)}</a>
                                                         <c:if test="${not empty q.higherEdu}">
                                                             (${q.higherEdu})
                                                         </c:if> 
@@ -295,23 +198,80 @@
                                                     </c:choose>
                                                 </div>
                                                 <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #ffffcc; " >
-                                                    <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >${function.convertStringUpperToLower(q.question)} ?</a>
+                                                    <a href="questions?id=${q.questionId}&q=${word.UrlFormat(q.question)}&ref=ire" >${word.convertStringUpperToLower(q.question)} ?</a>
                                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
                                                         <c:if test="${q.userId eq sessionScope.Session_id_of_user}">
-                                                            <a href="edit_q.jsp?Id=${q.questionId}&q=${q.question}"/>edit</a>
+                                                            <a href="edit_q?id=${q.questionId}&q=${q.question}"/>edit</a>
                                                         </c:if>
                                                     </c:if>                                                   
                                                 </div>
                                                 <div class="questionArea">
-                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
-                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
-                                                    <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >Ans(${q.totalAnswer})</a>&nbsp;&nbsp;
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote', 'question');" >Upvote(${q.questionVote})</a>&nbsp;&nbsp; 
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'downvote', 'question');" >Downvote</a>&nbsp;&nbsp; 
+                                                    <a href="Answer.jsp?Id=${q.questionId}&q=${word.UrlFormat(q.question)}&ref=ire" >Ans(${q.ansCount})</a>&nbsp;&nbsp;
+                                                    <a href="javascript:void(0)">View(${q.questionView})</a>
+                                                    <!-- Comment on question -->
+                                                    <c:forEach items="${comment.commentsOnQuestion(q.questionId)}" var="c">
+                                                        <div align="right" style="border-style: groove;">
+                                                            ${c.comment}:-
+                                                            <a href="profile?user=${c.userUserName}&id=${c.userId}&ref=irec">${word.convertStringUpperToLower(c.userFullName)}</a>,${c.time}
+                                                        </div>
+                                                    </c:forEach>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
+                                    </c:catch>
+
+                                    <c:if test="${rcExp ne null}">
+                                        ${rcExp}
+                                    </c:if>                                        
+                                </c:if>
+                                <!--------------------------------------------------->
+                                <c:if test="${relatedQuestion ne null and not empty relatedQuestion}">
+                                    <h4>Related question</h4>  
+                                    <c:catch var="REexp">
+                                        <c:set scope="page" value="0" var="count"/>
+                                        <c:forEach var="q" items="${relatedQuestion}" varStatus="loop">
+                                            <c:set scope="page" value="${loop.count}" var="count"/>
+                                            <div class="themeBox" style="height:auto;">
+                                                <div align="left" style="font-size: 15px;font-family: serif;">
+                                                    <c:if test="${q.userType eq 'guest'}">
+                                                        Posted by  <i style="color: red;">${word.convertStringUpperToLower(q.userName)}</i>
+                                                    </c:if>
+                                                    <c:if test="${q.userType ne 'guest'}">
+                                                        Posted by <a href="profile?user=${q.userName}&id=${q.userId}&ref=ir"> ${word.convertStringUpperToLower(q.fullName)}</a>
+                                                        <c:if test="${not empty q.higherEdu}">
+                                                            (${q.higherEdu})
+                                                        </c:if> 
+                                                    </c:if>
+                                                    ,
+                                                    <c:choose>
+                                                        <c:when test="${q.days eq 0}">
+                                                            Posted Today
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            Posted ${q.days} days ago
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                                <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #ffffcc; " >
+                                                    <a href="questions?id=${q.questionId}&q=${word.UrlFormat(q.question)}&ref=ir" >${word.convertStringUpperToLower(q.question)} ?</a>
+                                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
+                                                        <c:if test="${q.userId eq sessionScope.Session_id_of_user}">
+                                                            <a href="edit_q?id=${q.questionId}&q=${q.question}"/>edit</a>
+                                                        </c:if>
+                                                    </c:if>                                                   
+                                                </div>
+                                                <div class="questionArea">
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote', 'question');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'downvote', 'question');" >Downvote</a>&nbsp;&nbsp; 
+                                                    <a href="Answer.jsp?Id=${q.questionId}&q=${word.UrlFormat(q.question)}&ref=ir" >Ans(${q.totalAnswer})</a>&nbsp;&nbsp;
                                                     <a href="javascript:void(0)">View(${q.totalView})</a>
                                                     <!-- Comment on question -->
                                                     <c:forEach items="${comment.commentsOnQuestion(q.questionId)}" var="c">
                                                         <div align="right" style="border-style: groove;">
                                                             ${c.comment}:-
-                                                            <a href="profile.jsp?user=${c.userUserName}&ID=${c.userId}">${function.convertStringUpperToLower(c.userFullName)}</a>,${c.time}
+                                                            <a href="profile?user=${c.userUserName}&id=${c.userId}&ref=irc">${word.convertStringUpperToLower(c.userFullName)}</a>,${c.time}
                                                         </div>
                                                     </c:forEach>
                                                 </div>
@@ -326,17 +286,17 @@
                                     </c:if>
                                 </c:if>
                                 <!--*******************************************-->
-                                <c:if test="${tab eq 'all'}"> 
+                                <c:if test="${AllQuestion ne null and not empty AllQuestion}"> 
                                     <h4>Question you may like</h4>                                                                                          
                                     <c:catch var="exp">
-                                        <c:forEach var="q" items="${list}">
+                                        <c:forEach var="q" items="${AllQuestion}">
                                             <div class="themeBox" style="height:auto;">
                                                 <div align="left" style="font-size: 15px;font-family: serif;">
                                                     <c:if test="${q.userType eq 'guest'}">
-                                                        Posted by  <i style="color: red;">${function.convertStringUpperToLower(q.userName)}</i>
+                                                        Posted by  <i style="color: red;">${word.convertStringUpperToLower(q.userName)}</i>
                                                     </c:if>
                                                     <c:if test="${q.userType ne 'guest'}">
-                                                        Posted by <a href="profile.jsp?user=${q.userName}&ID=${q.userId}"> ${function.convertStringUpperToLower(q.fullName)}</a>
+                                                        Posted by <a href="profile?user=${q.userName}&id=${q.userId}&ref=iaq"> ${word.convertStringUpperToLower(q.fullName)}</a>
                                                         <c:if test="${not empty q.higherEdu}">
                                                             (${q.higherEdu})
                                                         </c:if> 
@@ -351,23 +311,23 @@
                                                     </c:choose>
                                                 </div>
                                                 <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #ffffcc; " >
-                                                    <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >${q.question} ?</a>
+                                                    <a href="questions?id=${q.questionId}&q=${word.UrlFormat(q.question)}&ref=iaq" >${q.question} ?</a>
                                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
                                                         <c:if test="${q.userId eq sessionScope.Session_id_of_user}">
-                                                            <a href="edit_q.jsp?Id=${q.questionId}&q=${q.question}"/>edit</a>
+                                                            <a href="edit_q?id=${q.questionId}&q=${q.question}"/>edit</a>
                                                         </c:if>
                                                     </c:if>                                                   
                                                 </div>
                                                 <div class="questionArea">
-                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
-                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
-                                                    <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >Ans(${q.totalAnswer})</a>&nbsp;&nbsp;
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote', 'question');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'downvote', 'question');" >Downvote</a>&nbsp;&nbsp; 
+                                                    <a href="Answer.jsp?Id=${q.questionId}&q=${word.UrlFormat(q.question)}&ref=iaq" >Ans(${q.totalAnswer})</a>&nbsp;&nbsp;
                                                     <a href="javascript:void(0)">View(${q.totalView})</a>
                                                     <!-- Comment on question -->
                                                     <c:forEach items="${comment.commentsOnQuestion(q.questionId)}" var="c">
                                                         <div align="right" style="border-style: groove;">
                                                             ${c.comment}:-
-                                                            <a href="profile.jsp?user=${c.userUserName}&ID=${c.userId}">${function.convertStringUpperToLower(c.userFullName)}</a>,${c.time}
+                                                            <a href="profile?user=${c.userUserName}&id=${c.userId}&ref=iaqc">${word.convertStringUpperToLower(c.userFullName)}</a>,${c.time}
                                                         </div>
                                                     </c:forEach>
                                                 </div>
@@ -379,26 +339,26 @@
                                                 <c:set value="${param.p}" var="pageNo"/>
                                             </c:if>
                                             <c:if test="${pageNo gt 1}">
-                                                <a href="getAllQuestion?p=${pageNo - 1}">Pre</a>&nbsp;
+                                                <a href="?tab=allquestion&p=${pageNo - 1}">Pre</a>&nbsp;
                                             </c:if>
                                             <c:if test="${totalNumberOfpage <= 15}">
                                                 <c:forEach begin="1" end="${totalNumberOfpage}" step="1" varStatus="loop">
-                                                    <a href="getAllQuestion?p=${loop.count}">${loop.count}</a>&nbsp;
+                                                    <a href="?tab=allquestion&p=${loop.count}">${loop.count}</a>&nbsp;
                                                 </c:forEach>
                                             </c:if>
                                             <c:if test="${totalNumberOfpage > 15}">
                                                 <c:forEach begin="1" end="8" step="1" varStatus="loop">
-                                                    <a href="getAllQuestion?p=${loop.count}">${loop.count}</a>&nbsp;
+                                                    <a href="?tab=allquestion&p=${loop.count}">${loop.count}</a>&nbsp;
                                                 </c:forEach>
                                                 ......
                                                 <c:set scope="page" value="${totalNumberOfpage - 8}" var="startFrom"/>
                                                 <c:forEach begin="${startFrom}" end="${totalNumberOfpage}" step="1">
-                                                    <a href="getAllQuestion?p=${startFrom}">${startFrom}</a>&nbsp;
+                                                    <a href="?tab=allquestion&p=${startFrom}">${startFrom}</a>&nbsp;
                                                     <c:set scope="page" value="${startFrom + 1}" var="startFrom"/>
                                                 </c:forEach>
                                             </c:if>
                                             <c:if test="${pageNo lt totalNumberOfpage}">
-                                                <a href="getAllQuestion?p=${pageNo + 1}">Next</a>&nbsp;
+                                                <a href="?tab=allquestion&p=${pageNo + 1}">Next</a>&nbsp;
                                             </c:if>
                                         </c:catch>
                                         <c:if test="${msg ne null}">
@@ -411,19 +371,19 @@
                                 </c:if>
                                 <!---------------------------->
                                 <!--*******************Unanswered question************************-->
-                                <c:if test="${tab eq 'unanswered'}"> 
+                                <c:if test="${UnAnsweredQuestion ne null and not empty UnAnsweredQuestion}"> 
                                     <h4>Please feel free to answer this question</h4>                                                                                          
                                     <c:catch var="exp">
                                         <c:set scope="page" value="0" var="count"/>
-                                        <c:forEach var="q" items="${list}" varStatus="loop">
+                                        <c:forEach var="q" items="${UnAnsweredQuestion}" varStatus="loop">
                                             <c:set scope="page" value="${loop.count}" var="count"/>
                                             <div class="themeBox" style="height:auto;">
                                                 <div align="left" style="font-size: 15px;font-family: serif;">
                                                     <c:if test="${q.userType eq 'guest'}">
-                                                        Posted by  <i style="color: red;">${function.convertStringUpperToLower(q.userName)}</i>
+                                                        Posted by  <i style="color: red;">${word.convertStringUpperToLower(q.userName)}</i>
                                                     </c:if>
                                                     <c:if test="${q.userType ne 'guest'}">
-                                                        Posted by <a href="profile.jsp?user=${q.userName}&ID=${q.userId}"> ${function.convertStringUpperToLower(q.fullName)}</a>
+                                                        Posted by <a href="profile?user=${q.userName}&id=${q.userId}&ref=un"> ${word.convertStringUpperToLower(q.fullName)}</a>
                                                         <c:if test="${not empty q.higherEdu}">
                                                             (${q.higherEdu})
                                                         </c:if> 
@@ -438,23 +398,23 @@
                                                     </c:choose>
                                                 </div>
                                                 <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #ffffcc; " >
-                                                    <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >${q.question} ?</a>
+                                                    <a href="questions?id=${q.questionId}&q=${word.UrlFormat(q.question)}&ref=un" >${q.question} ?</a>
                                                     <c:if test="${sessionScope.Session_id_of_user ne null}">
                                                         <c:if test="${q.userId eq sessionScope.Session_id_of_user}">
-                                                            <a href="edit_q.jsp?Id=${q.questionId}&q=${q.question}"/>edit</a>
+                                                            <a href="edit_q?id=${q.questionId}&q=${q.question}"/>edit</a>
                                                         </c:if>
                                                     </c:if>                                                   
                                                 </div>
                                                 <div class="questionArea">
-                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="upvote"%>');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
-                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', '<%="downvote"%>');" >Downvote</a>&nbsp;&nbsp; 
-                                                    <a href="Answer.jsp?q=${fn:replace(fn:replace(q.question, "|", ""), " ", "-")}&Id=${q.questionId}" >Ans(${q.totalAnswer})</a>&nbsp;&nbsp;
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote', 'question');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
+                                                    <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'downvote', 'question');" >Downvote</a>&nbsp;&nbsp; 
+                                                    <a href="Answer.jsp?Id=${q.questionId}&q=${word.UrlFormat(q.question)}&ref=un" >Ans(${q.totalAnswer})</a>&nbsp;&nbsp;
                                                     <a href="javascript:void(0)">View(${q.totalView})</a>
                                                     <!-- Comment on question -->
                                                     <c:forEach items="${comment.commentsOnQuestion(q.questionId)}" var="c">
                                                         <div align="right" style="border-style: groove;">
                                                             ${c.comment}:-
-                                                            <a href="profile.jsp?user=${c.userUserName}&ID=${c.userId}">${function.convertStringUpperToLower(c.userFullName)}</a>,${c.time}
+                                                            <a href="profile?user=${c.userUserName}&id=${c.userId}&ref=unc">${word.convertStringUpperToLower(c.userFullName)}</a>,${c.time}
                                                         </div>
                                                     </c:forEach>
                                                 </div>
@@ -490,11 +450,13 @@
                             </div>
                             <div>
                                 <c:catch var="ex">
-                                    <c:forEach items="${ads.displayRandomAds()}" var="a">
-                                        <a href="${a.forwardUrl}" target="_blank"> 
-                                            <img src="images/ads/${a.imageName}" height="${a.imageHeight}" width="${a.imageWidth}" alt="${a.imageAlt}">
-                                        </a>
-                                    </c:forEach>
+                                    <c:if test="${displayRandomAds ne null and not empty displayRandomAds}">
+                                        <c:forEach items="${displayRandomAds}" var="a">
+                                            <a href="${a.forwardUrl}" target="_blank"> 
+                                                <img src="images/ads/${a.imageName}" height="${a.imageHeight}" width="${a.imageWidth}" alt="${a.imageAlt}">
+                                            </a>
+                                        </c:forEach>
+                                    </c:if>
                                 </c:catch>
                                 <c:if test="${ex ne null}">
                                     ${ex}
@@ -515,14 +477,14 @@
                                     <div>
                                         <ul>
                                             <c:choose>
-                                                <c:when test="${sessionScope.Session_id_of_user ne null}">
+                                                <c:when test="${sessionScope.Session_id_of_user ne null and userFollowedTopic ne null and not empty userFollowedTopic}">
                                                     <c:set scope="page" value="0" var="count"/>
-                                                    <c:forEach var="t" items="${topic.userFollowedTopic(sessionScope.Session_id_of_user)}" varStatus="loop">
+                                                    <c:forEach var="t" items="${userFollowedTopic}" varStatus="loop">
                                                         <c:set scope="page" value="${loop.count}" var="count"/>
                                                         <li>
-                                                            <span title="Total followers of <c:out value="${function.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}">
-                                                                <a href="topic?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>">
-                                                                    <c:out value="${function.convertStringUpperToLower(t.topicName)}"/>
+                                                            <span title="Total followers of <c:out value="${word.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}">
+                                                                <a href="topic?id=${t.topicId}&t=${word.UrlFormat(t.topicName)}&ref=i">
+                                                                    <c:out value="${word.convertStringUpperToLower(t.topicName)}"/>
                                                                 </a> (<c:out value="${t.totalFollowers}"/>) 
                                                             </span>
                                                         </li>
@@ -532,11 +494,11 @@
                                                     </c:if>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <c:forEach var="t" items="${topic.randomTopic(15)}">
+                                                    <c:forEach var="t" items="${randomTopic}">
                                                         <li>
-                                                            <span title="Total followers of <c:out value="${function.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}">
-                                                                <a href="topic?t=<c:out value="${fn:replace(t.topicName,' ','+')}"/>&id=<c:out value="${t.topicId}"/>">
-                                                                    <c:out value="${function.convertStringUpperToLower(t.topicName)}"/>
+                                                            <span title="Total followers of <c:out value="${word.convertStringUpperToLower(t.topicName)}"/> is <c:out value="${t.totalFollowers}"/> and related question is ${t.relatedQuestion}">
+                                                                <a href="topic?id=${t.topicId}&t=${word.UrlFormat(t.topicName)}&ref=i">
+                                                                    <c:out value="${word.convertStringUpperToLower(t.topicName)}"/>
                                                                 </a> (<c:out value="${t.totalFollowers}"/>) 
                                                             </span>
                                                         </li>
@@ -554,8 +516,8 @@
                                     <div>
                                         <ul>
                                             <c:catch var="msg">
-                                                <c:forEach items="${fun.CategoryDetail()}" var="m">
-                                                    <li><a href="fun?category=${m}">${function.convertStringUpperToLower(m)}</a></li>
+                                                <c:forEach items="${CategoryDetail}" var="m">
+                                                    <li><a href="fun?category=${m}&ref=i">${word.convertStringUpperToLower(m)}</a></li>
                                                     </c:forEach>
                                                 </c:catch>
                                                 <c:if test="${msg ne null}">
@@ -580,11 +542,11 @@
                                     </div>
                                     <div>
                                         <ul>
-                                            <li><a href="UserProfile.jsp">Complete User List</a></li>
-                                            <li><a href="moretopic">Complete Topic List</a></li>
-                                            <li><a href="blog">Read Blog</a></li>
-                                            <li><a href="WriteBlogHere.jsp">Write a Blog</a></li>
-                                            <li><a href="optionalquestion">Read Objective Question</a></li>
+                                            <li><a href="UserProfile.jsp?ref=i">Complete User List</a></li>
+                                            <li><a href="moretopic?ref=i">Complete Topic List</a></li>
+                                            <li><a href="blog?ref=i">Read Blog</a></li>
+                                            <li><a href="WriteBlogHere.jsp?ref=i">Write a Blog</a></li>
+                                            <li><a href="optionalquestion?ref=i">Read Objective Question</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -601,6 +563,7 @@
             <jsp:include page="footer.jsp"/>
             <script type="text/javascript" src="vendor/jquery-2.1.4.js"></script>            <!-- Bootstrap JS -->
             <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>            <!-- Bootstrap Select JS -->
-            <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>        </div> <!-- /.main-page-wrapper -->
+            <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>     
+        </div> <!-- /.main-page-wrapper -->
     </body>
 </html>

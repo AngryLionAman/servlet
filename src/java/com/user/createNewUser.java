@@ -34,6 +34,13 @@ import javax.servlet.http.HttpSession;
  */
 public class createNewUser extends HttpServlet {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -57,7 +64,9 @@ public class createNewUser extends HttpServlet {
         if (fullName == null || email == null || password == null) {
             message = "Input field can't be empty";
         } else {
-            if (expression.validateFullName(fullName) && expression.validatePassword(password) && (expression.validateEamil(email) || expression.validateMobileNumber(email))) {
+            if (expression.validateFullName(fullName) && 
+                    expression.validatePassword(password) && 
+                    (expression.validateEamil(email) || expression.validateMobileNumber(email))) {
                 try {
                     if (!function.EmailIsAvaliabe(email)) {
                         if (!newUser.saveUser(fullName, email, password)) {
@@ -70,6 +79,7 @@ public class createNewUser extends HttpServlet {
                                 response.addCookie(passwordCookie);
                             } catch (Exception msg) {
                                 //throw msg;  @beacuse cookies creation is not neccessary
+                                Logger.getLogger(createNewUser.class.getName()).log(Level.SEVERE, null, msg);
                             }
                             //Creating session variable for the newuser
                             int userId = function.GetUserIdByEmail(email);
@@ -93,7 +103,7 @@ public class createNewUser extends HttpServlet {
                     } else {
                         message = "Mail Id is already registred, please use another one";
                     }
-                } catch (SQLException ex) {
+                } catch (SQLException | ClassNotFoundException ex) {
                     Logger.getLogger(createNewUser.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {

@@ -27,8 +27,17 @@ import com.redfin.sitemapgenerator.ChangeFreq;
 import com.redfin.sitemapgenerator.WebSitemapGenerator;
 import com.redfin.sitemapgenerator.WebSitemapUrl;
 
+/**
+ *
+ * @author AngryLion
+ */
 public class SitemapGenerator {
 
+    /**
+     *
+     * @param args
+     * @throws MalformedURLException
+     */
     public static void main(String[] args) throws MalformedURLException {
 
         WebSitemapGenerator webSitemapGenerator = WebSitemapGenerator.builder("http://www.inquiryhere.com", new File("C:\\")).gzip(true).build();

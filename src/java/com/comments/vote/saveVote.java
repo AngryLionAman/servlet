@@ -19,6 +19,8 @@ import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -26,14 +28,26 @@ import java.sql.SQLException;
  */
 public class saveVote {
 
-    public boolean saveVoteOfQuestionAndAnswer(String action, String section, int questionOrAnswerId, int userId) throws SQLException {
+    /**
+     *
+     * @param action
+     * @param section
+     * @param questionOrAnswerId
+     * @param userId
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public boolean saveVoteOfQuestionAndAnswer(String action, String section, int questionOrAnswerId, int userId) throws SQLException, ClassNotFoundException {
+
         DatabaseConnection dc = DatabaseConnection.getInstance();
+
         Connection con = null;
         PreparedStatement ps = null;
-        boolean value;
+
         try {
             con = dc.getConnection();
-            String sql = "";
+            String sql = null;
             if (section.equals("answer") && action.equals("upvote")) {
 
                 sql = "insert into vote_by_user(answer_id,user_id)values(?,?)";
@@ -57,9 +71,9 @@ public class saveVote {
             ps = con.prepareStatement(sql);
             ps.setInt(1, questionOrAnswerId);
             ps.setInt(2, userId);
-            value = ps.execute();
+            return ps.execute();
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(saveVote.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (ps != null) {
                 try {
@@ -76,8 +90,7 @@ public class saveVote {
                 }
             }
         }
-
-        return value;
+        return true;
     }
 
 }

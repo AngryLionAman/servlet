@@ -15,11 +15,9 @@
  */
 package com.comments;
 
-import com.connect.DatabaseConnection;
+import com.notifications.CreateNotification;
+import com.string.validateInput;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,126 +33,69 @@ import javax.servlet.http.HttpSession;
  */
 public class saveQuestionComment extends HttpServlet {
 
-    private int getInputInt(String option) {
-        int id = 0;
-        if (option == null) {
-            return 0;
-        }
-        if (option.isEmpty()) {
-            return 0;
-        }
-        if (!option.isEmpty()) {
-            id = Integer.parseInt(option);
-        }
-        return id;
-    }
-
-    private String getInputString(String parameter) {
-        String val;
-        if (parameter.isEmpty()) {
-            val = null;
-        } else {
-            val = parameter.trim();
-        }
-        return val;
-    }
-
-    private int remove(String word) {
-        word = word.trim().replaceAll("[^0-9]", "");
-        return Integer.valueOf(word);
-    }
-
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        PrintWriter pw = response.getWriter();
+
         HttpSession session = request.getSession();
+        SaveQuestionCommentClassFile file = new SaveQuestionCommentClassFile();
+        CreateNotification notification = new CreateNotification();
+        validateInput input = new validateInput();
 
-        int session_active_user_id = getInputInt(request.getParameter("session_active_user_id"));
-        //int id_of_user_who_posted_question = getInputInt(request.getParameter("id_of_user_who_posted_question"));
-        int question_id = getInputInt(request.getParameter("question_id"));
-        String comments = getInputString(request.getParameter("comments"));
-        String question = getInputString(request.getParameter("question"));
-        if (session_active_user_id != 0 &&  question_id != 0 && comments != null && question != null) {
+        int session_active_user_id = input.getInputInt(request.getParameter("session_active_user_id"));
+        int id_of_user_who_posted_question = input.getInputInt(request.getParameter("id_of_user_who_posted_question"));
+        int question_id = input.getInputInt(request.getParameter("question_id"));
+        String comments = input.getInputString(request.getParameter("comments"));
+        String question = input.getInputString(request.getParameter("question"));
 
+        String message = null;
+        if (session_active_user_id != 0 && question_id != 0 && comments != null && question != null) {
             try {
-                DatabaseConnection dc = DatabaseConnection.getInstance();
-                Connection con = null;
-                PreparedStatement ps = null;
-                PreparedStatement ps1 = null;
-                try {
-                    con = dc.getConnection();
-                    String sql = "INSERT INTO comments (user_id,q_id,comments)VALUES(?,?,?)";
-                    ps = con.prepareStatement(sql);
-                    ps.setInt(1, session_active_user_id);
-                    ps.setInt(2, question_id);
-                    ps.setString(3, comments);
-                    boolean value = ps.execute();
-                    if (!value) {
-
-                        //Followered id = who created the notification
-                        //user id = who posted the question
-                        if (session.getAttribute("userIdForNotification") != null && 
-                                !session.getAttribute("userIdForNotification").toString().replaceAll("[^0-9]", "").isEmpty()) {
-                            String name = String.valueOf(session.getAttribute("userIdForNotification"));
-                            String[] name1 = name.split(" ");
-                            String sql1 = "INSERT INTO notification (user_id,notification_type,followers_id,question_id ) VALUES (?,?,?,?)";
-                            for (String obj : name1) {
-                                ps1 = con.prepareStatement(sql1);
-                                ps1.setInt(1, remove(obj));
-                                ps1.setString(2, "comment_on_question");
-                                ps1.setInt(3, session_active_user_id);
-                                ps1.setInt(4, question_id);
-                                ps1.execute();
+                if (!file.SaveQuestionComment(session_active_user_id, question_id, comments)) {
+                    if (session.getAttribute("userIdForNotification") != null) {
+                        String allUserId = String.valueOf(session.getAttribute("userIdForNotification"));
+                        if (!notification.CreateNotificationOfQuestionForAllRealtedUsers(allUserId, session_active_user_id, question_id)) {
+                            message = "Commnted has been posted and notification has been sent to all related users";
+                        } else {
+                            message = "Comment has been saved, but notification not generated";
+                        }
+                    } else {
+                        if (id_of_user_who_posted_question != 0) {
+                            if (!notification.CreateNotificationForQuestionComment(id_of_user_who_posted_question, session_active_user_id, question_id)) {
+                                message = "Comment has been posted and notification has been sent to user";
+                            } else {
+                                message = "Comment has been posted, Notification not sent to user";
                             }
-                        } 
-                        request.setAttribute("Id", question_id);
-                        request.setAttribute("q", question);
-                        request.getRequestDispatcher("Answer.jsp").forward(request, response);
-                    }
-
-                } catch (IOException | SQLException | ServletException msg) {
-                    pw.print(msg);
-                    throw msg;
-                } finally {
-                    if (ps != null) {
-                        try {
-                            ps.close();
-                        } catch (SQLException msg) {
-
+                        } else {
+                            message = "Comment has been saved, Notification will not generate for the guest post";
                         }
                     }
-                    if (ps1 != null) {
-                        try {
-                            ps1.close();
-                        } catch (SQLException msg) {
-
-                        }
-                    }
-                    if (con != null) {
-                        try {
-                            con.close();
-                        } catch (SQLException msg) {
-
-                        }
-                    }
+                } else {
+                    message = "Comment not posted";
                 }
-            } catch (SQLException msg) {
-                try {
-                    pw.print(msg);
-                    throw msg;
-                } catch (SQLException ex) {
-                    Logger.getLogger(saveQuestionComment.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(saveQuestionComment.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(saveQuestionComment.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         } else {
-            request.setAttribute("msg", "Your question comment not posted, Don't use the symbol");
-            request.getRequestDispatcher("Answer.jsp").forward(request, response);
+            message = "Comment not saved due to bad argument, Please try agian";
         }
+        request.setAttribute("id", question_id);
+        request.setAttribute("q", question);
+        request.setAttribute("message", message);
+        request.getRequestDispatcher("questions").forward(request, response);
     }
 
 }

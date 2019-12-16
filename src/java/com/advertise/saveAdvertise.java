@@ -33,7 +33,14 @@ import javax.servlet.http.HttpServletResponse;
  * @author AngryLion
  */
 public class saveAdvertise extends HttpServlet {
-    
+
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -59,7 +66,7 @@ public class saveAdvertise extends HttpServlet {
                     DatabaseConnection dc = DatabaseConnection.getInstance();
                     Connection con = null;
                     PreparedStatement ps = null;
-                    
+
                     try {
                         con = dc.getConnection();
                         String sql = "insert into advertise (image_name,image_alt,height,width,promoted_by,display,days,forward_link,ads_type,description)values(?,?,?,?,?,?,?,?,?,?)";
@@ -87,20 +94,20 @@ public class saveAdvertise extends HttpServlet {
                             try {
                                 ps.close();
                             } catch (SQLException msg) {
-                                
+
                             }
                         }
                         if (con != null) {
                             try {
                                 con.close();
                             } catch (SQLException msg) {
-                                
+
                             }
                         }
                         request.setAttribute("message", "Data has been saved");
                         request.getRequestDispatcher("Admin/advertise.jsp").forward(request, response);
                     }
-                    
+
                 } else {
                     printWriter.print("Something is missing..");
                 }
@@ -108,9 +115,7 @@ public class saveAdvertise extends HttpServlet {
                 request.setAttribute("message", "username or password is worng");
                 request.getRequestDispatcher("Admin/advertise.jsp").forward(request, response);
             }
-        } catch (NumberFormatException msg) {
-            printWriter.print(msg);
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException | NumberFormatException ex) {
             Logger.getLogger(saveAdvertise.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

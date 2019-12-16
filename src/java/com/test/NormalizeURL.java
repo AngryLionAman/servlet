@@ -35,6 +35,12 @@ import java.util.TreeMap;
  */
 public class NormalizeURL {
 
+    /**
+     *
+     * @param args
+     * @throws MalformedURLException
+     * @throws URISyntaxException
+     */
     public static void main(String[] args) throws MalformedURLException, URISyntaxException {
         Scanner in = new Scanner(System.in);
         while(true){
@@ -46,6 +52,13 @@ public class NormalizeURL {
         }
     }
 
+    /**
+     *
+     * @param taintedURL
+     * @return
+     * @throws MalformedURLException
+     * @throws URISyntaxException
+     */
     public static String normalize(final String taintedURL) throws MalformedURLException, URISyntaxException {
         final URL url;
         try {

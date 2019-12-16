@@ -31,27 +31,41 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class vote extends HttpServlet {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         validateInput input = new validateInput();
+
         String action = input.getInputString(request.getParameter("action"));
         String section = input.getInputString(request.getParameter("section"));
         int question_or_answer_id = input.getInputInt(request.getParameter("question_answer_id"));
         int activetUserId = input.getInputInt(request.getParameter("activetUserId"));
+
+        saveVote vote = new saveVote();
+
+        String message = null;
+
         if (action != null && section != null && question_or_answer_id != 0 && activetUserId != 0) {
             try {
-                saveVote vote = new saveVote();
-                boolean value = vote.saveVoteOfQuestionAndAnswer(action, section, question_or_answer_id, activetUserId);
-                if(!value){
-                    //Vote has been added
+                if (!vote.saveVoteOfQuestionAndAnswer(action, section, question_or_answer_id, activetUserId)) {
+                    message = action + ", " + section + "," + question_or_answer_id + " ," + activetUserId + " is performed";
+                } else {
+                    message = action + ", " + section + "," + question_or_answer_id + " ," + activetUserId + " not saved";
                 }
-            } catch (SQLException ex) {
+            } catch (SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(vote.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-
+            message = "Not getting the valid argumetns";
         }
-
+        //System.out.println("com.comments.vote.vote.doPost()" + message);
     }
 }

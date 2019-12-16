@@ -22,6 +22,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -29,16 +31,25 @@ import java.util.List;
  */
 public class topicDetals {
 
+    /**
+     *
+     * @param userId
+     * @return
+     * @throws Exception
+     */
     public List<topicPojo> userFollowedTopic(int userId) throws Exception {
+
         indexPageExtraFunction function = new indexPageExtraFunction();
         List<topicPojo> list = new ArrayList<>();
-        DatabaseConnection connection = new DatabaseConnection();
+
+        DatabaseConnection ds = new DatabaseConnection();
+
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             String sql = "select t.unique_id,t.topic_name from topic t right join topic_followers_detail de on t.unique_id = de.topic_id where user_or_followers_id =? and t.unique_id is not null and t.topic_name is not null limit 15";
-            con = connection.getConnection();
+            con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
             rs = ps.executeQuery();
@@ -49,8 +60,9 @@ public class topicDetals {
                 int relatedQuestion = function.totalRelatedQuestion(topicId);
                 list.add(new topicPojo(topicName, topicId, totalFollowers, relatedQuestion));
             }
+            return list;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(topicDetals.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -64,30 +76,35 @@ public class topicDetals {
                 } catch (SQLException msg) {
                 }
             }
-            if (con != null && !con.isClosed()) {
-                if (!con.getAutoCommit()) {
-                    con.commit();
-                    con.setAutoCommit(true);
-                }
+            if (con != null) {
                 try {
                     con.close();
                 } catch (SQLException msg) {
                 }
             }
         }
-        return list;
+        return null;
     }
 
+    /**
+     *
+     * @param Limit
+     * @return
+     * @throws Exception
+     */
     public List<topicPojo> randomTopic(int Limit) throws Exception {
+
         indexPageExtraFunction function = new indexPageExtraFunction();
         List<topicPojo> list = new ArrayList<>();
-        DatabaseConnection connection = new DatabaseConnection();
+
+        DatabaseConnection ds = new DatabaseConnection();
+
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             String sql = "SELECT unique_id,topic_name FROM topic where unique_id IS NOT NULL AND topic_name IS NOT NULL ORDER BY RAND() LIMIT ?";
-            con = connection.getConnection();
+            con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, Limit);
             rs = ps.executeQuery();
@@ -98,8 +115,9 @@ public class topicDetals {
                 int relatedQuestion = function.totalRelatedQuestion(topicId);
                 list.add(new topicPojo(topicName, topicId, totalFollowers, relatedQuestion));
             }
+            return list;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(topicDetals.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -113,17 +131,13 @@ public class topicDetals {
                 } catch (SQLException msg) {
                 }
             }
-            if (con != null && !con.isClosed()) {
-                if (!con.getAutoCommit()) {
-                    con.commit();
-                    con.setAutoCommit(true);
-                }
+            if (con != null) {
                 try {
                     con.close();
                 } catch (SQLException msg) {
                 }
             }
         }
-        return list;
+        return null;
     }
 }

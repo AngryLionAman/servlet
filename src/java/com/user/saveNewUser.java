@@ -28,7 +28,16 @@ import java.util.logging.Logger;
  */
 public class saveNewUser {
 
-    public boolean saveUser(String fullName, String emailOrMobile, String passWord) throws SQLException {
+    /**
+     *
+     * @param fullName
+     * @param emailOrMobile
+     * @param passWord
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public boolean saveUser(String fullName, String emailOrMobile, String passWord) throws SQLException, ClassNotFoundException {
 
         /*
         @ Need to create the username before re-start the new connection

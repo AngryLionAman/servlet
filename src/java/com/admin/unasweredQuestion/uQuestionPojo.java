@@ -27,26 +27,54 @@ public class uQuestionPojo {
     int postedById;
     String postedByName;
 
+    /**
+     *
+     * @return
+     */
     public int getQuestionId() {
         return questionId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getQuestion() {
         return question;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDate() {
         return date;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getPostedById() {
         return postedById;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getPostedByName() {
         return postedByName;
     }
 
+    /**
+     *
+     * @param questionId
+     * @param question
+     * @param date
+     * @param postedById
+     * @param postedByName
+     */
     public uQuestionPojo(int questionId, String question, String date, int postedById, String postedByName) {
         this.questionId = questionId;
         this.question = question;

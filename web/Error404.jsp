@@ -4,6 +4,7 @@
     Author     : inquiryhere.com
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -35,16 +36,19 @@
                                 <img src="https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png"  alt="Error"/>
                                 <p style="font-size: 25px;"><font style="color: red; font-size: 30px;">404 :</font> This is an Error.</p>        
                                 <br> <p style="font-size: 25px;"><font style="color: red; font-size: 30px;">Mean :</font> The page you are looking for may has been removed or location has been changed</p>
+                                    <c:if test="${message ne null}">
+                                    <br> <p style="font-size: 25px;"><font style="color: red; font-size: 30px;">Specific Reason :</font> ${message}</p>
+                                    </c:if>
                                 <br> <p style="font-size: 25px;"><font style="color: red; font-size: 30px;">What you can do :</font> 
                                     <br><br> <font style="color: #00ff00">Process 1 : </font> You can report us with the proper link you are looking for by clicking on <a href="help.jsp">HELP PAGE</a></p>
 
-                                <br><br><p style="font-size: 25px;"><font style="color: #00ff00">Process 2 : </font> You can search the same content in the above mention <a href="search.jsp">SEARCH BAR</a></p>
+                                <br><br><p style="font-size: 25px;"><font style="color: #00ff00">Process 2 : </font> You can search the same content in the above mention <a href="search">SEARCH BAR</a></p>
 
                                 <br><br><p style="font-size: 25px;"><font style="color: #00ff00">Process 3 : </font> You can directly visit to below listed link</p>
 
                                 <ul style="font-size: 25px; padding-left: 20px; padding-top: 10px;">
                                     <li style="padding-top: 5px;padding-bottom: 5px;">You can ask question By clicking <a href="#" data-toggle="modal" data-target="#myModal2">THIS LINK</a></li>
-                                    <li style="padding-top: 5px;padding-bottom: 5px;">You can read the blog By visiting <a href="blog.jsp">BLOG PAGE</a></li>
+                                    <li style="padding-top: 5px;padding-bottom: 5px;">You can read the blog By visiting <a href="blog">BLOG PAGE</a></li>
                                     <li style="padding-top: 5px;padding-bottom: 5px;">You can read the  <a href="optionalquestion">OBJECTIVE QUESTION</a></li>
                                     <li style="padding-top: 5px;padding-bottom: 5px;">You can read the joke, Sayari, Poem, Full Form, Quotes by Visiting <a href="fun">FUN PAGE</a></li>
                                 </ul>
@@ -56,7 +60,7 @@
                                     <br><br>Thanks for you patience.
                                 </p>
 
-                                <br><br> <p style="font-size: 25px;">Click here to visit <a href="https://www.inquiryhere.com">inquiryhere</a> <a href="index.jsp">HomePage</a></p>
+                                <br><br> <p style="font-size: 25px;">Click here to visit <a href="https://www.inquiryhere.com">inquiryhere</a> <a href="index">HomePage</a></p>
                             </div>
 
                         </div>

@@ -31,9 +31,21 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class savequestion extends HttpServlet {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        
         validateInput input = new validateInput();
 
         int userId = input.getInputInt(request.getParameter("userid"));
@@ -47,37 +59,40 @@ public class savequestion extends HttpServlet {
         questionClass funcation = new questionClass();
         int questionId = 0;
 
-        if (userId != 0 && question != null && tag_of_question != null) {
+        if (userId != 0 && question != null) {
             try {
                 if (!funcation.SaveQuestionByQuestionAndTagandUserId(userId, question)) {
-                    //Get the question id
-                    questionId = funcation.GetQuestionIdByQuestion(question);
-                    if (questionId != 0) {
-                        if (!funcation.SaveTag(tag_of_question)) {
-                            if (!funcation.SaveTagWithQuestionId(questionId, tag_of_question)) {
-                                message = "Question has been successfully Posted";
+                    questionId = funcation.GetQuestionIdByQuestion(question);  //*Get the question id*/
+                    if (tag_of_question != null) {
+                        if (questionId != 0) {
+                            if (!funcation.SaveTag(tag_of_question)) {
+                                if (!funcation.SaveTagWithQuestionId(questionId, tag_of_question)) {
+                                    message = "Question has been successfully Posted";
+                                } else {
+                                    message = "Tag saved but not integrated with the question id, Please inform us at contact us from";
+                                }
                             } else {
-                                message = "Tag saved but not integrated with the question id, Please inform us at contact us from";
+                                message = "Tag not saved in the database, Please inform us at contact us form";
                             }
                         } else {
-                            message = "Tag not saved in the database, Please inform us at contact us form";
+                            message = "Question has been save but question not found in database";
                         }
                     } else {
-                        message = "Question has been save but question not found in database";
+                        message = "Question has been saved but tag is empty";
                     }
                 } else {
                     message = "question not saved";
                 }
-            } catch (SQLException ex) {
+            } catch (SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(savequestion.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                // Some Dode stuf
+            } catch (Exception ex) {
+                Logger.getLogger(savequestion.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             message = "Got some problme, Please try again";
         }
         request.setAttribute("message", message);
-        request.setAttribute("Id", questionId);
-        request.getRequestDispatcher("Answer.jsp").forward(request, response);
+        request.setAttribute("id", questionId);
+        request.getRequestDispatcher("questions").forward(request, response);
     }
 }

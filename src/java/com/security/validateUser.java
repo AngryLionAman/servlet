@@ -6,14 +6,18 @@
 package com.security;
 
 import com.connect.DatabaseConnection;
+import com.connect.PoolConnection;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 /**
  *
@@ -21,28 +25,33 @@ import javax.servlet.http.HttpSession;
  */
 public class validateUser {
 
+    /**
+     *
+     * @param username
+     * @param password
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws Exception
+     */
     public boolean validateUser(String username, String password) throws SQLException, ClassNotFoundException, Exception {
 
-        boolean found = false;
-        DatabaseConnection con = new DatabaseConnection();
+        DatabaseConnection ds = new DatabaseConnection();
+
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            String v = "SELECT ID,email,password FROM newuser WHERE email = ?";
-            connection =con.getConnection();
+            String v = "SELECT id FROM newuser WHERE email = ? AND password = ? LIMIT 1";
+            connection = ds.getConnection();
             preparedStatement = connection.prepareStatement(v);
             preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
             resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                String password1 = resultSet.getString("password");
-                if (password.equals(password1)) {
-                    found = true;
-                }
-            }
+            return resultSet.first();
 
         } catch (SQLException e) {
-            throw e;
+            Logger.getLogger(validateUser.class.getName()).log(Level.SEVERE, username, e);
         } finally {
             if (resultSet != null) {
                 try {
@@ -65,36 +74,50 @@ public class validateUser {
 
         }
 
-        return found;
+        return false;
     }
-    public void validateAdminUser(String eMail,String passWord,HttpServletRequest request,HttpServletResponse response) throws SQLException, IOException{
+
+    /**
+     *
+     * @param eMail
+     * @param passWord
+     * @param request
+     * @param response
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws Exception
+     */
+    public void validateAdminUser(String eMail, String passWord, HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ClassNotFoundException, Exception {
         //HttpServletRequest request = null;
         HttpSession session = request.getSession();
-        DatabaseConnection con = new DatabaseConnection();
+        
+        DatabaseConnection ds = new DatabaseConnection();
+        
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        try{
+        try {
             String sql = "select id from newuser where email = ? and password = ?";
-            connection = con.getConnection();
+            connection = ds.getConnection();
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, eMail);
             preparedStatement.setString(2, passWord);
             resultSet = preparedStatement.executeQuery();
             int foundUserId = 0;
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 foundUserId = resultSet.getInt("id");
             }
-            if(foundUserId != 0){
+            if (foundUserId != 0) {
                 session.setAttribute("adminUserId", foundUserId);
                 response.sendRedirect("adminModule.jsp");
-            }else{
+            } else {
                 response.sendRedirect("visit.jsp?msg=invalid crenditial");
             }
-            
-        }catch(SQLException msg){
-            throw msg;
-        }finally{
+
+        } catch (SQLException msg) {
+            Logger.getLogger(validateUser.class.getName()).log(Level.SEVERE, eMail, msg);
+        } finally {
             if (resultSet != null) {
                 try {
                     resultSet.close();

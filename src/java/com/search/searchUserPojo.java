@@ -28,30 +28,63 @@ public class searchUserPojo {
     String imageLink;
     int totalFollowers;
 
+    /**
+     *
+     * @return
+     */
     public int getUserId() {
         return userId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUserName() {
         return userName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUserFullName() {
         return userFullName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getBio() {
         return bio;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getImageLink() {
         return imageLink;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTotalFollowers() {
         return totalFollowers;
     }
 
+    /**
+     *
+     * @param userId
+     * @param userName
+     * @param userFullName
+     * @param bio
+     * @param imageLink
+     * @param totalFollowers
+     */
     public searchUserPojo(int userId, String userName, String userFullName, String bio, String imageLink, int totalFollowers) {
         this.userId = userId;
         this.userName = userName;

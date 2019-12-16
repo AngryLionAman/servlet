@@ -16,27 +16,42 @@
 package com.answer;
 
 import com.connect.DatabaseConnection;
+import com.connect.PoolConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  *
  * @author AngryLion
  */
 public class comments {
-    public List<getAnswerCommentPojo> getAnswerCommentByAnswerid(int answerId) throws SQLException{
+    
+    /**
+     *
+     * @param answerId
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public List<getAnswerCommentPojo> getAnswerCommentByAnswerid(int answerId) throws SQLException, ClassNotFoundException, Exception{
+        
         List<getAnswerCommentPojo> list = new ArrayList<>();
-        DatabaseConnection dc = new DatabaseConnection();
+        
+        DatabaseConnection ds = new DatabaseConnection();
+        
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             String sql = "SELECT unique_id as commentid,comments,date_format(time,\"%e %b %Y,%h:%i%p\") as date,user_id as commentpostedbyid, newuser.username as username,newuser.firstname as fullname FROM comments inner join newuser on newuser.id = comments.user_id WHERE ans_id = ? order by 1 desc";
-            con = dc.getConnection();
+            con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, answerId);
             rs = ps.executeQuery();
@@ -49,8 +64,9 @@ public class comments {
                String fullName = rs.getString("fullname");
                list.add(new getAnswerCommentPojo(commentId, comments, date, commentPostedById, userName, fullName));
             }
+            return list;
         }catch(SQLException msg){
-            throw msg;
+            Logger.getLogger(comments.class.getName()).log(Level.SEVERE, null, msg);
         }finally {
             if (rs != null) {
                 try {
@@ -74,6 +90,6 @@ public class comments {
                 }
             }
         }
-        return list;
+        return null;
     }
 }

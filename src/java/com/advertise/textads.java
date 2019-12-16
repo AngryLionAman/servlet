@@ -54,6 +54,13 @@ public class textads extends HttpServlet {
         return id;
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -75,7 +82,7 @@ public class textads extends HttpServlet {
                    request.setAttribute("message", "Got the true value ");
                     request.getRequestDispatcher("Admin/textads.jsp").forward(request, response); 
                 }
-            } catch (SQLException ex) {
+            } catch (SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(textads.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {

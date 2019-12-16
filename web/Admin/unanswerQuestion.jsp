@@ -7,11 +7,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@page import="com.answer.saveAnswer"%>
 <c:if test="${sessionScope.adminUserId eq null}">
     <c:redirect url="visit.jsp?msg=Session is not valid"/>
 </c:if>
 <jsp:useBean class="com.admin.unasweredQuestion.uQuestion" id="question" scope="page"/>
+<jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <!DOCTYPE html>
 <html>
     <head>
@@ -56,7 +56,7 @@
                             <td>${q.question}</td>
                             <td>${q.date}</td>
                             <td>${q.postedByName}(${q.postedById})</td>
-                            <td><a href="?qId=${q.questionId}&question=${fn:replace(q.question, '|','')}&postedById=${q.postedById}">Answer This</a></td>
+                            <td><a href="?qId=${q.questionId}&question=${word.UrlFormat(q.question)}&postedById=${q.postedById}">Answer This</a></td>
                         </tr>
                     </c:forEach>
                 </table>

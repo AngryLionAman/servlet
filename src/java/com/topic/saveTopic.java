@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class saveTopic {
 
-    void SaveTopicByTopicIdAndUserId(String userid, String[] topicName) throws SQLException {
+    void SaveTopicByTopicIdAndUserId(String userid, String[] topicName) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = DatabaseConnection.getInstance();
 

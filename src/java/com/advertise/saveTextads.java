@@ -35,8 +35,9 @@ public class saveTextads {
      * @param days
      * @return
      * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
      */
-    public boolean textAds(String promoterName, String title, String desc, String link, int days) throws SQLException {
+    public boolean textAds(String promoterName, String title, String desc, String link, int days) throws SQLException, ClassNotFoundException {
         DatabaseConnection dc = DatabaseConnection.getInstance();
         Connection con = null;
         PreparedStatement ps = null;

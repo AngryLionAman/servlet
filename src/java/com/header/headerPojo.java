@@ -22,24 +22,43 @@ package com.header;
 public class headerPojo {
 
     int userId;
+    String userName;
+    String fullName;
 
+    /**
+     *
+     * @return
+     */
     public int getUserId() {
         return userId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUserName() {
         return userName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getFullName() {
         return fullName;
     }
 
+    /**
+     *
+     * @param userId
+     * @param userName
+     * @param fullName
+     */
     public headerPojo(int userId, String userName, String fullName) {
         this.userId = userId;
         this.userName = userName;
         this.fullName = fullName;
     }
-    String userName;
-    String fullName;
+    
 }

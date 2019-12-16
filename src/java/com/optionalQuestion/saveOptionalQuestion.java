@@ -59,6 +59,13 @@ public class saveOptionalQuestion extends HttpServlet {
         return id;
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -156,6 +163,8 @@ public class saveOptionalQuestion extends HttpServlet {
                 }
                 response.sendRedirect("optionalquestion?msg=" + msg);
             } catch (SQLException ex) {
+                Logger.getLogger(saveOptionalQuestion.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
                 Logger.getLogger(saveOptionalQuestion.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {

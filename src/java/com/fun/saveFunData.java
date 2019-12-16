@@ -15,13 +15,8 @@
  */
 package com.fun;
 
-import com.connect.DatabaseConnection;
+import com.string.validateInput;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -35,101 +30,48 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class saveFunData extends HttpServlet {
 
-    private String getInputString(String parameter) {
-        String val;
-        if (parameter.isEmpty()) {
-            val = null;
-        } else {
-            val = parameter.trim();
-        }
-        return val;
-    }
-
-    private int getInput(String userId) {
-        int id = 0;
-        if (userId == null) {
-            return 0;
-        }
-        if (userId.isEmpty()) {
-            return 0;
-        }
-        if (!userId.isEmpty()) {
-            id = Integer.parseInt(userId);
-        }
-        return id;
-    }
-
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            PrintWriter pw = response.getWriter();
-            int userId = getInput(request.getParameter("userId"));
-            String category = getInputString(request.getParameter("category").equalsIgnoreCase("others") ? request.getParameter("category1") : request.getParameter("category"));
-            String type = getInputString(request.getParameter("type").equalsIgnoreCase("others") ? request.getParameter("type1") : request.getParameter("type"));
-            String basedon = getInputString(request.getParameter("basedon").equalsIgnoreCase("others") ? request.getParameter("basedon1") : request.getParameter("basedon"));
-            String title = getInputString(request.getParameter("title"));
-            String description = request.getParameter("description").trim();
-            pw.print("<br>");
-            pw.print(category);
-            pw.print("<br>");
-            pw.print(type);
-            pw.print("<br>");
-            pw.print(basedon);
-            pw.print("<br>");
-            pw.print(title);
-            pw.print("<br>");
-            pw.print(description);
-            pw.print("<br>");
-            pw.print(userId);
-            DatabaseConnection dc = DatabaseConnection.getInstance();
-            Connection con = null;
-            PreparedStatement ps = null;
-            ResultSet rs = null;
-            try {
-                con = dc.getConnection();
-                String sql = "insert into fun(posted_by_id,title,description,category,based_on,type)value(?,?,?,?,?,?)";
-                ps = con.prepareStatement(sql);
-                ps.setInt(1, userId);
-                ps.setString(2, title);
-                ps.setString(3, description);
-                ps.setString(4, category);
-                ps.setString(5, basedon);
-                ps.setString(6, type);
-                boolean val = ps.execute();
-                if (val) {
-                    pw.print("Not inserted");
-                } else {
-                    pw.print("Inserted sucesfully");
-                }
-            } catch (SQLException msg) {
-                throw msg;
-            } finally {
-                if (rs != null) {
-                    try {
-                        rs.close();
-                    } catch (SQLException msg) {
-                    }
-                }
-                if (ps != null) {
-                    try {
-                        ps.close();
-                    } catch (SQLException msg) {
-                    }
-                }
-                if (con != null) {
-                    try {
-                        con.close();
-                    } catch (SQLException msg) {
-                    }
-                }
-                response.sendRedirect("fun?msg=Data has been saved");
-                //request.setAttribute("msg", "");
-                //request.getRequestDispatcher("fun").forward(request, response);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(saveFunData.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        validateInput input = new validateInput();
+        SaveFunDataClassFile file = new SaveFunDataClassFile();
+        String message = "Data not save, Please report to admin at contact us form";
+
+        try {
+            int userId = input.getInputInt(request.getParameter("userId"));
+            String category = input.getInputString(request.getParameter("category").equalsIgnoreCase("others") ? request.getParameter("category1") : request.getParameter("category"));
+            String type = input.getInputString(request.getParameter("type").equalsIgnoreCase("others") ? request.getParameter("type1") : request.getParameter("type"));
+            String basedon = input.getInputString(request.getParameter("basedon").equalsIgnoreCase("others") ? request.getParameter("basedon1") : request.getParameter("basedon"));
+            String title = input.getInputString(request.getParameter("title"));
+            String description = input.getInputString(request.getParameter("description"));
+
+            
+            if (description != null) {
+                if (!file.saveFunData(userId, title, description, category, basedon, type)) {
+                    message = "Data has been saved successfully";
+                } else {
+                    message = "Data not saved, Please try again";
+                }
+            } else {
+                message = "Description can't be empty";
+            }
+        } catch (Exception msg) {
+            Logger.getLogger(saveFunData.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            request.setAttribute("message", message);
+            request.getRequestDispatcher("fun").forward(request, response);
+        }
     }
 }

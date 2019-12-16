@@ -20,6 +20,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -27,14 +29,15 @@ import java.sql.SQLException;
  */
 public class newUser {
 
-    private int getUserId(String userName, String email) throws SQLException {
-        int guestId = 0;
-        DatabaseConnection dc = new DatabaseConnection();
+    private int getUserId(String userName, String email) throws SQLException, ClassNotFoundException, Exception {
+        
+        DatabaseConnection ds = new DatabaseConnection();
+        
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            con = dc.getConnection();
+            con = ds.getConnection();
             String sql;
             if(email != null){
                 sql = "select id from newuser where username = ? and email = ?";
@@ -46,10 +49,10 @@ public class newUser {
             ps.setString(2, email);
             rs = ps.executeQuery();
             while (rs.next()) {
-                guestId = rs.getInt("id");
+                return rs.getInt("id");
             }
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(newUser.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -73,16 +76,28 @@ public class newUser {
                 }
             }
         }
-        return guestId;
+        return 0;
     }
 
-    public int saveNewGuestUser(String userName,String userFullName, String email,String userType) throws SQLException {
-        int guestId = 0;
-        DatabaseConnection dc = new DatabaseConnection();
+    /**
+     *
+     * @param userName
+     * @param userFullName
+     * @param email
+     * @param userType
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws Exception
+     */
+    public int saveNewGuestUser(String userName,String userFullName, String email,String userType) throws SQLException, ClassNotFoundException, Exception {
+       
+        DatabaseConnection ds = new DatabaseConnection();
+        
         Connection con = null;
         PreparedStatement ps = null;
         try {
-            con = dc.getConnection();
+            con = ds.getConnection();
             String sql = "insert into newuser(username,firstname,user_type,email)values(?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setString(1, userName);
@@ -91,9 +106,9 @@ public class newUser {
             ps.setString(4, email);
             ps.execute();
             //Get the userId
-            guestId = getUserId(userName, email);
+            return getUserId(userName, email);
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(newUser.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (ps != null) {
                 try {
@@ -110,7 +125,6 @@ public class newUser {
                 }
             }
         }
-        return guestId;
-
+        return 0;
     }
 }

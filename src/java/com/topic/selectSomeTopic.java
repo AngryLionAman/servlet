@@ -34,7 +34,13 @@ import java.util.logging.Logger;
  */
 public class selectSomeTopic {
 
-    public Map<Integer, String> SelectSomeTopic() throws SQLException {
+    /**
+     *
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public Map<Integer, String> SelectSomeTopic() throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = DatabaseConnection.getInstance();
 

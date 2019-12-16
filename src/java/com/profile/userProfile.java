@@ -16,6 +16,17 @@ import java.sql.SQLException;
  */
 public class userProfile {
 
+    /**
+     *
+     * @param eMail
+     * @param higherQualification
+     * @param bestAchievement
+     * @param Bio
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws Exception
+     */
     public boolean saveUserProfile(String eMail, String higherQualification,
             String bestAchievement, String Bio) throws SQLException, ClassNotFoundException, Exception {
         DatabaseConnection connection = new DatabaseConnection();

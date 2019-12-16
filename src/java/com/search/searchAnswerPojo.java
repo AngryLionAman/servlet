@@ -27,26 +27,54 @@ public class searchAnswerPojo {
     int totalViewOfQuestion;
     int totalAnswerOfQuestion;
 
+    /**
+     *
+     * @return
+     */
     public int getQuestionId() {
         return questionId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getQuestion() {
         return question;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getAnswer() {
         return answer;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTotalViewOfQuestion() {
         return totalViewOfQuestion;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTotalAnswerOfQuestion() {
         return totalAnswerOfQuestion;
     }
 
+    /**
+     *
+     * @param questionId
+     * @param question
+     * @param answer
+     * @param totalViewOfQuestion
+     * @param totalAnswerOfQuestion
+     */
     public searchAnswerPojo(int questionId, String question, String answer, int totalViewOfQuestion, int totalAnswerOfQuestion) {
         this.questionId = questionId;
         this.question = question;

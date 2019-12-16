@@ -15,8 +15,11 @@
  */
 package com.notifications;
 
+import com.profile.profileDetailClassFile;
+import com.string.validateInput;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -30,32 +33,47 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class notification extends HttpServlet {
 
-    private int getInput(String option) {
-        int id = 0;
-        if (option == null) {
-            return 0;
-        }
-        if (option.isEmpty()) {
-            return 0;
-        }
-        if (!option.isEmpty()) {
-            id = Integer.parseInt(option);
-        }
-        return id;
-    }
-
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            displayNotification n = new displayNotification();
-            response.setContentType("text/html;charset=UTF-8");
-            int userId = getInput(request.getParameter("id"));
-            Object noti = n.notification(userId);
-            request.setAttribute("notification", noti);
-            request.getRequestDispatcher("inbox.jsp").forward(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(notification.class.getName()).log(Level.SEVERE, null, ex);
+
+        response.setContentType("text/html;charset=UTF-8");
+
+        displayNotification notification = new displayNotification();
+        validateInput input = new validateInput();
+        profileDetailClassFile file = new profileDetailClassFile();
+
+        List<notificationPojo> notification1 = null;
+
+        int userId = input.getInputInt(request.getParameter("id"));
+
+        String message = null;
+
+        if (userId != 0) {
+            try {
+                if (file.IsUserPresent(userId)) {
+                    notification1 = notification.notification(userId);
+                } else {
+                    message = "The id you are looking for notification is not avaliable";
+                }
+            } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(notification.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(notification.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            message = "Bad argument, Please don't access this page directly. This page will work after login";
         }
+        request.setAttribute("notification", notification1);
+        request.setAttribute("message", message);
+        request.getRequestDispatcher("inbox.jsp").forward(request, response);
+
     }
 }

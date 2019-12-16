@@ -11,6 +11,15 @@ package com.index;
  */
 public class commentPojo {
 
+    /**
+     *
+     * @param commentId
+     * @param comment
+     * @param time
+     * @param userId
+     * @param userFullName
+     * @param userUserName
+     */
     public commentPojo(int commentId, String comment, String time, int userId, String userFullName, String userUserName) {
         this.commentId = commentId;
         this.comment = comment;
@@ -20,26 +29,50 @@ public class commentPojo {
         this.userUserName = userUserName;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getCommentId() {
         return commentId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getComment() {
         return comment;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTime() {
         return time;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getUserId() {
         return userId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUserFullName() {
         return userFullName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUserUserName() {
         return userUserName;
     }

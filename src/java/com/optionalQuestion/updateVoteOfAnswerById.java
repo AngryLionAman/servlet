@@ -47,6 +47,13 @@ public class updateVoteOfAnswerById extends HttpServlet {
         return _id;
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -80,7 +87,7 @@ public class updateVoteOfAnswerById extends HttpServlet {
                         }
                     }
                 }
-            } catch (SQLException ex) {
+            } catch (SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(updateVoteOfAnswerById.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

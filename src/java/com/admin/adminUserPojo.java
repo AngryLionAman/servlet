@@ -26,22 +26,45 @@ public class adminUserPojo {
     String fullName;
     String eMail;
 
+    /**
+     *
+     * @return
+     */
     public int getUserId() {
         return userId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUserName() {
         return userName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getFullName() {
         return fullName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String geteMail() {
         return eMail;
     }
 
+    /**
+     *
+     * @param userId
+     * @param userName
+     * @param fullName
+     * @param eMail
+     */
     public adminUserPojo(int userId, String userName, String fullName, String eMail) {
         this.userId = userId;
         this.userName = userName;

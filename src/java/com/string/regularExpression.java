@@ -21,6 +21,11 @@ package com.string;
  */
 public class regularExpression {
 
+    /**
+     *
+     * @param args
+     * @return
+     */
     public String removeSpacialChar(String args) {
         String regs = "[\\\"/[|!@#$%^&*]/g]";
         args = args.replaceAll(regs, "").replaceAll(" ", "+");

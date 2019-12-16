@@ -29,7 +29,14 @@ import java.util.List;
  */
 public class adminUserDetail {
 
-    public List<adminUserPojo> userDetail(int userid) throws SQLException {
+    /**
+     *
+     * @param userid
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public List<adminUserPojo> userDetail(int userid) throws SQLException, ClassNotFoundException {
         List<adminUserPojo> list = new ArrayList<>();
         DatabaseConnection con = new DatabaseConnection();
         Connection connection = null;

@@ -21,12 +21,23 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+/**
+ *
+ * @author AngryLion
+ */
 @MultipartConfig(maxFileSize = 15000000)
 @WebServlet(name = "imageUpload", urlPatterns = {"/imageUpload"})
 public class imageUpload extends HttpServlet {
 
     PrintWriter pw;
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
@@ -71,9 +82,7 @@ public class imageUpload extends HttpServlet {
                     String p = "update newuser set imagepath = '" + fileName + "' where id = '" + UserEmail + "'";
                     st.execute(p);
 
-                } catch (SQLException ex) {
-                    Logger.getLogger(imageUpload.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (Exception ex) {
+                } catch (SQLException | ClassNotFoundException ex) {
                     Logger.getLogger(imageUpload.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 pw.print("Recored has been successfully updated");

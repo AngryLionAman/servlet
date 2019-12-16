@@ -13,6 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -20,11 +22,21 @@ import java.util.List;
  */
 public class indexPage {
 
+    /**
+     *
+     * @param qId
+     * @return
+     * @throws SQLException
+     * @throws Exception
+     */
     public List<recentQuestionPojo> getQuestion(int qId) throws SQLException, Exception {
+
         indexPageExtraFunction function = new indexPageExtraFunction();
         DatabaseConnection connection = new DatabaseConnection();
+
         time time = new time();
         List<recentQuestionPojo> list = new ArrayList<>();
+
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -39,7 +51,7 @@ public class indexPage {
             while (rs.next()) {
                 int totalView = rs.getInt("q.total_view");
                 String date = rs.getString("date");
-                int questionId = rs.getInt("q.q_id");                
+                int questionId = rs.getInt("q.q_id");
                 int days = time.showTime(questionId);
                 String question = rs.getString("q.question");
                 int vote = rs.getInt("q.vote");
@@ -48,13 +60,14 @@ public class indexPage {
                 String userType = rs.getString("user.user_type");
                 String higherEdu = rs.getString("user.higher_edu");
                 int userId = rs.getInt("user.id");
-                int totalAnswer = totalAnswer(questionId);
-                function.updateQuestionView(questionId);
+                int totalAnswer = 0;//totalAnswer(questionId); Getting null pointer exception here
+               // function.updateQuestionView(questionId); also getting the null pointer exception thats why closed for moment
                 recentQuestionPojo recentQuestionPojo = new recentQuestionPojo(totalView, date, days, questionId, question, vote, fullName, userName, userType, higherEdu, userId, totalAnswer);
                 list.add(recentQuestionPojo);
             }
+            return list;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(indexPage.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -77,11 +90,18 @@ public class indexPage {
             }
 
         }
-        return list;
+        return null;
     }
+
+    /**
+     *
+     * @return @throws SQLException
+     * @throws Exception
+     */
     public List<recentQuestionPojo> questionYouMayLike() throws SQLException, Exception {
+
         indexPageExtraFunction function = new indexPageExtraFunction();
-        DatabaseConnection connection = new DatabaseConnection();
+        DatabaseConnection connection = DatabaseConnection.getInstance();
         time time = new time();
         List<recentQuestionPojo> list = new ArrayList<>();
         Connection con = null;
@@ -97,7 +117,7 @@ public class indexPage {
             while (rs.next()) {
                 int totalView = rs.getInt("q.total_view");
                 String date = rs.getString("date");
-                int questionId = rs.getInt("q.q_id");                
+                int questionId = rs.getInt("q.q_id");
                 int days = time.showTime(questionId);
                 String question = rs.getString("q.question");
                 int vote = rs.getInt("q.vote");
@@ -112,7 +132,7 @@ public class indexPage {
                 list.add(recentQuestionPojo);
             }
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(indexPage.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -138,11 +158,17 @@ public class indexPage {
         return list;
     }
 
+    /**
+     *
+     * @return @throws Exception
+     */
     public List<recentQuestionPojo> recentPostQuestion() throws Exception {
+
         indexPageExtraFunction function = new indexPageExtraFunction();
         DatabaseConnection connection = new DatabaseConnection();
         time time = new time();
         List<recentQuestionPojo> list = new ArrayList<>();
+
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -169,7 +195,7 @@ public class indexPage {
                 list.add(recentQuestionPojo);
             }
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(indexPage.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -196,9 +222,17 @@ public class indexPage {
 
     }
 
+    /**
+     *
+     * @param user_Id
+     * @return
+     * @throws Exception
+     */
     public List<recentQuestionPojo> relatedQuestion(int user_Id) throws Exception {
+
+        DatabaseConnection ds = new DatabaseConnection();
+
         indexPageExtraFunction function = new indexPageExtraFunction();
-        DatabaseConnection connection = new DatabaseConnection();
         time time = new time();
         List<recentQuestionPojo> list = new ArrayList<>();
         Connection con = null;
@@ -212,13 +246,13 @@ public class indexPage {
                     + "on user.id = q.id where tag_id IN "
                     + "(select t.unique_id from topic t inner join topic_followers_detail de on t.unique_id = de.topic_id where user_or_followers_id = ?) "
                     + "and q.id is not null and q.q_id is not null and q.question is not null ORDER BY RAND() limit 10";
-            con = connection.getConnection();
+            con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, user_Id);
             rs = ps.executeQuery();
             while (rs.next()) {
                 int totalView = rs.getInt("totalView");
-                String date =  rs.getString("date");
+                String date = rs.getString("date");
                 int questionId = rs.getInt("questionId");
                 int days = time.showTime(questionId);
                 String question = rs.getString("q.question");
@@ -229,13 +263,13 @@ public class indexPage {
                 String higherEdu = rs.getString("user.higher_edu");
                 int userId = rs.getInt("userid");
                 int totalAnswer = totalAnswer(questionId);
-                function.updateQuestionView(questionId);
+                //function.updateQuestionView(questionId); // Update view by one is creating some probelm
                 recentQuestionPojo recentQuestionPojo = new recentQuestionPojo(totalView, date, days, questionId, question, vote, fullName, userName, userType, higherEdu, userId, totalAnswer);
                 list.add(recentQuestionPojo);
             }
 
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(indexPage.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -260,23 +294,31 @@ public class indexPage {
         return list;
     }
 
+    /**
+     *
+     * @param questionId
+     * @return
+     * @throws SQLException
+     * @throws Exception
+     */
     public int totalAnswer(int questionId) throws SQLException, Exception {
-        int totalAnswer = 0;
-        DatabaseConnection connection = new DatabaseConnection();
+
+        DatabaseConnection ds = new DatabaseConnection();
+
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             String sql = "SELECT COUNT(a_id)as cnt FROM answer WHERE q_id = ? group by q_id";
-            con = connection.getConnection();
+            con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, questionId);
             rs = ps.executeQuery();
             while (rs.next()) {
-                totalAnswer = rs.getInt("cnt");
+                return rs.getInt("cnt");
             }
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(indexPage.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -298,7 +340,7 @@ public class indexPage {
                 }
             }
         }
-        return totalAnswer;
+        return 0;
     }
 
 }

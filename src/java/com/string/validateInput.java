@@ -21,33 +21,55 @@ package com.string;
  */
 public class validateInput {
 
-    public int getInputInt(String option) {
-        int id = 0;
-        if (option == null) {
-            return 0;
-        }
-        if (option.isEmpty()) {
-            return 0;
-        }
-        if (!option.isEmpty()) {
-            id = Integer.parseInt(option);
-        }
-        return id;
-    }
+    /**
+     *
+     * @param args
+     * @return
+     */
+    public int getInputInt(String args) {
 
-    public String getInputString(String parameter) {
-        String val;
-        if (parameter.isEmpty()) {
-            val = null;
+        if (args == null) {
+            return 0;
+        } else if (args.isEmpty()) {
+            return 0;
+        } else if ((args.trim()).equals("null")) {
+            return 0;
+        } else if (args.equals("")) {
+            return 0;
         } else {
-            val = parameter.trim();
+            return Integer.parseInt(args);
         }
-        return val;
     }
 
-    public int remove(String word) {
-        word = word.trim().replaceAll("[^0-9]", "");
-        return Integer.valueOf(word);
+    /**
+     *
+     * @param args
+     * @return
+     */
+    public String getInputString(String args) {
+
+        if (args == null) {
+            return null;
+        } else if (args.isEmpty()) {
+            return null;
+        } else if (args.trim().isEmpty()) {
+            return null;
+        } else if (((args.trim()).equals("null"))) {
+            return null;
+        } else if (args.equals("")) {
+            return null;
+        } else {
+            return args.trim();
+        }
+    }
+
+    /**
+     *
+     * @param args
+     * @return
+     */
+    public int getOnlyInteger(String args) {
+        return Integer.valueOf(args.trim().replaceAll("[^0-9]", ""));
     }
 
 }

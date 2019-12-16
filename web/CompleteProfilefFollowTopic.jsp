@@ -1,7 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ include file="site.jsp" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:useBean id="fun" class="com.string.name" scope="page"></jsp:useBean>
+<jsp:useBean id="fun" class="com.string.WordFormating" scope="page"></jsp:useBean>
 <c:if test="${sessionScope.Session_id_of_user eq null}">
     <c:redirect url="signup.jsp"/>
 </c:if>

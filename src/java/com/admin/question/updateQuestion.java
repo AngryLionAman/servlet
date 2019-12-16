@@ -18,6 +18,8 @@ package com.admin.question;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +31,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class updateQuestion extends HttpServlet {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {        
@@ -47,6 +56,8 @@ public class updateQuestion extends HttpServlet {
                 save.saveQuestionWithIdAndTag(questionId, question, questionTag);
             } catch (SQLException ex) {
                 pw.print(ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(updateQuestion.class.getName()).log(Level.SEVERE, null, ex);
             }
             pw.print("<br>Question has been updated!!!!");
             response.sendRedirect("Admin/modifyQuestion.jsp?p="+pageNumber+"&msg=Question has been successfully updated");

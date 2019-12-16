@@ -29,7 +29,15 @@ import java.util.List;
  */
 public class supportingFunction {
 
-    public int showPrecentage(int questionId, int vote) throws SQLException {
+    /**
+     *
+     * @param questionId
+     * @param vote
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public int showPrecentage(int questionId, int vote) throws SQLException, ClassNotFoundException {
         DatabaseConnection dc = DatabaseConnection.getInstance();
         Connection con = null;
         PreparedStatement ps = null;
@@ -77,7 +85,14 @@ public class supportingFunction {
         return precentege ;
     }
 
-    public List<optionalQuestionAnswerPojo> optionOfQuestinById(int qId) throws SQLException {
+    /**
+     *
+     * @param qId
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public List<optionalQuestionAnswerPojo> optionOfQuestinById(int qId) throws SQLException, ClassNotFoundException {
         List<optionalQuestionAnswerPojo> list = new ArrayList<>();
         //HashMap<Integer, String> map = new HashMap<>();
         DatabaseConnection dc = DatabaseConnection.getInstance();
@@ -125,7 +140,13 @@ public class supportingFunction {
         return list;
     }
 
-    public List<String> onTopicName() throws SQLException {
+    /**
+     *
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public List<String> onTopicName() throws SQLException, ClassNotFoundException {
         List<String> list = new ArrayList<>();
         DatabaseConnection dc = DatabaseConnection.getInstance();
         Connection con = null;
@@ -168,7 +189,13 @@ public class supportingFunction {
         return list;
     }
 
-    public List<Integer> totalNumberOfOption() throws SQLException {
+    /**
+     *
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public List<Integer> totalNumberOfOption() throws SQLException, ClassNotFoundException {
         List<Integer> list = new ArrayList<>();
         DatabaseConnection dc = DatabaseConnection.getInstance();
         Connection con = null;

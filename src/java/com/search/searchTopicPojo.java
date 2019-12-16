@@ -24,28 +24,51 @@ public class searchTopicPojo {
     int topicId;
     String topicName;
     int totalRelatedQuestion;
-    String imageLink;
+    String imagePath;
 
+    /**
+     *
+     * @return
+     */
     public int getTopicId() {
         return topicId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTopicName() {
         return topicName;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTotalRelatedQuestion() {
         return totalRelatedQuestion;
     }
 
-    public String getImageLink() {
-        return imageLink;
+    /**
+     *
+     * @return
+     */
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public searchTopicPojo(int topicId, String topicName, int totalRelatedQuestion, String imageLink) {
+    /**
+     *
+     * @param topicId
+     * @param topicName
+     * @param totalRelatedQuestion
+     * @param imagePath
+     */
+    public searchTopicPojo(int topicId, String topicName, int totalRelatedQuestion, String imagePath) {
         this.topicId = topicId;
         this.topicName = topicName;
         this.totalRelatedQuestion = totalRelatedQuestion;
-        this.imageLink = imageLink;
+        this.imagePath = imagePath;
     }
 }

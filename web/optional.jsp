@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:useBean class="com.optionalQuestion.supportingFunction" id="opt_fun" scope="page"/>
-<jsp:useBean class="com.string.name" id="word" scope="page"/>
+<jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <html lang="en">
     <head>
         <meta charset="UTF-8">

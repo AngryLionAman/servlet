@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <!-- The rest of your web.xml content -->
+    <welcome-file-list>
+        <welcome-file>index</welcome-file>
+    </welcome-file-list>
     <servlet>
         <servlet-name>updateQuestion</servlet-name>
         <servlet-class>com.admin.question.updateQuestion</servlet-class>
@@ -22,16 +25,12 @@
         <servlet-class>com.question.getAllQuestion</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>unanswered</servlet-name>
-        <servlet-class>com.question.unanswered</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>validate</servlet-name>
         <servlet-class>com.login.validate</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>getFunData</servlet-name>
-        <servlet-class>com.fun.getFunData</servlet-class>
+        <servlet-class>com.fun.fun</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>saveFunData</servlet-name>
@@ -78,8 +77,8 @@
         <servlet-class>com.blog.blog</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>saveBlogComment</servlet-name>
-        <servlet-class>com.comments.saveBlogComment</servlet-class>
+        <servlet-name>SaveBlogComment</servlet-name>
+        <servlet-class>com.comments.SaveBlogComment</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>textads</servlet-name>
@@ -112,6 +111,46 @@
     <servlet>
         <servlet-name>savequestion</servlet-name>
         <servlet-class>com.question.user.savequestion</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>saveProfileComment</servlet-name>
+        <servlet-class>com.comments.saveProfileComment</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>updateAnswer</servlet-name>
+        <servlet-class>com.answer.update.updateAnswer</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>saveUpdatedAnswer</servlet-name>
+        <servlet-class>com.answer.update.saveUpdatedAnswer</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>edit_q</servlet-name>
+        <servlet-class>com.question.update.edit_q</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>help</servlet-name>
+        <servlet-class>com.help.help</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>profile</servlet-name>
+        <servlet-class>com.profile.profile</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SaveFollowUserServlet</servlet-name>
+        <servlet-class>com.follow.SaveFollowUserServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>search</servlet-name>
+        <servlet-class>com.search.search</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>index</servlet-name>
+        <servlet-class>com.index.index</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>questions</servlet-name>
+        <servlet-class>com.answer.questions</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>MyApp</servlet-name>
@@ -148,10 +187,6 @@
     <servlet-mapping>
         <servlet-name>getAllQuestion</servlet-name>
         <url-pattern>/getAllQuestion</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>unanswered</servlet-name>
-        <url-pattern>/unanswered</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>validate</servlet-name>
@@ -206,8 +241,8 @@
         <url-pattern>/blog</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>saveBlogComment</servlet-name>
-        <url-pattern>/saveBlogComment</url-pattern>
+        <servlet-name>SaveBlogComment</servlet-name>
+        <url-pattern>/SaveBlogComment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>textads</servlet-name>
@@ -241,6 +276,46 @@
         <servlet-name>savequestion</servlet-name>
         <url-pattern>/savequestion</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>saveProfileComment</servlet-name>
+        <url-pattern>/saveProfileComment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>updateAnswer</servlet-name>
+        <url-pattern>/updateAnswer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>saveUpdatedAnswer</servlet-name>
+        <url-pattern>/saveUpdatedAnswer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>edit_q</servlet-name>
+        <url-pattern>/edit_q</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>help</servlet-name>
+        <url-pattern>/help</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>profile</servlet-name>
+        <url-pattern>/profile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SaveFollowUserServlet</servlet-name>
+        <url-pattern>/SaveFollowUserServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>search</servlet-name>
+        <url-pattern>/search</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>index</servlet-name>
+        <url-pattern>/index</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>questions</servlet-name>
+        <url-pattern>/questions</url-pattern>
+    </servlet-mapping>
     <error-page>
         <error-code>404</error-code>
         <location>/Error404.jsp</location>
@@ -248,10 +323,6 @@
     <servlet>
         <servlet-name>MyApp</servlet-name>
         <servlet-class>com.tech.facebook.MyApp</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>profile</servlet-name>
-        <servlet-class>com.profile.profile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UploadServlet</servlet-name>
@@ -263,11 +334,11 @@
     </servlet>
     <servlet>
         <servlet-name>saveAnswer</servlet-name>
-        <servlet-class>com.answer.saveAnswer</servlet-class>
+        <servlet-class>com.admin.unasweredQuestion.SaveAnswerAdminModule</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>saveQuestion</servlet-name>
-        <servlet-class>com.question.saveQuestion</servlet-class>
+        <servlet-class>com.question.SaveQuestionForAdmin</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>deleteTopic</servlet-name>
@@ -277,10 +348,6 @@
         <servlet-name>guestSaveQuestion</servlet-name>
         <servlet-class>com.question.guestSaveQuestion</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>profile</servlet-name>
-        <url-pattern>/profile</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UploadServlet</servlet-name>
         <url-pattern>/UploadServlet</url-pattern>

@@ -30,6 +30,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class saveFollowedTopic extends HttpServlet {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -42,7 +49,7 @@ public class saveFollowedTopic extends HttpServlet {
             topic.SaveTopicByTopicIdAndUserId(userid, topicName);
             response.sendRedirect("index.jsp?ref=f_t");
             //request.getRequestDispatcher("index.jsp").forward(request, response);
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(saveFollowedTopic.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

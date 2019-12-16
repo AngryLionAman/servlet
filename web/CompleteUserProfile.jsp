@@ -1,7 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page language="java"%>
 <%@page import="java.sql.*"%>
-<%@include file="site.jsp" %>
 <%
     if (session.getAttribute("Session_id_of_user") != null) {
         int SessionUserId = (Integer)session.getAttribute("Session_id_of_user");
@@ -15,7 +14,7 @@
                 } catch (ClassNotFoundException ex) {
                     out.println("Exception in loading the class forname Driver" + ex);
                 }
-                connection = DriverManager.getConnection(DB_URL_, DB_USERNAME_, DB_PASSWORD_);
+                connection = null;//DriverManager.getConnection(DB_URL_, DB_USERNAME_, DB_PASSWORD_);
             }
             String higher_edu = null;
             String best_achievement = null;

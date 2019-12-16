@@ -15,12 +15,8 @@
  */
 package com.login;
 
-import com.connect.DatabaseConnection;
+import com.string.validateInput;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,91 +33,70 @@ import javax.servlet.http.HttpSession;
  */
 public class validate extends HttpServlet {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter pw = response.getWriter();
-        String email = request.getParameter("email").trim();
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        validateInput input = new validateInput();
+        supportingFunctionLogin login = new supportingFunctionLogin();
+
+        String email = input.getInputString(request.getParameter("email"));
         String password = request.getParameter("password");
-        if (email != null && !email.isEmpty() && password != null && !password.isEmpty()) {
+
+        String message = null;
+
+        if (email != null && password != null && !password.isEmpty()) {
             try {
-                DatabaseConnection dc = DatabaseConnection.getInstance();
-                Connection con = null;
-                PreparedStatement ps = null;
-                ResultSet rs = null;
-                boolean userValidated = false;
-                int userId = 0;
-                try {
-                    con = dc.getConnection();
-                    String sql = "select id, password from newuser where email = ?";
-                    ps = con.prepareStatement(sql);
-                    ps.setString(1, email);
-                    rs = ps.executeQuery();
-                    while (rs.next()) {
-                        userId = rs.getInt("id");
-                        String pass = rs.getString("password");
-                        if (password.equals(pass)) {
-                            userValidated = true;
-                        }
-                    }
-
-                } catch (SQLException msg) {
-                    pw.print(msg);
-                    throw msg;
-                } finally {
-                    if (rs != null) {
+                if (login.IsUserIsPresent(email, password)) {
+                    int userId = login.GetUserIdByEmailAndPassword(email, password);
+                    if (userId != 0) {
+                        HttpSession session = request.getSession();
+                        session.setAttribute("Session_id_of_user", userId);
+                        session.setMaxInactiveInterval(60);
                         try {
-                            rs.close();
-                        } catch (SQLException msg) {
+                            Cookie[] cookies = request.getCookies();
+                            if (cookies != null) {
 
-                        }
-                    }
-                    if (ps != null) {
-                        try {
-                            ps.close();
-                        } catch (SQLException msg) {
-
-                        }
-                    }
-                    if (con != null) {
-                        try {
-                            con.close();
-                        } catch (SQLException msg) {
-
-                        }
-                    }
-                    try {
-                        if (userValidated) {
-                            HttpSession session = request.getSession();
-                            session.setAttribute("email", email);
-                            session.setAttribute("Session_id_of_user", userId);
-                            session.setMaxInactiveInterval(60);
-                            try {
+                            } else {
                                 Cookie usernameCookie = new Cookie("usernamecookie", email);
                                 Cookie passwordCookie = new Cookie("passwordcookie", password);
                                 usernameCookie.setMaxAge(24 * 60 * 60 * 100);
                                 passwordCookie.setMaxAge(24 * 60 * 60 * 100);
                                 response.addCookie(usernameCookie);
                                 response.addCookie(passwordCookie);
-                            } catch (Exception msg) {
-                                throw msg;
                             }
-                            response.sendRedirect("index.jsp");
-                        } else {
-                            response.sendRedirect("login.jsp?ref=valid");
-                        }
-                    } catch (Exception msg) {
-                        pw.print(msg);
-                        throw msg;
-                    }
-                }
 
-            } catch (SQLException ex) {
-                pw.print(ex);
+                        } catch (Exception msg) {
+                            Logger.getLogger(validate.class.getName()).log(Level.SEVERE, null, msg);
+                        }
+                        request.getRequestDispatcher("index").forward(request, response);
+                        return;
+                    } else {
+                        message = "Your Email and Password is valid but got some unknown problem, Please contact to administrator";
+                    }
+                } else {
+                    message = "Email or Password is not valid, Please try again";
+                }
+            } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(validate.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
                 Logger.getLogger(validate.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+        } else {
+            message = "Email or password is empty, Please try with valid input";
         }
+        request.setAttribute("message", message);
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 }

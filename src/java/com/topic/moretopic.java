@@ -15,11 +15,7 @@
  */
 package com.topic;
 
-import com.question.getQuestionByTopicId;
-import com.string.validateInput;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,6 +44,13 @@ public class moretopic extends HttpServlet {
         return pageno;
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

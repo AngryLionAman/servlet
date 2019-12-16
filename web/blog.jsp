@@ -1,10 +1,8 @@
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:useBean class="com.string.regularExpression" id="word"/>
 <jsp:useBean class="com.fun.helpingFunction" id="fun" scope="page"/>
-<jsp:useBean class="com.string.name" id="function" scope="page"/>
-<%@include file="validator.jsp" %>
+<jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
@@ -40,20 +38,24 @@
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <div class="row">
                                 <c:if test="${message ne null}">
-                                   <div class="themeBox" style="font-family: serif;font-variant-position: super;font-size: 25px;text-align: center;background-color: #00ff5c;color: white;">
+                                   <div class="themeBox" align="center" style="font-size: 20px;color: green;background-color: yellow;">
                                         ${message}
                                     </div>
+                                </c:if>
+                                
+                                <c:if test="${blogList eq null}">
+                                    <c:redirect url="blog"/>
                                 </c:if>
                                 <c:if test="${blogList ne null}">
                                     <c:catch var="ex">
                                         <c:forEach items="${blogList}" var="b" >
                                             <div class="themeBox" style="height:auto;">
                                                 <div class="boxHeading">
-                                                    <a href="blog?sub=${word.removeSpacialChar(b.subject)}&id=${b.uniqueId}">${b.subject}</a>
+                                                    <a href="blog?id=${b.uniqueId}&sub=${word.UrlFormat(b.subject)}">${b.subject}</a>
                                                 </div>
                                                 <c:if test="${b.userName ne null}">
                                                     <div class="questionArea">
-                                                        <div class="postedBy">Published BY :<a href="profile.jsp?user=${b.userName}&ID=${b.userId}"> ${function.convertStringUpperToLower(b.fullName)}</a></div>
+                                                        <div class="postedBy">Published BY :<a href="profile?user=${b.userName}&id=${b.userId}&ref=b"> ${word.convertStringUpperToLower(b.fullName)}</a></div>
                                                     </div>
                                                 </c:if>                                                
                                             </div>
@@ -75,7 +77,7 @@
                                         <ul>
                                             <c:catch var="msg">
                                                 <c:forEach items="${fun.CategoryDetail()}" var="m">
-                                                    <li><a href="fun?category=${m}">${function.convertStringUpperToLower(m)}</a></li>
+                                                    <li><a href="fun?category=${m}">${word.convertStringUpperToLower(m)}</a></li>
                                                     </c:forEach>
                                                 </c:catch>
                                                 <c:if test="${msg ne null}">

@@ -29,34 +29,72 @@ public class getAnswerPojo {
     int totalView;
     int vote;
 
+    /**
+     *
+     * @return
+     */
     public int getUserId() {
         return userId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getUserName() {
         return userName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getFullName() {
         return fullName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getAnswer() {
         return answer;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getAnswerId() {
         return answerId;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTotalView() {
         return totalView;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getVote() {
         return vote;
     }
 
+    /**
+     *
+     * @param userId
+     * @param userName
+     * @param fullName
+     * @param answer
+     * @param answerId
+     * @param totalView
+     * @param vote
+     */
     public getAnswerPojo(int userId, String userName, String fullName, String answer, int answerId, int totalView, int vote) {
         this.userId = userId;
         this.userName = userName;

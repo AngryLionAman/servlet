@@ -29,34 +29,72 @@ public class funPojo {
     String basedOn;
     String type;
 
+    /**
+     *
+     * @return
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getPostedBy() {
         return postedBy;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDesc() {
         return desc;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getCategory() {
         return category;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getBasedOn() {
         return basedOn;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     *
+     * @param id
+     * @param postedBy
+     * @param title
+     * @param desc
+     * @param category
+     * @param basedOn
+     * @param type
+     */
     public funPojo(int id, int postedBy, String title, String desc, String category, String basedOn, String type) {
         this.id = id;
         this.postedBy = postedBy;

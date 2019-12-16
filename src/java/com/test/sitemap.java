@@ -26,7 +26,13 @@ import java.text.SimpleDateFormat;
  */
 public class sitemap {
 
-    public static void main(String[] args) throws SQLException {
+    /**
+     *
+     * @param args
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
         DatabaseConnection dc = DatabaseConnection.getInstance();
         Connection con = null;
         PreparedStatement ps = null;

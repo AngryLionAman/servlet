@@ -15,9 +15,9 @@
  */
 package com.answer.user.saveanswer;
 
+import com.notifications.CreateNotification;
 import com.string.validateInput;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +32,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class save_answer_servlet extends HttpServlet {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -40,41 +47,43 @@ public class save_answer_servlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
-        PrintWriter pw = response.getWriter();
-
         validateInput input = new validateInput();
-
         SaveAnswer saveAnswer = new SaveAnswer();
+        CreateNotification notification = new CreateNotification();
 
-        supportingFunction function = new supportingFunction();
+        int sessionUserId = input.getInputInt(request.getParameter("_id_of_user"));
+        int questionId = input.getInputInt(request.getParameter("q_id"));
+        int id_of_user_who_posted_question = input.getInputInt(request.getParameter("id_of_user_who_posted_question"));
+        String answer = input.getInputString(request.getParameter("answer"));
 
         String message = null;
 
-        try {
-            //String question = input.getInputString(request.getParameter("question"));
-            int id_of_user = input.getInputInt(request.getParameter("_id_of_user"));
-            int q_id = input.getInputInt(request.getParameter("q_id"));
-            int id_of_user_who_posted_question = input.getInputInt(request.getParameter("id_of_user_who_posted_question"));
-            String answer = input.getInputString(request.getParameter("answer"));
-            message = "Got some unknown error";
-            if (!saveAnswer.saveAnswerByQuestionAndIdUserId(id_of_user, q_id, answer)) {
-                message = "Answer has been submited";
-                /*Create the creating notification function*/
-                if (!function.CreateNotification(id_of_user, id_of_user_who_posted_question, q_id)) {
-                    //Notification created
+        if (sessionUserId != 0 && questionId != 0 && answer != null) {
+            try {
+                if (!saveAnswer.SaveAnswerByQuestionIdAndIdUserId(sessionUserId, questionId, answer)) {
+                    if (id_of_user_who_posted_question != 0) {
+                        if (!notification.UserGotAnswerOfQuestion(sessionUserId, id_of_user_who_posted_question, questionId)) {
+                            message = "Answer has been posted and notification has been successfully sent to user";
+                        } else {
+                            message = "Answer has been posted but notification not sent to user";
+                        }
+                    } else {
+                        message = "Answer has been posted, Notification will not generate for the guest post";
+                    }
+                } else {
+                    message = "Answer not saved, Got unknown error";
                 }
-                request.setAttribute("message", message);
-
-            } else {
-                
-                message = "Answer not saved,please try again";
-                request.setAttribute("message", message);
-
+            } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(save_answer_servlet.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(save_answer_servlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            request.setAttribute("Id", q_id);
-            request.getRequestDispatcher("Answer.jsp").forward(request, response);
-        } catch (IOException | SQLException | ServletException msg) {
-            Logger.getLogger(save_answer_servlet.class.getName()).log(Level.SEVERE, message, msg);
+        } else {
+            message = "Bad argument, Answer not posted. Please try again";
         }
+
+        request.setAttribute("message", message);
+        request.setAttribute("id", questionId);
+        request.getRequestDispatcher("questions").forward(request, response);
     }
 }

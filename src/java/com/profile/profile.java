@@ -1,46 +1,314 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2019 AngryLion.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.profile;
 
+import com.comments.GetComment;
+import com.comments.ProfileCommentsPojo;
+import com.login.supportingFunctionLogin;
+import com.string.validateInput;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.servlet.http.HttpSession;
+
 /**
  *
- * @author inquiryhere.com
+ * @author AngryLion
  */
 public class profile extends HttpServlet {
 
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, SQLException, ClassNotFoundException, Exception {
+
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        validateInput input = new validateInput();
+        profileDetailClassFile file = new profileDetailClassFile();
+        userSupportingClass supportingClass = new userSupportingClass();
+        GetComment comment = new GetComment();
+
+        int userId = GetUserId(request);
+
+        String tab;
+
+        if (request.getAttribute("tab") != null) {
+            tab = (String) request.getAttribute("tab");
+        } else {
+            if (null == request.getParameter("tab")) {
+                tab = "question";
+            } else {
+                switch (request.getParameter("tab")) {
+                    case "":
+                        tab = "question";
+                        break;
+                    default:
+                        tab = input.getInputString(request.getParameter("tab"));
+                        break;
+                }
+            }
+        }
+
+        String message = null;
+
+        if (request.getAttribute("message") != null) {
+            message = (String) request.getAttribute("message");
+        }
+
+        List<profileDetialPojoFile> GetUserDetailByUserId;
+        List<questionByUserIdPojo> GetTotalQuestionPostedByUserId = null;
+        List<answerByUserIdPojo> GetTotalAnswerPostedByUserId = null;
+        List<TopicByUserIdPojo> GetTotalTopicFollowedByUserId = null;
+        List<FollowersByUserIdPojo> GetTotalFollowersByUserId = null;
+        List<FollowingByUserIdPojo> GetTotalFollowingByUserId = null;
+        List<BlogByUserIdPojo> GetTotalBlogByUserId = null;
+        List<CountRowByUserIdPojo> CountRowByUserIdController;
+        List<ProfileCommentsPojo> GetCommentByProfileId;
+
+        if (userId != 0) {
+
+            GetUserDetailByUserId = file.GetUserDetailByUserId(userId);
+            supportingClass.UpdateProfileViewBy1ByUserId(userId);
+            CountRowByUserIdController = supportingClass.CountRowByUserIdController(userId);
+            GetCommentByProfileId = comment.GetCommentByProfileId(userId);
+
+            switch (tab) {
+                case "question":
+                    GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(userId);
+                    break;
+
+                case "answer":
+                    GetTotalAnswerPostedByUserId = supportingClass.GetTotalAnswerPostedByUserId(userId);
+                    break;
+
+                case "topic":
+                    GetTotalTopicFollowedByUserId = supportingClass.GetTotalTopicFollowedByUserId(userId);
+                    break;
+
+                case "following":
+                    GetTotalFollowingByUserId = supportingClass.GetTotalFollowingByUserId(userId);
+                    break;
+
+                case "followers":
+                    GetTotalFollowersByUserId = supportingClass.GetTotalFollowersByUserId(userId);
+                    break;
+
+                case "blog":
+                    GetTotalBlogByUserId = supportingClass.GetTotalBlogByUserId(userId);
+                    break;
+
+                default:
+                    GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(userId);
+                    break;
+            }
+
+        } else {
+            message = "The user you are looking for is not present in our database,"
+                    + " Or may you entring the invalid argument, Please try search option....";
+            request.setAttribute("message", message);
+            request.getRequestDispatcher("Error.jsp").forward(request, response);
+            return;
+        }
+
+        request.setAttribute("message", message);
+        request.setAttribute("GetUserDetailByUserId", GetUserDetailByUserId);
+        request.setAttribute("CountRowByUserIdController", CountRowByUserIdController);
+        request.setAttribute("GetTotalQuestionPostedByUserId", GetTotalQuestionPostedByUserId);
+        request.setAttribute("GetTotalAnswerPostedByUserId", GetTotalAnswerPostedByUserId);
+        request.setAttribute("GetTotalTopicFollowedByUserId", GetTotalTopicFollowedByUserId);
+        request.setAttribute("GetTotalFollowersByUserId", GetTotalFollowersByUserId);
+        request.setAttribute("GetTotalFollowingByUserId", GetTotalFollowingByUserId);
+        request.setAttribute("GetTotalBlogByUserId", GetTotalBlogByUserId);
+        request.setAttribute("GetCommentByProfileId", GetCommentByProfileId);
+        request.getRequestDispatcher("profile.jsp").forward(request, response);
+    }
+
+    /**
+     *
+     * @param request
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws Exception
+     */
+    public int GetUserId(HttpServletRequest request) throws SQLException, ClassNotFoundException, Exception {
+
+        validateInput input = new validateInput();
+
+        HttpSession session = request.getSession(false);
+
+        profileDetailClassFile file = new profileDetailClassFile();
+
+        int getParameterUserId = input.getInputInt(request.getParameter("id"));
+
+        String getParameterUserName = input.getInputString(request.getParameter("user"));
+
+        int getAttributeUserId;
+
+        if (request.getAttribute("id") != null) {
+            getAttributeUserId = input.getInputInt(String.valueOf((int) request.getAttribute("id")));
+        } else {
+            getAttributeUserId = 0;
+        }
+
+        int sessionGetAttributUserId;
+        if (session != null) {
+            if (session.getAttribute("Session_id_of_user") != null) {
+                sessionGetAttributUserId = (int) session.getAttribute("Session_id_of_user");
+            } else {
+                sessionGetAttributUserId = 0;
+            }
+        } else {
+            sessionGetAttributUserId = 0;
+        }
+
+        int userId = 0;
+
+        if (getParameterUserId != 0) {
+            if (file.IsUserPresent(getParameterUserId)) {
+                userId = getParameterUserId;
+            }
+        } else if (getParameterUserName != null) {
+            if (file.IsUserPresent(getParameterUserName)) {
+                userId = file.GetUserIdByUserName(getParameterUserName);
+            }
+        } else if (getAttributeUserId != 0) {
+            if (file.IsUserPresent(getAttributeUserId)) {
+                userId = getAttributeUserId;
+            }
+        } else if (sessionGetAttributUserId != 0) {
+            if (file.IsUserPresent(sessionGetAttributUserId)) {
+                userId = sessionGetAttributUserId;
+            }
+        } else {
+            userId = GetUserIdByCookiesEmailAndPass(request);
+        }
+
+        return userId;
+    }
+
+    /**
+     *
+     * @param request
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public int GetUserIdByCookiesEmailAndPass(HttpServletRequest request) throws SQLException, ClassNotFoundException, Exception {
+
+        supportingFunctionLogin login = new supportingFunctionLogin();
+        validateInput input = new validateInput();
+
+        String userEmail = null;
+        String userPass = null;
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("usernamecookie")) {
+                    userEmail = cookie.getValue();
+                }
+                if (cookie.getName().equals("passwordcookie")) {
+                    userPass = cookie.getValue();
+                }
+            }
+
+            if (input.getInputString(userEmail) != null && input.getInputString(userPass) != null) {
+                if (login.IsUserIsPresent(userEmail, userPass)) {
+                    return login.GetUserIdByEmailAndPassword(userEmail, userPass);
+                } else {
+                    return 0;
+                }
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        PrintWriter out = response.getWriter();
         try {
-            String fullName = request.getParameter("fullname");
-            String eMail = request.getParameter("email");
-            String higherQualification = request.getParameter("HigherQualification");
-            String bestAchievement = request.getParameter("BestAchievement");
-            String bio = request.getParameter("bio");
-            userProfile obj = new userProfile();
-            obj.saveUserProfile(eMail, higherQualification, bestAchievement, bio);
-            out.println(fullName+"'s profile has been saved!!!!");
-            response.sendRedirect("profile.jsp");
-            //RequestDispatcher rd = request.getRequestDispatcher("UpdateUserProfile.jsp");
-            //rd.forward(request, response);
-        } catch (SQLException ex) {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(profile.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(profile.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(profile.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(profile.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
 }

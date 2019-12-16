@@ -20,52 +20,67 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author AngryLion
  */
 public class time {
-    public int showTime(int questionId) throws SQLException{
-        DatabaseConnection connection = new DatabaseConnection();
+
+    /**
+     *
+     * @param questionId
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public int showTime(int questionId) throws SQLException, ClassNotFoundException, Exception {
+        /*
+        * This module is disabled due to so many null pointer exception
+        */
+        
+       /* DatabaseConnection ds = new DatabaseConnection();
+        
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        int days = 0;
-        try{
-           String sql = "SELECT DATEDIFF(CURDATE(), posted_time) AS Date FROM question WHERE q_id = ?";
-           con = connection.getConnection();
-           ps = con.prepareStatement(sql);
-           ps.setInt(1, questionId);
-           rs = ps.executeQuery();           
-           if(rs.next()){
-               days = rs.getInt("Date");
-           }           
-        }catch(SQLException msg){
-            throw msg;
-        }finally{
-            if(rs != null){
-                try{
+        
+        try {
+            String sql = "SELECT DATEDIFF(CURDATE(), posted_time) AS Date FROM question WHERE q_id = ?";
+            con = ds.getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, questionId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("Date");
+            }
+        } catch (SQLException msg) {
+            Logger.getLogger(time.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            if (rs != null) {
+                try {
                     rs.close();
-                }catch(SQLException msg){
-                    
+                } catch (SQLException msg) {
+
                 }
             }
-            if(ps != null){
-                try{
+            if (ps != null) {
+                try {
                     ps.close();
-                }catch(SQLException msg){
-                    
+                } catch (SQLException msg) {
+
                 }
             }
-            if(con != null){
-                try{
+            if (con != null) {
+                try {
                     con.close();
-                }catch(SQLException msg){
-                    
+                } catch (SQLException msg) {
+
                 }
             }
-        }
-        return days;
+        }*/
+        return 0;
     }
 }

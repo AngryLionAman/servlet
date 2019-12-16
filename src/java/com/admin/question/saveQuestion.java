@@ -26,7 +26,16 @@ import java.sql.SQLException;
  * @author AngryLion
  */
 public class saveQuestion {
-    protected boolean updateQuestionById(int questionId,String question) throws SQLException{
+
+    /**
+     *
+     * @param questionId
+     * @param question
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    protected boolean updateQuestionById(int questionId,String question) throws SQLException, ClassNotFoundException{
         DatabaseConnection dc = new DatabaseConnection();
         Connection con = null;
         PreparedStatement ps = null;
@@ -56,7 +65,14 @@ public class saveQuestion {
         
     }
 
-    protected boolean deleteQuesstionTag(int questionId) throws SQLException {
+    /**
+     *
+     * @param questionId
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    protected boolean deleteQuesstionTag(int questionId) throws SQLException, ClassNotFoundException {
         DatabaseConnection dc = new DatabaseConnection();
         Connection con = null;
         PreparedStatement ps = null;
@@ -89,7 +105,15 @@ public class saveQuestion {
 
     }
 
-    public void saveQuestionWithIdAndTag(int questionId,String question, String questionTag) throws SQLException {
+    /**
+     *
+     * @param questionId
+     * @param question
+     * @param questionTag
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public void saveQuestionWithIdAndTag(int questionId,String question, String questionTag) throws SQLException, ClassNotFoundException {
         DatabaseConnection dc = new DatabaseConnection();
         Connection con = null;
         PreparedStatement ps = null;

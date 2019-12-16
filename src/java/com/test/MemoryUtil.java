@@ -25,7 +25,11 @@ public class MemoryUtil{
 
        private static final int MegaBytes = 10241024;
 
-       public static void main(String args[]) {
+    /**
+     *
+     * @param args
+     */
+    public static void main(String args[]) {
 
               long freeMemory = Runtime.getRuntime().freeMemory()/MegaBytes;
               long totalMemory = Runtime.getRuntime().totalMemory()/MegaBytes;

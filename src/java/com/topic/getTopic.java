@@ -16,13 +16,13 @@
 package com.topic;
 
 import com.connect.DatabaseConnection;
-import com.index.indexPageExtraFunction;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,68 +30,39 @@ import java.util.List;
  */
 public class getTopic {
 
-    public List<topicPojo> getTopicDetailByRefId(int topicid) throws SQLException, Exception {
-        indexPageExtraFunction function = new indexPageExtraFunction();
-        DatabaseConnection connection = DatabaseConnection.getInstance();
-        List<topicPojo> list = new ArrayList<>();
+    /**
+     *
+     * @param topicid
+     * @return
+     * @throws SQLException
+     * @throws Exception
+     */
+    public HashMap<Integer, String> getTopicDetailByRefId(int topicid) throws SQLException, Exception {
+        //indexPageExtraFunction function = new indexPageExtraFunction();
+        
+        DatabaseConnection ds = new DatabaseConnection();
+
+        //List<topicPojo> list = new ArrayList<>();
+        HashMap<Integer, String> map = new HashMap<>();
+
         Connection con = null;
         PreparedStatement ps = null;
-        PreparedStatement ps1 = null;
         ResultSet rs = null;
-        ResultSet rs1 = null;
+
         try {
-            String sql = "select DISTINCT t.unique_id,t.topic_name,t.image_url,t.desc_hindi,t.desc_english,t.crawl from topic t right join question_topic_tag qtt on t.unique_id=qtt.tag_id where question_id IN (select question_id from question_topic_tag where tag_id=?) and t.unique_id is not null and t.topic_name is not null and t.image_url is not null group by t.unique_id limit 30";
-            con = connection.getConnection();
+            String sql = "select DISTINCT t.unique_id,t.topic_name from topic t inner join question_topic_tag qtt on t.unique_id=qtt.tag_id where question_id IN (select question_id from question_topic_tag where tag_id= ? ) and t.unique_id is not null and t.topic_name is not null group by t.unique_id limit 30";
+            con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, topicid);
             rs = ps.executeQuery();
-            int count = 0;
             while (rs.next()) {
-                count++;
-                String topicName = rs.getString("topic_name");
-                int topicId = rs.getInt("unique_id");
-                String imageUrl = rs.getString("image_url");
-                String descHindi = rs.getString("desc_hindi") == null ? "" : rs.getString("desc_hindi");
-                String descEng = rs.getString("desc_english") == null ? "" : rs.getString("desc_english");
-                boolean crawl = rs.getBoolean("crawl");
-                int totalFollowers = function.totalFollowersOfTopic(topicId);
-                int relatedQuestion = function.totalRelatedQuestion(topicId);
-                if (list.isEmpty()) {
-                    list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, crawl, totalFollowers, relatedQuestion));
-                } else {
-                    if (!list.contains(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, crawl, totalFollowers, relatedQuestion))) {
-                        list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, crawl, totalFollowers, relatedQuestion));
-                    }
-                }
-
+                String topicName = rs.getString("t.topic_name").trim();
+                int topicId = rs.getInt("t.unique_id");
+                map.putIfAbsent(topicId, topicName);
             }
-            if (count < 30) {
-                //Override everything
-                int limit = 30 - count;
-                String sql1 = "select DISTINCT t.unique_id,t.topic_name,t.image_url,t.desc_hindi,desc_english from topic t order by rand() limit ?";
-                ps1 = con.prepareStatement(sql1);
-                ps1.setInt(1, limit);
-                rs1 = ps1.executeQuery();
-                while (rs1.next()) {
-                    count++;
-                    String topicName = rs1.getString("topic_name");
-                    int topicId = rs1.getInt("unique_id");
-                    String imageUrl = rs1.getString("image_url");
-                    String descHindi = rs1.getString("desc_hindi") == null ? "" : rs1.getString("desc_hindi");
-                    String descEng = rs1.getString("desc_english") == null ? "" : rs1.getString("desc_english");
-                    int totalFollowers = function.totalFollowersOfTopic(topicId);
-                    int relatedQuestion = function.totalRelatedQuestion(topicId);
-                    if (list.isEmpty()) {
-                        list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, true, totalFollowers, relatedQuestion));
-                    } else {
-                        if (!list.contains(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, true, totalFollowers, relatedQuestion))) {
-                            list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, true, totalFollowers, relatedQuestion));
-                        }
-                    }
-                }
-            }
-        } catch (Exception msg) {
-            throw msg;
+            return map;
+        } catch (SQLException msg) {
+            Logger.getLogger(getTopic.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -99,21 +70,10 @@ public class getTopic {
                 } catch (SQLException msg) {
                 }
             }
-            if (rs1 != null) {
-                try {
-                    rs1.close();
-                } catch (SQLException msg) {
-                }
-            }
+
             if (ps != null) {
                 try {
                     ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps1 != null) {
-                try {
-                    ps1.close();
                 } catch (SQLException msg) {
                 }
             }
@@ -124,6 +84,6 @@ public class getTopic {
                 }
             }
         }
-        return list;
+        return null;
     }
 }

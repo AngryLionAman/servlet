@@ -57,7 +57,7 @@
                         Privacy Policy
                     </div><br>
                     <div >
-                        nquiryhere.com does not collect or redistribute personal information. View the full <a href=privacy.jsp>privacy policy</a>
+                        inquiryhere.com does not collect or redistribute personal information. View the full <a href=privacy.jsp>privacy policy</a>
                     </div>
 
                 </div>                          

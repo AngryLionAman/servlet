@@ -28,30 +28,63 @@ public class optionalQuestionPojo {
     int postedBy;
     int totalOption;
 
+    /**
+     *
+     * @return
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getQuestion() {
         return question;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getCorrectAnswer() {
         return correctAnswer;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getOnTopic() {
         return onTopic;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getPostedBy() {
         return postedBy;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTotalOption() {
         return totalOption;
     }
 
+    /**
+     *
+     * @param id
+     * @param question
+     * @param correctAnswer
+     * @param onTopic
+     * @param postedBy
+     * @param totalOption
+     */
     public optionalQuestionPojo(int id, String question, String correctAnswer, String onTopic, int postedBy, int totalOption) {
         this.id = id;
         this.question = question;

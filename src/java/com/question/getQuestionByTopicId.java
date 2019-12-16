@@ -21,6 +21,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -28,10 +30,21 @@ import java.util.HashMap;
  */
 public class getQuestionByTopicId {
 
-    public HashMap<Integer, String> getAllQuestionByTopicId(int topicId, int pageNo, int recordPerPage) throws SQLException {
+    /**
+     *
+     * @param topicId
+     * @param pageNo
+     * @param recordPerPage
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public HashMap<Integer, String> getAllQuestionByTopicId(int topicId, int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
 
         HashMap<Integer, String> map = new HashMap<>();
+        
         DatabaseConnection dc = new DatabaseConnection();
+        
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -52,8 +65,9 @@ public class getQuestionByTopicId {
                 String question = rs.getString("question");
                 map.putIfAbsent(questionId, question);
             }
+            return map;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(getQuestionByTopicId.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -77,6 +91,6 @@ public class getQuestionByTopicId {
                 }
             }
         }
-        return map;
+        return null;
     }
 }

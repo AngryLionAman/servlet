@@ -22,6 +22,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -29,13 +31,24 @@ import java.util.List;
  */
 public class getAllBlog {
 
-    public List<blogPojo> blogByLimit(int limit) throws SQLException {
-        DatabaseConnection dc = new DatabaseConnection();
+    /**
+     *
+     * @param limit
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public List<blogPojo> blogByLimit(int limit) throws SQLException, ClassNotFoundException {
+
+        DatabaseConnection dc = DatabaseConnection.getInstance();
+
         List<blogPojo> list = new ArrayList<>();
+
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-         try {
+
+        try {
             con = dc.getConnection();
             String sql = "SELECT unique_id,subject,posted_by as userId,username,firstname FROM blog LEFT JOIN newuser ON newuser.id = blog.posted_by order by rand() limit ?";
             ps = con.prepareStatement(sql);
@@ -49,8 +62,9 @@ public class getAllBlog {
                 String subject = rs.getString("subject");
                 list.add(new blogPojo(userId, userName, fullName, unique_id, subject));
             }
+            return list;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(getAllBlog.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -74,15 +88,26 @@ public class getAllBlog {
                 }
             }
         }
-        return list;
+        return null;
 
     }
-    public List<blogPojoById> blogByBlogId(int blogid) throws SQLException {
-        DatabaseConnection dc = new DatabaseConnection();
+
+    /**
+     *
+     * @param blogid
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public List<blogPojoById> blogByBlogId(int blogid) throws SQLException, ClassNotFoundException {
+
+        DatabaseConnection dc = DatabaseConnection.getInstance();
         List<blogPojoById> list = new ArrayList<>();
+
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+
         try {
             con = dc.getConnection();
             String sql = "SELECT b.subject,b.view,b.unique_id,b.desc,user.firstname,user.username,user.id FROM blog b left join newuser user on b.posted_by = user.Id WHERE unique_id =?";
@@ -99,8 +124,9 @@ public class getAllBlog {
                 String fullName = rs.getString("user.firstname");
                 list.add(new blogPojoById(uniqueId, subject, desc, view, userId, userName, fullName));
             }
+            return list;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(getAllBlog.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -124,12 +150,19 @@ public class getAllBlog {
                 }
             }
         }
-        return list;
+        return null;
 
     }
 
-    public List<blogPojo> blog() throws SQLException {
-        DatabaseConnection dc = new DatabaseConnection();
+    /**
+     *
+     * @return @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public List<blogPojo> blog() throws SQLException, ClassNotFoundException {
+
+        DatabaseConnection dc = DatabaseConnection.getInstance();
+
         List<blogPojo> list = new ArrayList<>();
         Connection con = null;
         PreparedStatement ps = null;
@@ -147,8 +180,9 @@ public class getAllBlog {
                 String subject = rs.getString("subject");
                 list.add(new blogPojo(userId, userName, fullName, unique_id, subject));
             }
+            return list;
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(getAllBlog.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
@@ -172,6 +206,6 @@ public class getAllBlog {
                 }
             }
         }
-        return list;
+        return null;
     }
 }

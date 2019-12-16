@@ -16,7 +16,6 @@
 package com.optionalQuestion;
 
 import com.connect.DatabaseConnection;
-import com.fun.getFunData;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -61,11 +60,18 @@ public class displayOptionalQuestion extends HttpServlet {
         return pageno;
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            DatabaseConnection dc = DatabaseConnection.getInstance();
+            DatabaseConnection dc = new DatabaseConnection();
             List<optionalQuestionPojo> list = new ArrayList<>();
             Connection con = null;
             PreparedStatement ps = null;
@@ -144,8 +150,8 @@ public class displayOptionalQuestion extends HttpServlet {
                     }
                 }
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(getFunData.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

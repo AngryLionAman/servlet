@@ -26,22 +26,45 @@ public class SEOPojo {
     String questionDescription;
     String imageLinkResult;
 
+    /**
+     *
+     * @return
+     */
     public String getImageLinkResult() {
         return imageLinkResult;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getQuestionId() {
         return questionId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getQuestionTitle() {
         return questionTitle;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getQuestionDescription() {
         return questionDescription;
     }
 
+    /**
+     *
+     * @param questionId
+     * @param questionTitle
+     * @param questionDescription
+     * @param imageLinkResult
+     */
     public SEOPojo(int questionId, String questionTitle, String questionDescription, String imageLinkResult) {
         this.questionId = questionId;
         this.questionTitle = questionTitle;
@@ -49,6 +72,12 @@ public class SEOPojo {
         this.imageLinkResult = imageLinkResult;
     }
 
+    /**
+     *
+     * @param questionId
+     * @param questionTitle
+     * @param questionDescription
+     */
     public SEOPojo(int questionId, String questionTitle, String questionDescription) {
         this.questionId = questionId;
         this.questionTitle = questionTitle;

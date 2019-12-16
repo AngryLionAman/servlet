@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -31,7 +30,14 @@ import javax.servlet.http.HttpSession;
  */
 public class SupportingFunction {
 
-    public int GetUserIdByEmail(String email) throws SQLException {
+    /**
+     *
+     * @param email
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public int GetUserIdByEmail(String email) throws SQLException, ClassNotFoundException {
         
         DatabaseConnection dc = DatabaseConnection.getInstance();
 
@@ -73,9 +79,15 @@ public class SupportingFunction {
         return 0;
     }
 
-    public String CreateUsername(String username) throws SQLException {
-        String finalUsername = "";
-
+    /**
+     *
+     * @param username
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public String CreateUsername(String username) throws SQLException, ClassNotFoundException {
+        
         DatabaseConnection dc = DatabaseConnection.getInstance();
 
         Connection con = null;
@@ -84,21 +96,16 @@ public class SupportingFunction {
 
         try {
             con = dc.getConnection();
-            String sql = "select username from newuser where username = ?";
+            String sql = "SELECT username FROM newuser WHERE username = ?";
             ps = con.prepareStatement(sql);
             ps.setString(1, username);
             rs = ps.executeQuery();
-            boolean usernameFound = false;
-            while (rs.next()) {
-                usernameFound = true;
-            }
-            if (usernameFound) {
+            if(rs.first()){
                 Random rand = new Random();
                 int number = rand.nextInt(100);
-                finalUsername = username + number;
-                CreateUsername(finalUsername);
-            } else {
-                finalUsername = username;
+                CreateUsername(username + number);
+            }else{
+                return username;
             }
         } catch (SQLException msg) {
             Logger.getLogger(SupportingFunction.class.getName()).log(Level.SEVERE, null, msg);
@@ -122,10 +129,17 @@ public class SupportingFunction {
                 }
             }
         }
-        return finalUsername;
+        return null;
     }
 
-    public boolean EmailIsAvaliabe(String args) throws SQLException {
+    /**
+     *
+     * @param args
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public boolean EmailIsAvaliabe(String args) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = DatabaseConnection.getInstance();
 
@@ -138,9 +152,8 @@ public class SupportingFunction {
             ps = con.prepareStatement(sql);
             ps.setString(1, args);
             rs = ps.executeQuery();
-            while (rs.next()) {
-                return true;
-            }
+            return rs.first();
+           
         } catch (SQLException msg) {
             Logger.getLogger(SupportingFunction.class.getName()).log(Level.SEVERE, null, msg);
         } finally {

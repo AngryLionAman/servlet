@@ -29,7 +29,14 @@ import java.util.List;
  */
 public class displayNotification {
 
-    public List<notificationPojo> notification(int UserId) throws SQLException {
+    /**
+     *
+     * @param UserId
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public List<notificationPojo> notification(int UserId) throws SQLException, ClassNotFoundException {
         List<notificationPojo> list = new ArrayList<>();
         DatabaseConnection dc = DatabaseConnection.getInstance();
         Connection con = null;

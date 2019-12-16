@@ -96,9 +96,9 @@
             <h2>Most 10 viewed answer</h2>
             <c:catch var="ms">
                 <sql:query var="mva" dataSource="jdbc/mydatabase">
-                     select q_id, a_id , total_view , postedtime from answer order by total_view desc limit 10;
+                    select q_id, a_id , total_view , postedtime from answer order by total_view desc limit 10;
                 </sql:query>
-                    question id, answer id ,  totla view<br>
+                question id, answer id ,  totla view<br>
                 <c:forEach var="mq" items="${mva.rows}">
                     ${mq.q_id}, ${mq.a_id}, (${mq.total_view}), ${mq.postedtime}<br><br>
                 </c:forEach>
@@ -167,6 +167,14 @@
                         Undefined
                     </c:otherwise>
                 </c:choose>, Commented By Id - ${c.user_id},${c.time}<br><br>
+            </c:forEach>
+
+            <h2>Latest 10 Help Query</h2>
+            <sql:query dataSource="jdbc/mydatabase" var="help">
+                select * from asked_help_query order by 1 desc limit 10;
+            </sql:query>
+            <c:forEach items="${help.rows}" var="h">
+                <p>${h.Query}, By #${h.name},${h.Email},${h.date}</p>
             </c:forEach>
         </c:catch>
         <c:if test="${msg ne null}">

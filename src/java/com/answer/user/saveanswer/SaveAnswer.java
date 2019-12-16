@@ -28,15 +28,24 @@ import java.util.logging.Logger;
  */
 public class SaveAnswer {
 
-    public boolean saveAnswerByQuestionAndIdUserId(int userid, int questionid, String answer) throws SQLException {
+    /**
+     *
+     * @param userid
+     * @param questionid
+     * @param answer
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public boolean SaveAnswerByQuestionIdAndIdUserId(int userid, int questionid, String answer) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+        DatabaseConnection ds = new DatabaseConnection();
 
         Connection con = null;
         PreparedStatement ps = null;
 
         try {
-            con = dc.getConnection();
+            con = ds.getConnection();
             String sql = "insert into answer(q_id,answer,Answer_by_id,vote) values(?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setInt(1, questionid);

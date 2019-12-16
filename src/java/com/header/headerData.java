@@ -22,35 +22,48 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author inquiryhere.com
  */
 public class headerData {
-    public List<headerPojo> headerUser(int userId) throws Exception{
+
+    /**
+     *
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    public List<headerPojo> headerUser(int userId) throws Exception {
+
         List<headerPojo> list = new ArrayList<>();
-        
+
         DatabaseConnection connection = new DatabaseConnection();
+
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        try{
+
+        try {
             String sql = "select id,username,firstname from newuser where id = ?";
             con = connection.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
             rs = ps.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 int user_Id = rs.getInt("id");
                 String userName = rs.getString("username");
                 String fullName = rs.getString("firstname");
                 list.add(new headerPojo(user_Id, userName, fullName));
             }
-        }catch(SQLException msg){
-            throw msg;
-        }finally{
-             if (rs != null) {
+            return list;
+        } catch (SQLException msg) {
+            Logger.getLogger(headerData.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            if (rs != null) {
                 try {
                     rs.close();
                 } catch (SQLException msg) {
@@ -73,6 +86,6 @@ public class headerData {
                 }
             }
         }
-        return list;
+        return null;
     }
 }

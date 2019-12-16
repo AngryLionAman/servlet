@@ -29,34 +29,72 @@ public class displayAdsPojo {
     String promotedBy;
     String forwardUrl;
 
+    /**
+     *
+     * @return
+     */
     public int getAdsId() {
         return adsId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getImageName() {
         return imageName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getImageAlt() {
         return imageAlt;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getImageHeight() {
         return imageHeight;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getImageWidth() {
         return imageWidth;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getPromotedBy() {
         return promotedBy;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getForwardUrl() {
         return forwardUrl;
     }
 
+    /**
+     *
+     * @param adsId
+     * @param imageName
+     * @param imageAlt
+     * @param imageHeight
+     * @param imageWidth
+     * @param promotedBy
+     * @param forwardUrl
+     */
     public displayAdsPojo(int adsId, String imageName, String imageAlt, int imageHeight, int imageWidth, String promotedBy, String forwardUrl) {
         this.adsId = adsId;
         this.imageName = imageName;

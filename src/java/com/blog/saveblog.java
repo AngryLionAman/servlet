@@ -15,6 +15,7 @@
  */
 package com.blog;
 
+import com.string.validateInput;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -30,55 +31,48 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class saveblog extends HttpServlet {
 
-    private int getInputInt(String option) {
-        int id = 0;
-        if (option == null) {
-            return 0;
-        }
-        if (option.isEmpty()) {
-            return 0;
-        }
-        if (!option.isEmpty()) {
-            id = Integer.parseInt(option);
-        }
-        return id;
-    }
-
-    private String getInputString(String parameter) {
-        String val;
-        if (parameter.isEmpty()) {
-            val = null;
-        } else {
-            val = parameter.trim();
-        }
-        return val;
-    }
-
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        
-        String blog_sub = getInputString(request.getParameter("blog_subject"));
-        String blog_description = getInputString(request.getParameter("blog_description"));
-        int id_of_user = getInputInt(request.getParameter("Session_id_of_user"));
-        
-        saveBlogClass bc = new saveBlogClass();
-        
+
+        validateInput input = new validateInput();
+
+        String blog_sub = input.getInputString(request.getParameter("blog_subject"));
+        String blog_description = input.getInputString(request.getParameter("blog_description"));
+        int id_of_user = input.getInputInt(request.getParameter("Session_id_of_user"));
+
+        saveBlogClass blog = new saveBlogClass();
+
+        String message = null;
+
         if (blog_sub != null && blog_description != null && id_of_user != 0) {
             try {
-                boolean result =  bc.saveBlog(blog_sub, blog_description, id_of_user);
-                if(!result){
-                    request.setAttribute("message", "Blog has been saved");
-                }else{
-                    request.setAttribute("message", "Got some error, Blog not saved");
+                if (!blog.saveBlog(blog_sub, blog_description, id_of_user)) {
+                    message = "Blog has been saved";
+                    //Send notification to all followers
+                } else {
+                    message = "Blog not saved, Got some unknown error. Please try again";
                 }
-                request.getRequestDispatcher("blog").forward(request, response);
-            } catch (SQLException ex) {
+            } catch (SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(saveblog.class.getName()).log(Level.SEVERE, null, ex);
             }
+        } else {
+            message = "Blog not saved due to bad argument, Please try again";
         }
+        request.setAttribute("message", message);
+        request.setAttribute("id", id_of_user);
+        request.setAttribute("tab", "blog");
+        request.getRequestDispatcher("profile").forward(request, response);
     }
 }
