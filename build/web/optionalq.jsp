@@ -2,9 +2,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:useBean class="com.string.name" id="word" scope="page"/>
+<jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <jsp:useBean class="com.optionalQuestion.supportingFunction" id="opt_fun" scope="page"/>
-<%@ include file="site.jsp" %>
+<c:if test="${list eq null}">
+    <c:redirect url="optionalquestion"/>
+</c:if>
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>

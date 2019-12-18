@@ -2,10 +2,9 @@
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@include file="site.jsp" %>
 <jsp:useBean class="com.topic.topicFollow" id="topic" scope="page"/>
 <jsp:useBean class="com.question.getQuestion" id="question" scope="page"/>
-<jsp:useBean class="com.string.name" id="word" scope="page"/>
+<jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
@@ -51,32 +50,7 @@
                 ${ex}
             </c:if>
         </c:if>
-        <c:catch var="msg">
-            <c:if test="${topicDetailForSeo eq null}">
-                <c:choose>
-                    <c:when test="${param.id ne null and not empty param.id}">
-                        <c:redirect url="topic?id=${param.id}"/>
-                    </c:when>
-                    <c:otherwise>  
-                        <c:choose>
-                            <c:when test="${message ne null}">
-                                <c:redirect url="Error404.jsp"/>
-                            </c:when>
-                            <c:otherwise>
-                                <c:redirect url="Error404.jsp"/>
-                            </c:otherwise>   
-                        </c:choose>
-                    </c:otherwise>
-
-                </c:choose>
-            </c:if>
-        </c:catch>
-        <c:if test="${msg ne null}">
-            ${msg}
-        </c:if>
-
-
-
+   
         <%--
        Meta tag For the SEO
         --%>
@@ -114,27 +88,24 @@
         <meta property="og:site_name" content="www.inquiryhere.com" />
 
         <script type="text/javascript">
-            function take_value(el, _topic_id, id_of_user) {
-            <% if (session.getAttribute("Session_id_of_user") == null) { %>
-                alert("Please login first");<%
-                } else {%>
-                if (el.value === "follow") {
-                    el.value = "followed";
-                    var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_follow_topic.jsp?val_topic=" + _topic_id + "&val2_topic=" + id_of_user + "&action=follow", true);
-                    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    http.send();
-                } else {
-                    el.value = "follow";
-                    var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_follow_topic.jsp?val_topic=" + _topic_id + "&val2_topic=" + id_of_user + "&action=delete", true);
-                    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    http.send();
+            function follow_topic(el, _topic_id, id_of_user) {
+                if (_topic_id !== "" && id_of_user !== "") {
+                    if (el.value === "follow") {
+                        el.value = "followed";
+                        var http = new XMLHttpRequest();
+                        http.open("POST", "followTopicServlet?topicId=" + _topic_id + "&userId=" + id_of_user + "&action=follow", true);
+                        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        http.send();
+                    } else {
+                        el.value = "follow";
+                        var http = new XMLHttpRequest();
+                        http.open("POST", "followTopicServlet?topicId=" + _topic_id + "&userId=" + id_of_user + "&action=unfollow", true);
+                        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        http.send();
+                    }
                 }
-
-            <% }%>
             }
-        </script>        
+        </script>       
     </head>
 
     <body>
@@ -146,8 +117,16 @@
                     <div class="row">
                         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                             <div class="row">
-                                <c:if test="${msg ne null}">
-                                    ${msg}
+                                <c:if test="${message ne null}">
+                                    <div class="clear-fix" align="center" style="font-size: 20px;color: green;background-color: yellow;">                           
+                                        ${message}                               
+                                    </div>
+                                </c:if>
+                                
+                                <c:if test="${gotException ne null}">
+                                    <div class="clear-fix" align="center" style="font-size: 20px;color: red;background-color: white;">
+                                        ${'Got some probelm, Please refresh this page or visit after some time'}
+                                    </div>
                                 </c:if>
                                 <div class="themeBox" style="height:auto;">
                                     <center> 
@@ -171,16 +150,21 @@
                                                         <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
 
                                                             <c:catch var="exc">
-                                                                <c:if test="${sessionScope.Session_id_of_user ne null and topicId ne null and not empty param.id }">
-                                                                    <c:choose>
-                                                                        <c:when test="${topic.topicFollw(topicId, sessionScope.Session_id_of_user)}">
-                                                                            <input type="button" value="Unfollow" id="myButton1" onclick="return take_value(this, '${topicId}', '${sessionScope.Session_id_of_user}');" />
-                                                                        </c:when>
-                                                                        <c:otherwise>
-                                                                            <input type="button" value="follow" id="myButton1" onclick="return take_value(this, '${topicId}', '${sessionScope.Session_id_of_user}');" />
-                                                                        </c:otherwise>
-                                                                    </c:choose>                                                       
-                                                                </c:if>
+                                                                <c:choose>
+                                                                    <c:when test="${sessionScope.Session_id_of_user ne null}">
+                                                                        <c:choose>
+                                                                            <c:when test="${topic.topicFollw(topicId, sessionScope.Session_id_of_user)}">
+                                                                                <input type="button" value="Unfollow" onclick="return follow_topic(this, '${topicId}', '${sessionScope.Session_id_of_user}');" />
+                                                                            </c:when>
+                                                                            <c:otherwise>
+                                                                                <input type="button" value="follow" onclick="return follow_topic(this, '${topicId}', '${sessionScope.Session_id_of_user}');" />
+                                                                            </c:otherwise>
+                                                                        </c:choose>                                                                        
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <input type="button" value="follow" onclick="alert('Please Login to follow')" />
+                                                                    </c:otherwise>
+                                                                </c:choose>  
                                                             </c:catch>
                                                             <c:if test="${exc ne null}">
                                                                 ${exc}
@@ -223,10 +207,10 @@
                                 </div>
                                 <div class="themeBox" style="height:auto;">
                                     <div><c:set scope="page" value="0" var="count"/>
-                                        <c:if test="${allQuestionByTopicId ne null}">
+                                        <c:if test="${allQuestionByTopicId ne null and not empty allQuestionByTopicId}">
                                             <c:forEach items="${allQuestionByTopicId}" var="rq" varStatus="loop">
                                                 <c:set scope="page" value="${loop.count}" var="count"/>
-                                                <a href="Answer.jsp?q=${fn:replace(fn:replace(rq.value, "|", ""), " ", "-")}&Id=${rq.key}" >&nbsp;${rq.value}?</a><br><br>
+                                                <a href="questions?id=${rq.key}&q=${word.UrlFormat(rq.value)}&ref=topic" >&nbsp;${rq.value}?</a><br><br>
                                             </c:forEach>
                                             <c:catch var="msg">
                                                 <c:if test="${totalNumberOfpage gt 1}">
@@ -276,34 +260,28 @@
                                     <div class="themeBox" style="height:auto;">
                                         <h4 style="background-color: yellow;">Also Read..</h4>
                                         <c:forEach items="${question.getRandomQuestionByLimit(30 - count)}" var="rq">
-                                            <a href="Answer.jsp?q=${fn:replace(fn:replace(rq.value, "|", ""), " ", "-")}&Id=${rq.key}" >&nbsp;${rq.value}?</a><br><br>                                           
+                                            <a href="questions?id=${rq.key}&q=${word.UrlFormat(rq.value)}&ref=topic" >&nbsp;${rq.value}?</a><br><br>                                           
                                         </c:forEach>
                                     </div>
                                 </c:if>
 
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                            <div class="themeBox" style="height:auto;">
-                                <div class="boxHeading">
-                                    Related Topic
-                                </div>
-                                <div>
-                                    <c:if test="${topicDetailByRefId ne null}">
+                        <c:if test="${topicDetailByRefId ne null and not empty topicDetailByRefId}">
+
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                <div class="themeBox" style="height:auto;">
+                                    <div class="boxHeading">
+                                        Related Topic
+                                    </div>
+                                    <div>
+
                                         <c:catch var="exp">
                                             <c:forEach items="${topicDetailByRefId}" var="rt" varStatus="loop">  
                                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="border: #000000; border-style: solid;">
-                                                    <span title="Total followers of ${rt.topicName} is ${rt.totalFollowers} and total question is ${rt.relatedQuestion}"><a href="topic?t=${fn:replace(rt.topicName, ' ', '-')}&id=${rt.topicId}">
-                                                            <c:choose>
-                                                                <c:when test="${rt.imageUrl ne null or not empty rt.imageUrl}">
-                                                                    <img src="${rt.imageUrl}" alt="inquiryhere.com" height="100" width="100">
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <img src="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" alt="inquiryhere.com" height="100" width="100">
-                                                                </c:otherwise>
-                                                            </c:choose>       
-                                                            ${word.convertStringUpperToLower(rt.topicName)}</a>
-                                                    </span>
+                                                    <a href="topic?t=${word.UrlFormat(rt.value)}&id=${rt.key}">
+                                                        <img src="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" alt="inquiryhere.com" height="100" width="100">
+                                                        ${word.convertStringUpperToLower(rt.value)}</a>
                                                 </div>  
                                             </c:forEach> 
                                             <br>  <a href='moretopic' style='color:red;'>Follow More Topic</a>
@@ -312,10 +290,11 @@
                                         <c:if test="${exp ne null}">
                                             ${exp}
                                         </c:if>
-                                    </c:if>
+
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </c:if>           
                         <div class="clear-fix"></div>
                     </div>
                     <div class="clear-fix"></div>

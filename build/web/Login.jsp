@@ -1,18 +1,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@page import="java.sql.*"%>
-<%@include file="site.jsp" %>
+<jsp:useBean class="com.security.validateUser" id="function" scope="page" />
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
         <meta charset="UTF-8">
-        <%
-            request.setCharacterEncoding("UTF-8");
-            response.setCharacterEncoding("UTF-8");
-        %>
-        <jsp:useBean class="com.security.validateUser" id="function" scope="page" />
+        
         <c:if test="${sessionScope.Session_id_of_user ne null}">
-            <c:redirect url="index.jsp?ref=login"/>
+            <c:redirect url="index?ref=login"/>
         </c:if>
         <c:catch var="ex">
             <c:if test="${sessionScope.Session_id_of_user eq null}">
@@ -30,7 +25,7 @@
                 <c:if test="${username ne null and not empty username and password ne null and not empty password}">
                     <c:set scope="page" var="status" value="${function.validateUser(username, password)}"/>
                 </c:if> 
-                <c:if test="${status}">  
+                <c:if test="${stantus}">  
                     <jsp:forward page="validate.jsp">
                         <jsp:param name="email" value="${username}"/>
                         <jsp:param name="password" value="${password}"/>
@@ -99,7 +94,7 @@
                     </div>
 
                     <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 float-right textalign-right">
-                        <a href="index.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Home</a>
+                        <a href="index" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Home</a>
                         <a  href="forgotpassword.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">forgot password</a>                    
                     </div>
                 </div>
@@ -115,6 +110,9 @@
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <div class="row">
                                 <center>
+                                    <c:if test="${message ne null}">
+                                        ${message}
+                                    </c:if>
                                     <c:if test="${param.ref ne null or not empty param.ref}">
                                         <c:choose>
                                             <c:when test="${param.ref eq 'logout'}">
@@ -133,7 +131,7 @@
                                     </c:if>
 
                                     <div class="themeBox" style="height:300px;">
-                                        <form action="<%=request.getContextPath()%>/validate" method="post" name="form_name">
+                                        <form action="validate" method="post" name="form_name">
                                             <div  align="left">
                                                 <label for="fname">Email &#8628;</label><a href="help.jsp#email">&#10067;</a>
                                                 <div class="boxHeading">

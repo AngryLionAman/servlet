@@ -27,7 +27,7 @@ public class validateInput {
      * @return
      */
     public int getInputInt(String args) {
-
+        
         if (args == null) {
             return 0;
         } else if (args.isEmpty()) {
@@ -71,5 +71,4 @@ public class validateInput {
     public int getOnlyInteger(String args) {
         return Integer.valueOf(args.trim().replaceAll("[^0-9]", ""));
     }
-
 }

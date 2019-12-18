@@ -60,99 +60,108 @@ public class profile extends HttpServlet {
         userSupportingClass supportingClass = new userSupportingClass();
         GetComment comment = new GetComment();
 
-        int userId = GetUserId(request);
-
-        String tab;
-
-        if (request.getAttribute("tab") != null) {
-            tab = (String) request.getAttribute("tab");
-        } else {
-            if (null == request.getParameter("tab")) {
-                tab = "question";
-            } else {
-                switch (request.getParameter("tab")) {
-                    case "":
-                        tab = "question";
-                        break;
-                    default:
-                        tab = input.getInputString(request.getParameter("tab"));
-                        break;
-                }
-            }
-        }
-
-        String message = null;
-
-        if (request.getAttribute("message") != null) {
-            message = (String) request.getAttribute("message");
-        }
-
-        List<profileDetialPojoFile> GetUserDetailByUserId;
+        List<profileDetialPojoFile> GetUserDetailByUserId = null;
         List<questionByUserIdPojo> GetTotalQuestionPostedByUserId = null;
         List<answerByUserIdPojo> GetTotalAnswerPostedByUserId = null;
         List<TopicByUserIdPojo> GetTotalTopicFollowedByUserId = null;
         List<FollowersByUserIdPojo> GetTotalFollowersByUserId = null;
         List<FollowingByUserIdPojo> GetTotalFollowingByUserId = null;
         List<BlogByUserIdPojo> GetTotalBlogByUserId = null;
-        List<CountRowByUserIdPojo> CountRowByUserIdController;
-        List<ProfileCommentsPojo> GetCommentByProfileId;
+        List<CountRowByUserIdPojo> CountRowByUserIdController = null;
+        List<ProfileCommentsPojo> GetCommentByProfileId = null;
 
-        if (userId != 0) {
+        String message = null;
+        String gotException = null;
 
-            GetUserDetailByUserId = file.GetUserDetailByUserId(userId);
-            supportingClass.UpdateProfileViewBy1ByUserId(userId);
-            CountRowByUserIdController = supportingClass.CountRowByUserIdController(userId);
-            GetCommentByProfileId = comment.GetCommentByProfileId(userId);
+        try {
+            int userId = GetUserId(request);
 
-            switch (tab) {
-                case "question":
-                    GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(userId);
-                    break;
+            String tab;
 
-                case "answer":
-                    GetTotalAnswerPostedByUserId = supportingClass.GetTotalAnswerPostedByUserId(userId);
-                    break;
-
-                case "topic":
-                    GetTotalTopicFollowedByUserId = supportingClass.GetTotalTopicFollowedByUserId(userId);
-                    break;
-
-                case "following":
-                    GetTotalFollowingByUserId = supportingClass.GetTotalFollowingByUserId(userId);
-                    break;
-
-                case "followers":
-                    GetTotalFollowersByUserId = supportingClass.GetTotalFollowersByUserId(userId);
-                    break;
-
-                case "blog":
-                    GetTotalBlogByUserId = supportingClass.GetTotalBlogByUserId(userId);
-                    break;
-
-                default:
-                    GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(userId);
-                    break;
+            if (request.getAttribute("tab") != null) {
+                tab = (String) request.getAttribute("tab");
+            } else {
+                if (null == request.getParameter("tab")) {
+                    tab = "question";
+                } else {
+                    switch (request.getParameter("tab")) {
+                        case "":
+                            tab = "question";
+                            break;
+                        default:
+                            tab = input.getInputString(request.getParameter("tab"));
+                            break;
+                    }
+                }
             }
 
-        } else {
-            message = "The user you are looking for is not present in our database,"
-                    + " Or may you entring the invalid argument, Please try search option....";
-            request.setAttribute("message", message);
-            request.getRequestDispatcher("Error.jsp").forward(request, response);
-            return;
-        }
+            if (request.getAttribute("message") != null) {
+                message = (String) request.getAttribute("message");
+            }
 
-        request.setAttribute("message", message);
-        request.setAttribute("GetUserDetailByUserId", GetUserDetailByUserId);
-        request.setAttribute("CountRowByUserIdController", CountRowByUserIdController);
-        request.setAttribute("GetTotalQuestionPostedByUserId", GetTotalQuestionPostedByUserId);
-        request.setAttribute("GetTotalAnswerPostedByUserId", GetTotalAnswerPostedByUserId);
-        request.setAttribute("GetTotalTopicFollowedByUserId", GetTotalTopicFollowedByUserId);
-        request.setAttribute("GetTotalFollowersByUserId", GetTotalFollowersByUserId);
-        request.setAttribute("GetTotalFollowingByUserId", GetTotalFollowingByUserId);
-        request.setAttribute("GetTotalBlogByUserId", GetTotalBlogByUserId);
-        request.setAttribute("GetCommentByProfileId", GetCommentByProfileId);
-        request.getRequestDispatcher("profile.jsp").forward(request, response);
+            if (userId != 0) {
+
+                GetUserDetailByUserId = file.GetUserDetailByUserId(userId);
+                supportingClass.UpdateProfileViewBy1ByUserId(userId);
+                CountRowByUserIdController = supportingClass.CountRowByUserIdController(userId);
+                GetCommentByProfileId = comment.GetCommentByProfileId(userId);
+
+                switch (tab) {
+                    case "question":
+                        GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(userId);
+                        break;
+
+                    case "answer":
+                        GetTotalAnswerPostedByUserId = supportingClass.GetTotalAnswerPostedByUserId(userId);
+                        break;
+
+                    case "topic":
+                        GetTotalTopicFollowedByUserId = supportingClass.GetTotalTopicFollowedByUserId(userId);
+                        break;
+
+                    case "following":
+                        GetTotalFollowingByUserId = supportingClass.GetTotalFollowingByUserId(userId);
+                        break;
+
+                    case "followers":
+                        GetTotalFollowersByUserId = supportingClass.GetTotalFollowersByUserId(userId);
+                        break;
+
+                    case "blog":
+                        GetTotalBlogByUserId = supportingClass.GetTotalBlogByUserId(userId);
+                        break;
+
+                    default:
+                        GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(userId);
+                        break;
+                }
+                
+            } else {
+                message = "The user you are looking for is not present in our database,"
+                        + " Or may you entring the invalid argument, Please try search option....";
+                //request.setAttribute("message", message);
+                //request.getRequestDispatcher("Error.jsp").forward(request, response);
+                //return;
+            }
+            
+        } catch (Exception msg) {
+            gotException = "not null";
+            Logger.getLogger(profile.class.getName()).log(Level.SEVERE, message, msg);
+        } finally {
+            request.setAttribute("gotException", gotException);
+
+            request.setAttribute("message", message);
+            request.setAttribute("GetUserDetailByUserId", GetUserDetailByUserId);
+            request.setAttribute("CountRowByUserIdController", CountRowByUserIdController);
+            request.setAttribute("GetTotalQuestionPostedByUserId", GetTotalQuestionPostedByUserId);
+            request.setAttribute("GetTotalAnswerPostedByUserId", GetTotalAnswerPostedByUserId);
+            request.setAttribute("GetTotalTopicFollowedByUserId", GetTotalTopicFollowedByUserId);
+            request.setAttribute("GetTotalFollowersByUserId", GetTotalFollowersByUserId);
+            request.setAttribute("GetTotalFollowingByUserId", GetTotalFollowingByUserId);
+            request.setAttribute("GetTotalBlogByUserId", GetTotalBlogByUserId);
+            request.setAttribute("GetCommentByProfileId", GetCommentByProfileId);
+            request.getRequestDispatcher("profile.jsp").forward(request, response);
+        }
     }
 
     /**

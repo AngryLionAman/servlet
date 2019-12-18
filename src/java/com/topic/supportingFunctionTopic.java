@@ -20,12 +20,59 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author AngryLion
  */
 public class supportingFunctionTopic {
+
+    public boolean isTopicPresentByTopicId(int topicId) throws SQLException, ClassNotFoundException {
+
+        DatabaseConnection dc = new DatabaseConnection();
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = dc.getConnection();
+
+            String sql = "SELECT unique_id FROM topic WHERE unique_id = ? LIMIT 1";
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, topicId);
+            rs = ps.executeQuery();
+            return rs.first();
+        } catch (SQLException msg) {
+            Logger.getLogger(supportingFunctionTopic.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException msg) {
+
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException msg) {
+
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException msg) {
+
+                }
+            }
+        }
+
+        return false;
+    }
 
     /**
      *
@@ -54,7 +101,7 @@ public class supportingFunctionTopic {
                 questionTag += rs.getString("topic_name") + ",";
             }
         } catch (SQLException msg) {
-            throw msg;
+            Logger.getLogger(supportingFunctionTopic.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {

@@ -101,6 +101,11 @@
                     ${message}
                 </div>
             </c:if>
+            <c:if test="${gotException ne null}">
+                <div class="clear-fix" align="center" style="font-size: 20px;color: red;background-color: white;">
+                   ${'Got some probelm, Please refresh this page or visit after some time'}
+                </div>
+            </c:if>
             <div class="bodydata">
                 <div class="container clear-fix">
                     <div class="row">

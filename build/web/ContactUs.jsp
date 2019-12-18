@@ -46,31 +46,13 @@
                                     <center><div class="boxHeading">
                                             If you need any help
                                         </div></center>
-                                    <form action="submit_help.jsp">
-                                        <div>Name: <input type="text"  placeholder="Type your Name" name="Name_h" width="auto" required=""></div>
-                                        <div>Email: <input type="email"  placeholder="Type your Valid mail" name="Email_h" required=""></div>
-                                        <div><textarea type="text" class="anstext" placeholder="write your query here" name="Q_h" required=""></textarea></div>
+                                    <form action="help" method="post" name="contactus_form_name">
+                                        <div>Name: <input type="text"  placeholder="Type your Name" name="fullName" width="auto" required=""></div>
+                                        <div>Email: <input type="email"  placeholder="Type your Valid mail" name="Email" required=""></div>
+                                        <div><textarea type="text" class="anstext" placeholder="write your query here" name="query" required=""></textarea></div>
 
                                         <div class="float-right margintop20" style="vertical-align:bottom">
                                             <button type="submit" class="btn" data-toggle="modal" >ASK FOR HELP</button>
-                                            <!-- btn-info btn-lg -->
-                                        </div>
-                                    </form>
-                                    <div class="clear-fix"></div>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="themeBox" style="height:auto;">
-                                    <center><div class="boxHeading">
-                                            If you have any suggestion for us
-                                        </div></center>
-                                    <form action="submit_help.jsp"> 
-                                        <div>Name: <input type="text"  placeholder="Type your Name" name="Name_s" width="auto" required=""></div>
-                                        <div>Email: <input type="email"  placeholder="Type your Valid mail" name="Email_s" width="auto" required=""></div>
-                                        <div><textarea type="text" class="anstext" placeholder="write your suggestion here" name="S_s" required=""></textarea></div>
-
-                                        <div class="float-right margintop20" style="vertical-align:bottom">
-                                            <button type="submit" class="btn" data-toggle="modal" >SUGGEST US</button>
                                             <!-- btn-info btn-lg -->
                                         </div>
                                     </form>

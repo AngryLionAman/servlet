@@ -50,32 +50,7 @@
                 ${ex}
             </c:if>
         </c:if>
-        <c:catch var="msg">
-            <c:if test="${topicDetailForSeo eq null}">
-                <c:choose>
-                    <c:when test="${param.id ne null and not empty param.id}">
-                        <c:redirect url="topic?id=${param.id}"/>
-                    </c:when>
-                    <c:otherwise>  
-                        <c:choose>
-                            <c:when test="${message ne null}">
-                                <c:redirect url="Error404.jsp"/>
-                            </c:when>
-                            <c:otherwise>
-                                <c:redirect url="Error404.jsp"/>
-                            </c:otherwise>   
-                        </c:choose>
-                    </c:otherwise>
-
-                </c:choose>
-            </c:if>
-        </c:catch>
-        <c:if test="${msg ne null}">
-            ${msg}
-        </c:if>
-
-
-
+   
         <%--
        Meta tag For the SEO
         --%>
@@ -142,8 +117,16 @@
                     <div class="row">
                         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                             <div class="row">
-                                <c:if test="${msg ne null}">
-                                    ${msg}
+                                <c:if test="${message ne null}">
+                                    <div class="clear-fix" align="center" style="font-size: 20px;color: green;background-color: yellow;">                           
+                                        ${message}                               
+                                    </div>
+                                </c:if>
+                                
+                                <c:if test="${gotException ne null}">
+                                    <div class="clear-fix" align="center" style="font-size: 20px;color: red;background-color: white;">
+                                        ${'Got some probelm, Please refresh this page or visit after some time'}
+                                    </div>
                                 </c:if>
                                 <div class="themeBox" style="height:auto;">
                                     <center> 
@@ -277,7 +260,7 @@
                                     <div class="themeBox" style="height:auto;">
                                         <h4 style="background-color: yellow;">Also Read..</h4>
                                         <c:forEach items="${question.getRandomQuestionByLimit(30 - count)}" var="rq">
-                                           <a href="questions?id=${rq.key}&q=${word.UrlFormat(rq.value)}&ref=topic" >&nbsp;${rq.value}?</a><br><br>                                           
+                                            <a href="questions?id=${rq.key}&q=${word.UrlFormat(rq.value)}&ref=topic" >&nbsp;${rq.value}?</a><br><br>                                           
                                         </c:forEach>
                                     </div>
                                 </c:if>
@@ -285,7 +268,7 @@
                             </div>
                         </div>
                         <c:if test="${topicDetailByRefId ne null and not empty topicDetailByRefId}">
-                          
+
                             <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                 <div class="themeBox" style="height:auto;">
                                     <div class="boxHeading">

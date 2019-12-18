@@ -25,8 +25,8 @@
                             <textarea type="text" class="anstext" name="question" placeholder="Ex: What is,How to.." required=""></textarea>
                         </div>
                         <div class="margintop20">
-                            <div>Tag suggestion description <i style="color: red;">*</i></div>
-                            <textarea type="text" class="anstext" name="tag_of_question" placeholder="Ex:Java,Database,c language" required=""></textarea>
+                            <div>Put your tag here (Ex : Math, Algebra, Formula) <i style="color: red;">*</i></div>
+                            <textarea type="text" class="anstext" name="tag_of_question" placeholder="Ex:Java,Database,c language"></textarea>
                         </div>
                         <c:if test="${sessionScope.Session_id_of_user eq null}">
                             <div class="margintop20">
@@ -49,7 +49,7 @@
     </div>
 </div>
 <footer style="text-align: center;">
-    <a href="index.jsp" style="color: white;">Home</a> &nbsp;&nbsp;
+    <a href="index" style="color: white;">Home</a> &nbsp;&nbsp;
     <a href="privacy.jsp" style="color: white;">Privacy Policy</a> &nbsp;&nbsp;
     <a href="terms.jsp" style="color: white;">Terms</a> &nbsp;&nbsp;
     <a href="help.jsp" style="color: white;">Help</a> &nbsp;&nbsp;

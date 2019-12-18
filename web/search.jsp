@@ -83,6 +83,16 @@
                                 ${message}                                
                             </div>
                         </c:if>
+                        <c:if test="${gotException ne null}">
+                            <div class="clear-fix" align="center" style="font-size: 20px;color: red;background-color: white;">
+                                ${'Got some probelm, Please refresh this page or visit after some time'}
+                            </div>
+                        </c:if>
+                        <c:if test="${query ne null}">
+                            <div class="clear-fix" align="center" style="font-size: 20px;color: green;background-color: white;">
+                                You searched for : ${query}
+                            </div>
+                        </c:if>
                         <div class="row">
                             <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                                 <div class="row">
@@ -108,10 +118,12 @@
                                         </c:catch>
                                         <c:if test="${exe ne null}}">
                                             ${exe}
-                                        </c:if>                                        
+                                        </c:if>   
+
                                     </div>
                                 </div>
                             </div>
+
                             <div class="row">
 
                                 <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">

@@ -1,11 +1,9 @@
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@include file="site.jsp" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <jsp:useBean class="com.fun.helpingFunction" id="fun" scope="page"/>
-<jsp:useBean class="com.string.name" id="function" scope="page"/>
-<jsp:useBean class="com.string.regularExpression" id="reg" scope="page"/>
+<jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
@@ -94,6 +92,11 @@
             <div class="bodydata">
                 <div class="container clear-fix">
                     <div class="row">
+                        <c:if test="${message ne null}">
+                            <div class="themeBox" align="center" style="font-size: 20px;color: green;background-color: yellow;">
+                                ${message}
+                            </div>
+                        </c:if>
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -108,7 +111,7 @@
                                     <c:if test="${userName ne null}">
                                         <div class="questionArea">
 
-                                            <div class="postedBy">Posted by :<a href="profile.jsp?user=${userName}&ID=${userId}">${fullName}</a></div>
+                                            <div class="postedBy">Posted by :<a href="profile?user=${userName}&id=${userId}&ref=b">${fullName}</a></div>
 
                                         </div>
                                     </c:if>
@@ -136,14 +139,14 @@
                                                 <font color="green"> <c:out value="Guest User"/> </font>  
                                             </c:when>
                                             <c:otherwise>
-                                                <a href="profile.jsp?user=${cmt.fullname}&ID=${cmt.user_id}">${cmt.fullname}</a>    
+                                                <a href="profile?user=${cmt.fullname}&id=${cmt.user_id}&ref=bc">${cmt.fullname}</a>    
                                             </c:otherwise>  
                                         </c:choose>                                                                                     
                                         <br>________________________________<br>
                                     </c:forEach>
                                 </div>
 
-                                <form action="saveBlogComment" method="get">
+                                <form name="form_name_blog_save_comment" action="SaveBlogComment" method="post">
                                     <input type="hidden" name="blogSub" value="${blogSub}">
                                     <input type="hidden" name="blog_id" value="${blogId}">
                                     <input type="hidden" name="sessionUserId" value="${sessionScope.Session_id_of_user}">
@@ -162,7 +165,7 @@
                                     <div>
                                         <c:catch var="msg">
                                             <c:forEach items="${blogByLimit}" var="m">
-                                                <a href="blog?sub=${reg.removeSpacialChar(m.subject)}&id=${m.uniqueId}">${m.subject}</a><br><br>
+                                                <a href="blog?id=${m.uniqueId}&sub=${word.UrlFormat(m.subject)}">${m.subject}</a><br><br>
                                             </c:forEach>
                                         </c:catch>
                                         <c:if test="${msg ne null}">
@@ -178,7 +181,7 @@
                                         <ul>
                                             <c:catch var="msg">
                                                 <c:forEach items="${fun.CategoryDetail()}" var="m">
-                                                    <li><a href="fun?category=${m}">${function.convertStringUpperToLower(m)}</a></li>
+                                                    <li><a href="fun?category=${m}">${word.convertStringUpperToLower(m)}</a></li>
                                                     </c:forEach>
                                                 </c:catch>
                                                 <c:if test="${msg ne null}">

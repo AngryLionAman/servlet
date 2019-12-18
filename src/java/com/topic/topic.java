@@ -16,6 +16,7 @@
 package com.topic;
 
 import com.question.getQuestionByTopicId;
+import com.string.validateInput;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -32,37 +33,72 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class topic extends HttpServlet {
 
-    private int getInput(String pageNo) {
-        int pageno = 1;
-        if (pageNo == null) {
-            return 1;
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, Exception {
+
+        validateInput input = new validateInput();
+        topicDetail detailForSeo = new topicDetail();
+        getQuestionByTopicId byTopicId = new getQuestionByTopicId();
+        getTopic topic = new getTopic();
+        getTotalnumberOfColum colum = new getTotalnumberOfColum();
+        supportingFunctionTopic ft = new supportingFunctionTopic();
+
+        int recoredPerPage = 30;
+        String message = null;
+        String gotException = null;
+        String validInput = null;
+
+        List<topicPojo> topicDetailForSeo = null;
+        HashMap<Integer, String> allQuestionByTopicId = null;
+        int totalNumberOfpage = 0;
+        HashMap<Integer, String> topicDetailByRefId = null;
+
+        try {
+
+            int pageNo = input.getInputInt(request.getParameter("p"));
+            int topicId = input.getInputInt(request.getParameter("id"));
+
+            if (topicId != 0) {
+                validInput = "Got valid input";
+
+                if (ft.isTopicPresentByTopicId(topicId)) {
+                    topicDetailForSeo = detailForSeo.topic(topicId);
+                    allQuestionByTopicId = byTopicId.getAllQuestionByTopicId(topicId, pageNo, recoredPerPage);
+                    totalNumberOfpage = colum.totalNumberOfPageOfTopicByTopicId(topicId, recoredPerPage);
+                    topicDetailByRefId = topic.getTopicDetailByRefId(topicId);
+                } else {
+                    message = "Topic not found in database or location has been changed, please try searching option";
+                }
+
+            } else {
+                message = "Topic has been deleted or location has been changed or you may hiting the invalid argumet, please try searching option";
+            }
+
+        } catch (Exception msg) {
+            gotException = "not null";
+            Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
+        } finally {
+            request.setAttribute("validInput", validInput);
+            request.setAttribute("message", message);
+            request.setAttribute("gotException", gotException);
+
+            request.setAttribute("topicDetailForSeo", topicDetailForSeo);
+            request.setAttribute("allQuestionByTopicId", allQuestionByTopicId);
+            request.setAttribute("totalNumberOfpage", totalNumberOfpage);
+            request.setAttribute("topicDetailByRefId", topicDetailByRefId);
+
+            request.getRequestDispatcher("topic.jsp").forward(request, response);
         }
-        if (pageNo.isEmpty()) {
-            return 1;
-        }
-        if (!pageNo.isEmpty()) {
-            pageno = Integer.parseInt(pageNo);
-        }
-        return pageno;
+
     }
 
-    /**
-     *
-     * @param topicId
-     * @return
-     */
-    public int getInputInt(String topicId) {
-        int id = 0;
-        if (topicId == null) {
-            return 0;
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(topic.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (topicId.isEmpty()) {
-            return 0;
-        }
-        if (!topicId.isEmpty()) {
-            id = Integer.parseInt(topicId);
-        }
-        return id;
     }
 
     /**
@@ -75,58 +111,10 @@ public class topic extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int pageNo = getInput(request.getParameter("p"));
-
-        int topicId;
-        if (request.getParameter("id") == null) {
-
-            topicId = 0;
-
-        } else {
-
-            topicId = getInputInt(request.getParameter("id"));
-
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(topic.class.getName()).log(Level.SEVERE, null, ex);
         }
-        int recoredPerPage = 30;
-
-        topicDetail detailForSeo = new topicDetail();
-
-        getQuestionByTopicId byTopicId = new getQuestionByTopicId();
-
-        getTopic topic = new getTopic();
-
-        getTotalnumberOfColum colum = new getTotalnumberOfColum();
-
-        if (topicId != 0) {
-
-            try {
-
-                List<topicPojo> topicDetailForSeo = detailForSeo.topic(topicId);
-
-                HashMap<Integer, String> allQuestionByTopicId = byTopicId.getAllQuestionByTopicId(topicId, pageNo, recoredPerPage);
-
-                int totalNumberOfpage = colum.totalNumberOfPageOfTopicByTopicId(topicId, recoredPerPage);
-
-                HashMap<Integer, String> topicDetailByRefId = topic.getTopicDetailByRefId(topicId);
-
-                request.setAttribute("topicDetailForSeo", topicDetailForSeo);
-
-                request.setAttribute("allQuestionByTopicId", allQuestionByTopicId);
-
-                request.setAttribute("totalNumberOfpage", totalNumberOfpage);
-
-                request.setAttribute("topicDetailByRefId", topicDetailByRefId);
-
-                request.getRequestDispatcher("topic.jsp").forward(request, response);
-
-            } catch (Exception msg) {
-                Logger.getLogger(topic.class.getName()).log(Level.SEVERE, null, msg);
-            }
-        } else {
-            request.setAttribute("message", "You have hitted the bad url");
-
-            request.getRequestDispatcher("Error404.jsp").forward(request, response);
-        }
-
     }
 }

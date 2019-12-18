@@ -5,9 +5,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page language="java"%>
 <%@page import="java.sql.*"%>
-<%@include file="site.jsp" %>
-<%@include file="validator.jsp" %>
-<jsp:useBean class="com.string.name" id="word" scope="page"/>
+<jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -34,13 +32,13 @@
                 if (el.value === "follow") {
                     el.value = "followed";
                     var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_follower_detail.jsp?val_topic=" + user_id + "&val2_topic=" + id_of_user + "&action=follow", true);
+                    http.open("POST", "/submit_follower_detail.jsp?val_topic=" + user_id + "&val2_topic=" + id_of_user + "&action=follow", true);
                     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                     http.send();
                 } else {
                     el.value = "follow";
                     var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_follower_detail.jsp?val_topic=" + user_id + "&val2_topic=" + id_of_user + "&action=delete", true);
+                    http.open("POST", "/submit_follower_detail.jsp?val_topic=" + user_id + "&val2_topic=" + id_of_user + "&action=delete", true);
                     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                     http.send();
                 }
@@ -106,7 +104,7 @@
                                                     <c:if test="${sessionScope.Session_id_of_user ne user.ID}">
                                                         <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                                             <img src="images/${user.imagepath}" alt="" style="width:100%; border:1px solid #ddd;margin-top:20px;">
-                                                            <a href="profile.jsp?user=${fn:toLowerCase(user.username)}&ID=${user.ID}">${word.convertStringUpperToLower(user.firstname)}</a>
+                                                            <a href="profile?user=${fn:toLowerCase(user.username)}&id=${user.ID}&ref=mu">${word.convertStringUpperToLower(user.firstname)}</a>
                                                             <c:if test="${sessionScope.Session_id_of_user ne null}">
                                                                 <sql:query dataSource="jdbc/mydatabase" var="fDetail"> 
                                                                     select count(*) as cnt from ak_follower_detail where user_id = ? and followers_id = ? limit 1;

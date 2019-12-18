@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="en"><head>
         <meta charset="UTF-8">
         <%@include file="googleAnalytics.jsp" %>
@@ -31,6 +32,11 @@
 
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" >
                             <div class="row">
+                                <c:if test="${message ne null}">
+                                    <div class="clear-fix" align="center" style="font-size: 20px;color: green;background-color: yellow;">
+                                        ${message}
+                                    </div>                                   
+                                </c:if>
                                 <center align="left">                                    
                                     <div class="themeBox" style="height:auto;">
                                         <div class="boxHeading">
@@ -101,10 +107,10 @@
                                     <center><div class="boxHeading">
                                             If you need any help
                                         </div></center>
-                                    <form action="submit_help.jsp">
-                                        <div>Name: <input type="text"  placeholder="Type your Name" name="Name_h" width="auto" required=""></div>
-                                        <div>Email: <input type="email"  placeholder="Type your Valid mail" name="Email_h" required=""></div>
-                                        <div><textarea type="text" class="anstext" placeholder="write your question here" name="Q_h" required=""></textarea></div>
+                                    <form action="help" method="post" name="help_form">
+                                        <div>Name: <input type="text"  placeholder="Type your Name" name="fullName" width="auto" required=""></div>
+                                        <div>Email: <input type="email"  placeholder="Type your Valid mail" name="Email" required=""></div>
+                                        <div><textarea type="text" class="anstext" placeholder="write your question here" name="query" required=""></textarea></div>
 
                                         <div class="float-right margintop20" style="vertical-align:bottom">
                                             <button type="submit" class="btn" data-toggle="modal" >ASK FOR HELP</button>

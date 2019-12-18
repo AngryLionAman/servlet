@@ -40,25 +40,6 @@ public class index extends HttpServlet {
 
     /**
      *
-     * @param pageNo
-     * @return
-     */
-    protected static int getInput(String pageNo) {
-        int pageno = 1;
-        if (pageNo == null) {
-            return 1;
-        }
-        if (pageNo.isEmpty()) {
-            return 1;
-        }
-        if (!pageNo.isEmpty()) {
-            pageno = Integer.parseInt(pageNo);
-        }
-        return pageno;
-    }
-
-    /**
-     *
      * @param tab
      * @return
      */
@@ -97,9 +78,7 @@ public class index extends HttpServlet {
         topicDetals detals = new topicDetals();
         displayAds ads = new displayAds();
         FunHelpingFunction function = new FunHelpingFunction();
-
-        String tab = Tab(request.getParameter("tab"));
-        int pageNo = getInput(request.getParameter("p"));
+        validateInput input = new validateInput();
 
         // List<recentQuestionPojo> recentPostQuestion = null;
         List<recentQuestionPojo> relatedQuestion = null;
@@ -113,80 +92,91 @@ public class index extends HttpServlet {
         List<topicPojo> userFollowedTopic = null;
         List<topicPojo> randomTopic = null;
 
-        int userId = user.GetUserId(request);
-        if (userId != 0) {
-            userFollowedTopic = detals.userFollowedTopic(userId);
-        } else {
-            randomTopic = detals.randomTopic(15);
-        }
-
         List<displayAdsPojo> displayRandomAds = null;
-
-        try {
-            displayRandomAds = ads.displayRandomAds();
-        } catch (Exception msg) {
-            Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
-        }
-
         List<String> CategoryDetail = null;
-        try {
-            CategoryDetail = function.getFunCategory();
-        } catch (Exception msg) {
-            Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
-        }
 
-        switch (tab) {
-            case "recent":
-                RecentPostQUestionHavingAtLeastOneAnswer = question.RecentPostQUestionHavingAtLeastOneAnswer();
-                //recentPostQuestion = page.recentPostQuestion();
-                break;
-
-            case "allquestion":
-                AllQuestion = allQuestionClass.AllQuestion(pageNo);
-                TotalNoOfPage = allQuestionClass.TotalNoOfPage();
-                break;
-
-            case "unanswered":
-                UnAnsweredQuestion = question.UnAnsweredQuestion();
-                break;
-
-            case "related":
-
-                if (userId != 0) {
-                    relatedQuestion = page.relatedQuestion(userId);
-                } else {
-                    String message = "Dear User, we are really sorry for this problem."
-                            + "<br>This problem occurred due to following reasong.."
-                            + "<br>After logout, you are trying to access this url."
-                            + "<br>You are hitting the invalid argument."
-                            + "<br>If you are not doing wrong and still getting this message. So, Please contect to administrator.";
-                    request.setAttribute("message", message);
-                    request.getRequestDispatcher("Error404.jsp").forward(request, response);
-                    return;
-                }
-                break;
-
-            default:
-                RecentPostQUestionHavingAtLeastOneAnswer = question.RecentPostQUestionHavingAtLeastOneAnswer();
-                break;
-
-        }
-
-        request.setAttribute("recentPostQuestion", RecentPostQUestionHavingAtLeastOneAnswer);
-        request.setAttribute("relatedQuestion", relatedQuestion);
-        request.setAttribute("userFollowedTopic", userFollowedTopic);
-        request.setAttribute("randomTopic", randomTopic);
-        request.setAttribute("UnAnsweredQuestion", UnAnsweredQuestion);
-
-        request.setAttribute("AllQuestion", AllQuestion);
-        request.setAttribute("totalNumberOfpage", TotalNoOfPage);
-
-        request.setAttribute("displayRandomAds", displayRandomAds);
-        request.setAttribute("CategoryDetail", CategoryDetail);
+        String message = null;
+        String gotException = null;
         
-        request.setAttribute("what", "notNull");
+        try {
+            String tab = Tab(request.getParameter("tab"));
+            int pageNo = input.getInputInt(request.getParameter("p"));
 
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+            int userId = user.GetUserId(request);
+            if (userId != 0) {
+                userFollowedTopic = detals.userFollowedTopic(userId);
+            } else {
+                randomTopic = detals.randomTopic(15);
+            }
+
+            try {
+                displayRandomAds = ads.displayRandomAds();
+            } catch (Exception msg) {
+                Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
+            }
+
+            try {
+                CategoryDetail = function.getFunCategory();
+            } catch (Exception msg) {
+                Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
+            }
+
+            switch (tab) {
+                case "recent":
+                    RecentPostQUestionHavingAtLeastOneAnswer = question.RecentPostQUestionHavingAtLeastOneAnswer();
+                    //recentPostQuestion = page.recentPostQuestion();
+                    break;
+
+                case "allquestion":
+                    AllQuestion = allQuestionClass.AllQuestion(pageNo);
+                    TotalNoOfPage = allQuestionClass.TotalNoOfPage();
+                    break;
+
+                case "unanswered":
+                    UnAnsweredQuestion = question.UnAnsweredQuestion();
+                    break;
+
+                case "related":
+
+                    if (userId != 0) {
+                        relatedQuestion = page.relatedQuestion(userId);
+                    } else {
+                        message = "Dear User, we are really sorry for this problem."
+                                + "<br>This problem occurred due to following reasong.."
+                                + "<br>After logout, you are trying to access this url."
+                                + "<br>You are hitting the invalid argument."
+                                + "<br>If you are not doing wrong and still getting this message. So, Please contect to administrator.";
+
+                    }
+                    break;
+
+                default:
+                    RecentPostQUestionHavingAtLeastOneAnswer = question.RecentPostQUestionHavingAtLeastOneAnswer();
+                    break;
+
+            }
+        } catch (Exception msg) {
+            gotException = "Not null";
+            Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            request.setAttribute("gotException", gotException);
+            
+            request.setAttribute("recentPostQuestion", RecentPostQUestionHavingAtLeastOneAnswer);
+            request.setAttribute("relatedQuestion", relatedQuestion);
+            request.setAttribute("userFollowedTopic", userFollowedTopic);
+            request.setAttribute("randomTopic", randomTopic);
+            request.setAttribute("UnAnsweredQuestion", UnAnsweredQuestion);
+
+            request.setAttribute("AllQuestion", AllQuestion);
+            request.setAttribute("totalNumberOfpage", TotalNoOfPage);
+
+            request.setAttribute("displayRandomAds", displayRandomAds);
+            request.setAttribute("CategoryDetail", CategoryDetail);
+
+            request.setAttribute("message", message);
+
+            request.getRequestDispatcher("index.jsp").forward(request, response);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

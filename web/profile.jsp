@@ -23,9 +23,6 @@
                 <c:when test="${param.ID ne null and not empty param.ID}">
                     <c:redirect url="profile?id=${param.ID}"/>
                 </c:when>
-                <c:otherwise>
-                    <c:redirect url="profile"/>
-                </c:otherwise>
             </c:choose>
         </c:if>
         
@@ -111,6 +108,13 @@
                                     ${message}                                
                                 </div>
                             </c:if>
+                            
+                            <c:if test="${gotException ne null}">                                
+                                <div class="clear-fix" align="center" style="font-size: 20px;color: red;background-color: white;">
+                                    ${'Got some probelm, Please refresh this page or visit after some time'}                                
+                                </div>
+                            </c:if>
+                            
                             <div class="themeBox" style="min-height:1px;">
                                 <div class="boxHeading">
                                     Profile details[ View(${totalView}) ]

@@ -1,7 +1,4 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page language="java" %>
-<%@page import="java.sql.*" %> 
-<%@include file="site.jsp" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html lang="en">
     <head>
@@ -39,7 +36,7 @@
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <form name="submitquestion" method="get" action="saveblog">
+                                    <form name="form_name_blof" method="get" action="saveblog">
                                         <input type="hidden" name="Session_id_of_user" value="${sessionScope.Session_id_of_user}"/>
                                         <div class="boxHeading marginbot10">
                                             <div class="themeBox" style="height:auto;">

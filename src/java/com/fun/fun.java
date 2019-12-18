@@ -63,6 +63,7 @@ public class fun extends HttpServlet {
         List<String> funType = null;
 
         String message = null;
+        String gotException = null;
 
         if (request.getAttribute("message") != null) {
             message = (String) request.getAttribute("message");
@@ -93,8 +94,11 @@ public class fun extends HttpServlet {
             funType = function.getFunType();
 
         } catch (Exception msg) {
+            gotException = "Not null";
             Logger.getLogger(fun.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
+            request.setAttribute("gotException", gotException);
+            
             request.setAttribute("funDataByCategory", funData);
             request.setAttribute("totalNumberOfpage", totalNumberOfpage);
 

@@ -68,16 +68,12 @@ public class search extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         validateInput input = new validateInput();
-
         SearchClassFile file = new SearchClassFile();
-
         topicDetals detals = new topicDetals();
 
-        String query = input.getInputString(request.getParameter("q"));
-
         String message = null;
-
-        String tab = Tab(request.getParameter("tab"));
+        String gotException = null;
+        String query = null;
 
         List<topicPojo> randomTopic = null;
         List<CountSearchPojo> GetCountRowSearch = null;
@@ -86,55 +82,62 @@ public class search extends HttpServlet {
         List<searchTopicPojo> topicByQuearyAndLimit = null;
         List<searchUserPojo> userByQuearyAndLimit = null;
 
-        if (query == null) {
-            query = "inquiryhere.com";
-        }
-
-        if (query != null) {
+        try {
+            String tab = Tab(request.getParameter("tab"));
+            query = input.getInputString(request.getParameter("q"));
             try {
                 randomTopic = detals.randomTopic(50);
             } catch (Exception msg) {
                 Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
             }
+            
+            if (query != null) {
 
-            GetCountRowSearch = file.GetCountRowSearch(query);
-            switch (tab) {
-                case "question":
-                    questionByQueryAndLimit = file.getQuestionByQueryAndLimit(query, 0);
-                    break;
+                GetCountRowSearch = file.GetCountRowSearch(query);
+                switch (tab) {
+                    case "question":
+                        questionByQueryAndLimit = file.getQuestionByQueryAndLimit(query, 0);
+                        break;
 
-                case "answer":
-                    answerByQuearyAndLimit = file.getAnswerByQuearyAndLimit(query, 0);
-                    break;
+                    case "answer":
+                        answerByQuearyAndLimit = file.getAnswerByQuearyAndLimit(query, 0);
+                        break;
 
-                case "topic":
-                    topicByQuearyAndLimit = file.getTopicByQuearyAndLimit(query, 0);
-                    break;
+                    case "topic":
+                        topicByQuearyAndLimit = file.getTopicByQuearyAndLimit(query, 0);
+                        break;
 
-                case "profile":
-                    userByQuearyAndLimit = file.getUserByQuearyAndLimit(query, 0);
-                    break;
+                    case "profile":
+                        userByQuearyAndLimit = file.getUserByQuearyAndLimit(query, 0);
+                        break;
 
-                default:
-                    questionByQueryAndLimit = file.getQuestionByQueryAndLimit(query, 5);
-                    answerByQuearyAndLimit = file.getAnswerByQuearyAndLimit(query, 5);
-                    topicByQuearyAndLimit = file.getTopicByQuearyAndLimit(query, 5);
-                    userByQuearyAndLimit = file.getUserByQuearyAndLimit(query, 5);
-                    break;
+                    default:
+                        questionByQueryAndLimit = file.getQuestionByQueryAndLimit(query, 5);
+                        answerByQuearyAndLimit = file.getAnswerByQuearyAndLimit(query, 5);
+                        topicByQuearyAndLimit = file.getTopicByQuearyAndLimit(query, 5);
+                        userByQuearyAndLimit = file.getUserByQuearyAndLimit(query, 5);
+                        break;
+                }
+            } else {
+                message = "Empty queary, Please search something..";
             }
-        } else {
-            message = "Empty queary, Please search something..";
-        }
-        request.setAttribute("query", query);
-        request.setAttribute("randomTopic", randomTopic);
-        request.setAttribute("GetCountRowSearch", GetCountRowSearch);
-        request.setAttribute("questionByQueryAndLimit", questionByQueryAndLimit);
-        request.setAttribute("answerByQuearyAndLimit", answerByQuearyAndLimit);
-        request.setAttribute("topicByQuearyAndLimit", topicByQuearyAndLimit);
-        request.setAttribute("userByQuearyAndLimit", userByQuearyAndLimit);
-        request.setAttribute("message", message);
+        } catch (Exception msg) {
+            gotException = "not null";
+            Logger.getLogger(search.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            request.setAttribute("query", query);
+            request.setAttribute("randomTopic", randomTopic);
+            request.setAttribute("GetCountRowSearch", GetCountRowSearch);
+            request.setAttribute("questionByQueryAndLimit", questionByQueryAndLimit);
+            request.setAttribute("answerByQuearyAndLimit", answerByQuearyAndLimit);
+            request.setAttribute("topicByQuearyAndLimit", topicByQuearyAndLimit);
+            request.setAttribute("userByQuearyAndLimit", userByQuearyAndLimit);
 
-        request.getRequestDispatcher("search.jsp").forward(request, response);
+            request.setAttribute("message", message);
+            request.setAttribute("gotException", gotException);
+
+            request.getRequestDispatcher("search.jsp").forward(request, response);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

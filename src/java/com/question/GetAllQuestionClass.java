@@ -113,6 +113,9 @@ public class GetAllQuestionClass {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
+        if(pageNo == 0){
+            pageNo = 1;
+        }
         int recordPerPage = 20;
         int startPage = (pageNo * recordPerPage) - recordPerPage;
 

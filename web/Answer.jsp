@@ -138,6 +138,11 @@
                                 </c:when>
                             </c:choose>
                         </div>
+                        <c:if test="${gotException ne null}">
+                            <div class="clear-fix" align="center" style="font-size: 20px;color: red;background-color: white;">
+                                ${'Got some probelm, Please refresh this page or visit after some time'}
+                            </div>
+                        </c:if>
                         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                             <div>
                                 <c:if test="${questionTagWithId ne null and not empty questionTagWithId}">                                    
@@ -236,86 +241,86 @@
                                 </script>
                                 <div class="boxHeading marginbot10">Answer:</div>
                                 <!-- Answer of a question -->
-                                    <c:if test="${answerById eq null or empty answerById}">
-                                        <div class="themeBox" style="height:auto;">
-                                            <div class="boxHeading marginbot10" style="font-size: 15px;font-family: Arial, Helvetica, sans-serif;">
-                                                <b> <c:out value="No answer found, Be the first person to answer"/></b>
-                                            </div>
+                                <c:if test="${answerById eq null or empty answerById}">
+                                    <div class="themeBox" style="height:auto;">
+                                        <div class="boxHeading marginbot10" style="font-size: 15px;font-family: Arial, Helvetica, sans-serif;">
+                                            <b> <c:out value="No answer found, Be the first person to answer"/></b>
                                         </div>
-                                    </c:if>
-                                    <c:if test="${answerById ne null and not empty answerById}">
-                                        <c:forEach items="${answerById}" var="a" varStatus="loop">
-                                            <div class="themeBox" style="height:auto;">
-                                                <div style="padding: 5px; background-color: #BCC6CC; display: inline-block;">
-                                                    Answer By : <a href="profile?user=${a.userName}&id=${a.userId}&ref=a"><c:out value="${word.convertStringUpperToLower(a.fullName)}"/></a> 
-                                                    <c:if test="${not userIdForNotification.contains(a.userId)}">
-                                                        <c:set value=" ${userIdForNotification.add(a.userId)}" var="notuserd"/>                                                      
-                                                    </c:if>
-                                                </div>
-                                                <c:if test="${sessionScope.Session_id_of_user ne null}">                                                
-                                                    <c:if test="${a.userId eq sessionScope.Session_id_of_user}">
-                                                        <div style="padding: 5px; display: inline-block;" align="right">
-                                                            <form name="Form_Name" method="post" action="updateAnswer">
-                                                                <input type="hidden" name="q" value="${current_q_string}">
-                                                                <input type="hidden" name="q_id" value="${questionId}">
-                                                                <input type="hidden" name="ans_id" value="${a.answerId}">
-                                                                <input type="hidden" name="ans_by_id" value="${a.userId}">
-                                                                <input type="submit" value="Edit">
-                                                            </form>
-                                                        </div>
-                                                    </c:if>
+                                    </div>
+                                </c:if>
+                                <c:if test="${answerById ne null and not empty answerById}">
+                                    <c:forEach items="${answerById}" var="a" varStatus="loop">
+                                        <div class="themeBox" style="height:auto;">
+                                            <div style="padding: 5px; background-color: #BCC6CC; display: inline-block;">
+                                                Answer By : <a href="profile?user=${a.userName}&id=${a.userId}&ref=a"><c:out value="${word.convertStringUpperToLower(a.fullName)}"/></a> 
+                                                <c:if test="${not userIdForNotification.contains(a.userId)}">
+                                                    <c:set value=" ${userIdForNotification.add(a.userId)}" var="notuserd"/>                                                      
                                                 </c:if>
-                                                <br><br>
-                                                <div class="boxHeading marginbot10" style="font-size: 15px;font-family: Arial, Helvetica, sans-serif;">
-                                                    <c:out value="${a.answer}" escapeXml="false"/>
-                                                </div>
-                                                <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${a.answerId}"/>', '${sessionScope.Session_id_of_user}', 'upvote', 'answer');" >Upvote(<c:out value="${a.vote}"/>)</a>&nbsp;&nbsp; 
-                                                <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${a.answerId}"/>', '${sessionScope.Session_id_of_user}', 'downvote', 'answer');" >Downvote</a>&nbsp;&nbsp;
-                                                <a href="javascript:void(0)" value="Comment" onclick="showAns<c:out value="${a.answerId}"/>CommentBox()">Comment</a>&nbsp;&nbsp;
-                                                <a href="javascript:void(0)">View(<c:out value="${a.totalView}"/>)</a>
-
-                                                <div class="hidden" id="Anscomment<c:out value="${a.answerId}"/>">
-                                                    <form action="saveAnswerComment" method="post">
-                                                        <input type="hidden" name="session_active_user_id" value="<c:out value="${sessionScope.Session_id_of_user}"/>">
-                                                        <input type="hidden" name="id_of_user_who_posted_question" value="<c:out value="${user_id_who_asked_question}"/>">
-                                                        <input type="hidden" name="answer_id" value="<c:out value="${a.answerId}"/>">
-                                                        <input type="hidden" name="question_id" value="<c:out value="${questionId}"/>">
-                                                        <input type="hidden" name="question" value="<c:out value="${current_q_string}"/>">
-                                                        <textarea name="comments" rows="3" cols="30" required=""></textarea>
-                                                        <input type="submit" name="sub" value="Send Comment">
-                                                    </form>
-                                                </div>
-
-                                                <script type="text/javascript">
-                                                    function showAns<c:out value="${a.answerId}"/>CommentBox() {
-                                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                                        var div = document.getElementById('Anscomment<c:out value="${a.answerId}"/>');
-                                                        div.className = 'visible';
-                                                    </c:if>
-                                                    <c:if test="${sessionScope.Session_id_of_user eq null}">
-                                                        alert("Please Login First to comment!!!");
-                                                    </c:if>
-                                                    }
-                                                </script>
                                             </div>
-                                            <!-- Comment on Answer -->
-
-                                            <c:catch var="exp">
-                                                <c:forEach var="cmt" items="${commentOnAnswer.getAnswerCommentByAnswerid(a.answerId)}">
-                                                    <div align="right" style="border-style: groove;">
-                                                        ${cmt.comments} : <a href="profile?user=${cmt.userName}&id=${cmt.commentPostedById}&ref=ac"><c:out value="${word.convertStringUpperToLower(cmt.fullName)}"/></a> ${cmt.date}
-                                                        <c:if test="${not userIdForNotification.contains(cmt.commentPostedById)}">
-                                                            ${userIdForNotification.add(cmt.commentPostedById)}
-                                                        </c:if>
+                                            <c:if test="${sessionScope.Session_id_of_user ne null}">                                                
+                                                <c:if test="${a.userId eq sessionScope.Session_id_of_user}">
+                                                    <div style="padding: 5px; display: inline-block;" align="right">
+                                                        <form name="Form_Name" method="post" action="updateAnswer">
+                                                            <input type="hidden" name="q" value="${current_q_string}">
+                                                            <input type="hidden" name="q_id" value="${questionId}">
+                                                            <input type="hidden" name="ans_id" value="${a.answerId}">
+                                                            <input type="hidden" name="ans_by_id" value="${a.userId}">
+                                                            <input type="submit" value="Edit">
+                                                        </form>
                                                     </div>
-                                                </c:forEach>   
-                                            </c:catch>
-                                            <c:if test="${exp ne null}">
-                                                ${exp}
+                                                </c:if>
                                             </c:if>
-                                        </c:forEach>
-                                       
-                                    </c:if>
+                                            <br><br>
+                                            <div class="boxHeading marginbot10" style="font-size: 15px;font-family: Arial, Helvetica, sans-serif;">
+                                                <c:out value="${a.answer}" escapeXml="false"/>
+                                            </div>
+                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${a.answerId}"/>', '${sessionScope.Session_id_of_user}', 'upvote', 'answer');" >Upvote(<c:out value="${a.vote}"/>)</a>&nbsp;&nbsp; 
+                                            <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '<c:out value="${a.answerId}"/>', '${sessionScope.Session_id_of_user}', 'downvote', 'answer');" >Downvote</a>&nbsp;&nbsp;
+                                            <a href="javascript:void(0)" value="Comment" onclick="showAns<c:out value="${a.answerId}"/>CommentBox()">Comment</a>&nbsp;&nbsp;
+                                            <a href="javascript:void(0)">View(<c:out value="${a.totalView}"/>)</a>
+
+                                            <div class="hidden" id="Anscomment<c:out value="${a.answerId}"/>">
+                                                <form action="saveAnswerComment" method="post">
+                                                    <input type="hidden" name="session_active_user_id" value="<c:out value="${sessionScope.Session_id_of_user}"/>">
+                                                    <input type="hidden" name="id_of_user_who_posted_question" value="<c:out value="${user_id_who_asked_question}"/>">
+                                                    <input type="hidden" name="answer_id" value="<c:out value="${a.answerId}"/>">
+                                                    <input type="hidden" name="question_id" value="<c:out value="${questionId}"/>">
+                                                    <input type="hidden" name="question" value="<c:out value="${current_q_string}"/>">
+                                                    <textarea name="comments" rows="3" cols="30" required=""></textarea>
+                                                    <input type="submit" name="sub" value="Send Comment">
+                                                </form>
+                                            </div>
+
+                                            <script type="text/javascript">
+                                                function showAns<c:out value="${a.answerId}"/>CommentBox() {
+                                                <c:if test="${sessionScope.Session_id_of_user ne null}">
+                                                    var div = document.getElementById('Anscomment<c:out value="${a.answerId}"/>');
+                                                    div.className = 'visible';
+                                                </c:if>
+                                                <c:if test="${sessionScope.Session_id_of_user eq null}">
+                                                    alert("Please Login First to comment!!!");
+                                                </c:if>
+                                                }
+                                            </script>
+                                        </div>
+                                        <!-- Comment on Answer -->
+
+                                        <c:catch var="exp">
+                                            <c:forEach var="cmt" items="${commentOnAnswer.getAnswerCommentByAnswerid(a.answerId)}">
+                                                <div align="right" style="border-style: groove;">
+                                                    ${cmt.comments} : <a href="profile?user=${cmt.userName}&id=${cmt.commentPostedById}&ref=ac"><c:out value="${word.convertStringUpperToLower(cmt.fullName)}"/></a> ${cmt.date}
+                                                    <c:if test="${not userIdForNotification.contains(cmt.commentPostedById)}">
+                                                        ${userIdForNotification.add(cmt.commentPostedById)}
+                                                    </c:if>
+                                                </div>
+                                            </c:forEach>   
+                                        </c:catch>
+                                        <c:if test="${exp ne null}">
+                                            ${exp}
+                                        </c:if>
+                                    </c:forEach>
+
+                                </c:if>
 
                                 <form name="Form_name" method="post" action="save_answer_servlet">
                                     <%
@@ -359,7 +364,7 @@
                                  data-ad-format="auto"
                                  data-full-width-responsive="true"></ins>
                             <script>
-                                                    (adsbygoogle = window.adsbygoogle || []).push({});
+                                                (adsbygoogle = window.adsbygoogle || []).push({});
                             </script>
                         </div>
                         <div class="row">
@@ -406,7 +411,7 @@
                                  data-ad-client="ca-pub-8778688755733551"
                                  data-ad-slot="9252283301"></ins>
                             <script>
-                                                    (adsbygoogle = window.adsbygoogle || []).push({});
+                                                (adsbygoogle = window.adsbygoogle || []).push({});
                             </script>
                         </div>
                         <div class="clear-fix"></div>

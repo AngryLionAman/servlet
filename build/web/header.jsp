@@ -1,9 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@include file="site.jsp"%>
 <jsp:useBean class="com.header.headerData" id="userdetails" scope="page"/>
-<jsp:useBean class="com.string.name" id="fun" scope="page"/>
+<jsp:useBean class="com.string.WordFormating" id="fun" scope="page"/>
 <jsp:useBean class="com.security.validateUser" id="function" scope="page" />
 <c:catch var="ex">
     <c:if test="${sessionScope.Session_id_of_user eq null}">
@@ -18,14 +17,13 @@
             </c:forEach>
         </c:if>
         <c:if test="${username ne null and not empty username and password ne null and not empty password}">
-            <c:set scope="page" var="status" value="${function.validateUser(username, password)}"/>
+            <c:if test="${function.validateUser(username, password)}">      
+                <jsp:include page="validate.jsp">
+                    <jsp:param name="email" value="${username}"/>
+                    <jsp:param name="password" value="${password}"/>
+                </jsp:include>        
+            </c:if>
         </c:if> 
-        <c:if test="${status}">      
-            <jsp:include page="validate.jsp">
-                <jsp:param name="email" value="${username}"/>
-                <jsp:param name="password" value="${password}"/>
-            </jsp:include>        
-        </c:if>
     </c:if>
 </c:catch>
 <c:if test="${ex ne null}">
@@ -35,7 +33,7 @@
     <div class="container clear-fix">
         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="padding-left:0px;">
             <div class="logo float-left">
-                <a href="index.jsp" style="vertical-align:middle;">
+                <a href="index" style="vertical-align:middle;">
                     <h4>
                         <div class="logotext">
                             inquiryhere.com
@@ -55,7 +53,7 @@
                 {
                     var a = document.forms["Form"]["q"].value;
                     var http = new XMLHttpRequest();
-                    http.open("POST", "<%=DB_AJAX_PATH%>/submit_searched_queary.jsp?searched_queary=" + a, true);
+                    http.open("POST", "saveSearchedQuaryServlet?query=" + a + "&id=${sessionScope.Session_id_of_user}", true);
                     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                     http.send();
                     return true;
@@ -64,7 +62,7 @@
         </script>
         <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 serachhere" style="display:inline-block;">
             <div style="overflow: hidden; padding-right: .5em;">
-                <form action="search.jsp" name="Form" onsubmit="return validateForm()">
+                <form action="search" name="Form" onsubmit="return validateForm()">
                     <input type="text" style="width: 100%;" name="q" required="">
                 </form>
             </div>
@@ -85,14 +83,14 @@
                 <a href="login.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Login</a>
             </c:if>
 
-            <a href="index.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Home</a>
+            <a href="index" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Home</a>
             <c:if test="${sessionScope.Session_id_of_user ne null}">
                 <c:catch var="m">
                     <c:forEach var="u" items="${userdetails.headerUser(sessionScope.Session_id_of_user)}">
-                        <a href="logout.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
+                        <a href="logout" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
 
                         <a href="" onclick="document.getElementById('myform').submit(); return false;" class="helpicon" style="color: white;padding-left: 10px;padding-right: 10px;">Inbox</a>
-                        <a href="profile.jsp?user=${u.userName}&ID=${u.userId}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 20px;">
+                        <a href="profile?user=${u.userName}&id=${u.userId}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 20px;">
                             <b><c:out value="${fun.firstName(u.fullName)}"/></b>
                         </a>             
                     </c:forEach>    

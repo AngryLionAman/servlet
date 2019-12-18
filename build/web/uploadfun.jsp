@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<jsp:useBean class="com.fun.helpingFunction" id="fun" scope="page"/>
-<jsp:useBean class="com.string.name" id="word" scope="page"/>
+<jsp:useBean class="com.fun.FunHelpingFunction" id="fun" scope="page"/>
+<jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -65,7 +65,7 @@
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" >
                             <div class="row">                                
                                 <div style="height:auto;background-color: #e1e8e8;">
-                                    <form name="saveFunData" action="<%=request.getContextPath()%>/saveFunData" >
+                                    <form name="saveFunData" action="saveFunData" method="post">
                                         <input type="hidden" name="userId" value="${sessionScope.Session_id_of_user}"/>
                                         <div id="category" style="background-color: #72f8e0; padding-bottom: 8px;padding-top: 8px;text-align: center;">
                                             <div class="boxHeading">
@@ -73,7 +73,7 @@
                                             </div>
                                             <div>
                                                 <select name="category" onchange='CheckCat(this.value);'>
-                                                    <c:forEach items="${fun.CategoryDetail()}" var="cat">
+                                                    <c:forEach items="${fun.funCategory}" var="cat">
                                                         <option value="${cat}">${word.convertStringUpperToLower(cat)}</option>
                                                     </c:forEach>
                                                     <option value="others">Others</option>
@@ -88,7 +88,7 @@
                                             <div>
                                                 <select name="type" onchange='CheckType(this.value);'>
                                                     <option value="" selected="">None</option>
-                                                    <c:forEach items="${fun.TypeDetail()}" var="t">
+                                                    <c:forEach items="${fun.funType}" var="t">
                                                         <option value="${t}">${word.convertStringUpperToLower(t)}</option>
                                                     </c:forEach>
                                                     <option value="others">Others</option>
@@ -103,7 +103,7 @@
                                             <div>
                                                 <select name="basedon" onchange='CheckBaesdOn(this.value);'>
                                                     <option value="" selected="">None</option>
-                                                    <c:forEach items="${fun.basedOnDetail()}" var="t">
+                                                    <c:forEach items="${fun.funBasedOn}" var="t">
                                                         <option value="${t}">${word.convertStringUpperToLower(t)}</option>
                                                     </c:forEach>
                                                     <option value="others">Others</option>

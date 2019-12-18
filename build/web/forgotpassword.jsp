@@ -2,16 +2,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@include file="site.jsp" %>
+<c:if test="${sessionScope.Session_id_of_user ne null}">
+    <c:redirect url="index?ref=f_pass"/>
+</c:if>
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
         <meta charset="UTF-8">  
-        <%
-            if (session.getAttribute("Session_id_of_user") != null) {
-                response.sendRedirect("index.jsp");
-            }
-        %>
+        
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Forger Password | inquiryhere.com</title>        
@@ -66,7 +64,7 @@
                     </div>
 
                     <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 float-right textalign-right">
-                        <a href="index.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 50px;">Home</a>
+                        <a href="index" class="helpicon" style="color: white;padding-left: 10px;padding-right: 50px;">Home</a>
                         <a  href="login.jsp" class="helpicon" style="color: white; width: 50px;">Login</a>
                         <a  href="signup.jsp" class="helpicon" style="color: white; width: 50px;">Sign up</a>
                     </div>

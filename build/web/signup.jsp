@@ -1,15 +1,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:if test="${sessionScope.Session_id_of_user ne null}">
+    <c:redirect url="index?ref=signup"/>
+</c:if>
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
         <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-        <%@include file="site.jsp" %>
 
-        <%
-            if (session.getAttribute("Session_id_of_user") != null) {
-                response.sendRedirect("index.jsp");
-            }
-        %>
         <meta charset="UTF-8">
         <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -95,7 +92,7 @@
             function take_value(email) {
                 //alert(email.value);
                 var http = new XMLHttpRequest();
-                http.open("post", "<%=DB_AJAX_PATH%>/validateUserName.jsp?userName=" + email.value, true);
+                http.open("post", "validateUserName.jsp?userName=" + email.value, true);
                 http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 http.send();
                 http.onload = function () {
@@ -111,7 +108,7 @@
                 <div class="container clear-fix">
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="padding-left:0px;">
                         <div class="logo float-left">
-                            <a href="index.jsp?ref=signup" style="vertical-align:middle;">
+                            <a href="index?ref=signup" style="vertical-align:middle;">
                                 <h4>
                                     <div class="logotext">
                                         inquiryhere.com
@@ -124,14 +121,14 @@
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 serachhere" style="display:inline-block;">
                         <div style="overflow: hidden; padding-right: .5em;">
-                            <form action="search.jsp">
+                            <form action="search">
                                 <input type="text" style="width: 100%;" name="q" required="" >
                             </form>
                         </div>
                     </div>
 
                     <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 float-right textalign-right">
-                        <a  href="index.jsp" class="helpicon" style="color: white; width: 50px;">Home</a>
+                        <a  href="index" class="helpicon" style="color: white; width: 50px;">Home</a>
                         <a  href="login.jsp" class="helpicon" style="color: white; width: 50px;">Login</a>
                     </div>
                 </div>

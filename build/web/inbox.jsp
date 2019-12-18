@@ -1,4 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:if test="${notification eq null}">
+    <c:redirect url="login.jsp?ref=Please login"/>
+</c:if>
 <html lang="en"><head>
         <meta charset="UTF-8">
         <%@include file="googleAnalytics.jsp" %>
@@ -30,7 +33,7 @@
                                                 <c:choose>
                                                     <c:when test="${n.notification_type eq 'got_answer_of_a_question'}">
                                                         <div class="boxHeading">
-                                                            <a href="Answer.jsp?q=${n.question}&ans_by=${n.userFirstName}&Id=${n.question_id}&c_id=${n.comment_id}"><b>${n.userFirstName}</b> give you an answer of <b>${n.question}</b></a>
+                                                            <a href="questions?q=${n.question}&ans_by=${n.userFirstName}&Id=${n.question_id}&c_id=${n.comment_id}"><b>${n.userFirstName}</b> give you an answer of <b>${n.question}</b></a>
                                                         </div>
                                                     </c:when>
                                                     <c:when test="${n.notification_type eq 'followed_by'}">
@@ -40,12 +43,12 @@
                                                     </c:when>
                                                     <c:when test="${n.notification_type eq 'comment_on_question'}">
                                                         <div class="boxHeading">
-                                                            <a href="Answer.jsp?q=${n.question}&comment_by=${n.userFirstName}&Id=${n.question_id}&c_id=${n.comment_id}"><b>${n.userFirstName}</b> commented on : <b>${n.question}</b>, Which belongs to you</a>  
+                                                            <a href="questions?q=${n.question}&comment_by=${n.userFirstName}&Id=${n.question_id}&c_id=${n.comment_id}"><b>${n.userFirstName}</b> commented on : <b>${n.question}</b>, Which belongs to you</a>  
                                                         </div>
                                                     </c:when>
                                                     <c:when test="${n.notification_type eq 'comment_on_Answer'}">
                                                         <div class="boxHeading">
-                                                            <a href="Answer.jsp?q=${n.question}&comment_by=${n.userFirstName}&Id=${n.question_id}&c_id=${n.comment_id}"><b>${n.userFirstName}</b> commented on a answer which something belongs to you and question is :- <b>${n.question}</b></a>    
+                                                            <a href="questions?q=${n.question}&comment_by=${n.userFirstName}&Id=${n.question_id}&c_id=${n.comment_id}"><b>${n.userFirstName}</b> commented on a answer which something belongs to you and question is :- <b>${n.question}</b></a>    
                                                         </div>    
                                                     </c:when>
                                                     <c:when test="${n.notification_type eq 'comment_on_Blog'}">

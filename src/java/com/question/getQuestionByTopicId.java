@@ -42,12 +42,16 @@ public class getQuestionByTopicId {
     public HashMap<Integer, String> getAllQuestionByTopicId(int topicId, int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
 
         HashMap<Integer, String> map = new HashMap<>();
-        
+
         DatabaseConnection dc = new DatabaseConnection();
-        
+
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+
+        if (pageNo < 1) {
+            pageNo = 1;
+        }
 
         int startPage = (pageNo * recordPerPage) - recordPerPage;
 
