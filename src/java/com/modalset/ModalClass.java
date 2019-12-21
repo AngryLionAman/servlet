@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.blog;
+package com.modalset;
 
 import com.connect.DatabaseConnection;
 import java.sql.Connection;
@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,20 +30,13 @@ import java.util.logging.Logger;
  *
  * @author AngryLion
  */
-public class getAllBlog {
+public class ModalClass {
 
-    /**
-     *
-     * @param limit
-     * @return
-     * @throws SQLException
-     * @throws java.lang.ClassNotFoundException
-     */
-    public List<blogPojo> blogByLimit(int limit) throws SQLException, ClassNotFoundException {
+    public List<String> getOptionByQuestionId(int questionId) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = new DatabaseConnection();
 
-        List<blogPojo> list = new ArrayList<>();
+        List<String> list = new ArrayList<>();
 
         Connection con = null;
         PreparedStatement ps = null;
@@ -50,60 +44,44 @@ public class getAllBlog {
 
         try {
             con = dc.getConnection();
-            String sql = "SELECT unique_id,subject,posted_by as userId,username,firstname FROM blog LEFT JOIN newuser ON newuser.id = blog.posted_by order by rand() limit ?";
+            String sql = "SELECT answer FROM set_question_option WHERE question_id  = ? ORDER BY 1";
             ps = con.prepareStatement(sql);
-            ps.setInt(1, limit);
+            ps.setInt(1, questionId);
             rs = ps.executeQuery();
             while (rs.next()) {
-                int userId = rs.getInt("userId");
-                String userName = rs.getString("username");
-                String fullName = rs.getString("firstname");
-                int unique_id = rs.getInt("unique_id");
-                String subject = rs.getString("subject");
-                list.add(new blogPojo(userId, userName, fullName, unique_id, subject));
+                String opt = rs.getString("answer");
+                list.add(opt);
             }
             return list;
         } catch (SQLException msg) {
-            Logger.getLogger(getAllBlog.class.getName()).log(Level.SEVERE, null, msg);
+            Logger.getLogger(ModalClass.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
                     rs.close();
                 } catch (SQLException msg) {
-
                 }
             }
             if (ps != null) {
                 try {
                     ps.close();
                 } catch (SQLException msg) {
-
                 }
             }
             if (con != null) {
                 try {
                     con.close();
                 } catch (SQLException msg) {
-
                 }
             }
         }
         return null;
-
     }
 
-    /**
-     *
-     * @param blogid
-     * @return
-     * @throws SQLException
-     * @throws java.lang.ClassNotFoundException
-     */
-    public List<blogPojoById> blogByBlogId(int blogid) throws SQLException, ClassNotFoundException {
+    public HashMap<Integer, String> getSetQuestionById(int questionId) throws SQLException, ClassNotFoundException {
 
+        HashMap<Integer, String> map = new HashMap<>();
         DatabaseConnection dc = new DatabaseConnection();
-        
-        List<blogPojoById> list = new ArrayList<>();
 
         Connection con = null;
         PreparedStatement ps = null;
@@ -111,102 +89,132 @@ public class getAllBlog {
 
         try {
             con = dc.getConnection();
-            String sql = "SELECT b.subject,b.view,b.unique_id,b.desc,user.firstname,user.username,user.id FROM blog b left join newuser user on b.posted_by = user.Id WHERE unique_id =?";
+            String sql = "SELECT unique_id, question FROM set_question WHERE unique_id = ?";
             ps = con.prepareStatement(sql);
-            ps.setInt(1, blogid);
+            ps.setInt(1, questionId);
             rs = ps.executeQuery();
             while (rs.next()) {
-                int uniqueId = rs.getInt("b.unique_id");
-                String subject = rs.getString("b.subject");
-                String desc = rs.getString("b.desc");
-                int view = rs.getInt("b.view");
-                int userId = rs.getInt("user.id");
-                String userName = rs.getString("user.username");
-                String fullName = rs.getString("user.firstname");
-                list.add(new blogPojoById(uniqueId, subject, desc, view, userId, userName, fullName));
+
+                int q_Id = rs.getInt("unique_id");
+                String question = rs.getString("question");
+                map.put(q_Id, question);
             }
-            return list;
+            return map;
         } catch (SQLException msg) {
-            Logger.getLogger(getAllBlog.class.getName()).log(Level.SEVERE, null, msg);
+            Logger.getLogger(ModalClass.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             if (rs != null) {
                 try {
                     rs.close();
                 } catch (SQLException msg) {
-
                 }
             }
             if (ps != null) {
                 try {
                     ps.close();
                 } catch (SQLException msg) {
-
                 }
             }
             if (con != null) {
                 try {
                     con.close();
                 } catch (SQLException msg) {
-
                 }
             }
         }
         return null;
-
     }
 
-    /**
-     *
-     * @return @throws SQLException
-     * @throws java.lang.ClassNotFoundException
-     */
-    public List<blogPojo> blog() throws SQLException, ClassNotFoundException {
+    public List<QuestionSetPojo> initilizeArrayList(String exam_of, int set_no) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = new DatabaseConnection();
+        List<QuestionSetPojo> list = new ArrayList<>();
 
-        List<blogPojo> list = new ArrayList<>();
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+
         try {
             con = dc.getConnection();
-            String sql = "SELECT unique_id,subject,posted_by as userId,username,firstname FROM blog LEFT JOIN newuser ON newuser.id = blog.posted_by";
+            String sql = "SELECT unique_id,question,correct_ans FROM set_question WHERE exam_of = ? AND set_no = ?";
             ps = con.prepareStatement(sql);
+            ps.setString(1, exam_of);
+            ps.setInt(2, set_no);
             rs = ps.executeQuery();
             while (rs.next()) {
-                int userId = rs.getInt("userId");
-                String userName = rs.getString("username");
-                String fullName = rs.getString("firstname");
-                int unique_id = rs.getInt("unique_id");
-                String subject = rs.getString("subject");
-                list.add(new blogPojo(userId, userName, fullName, unique_id, subject));
+                int questionId = rs.getInt("unique_id");
+                String question = rs.getString("question");
+                String correct_ans = rs.getString("correct_ans");
+                String selected_ans = null;
+                list.add(new QuestionSetPojo(questionId, question, correct_ans, selected_ans));
             }
             return list;
         } catch (SQLException msg) {
-            Logger.getLogger(getAllBlog.class.getName()).log(Level.SEVERE, null, msg);
+            Logger.getLogger(ModalClass.class.getName()).log(Level.SEVERE, exam_of, msg);
         } finally {
             if (rs != null) {
                 try {
                     rs.close();
                 } catch (SQLException msg) {
-
                 }
             }
             if (ps != null) {
                 try {
                     ps.close();
                 } catch (SQLException msg) {
-
                 }
             }
             if (con != null) {
                 try {
                     con.close();
                 } catch (SQLException msg) {
-
                 }
             }
         }
         return null;
     }
+
+    public int arraySise(String exam_of, int set_no) throws SQLException, ClassNotFoundException {
+
+        DatabaseConnection dc = new DatabaseConnection();
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = dc.getConnection();
+            String sql = "SELECT COUNT(*) AS cnt FROM set_question WHERE exam_of = ? AND set_no = ? GROUP BY exam_of";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, exam_of);
+            ps.setInt(2, set_no);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getInt("cnt");
+            }
+        } catch (SQLException msg) {
+            Logger.getLogger(ModalClass.class.getName()).log(Level.SEVERE, exam_of, msg);
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException msg) {
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException msg) {
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException msg) {
+                }
+            }
+        }
+        return 0;
+    }
+
 }

@@ -15,17 +15,50 @@
  */
 package com.test;
 
-import com.string.validateInput;
-
 /**
  *
  * @author AngryLion
  */
-public class NewClass1 {
-  public static void main(String[] args){
-      validateInput input = new validateInput();
-      System.out.println( input.getOnlyInteger("aman8kjsadkf843982@@"));
-      System.out.println( input.getInputInt("8888"));
-      
-  }
+class Main {
+
+    public int modalSet;
+    public int questionId;
+    public String answerId;
+
+    Main(int modalSet, int questionId, String answerId) {
+        this.modalSet = modalSet;
+        this.questionId = questionId;
+        this.answerId = answerId;
+    }
+
+    public static void main(String args[]) {
+        // declaring and initializing 2D array 
+        int modalSetId = 2;
+        int arraySize = 5;
+        int questionId = 4;
+        int answerId = 3;
+
+       // int array[][][][] = new int[answerId][answerId][answerId][answerId];
+
+        Main[] obj = new Main[3];
+        obj[0] = new Main(modalSetId, questionId, "A");
+        obj[1] = new Main(modalSetId, questionId, "b");
+        obj[2] = new Main(0, 0, null);
+
+        // printing 3D array 
+        try{
+            for(int i =0 ; i< obj.length; i++){
+                obj[i] = new Main(0, 0, null);
+            }
+            
+            
+           for (int i = 0; i < obj.length; i++) {
+            System.out.println(i +"->"+ obj[i].answerId +","+ obj[i].modalSet +","+ obj[i].questionId +"\n");
+        }  
+        }catch(Exception msg){
+            System.out.println("com.test.Main.main()"+msg);
+        }
+       
+
+    }
 }

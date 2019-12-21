@@ -1,7 +1,7 @@
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:useBean class="com.fun.helpingFunction" id="fun" scope="page"/>
+<jsp:useBean class="com.fun.FunHelpingFunction" id="fun" scope="page"/>
 <jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <html lang="en">
     <head>
@@ -38,14 +38,17 @@
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <div class="row">
                                 <c:if test="${message ne null}">
-                                   <div class="themeBox" align="center" style="font-size: 20px;color: green;background-color: yellow;">
+                                    <div class="themeBox" align="center" style="font-size: 20px;color: green;background-color: yellow;">
                                         ${message}
                                     </div>
                                 </c:if>
-                                
-                                <c:if test="${blogList eq null}">
-                                    <c:redirect url="blog"/>
+                                <c:if test="${gotException ne null}">                                
+                                    <div class="clear-fix" align="center" style="font-size: 20px;color: red;background-color: white;">
+                                        ${'Got some probelm, Please refresh this page or visit after some time'}                                
+                                    </div>
                                 </c:if>
+
+                               
                                 <c:if test="${blogList ne null}">
                                     <c:catch var="ex">
                                         <c:forEach items="${blogList}" var="b" >
@@ -76,7 +79,7 @@
                                     <div>
                                         <ul>
                                             <c:catch var="msg">
-                                                <c:forEach items="${fun.CategoryDetail()}" var="m">
+                                                <c:forEach items="${fun.funCategory}" var="m">
                                                     <li><a href="fun?category=${m}">${word.convertStringUpperToLower(m)}</a></li>
                                                     </c:forEach>
                                                 </c:catch>

@@ -68,11 +68,14 @@
         </script>    
         <c:if test="${titleAndDescripiton eq null or empty titleAndDescripiton}">
             <c:choose>
+                <c:when test="${gotException ne null and not empty gotException}">
+                    
+                </c:when>
                 <c:when test="${param.Id ne null and not empty param.Id}">
                     <c:redirect url="questions?id=${param.Id}"/>
                 </c:when>
                 <c:otherwise>
-                    <c:redirect url="Error404.jsp"/>
+                    <c:redirect url="Error404.jsp?msg=${message}"/>
                 </c:otherwise>
             </c:choose>
 
@@ -427,7 +430,5 @@
             <script type="text/javascript" src="vendor/bootstrap/bootstrap.min.js"></script>            <!-- Bootstrap Select JS -->
             <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
         </div> <!-- /.main-page-wrapper -->
-        <!-- Go to www.addthis.com/dashboard to customize your tools -->
-        <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5d7cae45521c6629"></script>
     </body>
 </html>

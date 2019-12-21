@@ -49,7 +49,8 @@
                 if (a === null || a === "", a.trim() === "")
                 {
                     return false;
-                } else
+                }
+                else
                 {
                     var a = document.forms["Form"]["q"].value;
                     var http = new XMLHttpRequest();

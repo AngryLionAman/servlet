@@ -38,7 +38,7 @@ public class SupportingFunctionBlog {
      */
     public boolean IsBlogPresentByBlogId(int blogId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+        DatabaseConnection dc = new DatabaseConnection();
 
         Connection con = null;
         PreparedStatement ps = null;
@@ -87,7 +87,8 @@ public class SupportingFunctionBlog {
      * @throws java.lang.ClassNotFoundException
      */
     public void increateBlogViewByBlogId(int blogId) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+        DatabaseConnection dc = new DatabaseConnection();
+        
         Connection con = null;
         PreparedStatement ps = null;
         try {

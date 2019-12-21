@@ -62,7 +62,7 @@ public class questions extends HttpServlet {
         getAnswer answer = new getAnswer();
         getQuestion q = new getQuestion();
 
-        String message;
+        String message = "Got some unknown error. We already working on this, Please try agina or visit after some time";
 
         List<SEOPojo> titleAndDescripiton = null;
         List<String> questionTag = null;
@@ -76,6 +76,11 @@ public class questions extends HttpServlet {
         String gotException = null;
 
         try {
+            try {
+                randomQuestion = q.getRandomQuestion();
+            } catch (ClassNotFoundException | SQLException msg) {
+                Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
+            }
 
             if (request.getParameter("Id") != null && !request.getParameter("Id").isEmpty()) {
                 questionId = input.getInputInt(request.getParameter("Id"));
@@ -87,13 +92,14 @@ public class questions extends HttpServlet {
 
             if (questionId != 0) {
                 if (ques.IsQuestionPresentByQuestionId(questionId)) {
+                    message = null;
                     titleAndDescripiton = seo.getTitleAndDescripiton(questionId);
                     questionTag = seo.getQuestionTag(questionId);
                     questionTagWithId = seo.getQuestionTagWithId(questionId);
                     question = page.getQuestion(questionId);
                     answerById = answer.getAnswerById(questionId);
                     relatedQuestionById = q.getRelatedQuestionById(questionId);
-                    randomQuestion = q.getRandomQuestion();
+
                 } else {
                     message = "Question id not found in database, please try search option";
                 }
@@ -101,11 +107,12 @@ public class questions extends HttpServlet {
                 message = "Question id is zero, or you are hiting the invalid argumet";
             }
         } catch (Exception msg) {
-             gotException = "Not null";
+            gotException = "Not null";
             Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             request.setAttribute("gotException", gotException);
-            
+            request.setAttribute("message", message);
+
             request.setAttribute("questionId", questionId);
             request.setAttribute("titleAndDescripiton", titleAndDescripiton);
             request.setAttribute("questionTag", questionTag);
@@ -119,62 +126,56 @@ public class questions extends HttpServlet {
         }
     }
 
-        // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-        /**
-         * Handles the HTTP <code>GET</code> method.
-         *
-         * @param request servlet request
-         * @param response servlet response
-         * @throws ServletException if a servlet-specific error occurs
-         * @throws IOException if an I/O error occurs
-         */
-        @Override
-        protected void doGet
-        (HttpServletRequest request, HttpServletResponse response)
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            try {
-                processRequest(request, response);
-            } catch (SQLException | ClassNotFoundException ex) {
-                Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        /**
-         * Handles the HTTP <code>POST</code> method.
-         *
-         * @param request servlet request
-         * @param response servlet response
-         * @throws ServletException if a servlet-specific error occurs
-         * @throws IOException if an I/O error occurs
-         */
-        @Override
-        protected void doPost
-        (HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-            try {
-                processRequest(request, response);
-            } catch (SQLException | ClassNotFoundException ex) {
-                Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        /**
-         * Returns a short description of the servlet.
-         *
-         * @return a String containing servlet description
-         */
-        @Override
-        public String getServletInfo
-        
-        
-        
-            () {
-        return "This is fucking servlet, it made my life hell. "
-                    + "it never let me do any task of my presnol life. my life is sucks";
-        }// </editor-fold>
-
     }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "This is fucking servlet, it made my life hell. "
+                + "it never let me do any task of my presnol life. my life is sucks";
+    }// </editor-fold>
+
+}

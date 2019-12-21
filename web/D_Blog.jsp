@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:useBean class="com.fun.helpingFunction" id="fun" scope="page"/>
+<jsp:useBean class="com.fun.FunHelpingFunction" id="fun" scope="page"/>
 <jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <html lang="en">
     <head>
@@ -18,6 +18,9 @@
                 <c:choose>
                     <c:when test="${param.id ne null and not empty param.id}">
                         <c:redirect url="blog?id=${param.id}"/> 
+                    </c:when>
+                    <c:when test="${param.Blog_Id ne null and not empty param.Blog_Id}">
+                        <c:redirect url="blog?id=${param.Blog_Id}"/> 
                     </c:when>
                     <c:otherwise>
                         <c:redirect url="blog"/>
@@ -180,7 +183,7 @@
                                     <div>
                                         <ul>
                                             <c:catch var="msg">
-                                                <c:forEach items="${fun.CategoryDetail()}" var="m">
+                                                <c:forEach items="${fun.funCategory}" var="m">
                                                     <li><a href="fun?category=${m}">${word.convertStringUpperToLower(m)}</a></li>
                                                     </c:forEach>
                                                 </c:catch>

@@ -14,11 +14,8 @@ public class DatabaseConnection {
 
     private static DatabaseConnection instance;
     private Connection connection;
-    //private String url = "jdbc:mysql://mysql3000.mochahost.com/cse13316_bharat?useUnicode=true&characterEncoding=utf-8";
     private final String url = "jdbc:mysql://localhost/bharat?useUnicode=true&characterEncoding=utf-8";
-    //private String username = "cse13316_bharat";
     private String username = "root";
-    //private String password = "c?GmSPOGpvcX";
     private String password = null;
 
     /**

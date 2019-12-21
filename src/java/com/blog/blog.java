@@ -17,7 +17,6 @@ package com.blog;
 
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,11 +41,14 @@ public class blog extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException {
+
         validateInput input = new validateInput();
         getAllBlog blog = new getAllBlog();
         SupportingFunctionBlog function = new SupportingFunctionBlog();
 
         int blogId;
+        String page = "blog.jsp";
+        String gotException = null;
 
         if (request.getAttribute("id") != null) {
             blogId = (int) request.getAttribute("id");
@@ -60,36 +62,46 @@ public class blog extends HttpServlet {
             message = (String) request.getAttribute("message");
         }
 
-        List<blogPojo> blog1 = null;
+        List<blogPojoById> blogByBlogId = null;
+        List<blogPojo> blogByLimit = null;
 
-        if (blogId != 0) {
-            try {
+        List<blogPojo> blog1 = null;
+        try {
+            
+            if (blogId != 0) {
                 if (function.IsBlogPresentByBlogId(blogId)) {
-                    List<blogPojoById> blogByBlogId = blog.blogByBlogId(blogId);
-                    request.setAttribute("blogByBlogId", blogByBlogId);
+
+                    blogByBlogId = blog.blogByBlogId(blogId);
                     function.increateBlogViewByBlogId(blogId);
-                    List<blogPojo> blogByLimit = blog.blogByLimit(10);
-                    request.setAttribute("message", message);
-                    request.setAttribute("blogByLimit", blogByLimit);
-                    request.getRequestDispatcher("D_Blog.jsp").forward(request, response);
+                    blogByLimit = blog.blogByLimit(10);
+
+                    page = "D_Blog.jsp";
+
                 } else {
-                    message = "The blog you are looking for has been removed or delete";
+                    message = "The blog you are looking for has been removed or delete. Sorry for the inconvenience";
                     blog1 = blog.blog();
-                    request.setAttribute("message", message);
-                    request.setAttribute("blogList", blog1);
-                    request.getRequestDispatcher("blog.jsp").forward(request, response);
+
+                    page = "blog.jsp";
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            try {
+            } else {
                 blog1 = blog.blog();
-            } catch (SQLException ex) {
-                Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, ex);
+
+                page = "blog.jsp";
             }
+        } catch (Exception msg) {
+            gotException = "not null";
+            Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            request.setAttribute("gotException", gotException);
+
+            request.setAttribute("message", message);
+
+            request.setAttribute("blogByLimit", blogByLimit);
+            request.setAttribute("blogByBlogId", blogByBlogId);
+
             request.setAttribute("blogList", blog1);
-            request.getRequestDispatcher("blog.jsp").forward(request, response);
+
+            request.getRequestDispatcher(page).forward(request, response);
         }
     }
 
@@ -103,11 +115,13 @@ public class blog extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         try {
             processRequest(request, response);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     /**
@@ -120,10 +134,12 @@ public class blog extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         try {
             processRequest(request, response);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 }

@@ -39,6 +39,9 @@
                                     <c:if test="${message ne null}">
                                     <br> <p style="font-size: 25px;"><font style="color: red; font-size: 30px;">Specific Reason :</font> ${message}</p>
                                     </c:if>
+                                    <c:if test="${param.msg ne null and not empty param.msg}">
+                                    <br> <p style="font-size: 25px;"><font style="color: red; font-size: 30px;">Specific Reason :</font> ${param.msg}</p>
+                                    </c:if>
                                 <br> <p style="font-size: 25px;"><font style="color: red; font-size: 30px;">What you can do :</font> 
                                     <br><br> <font style="color: #00ff00">Process 1 : </font> You can report us with the proper link you are looking for by clicking on <a href="help.jsp">HELP PAGE</a></p>
 

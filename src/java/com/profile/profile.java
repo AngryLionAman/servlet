@@ -175,13 +175,9 @@ public class profile extends HttpServlet {
     public int GetUserId(HttpServletRequest request) throws SQLException, ClassNotFoundException, Exception {
 
         validateInput input = new validateInput();
-
         HttpSession session = request.getSession(false);
-
         profileDetailClassFile file = new profileDetailClassFile();
-
         int getParameterUserId = input.getInputInt(request.getParameter("id"));
-
         String getParameterUserName = input.getInputString(request.getParameter("user"));
 
         int getAttributeUserId;

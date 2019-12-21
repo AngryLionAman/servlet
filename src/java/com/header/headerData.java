@@ -59,6 +59,9 @@ public class headerData {
                 String fullName = rs.getString("firstname");
                 list.add(new headerPojo(user_Id, userName, fullName));
             }
+            rs.close();
+            ps.close();
+            con.close();
             return list;
         } catch (SQLException msg) {
             Logger.getLogger(headerData.class.getName()).log(Level.SEVERE, null, msg);
@@ -75,11 +78,7 @@ public class headerData {
                 } catch (SQLException msg) {
                 }
             }
-            if (con != null && !con.isClosed()) {
-                if (!con.getAutoCommit()) {
-                    con.commit();
-                    con.setAutoCommit(true);
-                }
+            if (con != null) {
                 try {
                     con.close();
                 } catch (SQLException msg) {

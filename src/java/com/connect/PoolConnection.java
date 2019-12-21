@@ -35,13 +35,10 @@ public class PoolConnection {
 
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static final String JDBC_DB_URL = "jdbc:mysql://localhost/bharat?useUnicode=true&characterEncoding=utf-8";
-    //private static final String JDBC_DB_URL = "jdbc:mysql://mysql3000.mochahost.com/cse13316_bharat?useUnicode=true&characterEncoding=utf-8";
 
     // JDBC Database Credentials
-     private static final String JDBC_USER = "root";
-    //private static final String JDBC_USER = "cse13316_bharat";
+    private static final String JDBC_USER = "root";
     private static final String JDBC_PASS = null;
-    //private static final String JDBC_PASS = "c?GmSPOGpvcX";
 
     private static GenericObjectPool gPool = null;
 
@@ -80,7 +77,6 @@ public class PoolConnection {
     }
 
     // This Method Is Used To Print The Connection Pool Status
-
     /**
      *
      */
