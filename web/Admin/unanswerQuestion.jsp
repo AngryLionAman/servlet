@@ -21,10 +21,9 @@
         <title>Unanswered question</title>
     </head>
     <body>
-        <h1>Hello, <c:if test="${sessionScope.userName ne null}">
-                ${sessionScope.userName}
-        </c:if>
-            <a href="adminModule.jsp">Home</a> <a href="<%=request.getContextPath()%>/Logout">Logout</a>
+        <h1>Hello, ${sessionScope.userName}
+            <a href="adminModule.jsp">Home</a>, <a href="<%=request.getContextPath()%>/Logout">Logout</a>
+            , <a href="<%=request.getContextPath()%>/Admin/unanswerQuestion.jsp">Refresh</a>
         </h1>
         <c:choose>
             <c:when test="${param.qId ne null and not empty param.qId}">

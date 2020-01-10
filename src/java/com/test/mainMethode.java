@@ -15,12 +15,12 @@
  */
 package com.test;
 
+import com.connect.DatabaseConnection;
+import com.connect.SingletonDBConnection;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.apache.tomcat.jdbc.pool.DataSource;
-import org.apache.tomcat.jdbc.pool.PoolProperties;
+import java.sql.Statement;
 
 /**
  *
@@ -28,52 +28,48 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
  */
 public class mainMethode {
 
+    /**
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
-        PoolProperties p = new PoolProperties();
-        p.setUrl("jdbc:mysql://localhost/bharat?useUnicode=true&characterEncoding=utf-8");
-        p.setDriverClassName("com.mysql.jdbc.Driver");
-        p.setUsername("root");
-        p.setPassword(null);
-        p.setJmxEnabled(true);
-        p.setTestWhileIdle(false);
-        p.setTestOnBorrow(true);
-        p.setValidationQuery("SELECT 1");
-        p.setTestOnReturn(false);
-        p.setValidationInterval(30000);
-        p.setTimeBetweenEvictionRunsMillis(30000);
-        p.setMaxActive(100);
-        p.setInitialSize(10);
-        p.setMaxWait(10000);
-        p.setRemoveAbandonedTimeout(60);
-        p.setMinEvictableIdleTimeMillis(30000);
-        p.setMinIdle(10);
-        p.setLogAbandoned(true);
-        p.setRemoveAbandoned(true);
-        p.setJdbcInterceptors(
-                "org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;"
-                + "org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer");
-        DataSource datasource = new DataSource();
-        datasource.setPoolProperties(p);
+
+        Connection conn;
+        Statement stmt = null;
+        ResultSet rs;
+        
+       
+        conn = SingletonDBConnection.getConnInst();
+
+        String strSQL = "SELECT id, UserName FROM newuser limit 10";
 
         try {
-            
-            Connection con = datasource.getConnection();
-            String sql = "select * from newuser limit 10";
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(strSQL);
 
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            
             while (rs.next()) {
-                System.out.println(rs.getInt("id") + "\n");
-                System.out.println(rs.getString("username") + "\n");
-                System.out.println(rs.getString("firstname") + "\n");
-                System.out.println(rs.getString("user_type") + "\n");
+                System.out.println(rs.getInt(1));
+                System.out.println(rs.getString(2));
             }
-            
-        } catch (SQLException msg) {
-            System.out.println(msg);
+        } catch (SQLException e) {
+            System.out.println(e);
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    System.out.println(e);
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    System.out.println(e);
+                }
+            }
         }
 
     }
-
 }

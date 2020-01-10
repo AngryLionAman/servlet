@@ -16,6 +16,7 @@
 package com.answer;
 
 import com.index.indexPage;
+import com.index.indexPageExtraFunction;
 import com.index.recentQuestionPojo;
 import com.string.validateInput;
 import java.io.IOException;
@@ -61,8 +62,13 @@ public class questions extends HttpServlet {
         indexPage page = new indexPage();
         getAnswer answer = new getAnswer();
         getQuestion q = new getQuestion();
+        indexPageExtraFunction function = new indexPageExtraFunction();
 
-        String message = "Got some unknown error. We already working on this, Please try agina or visit after some time";
+        String message = null;
+
+        if (request.getAttribute("message") != null) {
+            message = (String) request.getAttribute("message");
+        }
 
         List<SEOPojo> titleAndDescripiton = null;
         List<String> questionTag = null;
@@ -92,13 +98,40 @@ public class questions extends HttpServlet {
 
             if (questionId != 0) {
                 if (ques.IsQuestionPresentByQuestionId(questionId)) {
-                    message = null;
-                    titleAndDescripiton = seo.getTitleAndDescripiton(questionId);
-                    questionTag = seo.getQuestionTag(questionId);
-                    questionTagWithId = seo.getQuestionTagWithId(questionId);
+
+                    try {
+                        titleAndDescripiton = seo.getTitleAndDescripiton(questionId);
+                    } catch (Exception msg) {
+                        Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
+                    }
+
+                    try {
+                        questionTag = seo.getQuestionTag(questionId);
+                    } catch (Exception msg) {
+                        Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
+                    }
+
+                    try {
+                        questionTagWithId = seo.getQuestionTagWithId(questionId);
+                    } catch (Exception msg) {
+                        Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
+                    }
+
+                    try {
+                        relatedQuestionById = q.getRelatedQuestionById(questionId);
+                    } catch (ClassNotFoundException | SQLException msg) {
+                        Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
+                    }
+
                     question = page.getQuestion(questionId);
+
                     answerById = answer.getAnswerById(questionId);
-                    relatedQuestionById = q.getRelatedQuestionById(questionId);
+
+                    try {
+                        function.updateQuestionView(questionId);
+                    } catch (Exception msg) {
+                        Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
+                    }
 
                 } else {
                     message = "Question id not found in database, please try search option";
@@ -108,6 +141,7 @@ public class questions extends HttpServlet {
             }
         } catch (Exception msg) {
             gotException = "Not null";
+            message = "Got some unknown error. We already working on this, Please try agina or visit after some time";
             Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             request.setAttribute("gotException", gotException);

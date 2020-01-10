@@ -334,7 +334,7 @@ public class questionClass {
 
         try {
             con = ds.getConnection();
-            String sql = "select q_id from question where question = ? limit 1";
+            String sql = "SELECT q_id FROM question WHERE question = ? ORDER BY q_id DESC LIMIT 1";
             ps = con.prepareStatement(sql);
             ps.setString(1, question);
             rs = ps.executeQuery();

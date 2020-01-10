@@ -32,6 +32,12 @@ import javax.sql.DataSource;
  */
 public class FunClassFile {
 
+    /**
+     *
+     * @param recordPerPage
+     * @return
+     * @throws Exception
+     */
     public int totalNumberOfpage(int recordPerPage) throws Exception {
 
         SecondPoolConnection pc = new SecondPoolConnection();
@@ -88,6 +94,12 @@ public class FunClassFile {
         return 0;
     }
 
+    /**
+     *
+     * @param based_on
+     * @return
+     * @throws Exception
+     */
     public List<funPojo> getFunDataByBasedOn(String based_on) throws Exception {
 
         List<funPojo> list = new ArrayList<>();
@@ -148,6 +160,12 @@ public class FunClassFile {
         return null;
     }
 
+    /**
+     *
+     * @param type_
+     * @return
+     * @throws Exception
+     */
     public List<funPojo> getFunDataByType(String type_) throws Exception {
 
         List<funPojo> list = new ArrayList<>();
@@ -208,6 +226,12 @@ public class FunClassFile {
         return null;
     }
 
+    /**
+     *
+     * @param category_
+     * @return
+     * @throws Exception
+     */
     public List<funPojo> getFunDataByCategory(String category_) throws Exception {
 
         List<funPojo> list = new ArrayList<>();
@@ -268,6 +292,13 @@ public class FunClassFile {
         return null;
     }
 
+    /**
+     *
+     * @param pageNo
+     * @param recordPerPage
+     * @return
+     * @throws Exception
+     */
     public List<funPojo> getRandomFunData(int pageNo, int recordPerPage) throws Exception {
 
         List<funPojo> list = new ArrayList<>();

@@ -15,8 +15,11 @@
  */
 package com.blog;
 
+import com.comments.BlogCommentPojoFile;
+import com.comments.GetComment;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,6 +48,7 @@ public class blog extends HttpServlet {
         validateInput input = new validateInput();
         getAllBlog blog = new getAllBlog();
         SupportingFunctionBlog function = new SupportingFunctionBlog();
+        GetComment comment = new GetComment();
 
         int blogId;
         String page = "blog.jsp";
@@ -66,29 +70,42 @@ public class blog extends HttpServlet {
         List<blogPojo> blogByLimit = null;
 
         List<blogPojo> blog1 = null;
+        List<BlogCommentPojoFile> commentOfBlogByBlogId = null;
+        
         try {
-            
+
             if (blogId != 0) {
                 if (function.IsBlogPresentByBlogId(blogId)) {
 
                     blogByBlogId = blog.blogByBlogId(blogId);
-                    function.increateBlogViewByBlogId(blogId);
-                    blogByLimit = blog.blogByLimit(10);
+                    try {
+                        function.increateBlogViewByBlogId(blogId);
+                    } catch (ClassNotFoundException | SQLException msg) {
+                        Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
+                    }
+
+                    try {
+                        blogByLimit = blog.blogByLimit(10);
+                    } catch (ClassNotFoundException | SQLException msg) {
+                        Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
+                    }
+
+                    try {
+                        commentOfBlogByBlogId = comment.getCommentOfBlogByBlogId(blogId);
+                    } catch (ClassNotFoundException | SQLException msg) {
+                        Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
+                    }
 
                     page = "D_Blog.jsp";
 
                 } else {
                     message = "The blog you are looking for has been removed or delete. Sorry for the inconvenience";
                     blog1 = blog.blog();
-
-                    page = "blog.jsp";
                 }
             } else {
                 blog1 = blog.blog();
-
-                page = "blog.jsp";
             }
-        } catch (Exception msg) {
+        } catch (ClassNotFoundException | SQLException msg) {
             gotException = "not null";
             Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
@@ -100,6 +117,8 @@ public class blog extends HttpServlet {
             request.setAttribute("blogByBlogId", blogByBlogId);
 
             request.setAttribute("blogList", blog1);
+
+            request.setAttribute("commentOfBlogByBlogId", commentOfBlogByBlogId);
 
             request.getRequestDispatcher(page).forward(request, response);
         }

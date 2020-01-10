@@ -15,13 +15,9 @@
  */
 package com.optionalQuestion;
 
-import com.connect.DatabaseConnection;
+import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,28 +32,79 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class displayOptionalQuestion extends HttpServlet {
 
-    private String getInputString(String parameter) {
-        String val;
-        if (parameter.isEmpty()) {
-            val = "all";
-        } else {
-            val = parameter.trim();
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        validateInput input = new validateInput();
+        DisplayOptionalQuestionClassFile file = new DisplayOptionalQuestionClassFile();
+        supportingFunction function = new supportingFunction();
+
+        List<optionalQuestionPojo> optionalQuestionByLimit = null;
+        List<String> onTopicName = null;
+        List<Integer> totalNumberOfOption = null;
+
+        int totalNoOfPage = 0;
+
+        try {
+            final int recordPerPage = 30;
+
+            int pageNo = 0;
+            try {
+                pageNo = input.getInputInt(request.getParameter("p"));
+            } catch (Exception msg) {
+                Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, msg);
+            }
+
+            int numOfoption = 0;
+            try {
+                numOfoption = input.getInputInt(request.getParameter("option"));
+            } catch (Exception msg) {
+                Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, msg);
+            }
+
+            String basedOn = null;
+            try {
+                basedOn = input.getInputString(request.getParameter("onTopic"));
+            } catch (Exception msg) {
+                Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, msg);
+            }
+
+            try {
+                onTopicName = function.onTopicName();
+            } catch (ClassNotFoundException | SQLException msg) {
+                Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, msg);
+            }
+
+            try {
+                totalNumberOfOption = function.totalNumberOfOption();
+            } catch (ClassNotFoundException | SQLException msg) {
+                Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, msg);
+            }
+
+            if (numOfoption != 0) {
+                optionalQuestionByLimit = file.getOptionalQuestionByNoOfPage(numOfoption, pageNo, recordPerPage);
+                totalNoOfPage = file.getTotalNoOfPageByNoOfPage(recordPerPage, numOfoption);
+            } else if (basedOn != null && !"all".equalsIgnoreCase(basedOn)) {
+                optionalQuestionByLimit = file.getOptionalQuestionByBasedOn(basedOn, pageNo, recordPerPage);
+                totalNoOfPage = file.getTotalNoOfPageByBasedOn(recordPerPage, basedOn);
+            } else {
+                optionalQuestionByLimit = file.getOptionalQuestionByLimit(pageNo, recordPerPage);
+                totalNoOfPage = file.getTotalNoOfPage(recordPerPage);
+            }
+
+        } catch (ClassNotFoundException | SQLException msg) {
+            Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            request.setAttribute("totalNumberOfOption", totalNumberOfOption);
+            request.setAttribute("onTopicName", onTopicName);
+            request.setAttribute("list", optionalQuestionByLimit);
+            request.setAttribute("totalNumberOfpage", (int) totalNoOfPage);
+            request.getRequestDispatcher("optionalq.jsp").forward(request, response);
         }
-        return val;
     }
 
-    private int getInput(String pageNo) {
-        int pageno = 1;
-        if (pageNo == null) {
-            return 1;
-        }
-        if (pageNo.isEmpty()) {
-            return 1;
-        }
-        if (!pageNo.isEmpty()) {
-            pageno = Integer.parseInt(pageNo);
-        }
-        return pageno;
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        processRequest(req, resp);
     }
 
     /**
@@ -68,91 +115,7 @@ public class displayOptionalQuestion extends HttpServlet {
      * @throws IOException
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            DatabaseConnection dc = new DatabaseConnection();
-            List<optionalQuestionPojo> list = new ArrayList<>();
-            Connection con = null;
-            PreparedStatement ps = null;
-            ResultSet rs = null;
-
-            int pageNo = getInput(request.getParameter("p"));
-            String _numofOption = getInputString(request.getParameter("option") == null ? "" : request.getParameter("option"));
-            String _basedOn = getInputString(request.getParameter("onTopic") == null ? "" : request.getParameter("onTopic"));
-            int recordPerPage = 30;
-            float totalNumberOfpage = 0;
-            int startPage = (pageNo * recordPerPage) - recordPerPage;
-
-            try {
-                con = dc.getConnection();
-                String sql;
-                if (_numofOption.equalsIgnoreCase("all") && _basedOn.equalsIgnoreCase("all")) {
-                    sql = "select id,question,answer,on_topic,posted_by,total_option from optional_question order by rand() limit "+startPage+","+recordPerPage;
-                } else {
-                    sql = "select id,question,answer,on_topic,posted_by,total_option from optional_question";
-                    if (!_numofOption.equalsIgnoreCase("all")) {
-                        sql += " where total_option = '" + _numofOption + "'";
-                    }
-                    if (!_basedOn.equalsIgnoreCase("all")) {
-                        sql += " where on_topic = '" + _basedOn + "'";
-                    }
-                }
-                ps = con.prepareStatement(sql);
-                rs = ps.executeQuery();
-                while (rs.next()) {
-                    int id = rs.getInt("id");
-                    String question = rs.getString("question");
-                    String correctAnswer = rs.getString("answer");
-                    String onTopic = rs.getString("on_topic");
-                    int postedBy = rs.getInt("posted_by");
-                    int totalOption = rs.getInt("total_option");
-                    list.add(new optionalQuestionPojo(id, question, correctAnswer, onTopic, postedBy, totalOption));
-                }
-                sql = "select count(*) as cnt from optional_question";
-                ps = con.prepareStatement(sql);
-                rs = ps.executeQuery();
-                while (rs.next()) {
-                    totalNumberOfpage = rs.getInt("cnt");
-                }
-                totalNumberOfpage = totalNumberOfpage / recordPerPage;
-                int newnumber = (int) totalNumberOfpage;
-                if (totalNumberOfpage > newnumber) {
-                    totalNumberOfpage = totalNumberOfpage + 1;
-                }
-                request.setAttribute("list", list);
-                if (_numofOption.equalsIgnoreCase("all") && _basedOn.equalsIgnoreCase("all")) {
-                    request.setAttribute("totalNumberOfpage", (int) totalNumberOfpage);
-                }
-                request.getRequestDispatcher("optionalq.jsp").forward(request, response);
-            } catch (SQLException msg) {
-                throw msg;
-            } finally {
-                if (rs != null) {
-                    try {
-                        rs.close();
-                    } catch (SQLException msg) {
-
-                    }
-                }
-                if (ps != null) {
-                    try {
-                        ps.close();
-                    } catch (SQLException msg) {
-
-                    }
-                }
-                if (con != null) {
-                    try {
-                        con.close();
-                    } catch (SQLException msg) {
-
-                    }
-                }
-            }
-        } catch (SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        processRequest(request, response);
     }
-
 }

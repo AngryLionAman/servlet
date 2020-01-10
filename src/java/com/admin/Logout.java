@@ -38,8 +38,11 @@ public class Logout extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        session.invalidate();
-        response.sendRedirect("Admin/visit.jsp?msg=Successfully logout");
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        request.setAttribute("message", "Logged out");
+        request.getRequestDispatcher("Admin/visit.jsp").forward(request, response);
     }
 }

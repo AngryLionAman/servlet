@@ -38,7 +38,7 @@
                                                     </c:when>
                                                     <c:when test="${n.notification_type eq 'followed_by'}">
                                                         <div class="boxHeading">
-                                                            <a href="profile.jsp?user=${n.userFirstName}&ID=${n.notificationCreatedBy}&c_id=${n.comment_id}"> <b>${n.userFirstName}</b> started following you</a>  
+                                                            <a href="profile?user=${n.userFirstName}&id=${n.notificationCreatedBy}&c_id=${n.comment_id}"> <b>${n.userFirstName}</b> started following you</a>  
                                                         </div>
                                                     </c:when>
                                                     <c:when test="${n.notification_type eq 'comment_on_question'}">
@@ -58,7 +58,37 @@
                                                     </c:when>
                                                     <c:when test="${n.notification_type eq 'comment_on_Profile'}">
                                                         <div class="boxHeading">  
-                                                            <a href="profile.jsp?ID=${sessionScope.Session_id_of_user}&c_id=${n.comment_id}"> <b>${n.userFirstName}</b> Commented on You profile</a>
+                                                            <a href="profile?id=${sessionScope.Session_id_of_user}&c_id=${n.comment_id}"> <b>${n.userFirstName}</b> Commented on You profile</a>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:when test="${n.notification_type eq 'approvel_for_question'}">
+                                                        <div class="boxHeading">  
+                                                            <a href="approval_for_question?q_id=${n.approval_for_question}&c_id=${n.comment_id}"> <b>${n.userFirstName}</b> modified your question</a>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:when test="${n.notification_type eq 'modified_question_approved'}">
+                                                        <div class="boxHeading">  
+                                                            <a href="questions?id=${n.approval_for_question}&c_id=${n.comment_id}">Your modified question has been approved</a>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:when test="${n.notification_type eq 'question_approved_by_user'}">
+                                                        <div class="boxHeading">  
+                                                            <a href="questions?id=${n.approval_for_question}&c_id=${n.comment_id}">Your question has been approved by user, Approval is pending by the admin</a>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:when test="${n.notification_type eq 'question_approvel_rejected_by_user'}">
+                                                        <div class="boxHeading">  
+                                                            <a href="questions?id=${n.approval_for_question}&c_id=${n.comment_id}">Your modification request for the question has been rejected by user, Wait for administrator action</a>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:when test="${n.notification_type eq 'question_approvel_rejected_by_admin'}">
+                                                        <div class="boxHeading">  
+                                                            <a href="questions?id=${n.approval_for_question}&c_id=${n.comment_id}">Your modification request for the question has been rejected by admin, Reason not specified. Just wait for some time , we will let you know the reason of rejection</a>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:when test="${n.notification_type eq 'question_approved_by_admin'}">
+                                                        <div class="boxHeading">  
+                                                            <a href="questions?id=${n.approval_for_question}&c_id=${n.comment_id}">Your question has been approved by Admin, Approval is pending by the User</a>
                                                         </div>
                                                     </c:when>
                                                     <c:otherwise>

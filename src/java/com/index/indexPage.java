@@ -30,8 +30,7 @@ public class indexPage {
      * @throws Exception
      */
     public List<recentQuestionPojo> getQuestion(int qId) throws SQLException, Exception {
-
-        indexPageExtraFunction function = new indexPageExtraFunction();
+        
         DatabaseConnection connection = new DatabaseConnection();
 
         time time = new time();
@@ -61,7 +60,6 @@ public class indexPage {
                 String higherEdu = rs.getString("user.higher_edu");
                 int userId = rs.getInt("user.id");
                 int totalAnswer = 0;//totalAnswer(questionId); Getting null pointer exception here
-               // function.updateQuestionView(questionId); also getting the null pointer exception thats why closed for moment
                 recentQuestionPojo recentQuestionPojo = new recentQuestionPojo(totalView, date, days, questionId, question, vote, fullName, userName, userType, higherEdu, userId, totalAnswer);
                 list.add(recentQuestionPojo);
             }

@@ -18,7 +18,6 @@ package com.answer.user.saveanswer;
 import com.notifications.CreateNotification;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -51,39 +50,47 @@ public class save_answer_servlet extends HttpServlet {
         SaveAnswer saveAnswer = new SaveAnswer();
         CreateNotification notification = new CreateNotification();
 
-        int sessionUserId = input.getInputInt(request.getParameter("_id_of_user"));
-        int questionId = input.getInputInt(request.getParameter("q_id"));
-        int id_of_user_who_posted_question = input.getInputInt(request.getParameter("id_of_user_who_posted_question"));
-        String answer = input.getInputString(request.getParameter("answer"));
-
         String message = null;
+        int questionId = 0;
 
-        if (sessionUserId != 0 && questionId != 0 && answer != null) {
-            try {
-                if (!saveAnswer.SaveAnswerByQuestionIdAndIdUserId(sessionUserId, questionId, answer)) {
-                    if (id_of_user_who_posted_question != 0) {
-                        if (!notification.UserGotAnswerOfQuestion(sessionUserId, id_of_user_who_posted_question, questionId)) {
-                            message = "Answer has been posted and notification has been successfully sent to user";
+        try {
+
+            int userId = input.getInputInt(request.getParameter("_id_of_user"));
+            questionId = input.getInputInt(request.getParameter("q_id"));
+            int id_of_user_who_posted_question = input.getInputInt(request.getParameter("id_of_user_who_posted_question"));
+            String answer = input.getInputString(request.getParameter("answer"));
+
+            if (questionId != 0 && answer != null) {
+                if (userId != 0) {
+                    if (!saveAnswer.SaveAnswerByQuestionIdAndIdUserId(userId, questionId, answer, true)) {
+                        if (id_of_user_who_posted_question != 0) {
+                            if (!notification.UserGotAnswerOfQuestion(userId, id_of_user_who_posted_question, questionId)) {
+                                message = "Answer has been posted and notification has been successfully sent to user";
+                            } else {
+                                message = "Answer has been posted but notification not sent to user";
+                            }
                         } else {
-                            message = "Answer has been posted but notification not sent to user";
+                            message = "Answer has been posted, Notification will not generate for the guest post";
                         }
                     } else {
-                        message = "Answer has been posted, Notification will not generate for the guest post";
+                        message = "Answer not saved, Please try agina or report to admin";
                     }
                 } else {
-                    message = "Answer not saved, Got unknown error";
+                    if (!saveAnswer.SaveAnswerByQuestionIdAndIdUserId(userId, questionId, answer, false)) {
+                        message = "Dear user, Your answer has been saved. it will visible after admin approval";
+                    } else {
+                        message = "Dear Guest user, Your answer not saved. Please try again or report to admin";
+                    }
                 }
-            } catch (SQLException | ClassNotFoundException ex) {
-                Logger.getLogger(save_answer_servlet.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(save_answer_servlet.class.getName()).log(Level.SEVERE, null, ex);
+            } else {
+                message = "Question id is zero, or Answer is empty. Please try agian or contact to adminstrator";
             }
-        } else {
-            message = "Bad argument, Answer not posted. Please try again";
+        } catch (Exception msg) {
+            Logger.getLogger(save_answer_servlet.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            request.setAttribute("message", message);
+            request.setAttribute("id", questionId);
+            request.getRequestDispatcher("questions").forward(request, response);
         }
-
-        request.setAttribute("message", message);
-        request.setAttribute("id", questionId);
-        request.getRequestDispatcher("questions").forward(request, response);
     }
 }

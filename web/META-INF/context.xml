@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/inquiryhere">
+<Context path="/inquiryhere" docBase="inquiryhere" debug="5" reloadable="true" crossContext="true">
     <Resource name="jdbc/mydatabase" 
               auth="Container" 
               type="javax.sql.DataSource" 
-              maxActive="100" 
-              maxIdle="100"
-              minIdle="10" 
-              maxWait="10000"
-              driverClassName="com.mysql.jdbc.Driver"               
+              driverClassName="com.mysql.jdbc.Driver" 
+              maxActive="20" 
+              maxIdle="10" 
+              maxWait="-1"              
               username="root" 
               password=""               
               url="jdbc:mysql://localhost/bharat?useUnicode=true&amp;characterEncoding=utf-8"               

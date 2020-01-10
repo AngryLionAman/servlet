@@ -6,7 +6,8 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<c:if test="${sessionScope.adminUserId eq null}">    
+<c:if test="${sessionScope.adminUserId eq null}">
+    <c:set scope="application" var="message" value="Session is not valid"/>    
     <c:redirect url="visit.jsp?msg=Session is not valid"/>
 </c:if>
 <!DOCTYPE html>
@@ -20,9 +21,7 @@
          <c:if test="${param.msg ne null}">
            <center> <h1 style="color: green;">${param.msg}</h1></center>
         </c:if>
-        <h1>Hello, <c:if test="${sessionScope.userName ne null}">
-                ${sessionScope.userName}
-        </c:if>
+        <h1>Hello,   ${sessionScope.userName}
             <a href="adminModule.jsp">Home</a> <a href="<%=request.getContextPath()%>/Logout">Logout</a>
         </h1>
         <form action="<%=request.getContextPath()%>/saveQuestion" name="postQuestion" method="post">

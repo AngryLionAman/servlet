@@ -72,27 +72,38 @@ public class profile extends HttpServlet {
 
         String message = null;
         String gotException = null;
+        String path = "profile.jsp";
 
         try {
-            int userId = GetUserId(request);
+            int userId = 0;
 
-            String tab;
+            try {
+                userId = GetUserId(request);
+            } catch (Exception msg) {
+                Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+            }
 
-            if (request.getAttribute("tab") != null) {
-                tab = (String) request.getAttribute("tab");
-            } else {
-                if (null == request.getParameter("tab")) {
-                    tab = "question";
+            String tab = "question";
+
+            try {
+                if (request.getAttribute("tab") != null) {
+                    tab = (String) request.getAttribute("tab");
                 } else {
-                    switch (request.getParameter("tab")) {
-                        case "":
-                            tab = "question";
-                            break;
-                        default:
-                            tab = input.getInputString(request.getParameter("tab"));
-                            break;
+                    if (null == request.getParameter("tab")) {
+                        tab = "question";
+                    } else {
+                        switch (request.getParameter("tab")) {
+                            case "":
+                                tab = "question";
+                                break;
+                            default:
+                                tab = input.getInputString(request.getParameter("tab"));
+                                break;
+                        }
                     }
                 }
+            } catch (Exception msg) {
+                Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
             }
 
             if (request.getAttribute("message") != null) {
@@ -101,49 +112,100 @@ public class profile extends HttpServlet {
 
             if (userId != 0) {
 
-                GetUserDetailByUserId = file.GetUserDetailByUserId(userId);
-                supportingClass.UpdateProfileViewBy1ByUserId(userId);
-                CountRowByUserIdController = supportingClass.CountRowByUserIdController(userId);
-                GetCommentByProfileId = comment.GetCommentByProfileId(userId);
+                try {
+                    GetUserDetailByUserId = file.GetUserDetailByUserId(userId);
+                } catch (ClassNotFoundException | SQLException msg) {
+                    Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+                }
+                try {
+                    supportingClass.UpdateProfileViewBy1ByUserId(userId);
+                } catch (ClassNotFoundException | SQLException msg) {
+                    Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+                }
+
+                try {
+                    CountRowByUserIdController = supportingClass.CountRowByUserIdController(userId);
+                } catch (ClassNotFoundException | SQLException msg) {
+                    Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+                }
+
+                try {
+                    GetCommentByProfileId = comment.GetCommentByProfileId(userId);
+                } catch (ClassNotFoundException | SQLException msg) {
+                    Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+                }
 
                 switch (tab) {
                     case "question":
-                        GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(userId);
+                        try {
+                            GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(userId);
+                        } catch (ClassNotFoundException | SQLException msg) {
+                            Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+                        }
+
                         break;
 
                     case "answer":
-                        GetTotalAnswerPostedByUserId = supportingClass.GetTotalAnswerPostedByUserId(userId);
+                        try {
+                            GetTotalAnswerPostedByUserId = supportingClass.GetTotalAnswerPostedByUserId(userId);
+                        } catch (ClassNotFoundException | SQLException msg) {
+                            Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+                        }
+
                         break;
 
                     case "topic":
-                        GetTotalTopicFollowedByUserId = supportingClass.GetTotalTopicFollowedByUserId(userId);
+                        try {
+                            GetTotalTopicFollowedByUserId = supportingClass.GetTotalTopicFollowedByUserId(userId);
+                        } catch (ClassNotFoundException | SQLException msg) {
+                            Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+                        }
+
                         break;
 
                     case "following":
-                        GetTotalFollowingByUserId = supportingClass.GetTotalFollowingByUserId(userId);
+                        try {
+                            GetTotalFollowingByUserId = supportingClass.GetTotalFollowingByUserId(userId);
+                        } catch (ClassNotFoundException | SQLException msg) {
+                            Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+                        }
+
                         break;
 
                     case "followers":
-                        GetTotalFollowersByUserId = supportingClass.GetTotalFollowersByUserId(userId);
+                        try {
+                            GetTotalFollowersByUserId = supportingClass.GetTotalFollowersByUserId(userId);
+                        } catch (ClassNotFoundException | SQLException msg) {
+                            Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+                        }
+
                         break;
 
                     case "blog":
-                        GetTotalBlogByUserId = supportingClass.GetTotalBlogByUserId(userId);
+                        try {
+                            GetTotalBlogByUserId = supportingClass.GetTotalBlogByUserId(userId);
+                        } catch (ClassNotFoundException | SQLException msg) {
+                            Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+                        }
+
                         break;
 
                     default:
-                        GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(userId);
+                        try {
+                            GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(userId);
+                        } catch (ClassNotFoundException | SQLException msg) {
+                            Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+                        }
+
                         break;
                 }
-                
+                path = "profile.jsp";
             } else {
                 message = "The user you are looking for is not present in our database,"
                         + " Or may you entring the invalid argument, Please try search option....";
-                //request.setAttribute("message", message);
-                //request.getRequestDispatcher("Error.jsp").forward(request, response);
-                //return;
+                path = "Error.jsp";
             }
-            
+
         } catch (Exception msg) {
             gotException = "not null";
             Logger.getLogger(profile.class.getName()).log(Level.SEVERE, message, msg);
@@ -160,7 +222,7 @@ public class profile extends HttpServlet {
             request.setAttribute("GetTotalFollowingByUserId", GetTotalFollowingByUserId);
             request.setAttribute("GetTotalBlogByUserId", GetTotalBlogByUserId);
             request.setAttribute("GetCommentByProfileId", GetCommentByProfileId);
-            request.getRequestDispatcher("profile.jsp").forward(request, response);
+            request.getRequestDispatcher(path).forward(request, response);
         }
     }
 

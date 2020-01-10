@@ -15,7 +15,9 @@
  */
 package com.test;
 
+import com.connect.DatabaseConnection;
 import com.guest.GuestUser;
+import java.sql.Connection;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 
@@ -25,6 +27,9 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
  */
 public class NewClass {
 
+    /**
+     *
+     */
     public void con() {
         PoolProperties p = new PoolProperties();
         p.setUrl("jdbc:mysql://localhost/bharat?useUnicode=true&characterEncoding=utf-8");
@@ -59,9 +64,12 @@ public class NewClass {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        GuestUser user = new GuestUser();
-        String GenreateGuestName = user.GenreateGuestName(null);
-        System.out.println(GenreateGuestName);
+        DatabaseConnection dc = new DatabaseConnection();
+        DataSource ds = (DataSource) dc.getConnection();
 
+        DatabaseConnection dc1 = DatabaseConnection.getInstance();
+        DataSource ds1 = (DataSource) dc1.getConnection();
+
+        Connection c = (Connection) DatabaseConnection.getInstance();
     }
 }

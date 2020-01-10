@@ -38,11 +38,9 @@ public class getTopic {
      * @throws Exception
      */
     public HashMap<Integer, String> getTopicDetailByRefId(int topicid) throws SQLException, Exception {
-        //indexPageExtraFunction function = new indexPageExtraFunction();
         
         DatabaseConnection ds = new DatabaseConnection();
-
-        //List<topicPojo> list = new ArrayList<>();
+        
         HashMap<Integer, String> map = new HashMap<>();
 
         Connection con = null;
@@ -50,7 +48,7 @@ public class getTopic {
         ResultSet rs = null;
 
         try {
-            String sql = "select DISTINCT t.unique_id,t.topic_name from topic t inner join question_topic_tag qtt on t.unique_id=qtt.tag_id where question_id IN (select question_id from question_topic_tag where tag_id= ? ) and t.unique_id is not null and t.topic_name is not null group by t.unique_id limit 30";
+            String sql = "SELECT DISTINCT t.unique_id,t.topic_name FROM topic t INNER JOIN question_topic_tag qtt ON t.unique_id=qtt.tag_id WHERE question_id IN (SELECT question_id FROM question_topic_tag WHERE tag_id = ? ) AND t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL AND crawl = 1 GROUP BY t.unique_id LIMIT 30";
             con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, topicid);

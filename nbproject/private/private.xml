@@ -3,16 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/question/Question.java</file>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/profile/profile.java</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/answer/getAnswer.java</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/answer/getAnswerPojo.java</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/admin/answer/admin_answer_approval.java</file>
             <file>file:/D:/Project/inquiryhere.com/web/Answer.jsp</file>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/fun/fun.java</file>
-            <file>file:/D:/Project/inquiryhere.com/web/index.jsp</file>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/question/GetAllQuestionClass.java</file>
-            <file>file:/D:/Project/inquiryhere.com/web/profile.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/answer/user/saveanswer/SaveAnswer.java</file>
+            <file>file:/D:/Project/inquiryhere.com/web/Admin/adminModule.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/web/Admin/approva_by_admin_answer.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/answer/user/saveanswer/save_answer_servlet.java</file>
             <file>file:/D:/Project/inquiryhere.com/src/java/com/answer/questions.java</file>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/index/index.java</file>
-            <file>file:/D:/Project/inquiryhere.com/web/fun.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/notifications/CreateNotification.java</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/admin/answer/AnswerApprovalAdminClassFile.java</file>
         </group>
     </open-files>
 </project-private>

@@ -18,6 +18,7 @@ package com.topic;
 import com.question.getQuestionByTopicId;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -33,13 +34,21 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class topic extends HttpServlet {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     * @throws Exception
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, Exception {
 
         validateInput input = new validateInput();
         topicDetail detailForSeo = new topicDetail();
         getQuestionByTopicId byTopicId = new getQuestionByTopicId();
-        getTopic topic = new getTopic();
+        getTopic topicObj = new getTopic();
         getTotalnumberOfColum colum = new getTotalnumberOfColum();
         supportingFunctionTopic ft = new supportingFunctionTopic();
 
@@ -55,17 +64,50 @@ public class topic extends HttpServlet {
 
         try {
 
-            int pageNo = input.getInputInt(request.getParameter("p"));
-            int topicId = input.getInputInt(request.getParameter("id"));
+            int pageNo = 0;
+
+            try {
+                pageNo = input.getInputInt(request.getParameter("p"));
+            } catch (Exception msg) {
+                Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
+            }
+
+            int topicId = 0;
+
+            try {
+                topicId = input.getInputInt(request.getParameter("id"));
+            } catch (Exception msg) {
+                Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
+            }
 
             if (topicId != 0) {
                 validInput = "Got valid input";
 
                 if (ft.isTopicPresentByTopicId(topicId)) {
-                    topicDetailForSeo = detailForSeo.topic(topicId);
-                    allQuestionByTopicId = byTopicId.getAllQuestionByTopicId(topicId, pageNo, recoredPerPage);
-                    totalNumberOfpage = colum.totalNumberOfPageOfTopicByTopicId(topicId, recoredPerPage);
-                    topicDetailByRefId = topic.getTopicDetailByRefId(topicId);
+                    try {
+                        topicDetailForSeo = detailForSeo.topic(topicId);
+                    } catch (Exception msg) {
+                        Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
+                    }
+
+                    try {
+                        allQuestionByTopicId = byTopicId.getAllQuestionByTopicId(topicId, pageNo, recoredPerPage);
+                    } catch (ClassNotFoundException | SQLException msg) {
+                        Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
+                    }
+
+                    try {
+                        totalNumberOfpage = colum.totalNumberOfPageOfTopicByTopicId(topicId, recoredPerPage);
+                    } catch (ClassNotFoundException | SQLException msg) {
+                        Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
+                    }
+
+                    try {
+                        topicDetailByRefId = topicObj.getTopicDetailByRefId(topicId);
+                    } catch (ClassNotFoundException | SQLException msg) {
+                        Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
+                    }
+
                 } else {
                     message = "Topic not found in database or location has been changed, please try searching option";
                 }
@@ -92,6 +134,13 @@ public class topic extends HttpServlet {
 
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
@@ -109,8 +158,7 @@ public class topic extends HttpServlet {
      * @throws IOException
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             processRequest(request, response);
         } catch (Exception ex) {

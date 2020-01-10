@@ -16,7 +16,6 @@
 package com.answer;
 
 import com.connect.DatabaseConnection;
-import com.connect.PoolConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  *
@@ -50,10 +48,16 @@ public class comments {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            String sql = "SELECT unique_id as commentid,comments,date_format(time,\"%e %b %Y,%h:%i%p\") as date,user_id as commentpostedbyid, newuser.username as username,newuser.firstname as fullname FROM comments inner join newuser on newuser.id = comments.user_id WHERE ans_id = ? order by 1 desc";
+            String sql = "SELECT unique_id as commentid,comments,date_format(time,\"%e %b %Y,%h:%i%p\") as date,"
+                    + "user_id as commentpostedbyid, newuser.username as username,newuser.firstname as fullname, newuser.user_type AS usertype "
+                    + "FROM comments inner join newuser on newuser.id = comments.user_id "
+                    + "WHERE content_id = ? AND comment_type = ? AND approved_by_admin = ? AND approved_by_user = ? order by 1 desc";
             con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, answerId);
+            ps.setString(2, "commet_on_answer");
+            ps.setBoolean(3, true);
+            ps.setBoolean(4, true);
             rs = ps.executeQuery();
             while(rs.next()){
                int commentId = rs.getInt("commentid");
@@ -62,7 +66,9 @@ public class comments {
                int commentPostedById = rs.getInt("commentpostedbyid");
                String userName = rs.getString("username");
                String fullName = rs.getString("fullname");
-               list.add(new getAnswerCommentPojo(commentId, comments, date, commentPostedById, userName, fullName));
+               String userType = rs.getString("usertype");
+               
+               list.add(new getAnswerCommentPojo(commentId, comments, date, commentPostedById, userName, fullName,userType));
             }
             return list;
         }catch(SQLException msg){

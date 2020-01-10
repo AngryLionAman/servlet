@@ -1,0 +1,373 @@
+/*
+ * Copyright 2019 AngryLion.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.approval.user;
+
+import com.connect.DatabaseConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author AngryLion
+ */
+public class ActionApprovalClassFile {
+
+    /**
+     *
+     * @param newQuestionId
+     * @param message
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public boolean questionRequestRejectedByAdmin(int newQuestionId, String message) throws SQLException, ClassNotFoundException {
+
+        DatabaseConnection dc = new DatabaseConnection();
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = dc.getConnection();
+            String sql = "UPDATE modified_question_table SET rejected_by_admin = 1, message = ? WHERE unique_id = ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, message);
+            ps.setInt(2, newQuestionId);
+            return ps.execute();
+        } catch (SQLException msg) {
+            Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @param newQuestionId
+     * @param message
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public boolean questionRequestRejectedByUser(int newQuestionId, String message) throws SQLException, ClassNotFoundException {
+
+        DatabaseConnection dc = new DatabaseConnection();
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = dc.getConnection();
+            String sql = "UPDATE modified_question_table SET rejected_by_user = 1, message = ? WHERE unique_id = ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, message);
+            ps.setInt(2, newQuestionId);
+            return ps.execute();
+        } catch (SQLException msg) {
+            Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @param newQuestionId
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public int whoModifiedTheQuestion(int newQuestionId) throws SQLException, ClassNotFoundException {
+
+        DatabaseConnection dc = new DatabaseConnection();
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = dc.getConnection();
+            String sql = "SELECT modified_question_by AS userid FROM modified_question_table WHERE unique_id = ? LIMIT 1";
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, newQuestionId);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getInt("userid");
+            }
+        } catch (SQLException msg) {
+            Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+        }
+        return 0;
+
+    }
+
+    /**
+     *
+     * @param oldQuestionId
+     * @param newQuestionId
+     * @param message
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public boolean replaceOldQuestionWithNewQuestionAndNewQuestionWithNullAndChangePermission(int oldQuestionId, int newQuestionId, String message) throws SQLException, ClassNotFoundException {
+        DatabaseConnection dc = new DatabaseConnection();
+
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        try {
+            con = dc.getConnection();
+
+            String sql = "UPDATE question q INNER JOIN modified_question_table n ON q.q_id = n.question_id SET q.question = n.modified_question , n.modified_question = NULL,n.approved_by_user = 1,n.message = ? WHERE q.q_id = ?  AND n.unique_id = ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, message);
+            ps.setInt(2, oldQuestionId);
+            ps.setInt(3, newQuestionId);
+            
+            return ps.execute();
+
+        } catch (SQLException msg) {
+            Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @param newQuestionId
+     * @param message
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+
+    public boolean changePermissionOfQuestionByAdmin(int newQuestionId, String message) throws SQLException, ClassNotFoundException {
+        DatabaseConnection dc = new DatabaseConnection();
+
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        try {
+            con = dc.getConnection();
+
+            String sql = "UPDATE modified_question_table SET approved_by_admin = 1,message = ? WHERE unique_id = ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, message);
+            ps.setInt(2, newQuestionId);
+            return ps.execute();
+        } catch (SQLException msg) {
+            Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @param newQuestionId
+     * @param message
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public boolean changePermissionOfQuestionByUser(int newQuestionId, String message) throws SQLException, ClassNotFoundException {
+        DatabaseConnection dc = new DatabaseConnection();
+
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        try {
+            con = dc.getConnection();
+
+            String sql = "UPDATE modified_question_table SET approved_by_user = 1,message = ? WHERE unique_id = ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, message);
+            ps.setInt(2, newQuestionId);
+            return ps.execute();
+        } catch (SQLException msg) {
+            Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @param newQuestionId
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public boolean isApprovedByAdmin(int newQuestionId) throws SQLException, ClassNotFoundException {
+
+        DatabaseConnection dc = new DatabaseConnection();
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = dc.getConnection();
+
+            String sql = "SELECT approved_by_admin AS permission FROM modified_question_table WHERE unique_id = ?";
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, newQuestionId);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getBoolean("permission");
+            }
+        } catch (SQLException msg) {
+            Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException msg) {
+
+            }
+        }
+        return false;
+    }
+}

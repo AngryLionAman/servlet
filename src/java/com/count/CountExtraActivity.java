@@ -15,14 +15,13 @@
  */
 package com.count;
 
-import com.connect.PoolConnection;
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  *
@@ -39,8 +38,7 @@ public class CountExtraActivity {
      */
     public int CountTotalAnswerOfQuestionByQuestionId(int questionId) throws SQLException, ClassNotFoundException, Exception {
 
-        PoolConnection pc = new PoolConnection();
-        DataSource ds = pc.setUpPool();
+        DatabaseConnection ds = new DatabaseConnection();
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;

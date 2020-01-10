@@ -26,22 +26,45 @@ public class QuestionSetPojo {
     String correct_ans;
     String selected_ans;
 
+    /**
+     *
+     * @return
+     */
     public int getQuestionId() {
         return questionId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getQuestion() {
         return question;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getCorrect_ans() {
         return correct_ans;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSelected_ans() {
         return selected_ans;
     }
 
+    /**
+     *
+     * @param questionId
+     * @param question
+     * @param correct_ans
+     * @param selected_ans
+     */
     public QuestionSetPojo(int questionId, String question, String correct_ans, String selected_ans) {
         this.questionId = questionId;
         this.question = question;

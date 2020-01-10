@@ -31,18 +31,20 @@
             }
         </style>
         <script type="text/javascript">
-
+            
             function showCommentBox() {
-                var s_u_id = document.q_com.session_active_user_id.value;
-                var q_u_id = document.q_com.id_of_user_who_posted_question.value;
-                var q_id = document.q_com.question_id.value;
-                if (!(s_u_id === "") && !(q_u_id === "" || q_u_id === null) && !(q_id === "" || q_id === null)) {
-                    var div = document.getElementById('comment');
-                    div.className = 'visible';
-                } else {
-                    alert("Please Login to comment!!!");
-                }
-
+                var div = document.getElementById('comment');
+                div.className = 'visible';
+                /* var s_u_id = document.q_com.session_active_user_id.value;
+                 var q_u_id = document.q_com.id_of_user_who_posted_question.value;
+                 var q_id = document.q_com.question_id.value;
+                 if (!(s_u_id === "") && !(q_u_id === "" || q_u_id === null) && !(q_id === "" || q_id === null)) {
+                 var div = document.getElementById('comment');
+                 div.className = 'visible';
+                 } else {
+                 alert("Please Login to comment!!!");
+                 }*/
+                
             }
         </script>
         <script src="ckeditor/ckeditor.js"></script>        <!-- For IE -->
@@ -69,7 +71,7 @@
         <c:if test="${titleAndDescripiton eq null or empty titleAndDescripiton}">
             <c:choose>
                 <c:when test="${gotException ne null and not empty gotException}">
-                    
+
                 </c:when>
                 <c:when test="${param.Id ne null and not empty param.Id}">
                     <c:redirect url="questions?id=${param.Id}"/>
@@ -86,7 +88,8 @@
                 <c:forEach var="h_seo" items="${titleAndDescripiton}">
                     <title><c:out value="${h_seo.questionTitle}"/>- inquiryhere.com</title>    
                     <meta property="og:title" content="<c:out value="${h_seo.questionTitle}"/>" />
-                    <meta property="og:url" content="<c:out value="${h_seo.questionTitle}"/>">
+                    <meta property="title" content="<c:out value="${h_seo.questionTitle}"/>" />
+                    
                     <c:if test="${not empty h_seo.questionDescription and h_seo.questionDescription ne null}">
                         <meta property="og:description" content="<c:out value="${h_seo.questionDescription}"/>"/>
                         <meta property="description" content="<c:out value="${h_seo.questionDescription}"/>"/>
@@ -98,21 +101,24 @@
                     <c:choose>
                         <c:when test="${not empty h_seo.imageLinkResult and h_seo.imageLinkResult ne null}">
                             <meta property="og:image" content="${h_seo.imageLinkResult}" />                          
+                            <meta property="image" content="${h_seo.imageLinkResult}" />                          
                         </c:when>
                         <c:otherwise>
                             <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />    
+                            <meta property="image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />    
                         </c:otherwise>
                     </c:choose>
-                </c:forEach>
-                <c:set var="myVar" value="inquiryhere.com"/>
-                <c:if test="${questionTag ne null and not empty questionTag}">
-                    <c:forEach items="${questionTag}" var="currentItem" varStatus="stat">
-                        <meta property="article:tag" content="${currentItem}"/>
-                        <c:set var="myVar" value="${myVar},${currentItem}"/>
+                    <link rel="canonical" href="https://www.inquiryhere.com/questions?id=${h_seo.questionId}&q=${word.UrlFormat(h_seo.questionTitle)}" />
                     </c:forEach>
-                </c:if>
+                    <c:set var="myVar" value="inquiryhere.com"/>
+                    <c:if test="${questionTag ne null and not empty questionTag}">
+                        <c:forEach items="${questionTag}" var="currentItem" varStatus="stat">
+                            <meta property="article:tag" content="${currentItem}"/>
+                            <c:set var="myVar" value="${myVar},${currentItem}"/>
+                        </c:forEach>
+                    </c:if>
 
-                <meta name="keywords" content="${myVar}"/>
+                    <meta name="keywords" content="${myVar}"/>
             </c:catch>
             <c:if test="${ex ne null}">
                 ${ex}
@@ -122,7 +128,7 @@
         <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png">   
         <meta property="og:site_name" content="inquiryhere.com" />
         <meta property="og:type" content="website">
-        <meta property="og:locale" content="en_US">
+        <meta property="og:locale" content="en">
     </head>
     <body>
         <div class="main-page-wrapper">
@@ -148,16 +154,18 @@
                         </c:if>
                         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                             <div>
-                                <c:if test="${questionTagWithId ne null and not empty questionTagWithId}">                                    
-                                    <c:set scope="page" var="count_tag" value="0"/>
-                                    <c:forEach items="${questionTagWithId}" var="tag" varStatus="loop">
-                                        <c:set scope="page" var="count_tag" value="${loop.count}"/>
-                                        <a style="font-size: 15pt;color: #000210;background: #f0f0f0; border-radius: 5px;padding-top: 0px;padding-bottom: 0px;padding-left: 1px;padding-right: 2px;" href="topic?t=${word.UrlFormat(tag.value)}&id=${tag.key}&ref=a">${word.convertStringUpperToLower(tag.value)}</a>
-                                    </c:forEach>
-                                    <c:if test="${count_tag eq 0}">
-                                        <c:out value=""/><!--old code: if question has no tag...-->
+                                <c:catch var="t">
+                                    <c:if test="${questionTagWithId ne null and not empty questionTagWithId}">                                    
+                                        <c:set scope="page" var="count_tag" value="0"/>
+                                        <c:forEach items="${questionTagWithId}" var="tag" varStatus="loop">
+                                            <c:set scope="page" var="count_tag" value="${loop.count}"/>
+                                            <a style="font-size: 15pt;color: #000210;background: #f0f0f0; border-radius: 5px;padding-top: 0px;padding-bottom: 0px;padding-left: 1px;padding-right: 2px;" href="topic?t=${word.UrlFormat(tag.value)}&id=${tag.key}&ref=a">${word.convertStringUpperToLower(tag.value)}</a>
+                                        </c:forEach>
+                                        <c:if test="${count_tag eq 0}">
+                                            <c:out value=""/><!--old code: if question has no tag...-->
+                                        </c:if>
                                     </c:if>
-                                </c:if>
+                                </c:catch>                                
                             </div>
                             <div class="row">
                                 <!-- Displaying question and details section -->
@@ -187,20 +195,47 @@
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </div>
-                                                <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px; background: #ffffcc; " >
+                                                <div class="boxHeading marginbot10" style="border-radius: 5px;padding-top: 10px;padding-left: 10px; background: #ffffcc; " >
                                                     <h1 style="font-size: 20px;">${word.convertStringUpperToLower(q.question)}</h1>
-                                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                                        <c:if test="${q.userId eq sessionScope.Session_id_of_user}">
-                                                            <a href="edit_q?id=${q.questionId}&q=${q.question}&ref=a"/>edit</a>
-                                                        </c:if>
-                                                    </c:if>                                                   
+                                                    <c:choose>
+                                                        <c:when test="${sessionScope.Session_id_of_user ne null}">
+                                                            <c:choose>
+                                                                <c:when test="${q.userId eq sessionScope.Session_id_of_user}">
+                                                                    <a href="edit_q?id=${q.questionId}&q=${q.question}&ref=a"/>edit</a>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <div style="display: inline-block;" align="right">
+                                                                        <form name="Form_Name" method="post" action="modify_q">
+                                                                            <input type="hidden" name="q_id" value="${q.questionId}">
+                                                                            <input type="hidden" name="u_id" value="${sessionScope.Session_id_of_user}">
+                                                                            <input type="hidden" name="q_u_id" value="${q.userId}">
+                                                                            <input type="hidden" name="q" value="${q.question}">
+                                                                            <input type="submit" value="Modify">
+                                                                        </form>
+                                                                    </div>
+                                                                </c:otherwise>
+                                                            </c:choose>                                                            
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <div style="display: inline-block;" align="right">
+                                                                <form name="Form_Name" method="post" action="modify_q">
+                                                                    <input type="hidden" name="q_id" value="${q.questionId}">
+                                                                    <input type="hidden" name="u_id" value="${sessionScope.Session_id_of_user}">
+                                                                    <input type="hidden" name="q_u_id" value="${q.userId}">
+                                                                    <input type="hidden" name="q" value="${q.question}">
+                                                                    <input type="submit" value="Modify">
+                                                                </form>
+                                                            </div>
+                                                        </c:otherwise>
+                                                    </c:choose>
+
                                                 </div>
                                                 <div class="questionArea">
                                                     <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'upvote', 'question');" >Upvote(${q.vote})</a>&nbsp;&nbsp; 
                                                     <a href="javascript:void(0)" onclick="this.style.color = 'red';return take_value(this, '${q.questionId}', '<c:out value="${sessionScope.Session_id_of_user}"/>', 'downvote', 'question');" >Downvote</a>&nbsp;&nbsp; 
                                                     <a href="javascript:void(0)" value="Comment" onclick="showCommentBox()">Comment</a>&nbsp;&nbsp;
                                                     <a href="javascript:void(0)">View(${q.totalView})</a>
-                                                    <form action="answer" method="post" name="q_com">
+                                                    <form action="saveQuestionComment" method="post" name="q_com">
                                                         <div class="hidden" id="comment">
                                                             <input type="hidden" name="session_active_user_id" value="<c:out value="${sessionScope.Session_id_of_user}"/>">
                                                             <input type="hidden" name="id_of_user_who_posted_question" value="<c:out value="${q.userId}"/>">
@@ -220,17 +255,29 @@
                                 </c:if>
 
                                 <!-- Comment on question -->
-                                <c:if test="${questionId ne null}">                                    
-                                    <c:forEach items="${comment.commentsOnQuestion(questionId)}" var="c">
-                                        <div align="right" style="border-style: groove;">
-                                            ${c.comment} :-
-                                            <a href="profile?user=${c.userUserName}&id=${c.userId}&ref=qc">${word.convertStringUpperToLower(c.userFullName)}</a> ${c.time} 
+                                <c:if test="${questionId ne null and not empty questionId}">   
+                                    <c:catch var="l">
+                                        <c:forEach items="${comment.commentsOnQuestion(questionId)}" var="c">
+                                            <div align="right" style="border-style: groove;">
+                                                ${c.comment} :-
+                                                <c:choose>
+                                                    <c:when test="${c.userType eq 'guest'}">
+                                                        <font style="color: red;">${word.convertStringUpperToLower(c.userFullName)}</font> , ${c.time}
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <a href="profile?user=${c.userUserName}&id=${c.userId}&ref=qc">${word.convertStringUpperToLower(c.userFullName)}</a> ${c.time} 
 
-                                            <c:if test="${!userIdForNotification.contains(c.userId)}">
-                                                <c:out value="${userIdForNotification.add(c.userId)}"></c:out>
-                                            </c:if>
-                                        </div>
-                                    </c:forEach>                                    
+                                                        <c:if test="${!userIdForNotification.contains(c.userId)}">
+                                                            <c:out value="${userIdForNotification.add(c.userId)}"></c:out>
+                                                        </c:if>
+                                                    </c:otherwise>
+                                                </c:choose>                                               
+                                            </div>
+                                        </c:forEach>    
+                                    </c:catch>
+                                    <c:if test="${l ne null}">
+                                        ${l}
+                                    </c:if>                                                                   
                                 </c:if>
                                 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
                                 <!-- just down the question and just up the answer on the answer page -->
@@ -255,10 +302,19 @@
                                     <c:forEach items="${answerById}" var="a" varStatus="loop">
                                         <div class="themeBox" style="height:auto;">
                                             <div style="padding: 5px; background-color: #BCC6CC; display: inline-block;">
-                                                Answer By : <a href="profile?user=${a.userName}&id=${a.userId}&ref=a"><c:out value="${word.convertStringUpperToLower(a.fullName)}"/></a> 
-                                                <c:if test="${not userIdForNotification.contains(a.userId)}">
-                                                    <c:set value=" ${userIdForNotification.add(a.userId)}" var="notuserd"/>                                                      
-                                                </c:if>
+                                                Answer By :                                                
+                                                <c:choose>
+                                                    <c:when test="${a.userType eq 'guest'}">
+                                                        <font style="color: red;">${word.convertStringUpperToLower(a.fullName)}</font>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <a href="profile?user=${a.userName}&id=${a.userId}&ref=a"><c:out value="${word.convertStringUpperToLower(a.fullName)}"/></a> 
+                                                        <c:if test="${not userIdForNotification.contains(a.userId)}">
+                                                            <c:set value=" ${userIdForNotification.add(a.userId)}" var="notuserd"/>                                                      
+                                                        </c:if>
+                                                    </c:otherwise>
+                                                </c:choose>                                                  
+
                                             </div>
                                             <c:if test="${sessionScope.Session_id_of_user ne null}">                                                
                                                 <c:if test="${a.userId eq sessionScope.Session_id_of_user}">
@@ -296,13 +352,8 @@
 
                                             <script type="text/javascript">
                                                 function showAns<c:out value="${a.answerId}"/>CommentBox() {
-                                                <c:if test="${sessionScope.Session_id_of_user ne null}">
                                                     var div = document.getElementById('Anscomment<c:out value="${a.answerId}"/>');
                                                     div.className = 'visible';
-                                                </c:if>
-                                                <c:if test="${sessionScope.Session_id_of_user eq null}">
-                                                    alert("Please Login First to comment!!!");
-                                                </c:if>
                                                 }
                                             </script>
                                         </div>
@@ -311,10 +362,21 @@
                                         <c:catch var="exp">
                                             <c:forEach var="cmt" items="${commentOnAnswer.getAnswerCommentByAnswerid(a.answerId)}">
                                                 <div align="right" style="border-style: groove;">
-                                                    ${cmt.comments} : <a href="profile?user=${cmt.userName}&id=${cmt.commentPostedById}&ref=ac"><c:out value="${word.convertStringUpperToLower(cmt.fullName)}"/></a> ${cmt.date}
-                                                    <c:if test="${not userIdForNotification.contains(cmt.commentPostedById)}">
-                                                        ${userIdForNotification.add(cmt.commentPostedById)}
-                                                    </c:if>
+                                                    ${cmt.comments} :                                                     
+                                                    <c:choose>
+                                                        <c:when test="${cmt.userType eq 'guest'}">
+                                                            <font style="color: red;">${word.convertStringUpperToLower(cmt.fullName)}</font> , ${cmt.date}
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <a href="profile?user=${cmt.userName}&id=${cmt.commentPostedById}&ref=ac"><c:out value="${word.convertStringUpperToLower(cmt.fullName)}"/></a> ${cmt.date}
+
+                                                            <c:if test="${not userIdForNotification.contains(cmt.commentPostedById)}">
+                                                                ${userIdForNotification.add(cmt.commentPostedById)}
+                                                            </c:if>
+                                                        </c:otherwise>
+                                                    </c:choose>   
+
+
                                                 </div>
                                             </c:forEach>   
                                         </c:catch>
@@ -326,32 +388,12 @@
                                 </c:if>
 
                                 <form name="Form_name" method="post" action="save_answer_servlet">
-                                    <%
-                                        String URL = request.getRequestURL() + "?" + request.getQueryString();
-                                    %> 
                                     <input type="hidden" name="question" value="<c:out value="${current_q_string}"/>">
-                                    <input type="hidden" name="_id_of_user" value="<c:out value="${sessionScope.Session_id_of_user}"/>">
-                                    <input type="hidden" name="id_of_user_who_posted_question" value="<c:out value="${user_id_who_asked_question}"/>">
-                                    <input type="hidden" name="q_id" value="${questionId}">                                        
-                                    <input type="hidden" name="URL" value="<%=URL%>">
-                                    <c:if test="${sessionScope.Session_id_of_user eq null}">
-                                        <textarea class="ckeditor" name="answer" required="" disabled="" >Please Login to answer........</textarea>
-                                    </c:if>
-                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                        <textarea class="ckeditor" name="answer" required="" placeholder="Describe yourself Answer..">
-                                            <%
-                                                if (request.getParameter("ans") != null) {
-                                                    out.println(request.getParameter("ans"));
-                                                }
-                                            %>
-                                        </textarea>
-                                    </c:if>
-                                    <c:if test="${sessionScope.Session_id_of_user eq null}">
-                                        <input type="submit" name="Post" value="Please login to submit" disabled=""> 
-                                    </c:if>
-                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                        <input type="submit" name="Post" value="Submit"> 
-                                    </c:if>                               
+                                    <input type="hidden" name="_id_of_user" value="${sessionScope.Session_id_of_user}">
+                                    <input type="hidden" name="id_of_user_who_posted_question" value="${user_id_who_asked_question}">
+                                    <input type="hidden" name="q_id" value="${questionId}">   
+                                    <textarea class="ckeditor" name="answer" required="" placeholder="Describe yourself Answer.."></textarea>
+                                    <input type="submit" name="Post" value="Submit"> 
                                 </form>
                                 <div class="clear-fix"></div>
                             </div>
@@ -372,36 +414,40 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                <div class="themeBox" style="height:auto;">
-                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
-                                        Related Question
+                                <c:catch var="rq">
+                                    <div class="themeBox" style="height:auto;">
+                                        <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                            Related Question
+                                        </div>
+                                        <div>
+                                            <c:if test="${relatedQuestionById eq null or empty relatedQuestionById}">
+                                                <c:out value="No related question found"/>
+                                            </c:if>
+                                            <c:if test="${relatedQuestionById ne null and not empty relatedQuestionById}">
+                                                <c:forEach items="${relatedQuestionById}" var="rq" varStatus="loop">
+                                                    <a href="questions?id=${rq.key}&q=${word.UrlFormat(rq.value)}" >${rq.value}</a><br><br>
+                                                </c:forEach>                                            
+                                            </c:if>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <c:if test="${relatedQuestionById eq null or empty relatedQuestionById}">
-                                            <c:out value="No related question found"/>
-                                        </c:if>
-                                        <c:if test="${relatedQuestionById ne null and not empty relatedQuestionById}">
-                                            <c:forEach items="${relatedQuestionById}" var="rq" varStatus="loop">
-                                                <a href="questions?id=${rq.key}&q=${word.UrlFormat(rq.value)}" >${rq.value}</a><br><br>
-                                            </c:forEach>                                            
-                                        </c:if>
-                                    </div>
-                                </div>
+                                </c:catch>                                
                             </div>
                             <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                                <div class="themeBox" style="height:auto;">
-                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
-                                        Question you may like
+                                <c:catch var="rm">
+                                    <div class="themeBox" style="height:auto;">
+                                        <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                            Question you may like
+                                        </div>
+                                        <div>
+                                            <c:if test="${randomQuestion ne null and not empty randomQuestion}">
+                                                <c:forEach items="${randomQuestion}" var="r_q">
+                                                    <a href="questions?id=${r_q.key}&q=${word.UrlFormat(r_q.value)}" >${r_q.value}</a><br><br>
+                                                </c:forEach>   
+                                            </c:if>                                                                 
+                                        </div>
                                     </div>
-                                    <div>
-                                        <c:if test="${randomQuestion ne null and not empty randomQuestion}">
-                                            <c:forEach items="${randomQuestion}" var="r_q">
-                                                <a href="questions?id=${r_q.key}&q=${word.UrlFormat(r_q.value)}" >${r_q.value}</a><br><br>
-                                            </c:forEach>   
-                                        </c:if>                                                                 
-                                    </div>
+                                </c:catch>
 
-                                </div>
                             </div>
                         </div>
                         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">

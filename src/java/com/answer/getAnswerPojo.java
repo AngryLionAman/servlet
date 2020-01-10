@@ -22,6 +22,7 @@ package com.answer;
 public class getAnswerPojo {
 
     int userId;
+    String userType;
     String userName;
     String fullName;
     String answer;
@@ -87,7 +88,16 @@ public class getAnswerPojo {
 
     /**
      *
+     * @return
+     */
+    public String getUserType() {
+        return userType;
+    }
+
+    /**
+     *
      * @param userId
+     * @param userType
      * @param userName
      * @param fullName
      * @param answer
@@ -95,8 +105,9 @@ public class getAnswerPojo {
      * @param totalView
      * @param vote
      */
-    public getAnswerPojo(int userId, String userName, String fullName, String answer, int answerId, int totalView, int vote) {
+    public getAnswerPojo(int userId, String userType, String userName, String fullName, String answer, int answerId, int totalView, int vote) {
         this.userId = userId;
+        this.userType = userType;
         this.userName = userName;
         this.fullName = fullName;
         this.answer = answer;

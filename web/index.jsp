@@ -5,7 +5,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <jsp:useBean class="com.index.comments" id="comment" scope="page"/>
 <jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
-
+<!DOCTYPE html>
 <html lang="en">
     <head>  
         <%@include file="googleAnalytics.jsp" %>
@@ -13,7 +13,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="content-type" content="text/html" charset="utf-8">
-        <meta name="robots" content="noindex, nofollow" />
         <title>INQUIRYHERE.COM | HOME PAGE</title>
         <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png" />
         <link rel="canonical" href="https://www.inquiryhere.com" />
@@ -26,7 +25,7 @@
         <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
         <meta property="image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
         <meta property="og:type" content="website">
-        <meta property="og:locale" content="en_US">
+        <meta property="og:locale" content="en">
         <meta property="og:title" content="India's First Question Answer Based Social Media, Where Experts Give You Advise And Suggestion Related To Your Query" />
         <meta property="og:url" content="https://www.inquiryhere.com/">
         <meta property="og:site_name" content="www.inquiryhere.com" />

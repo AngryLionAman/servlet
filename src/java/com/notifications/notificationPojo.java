@@ -28,26 +28,7 @@ public class notificationPojo {
     int notificationCreatedBy;//user Id
     String userFirstName;
     String notification_type;
-
-    /**
-     *
-     * @param comment_id
-     * @param question_id
-     * @param blog_id
-     * @param question
-     * @param notificationCreatedBy
-     * @param userFirstName
-     * @param notification_type
-     */
-    public notificationPojo(int comment_id, int question_id, int blog_id, String question, int notificationCreatedBy, String userFirstName, String notification_type) {
-        this.comment_id = comment_id;
-        this.question_id = question_id;
-        this.blog_id = blog_id;
-        this.question = question;
-        this.notificationCreatedBy = notificationCreatedBy;
-        this.userFirstName = userFirstName;
-        this.notification_type = notification_type;
-    }
+    int approval_for_question;
 
     /**
      *
@@ -105,4 +86,33 @@ public class notificationPojo {
         return notification_type;
     }
 
+    /**
+     *
+     * @return
+     */
+    public int getApproval_for_question() {
+        return approval_for_question;
+    }
+
+    /**
+     *
+     * @param comment_id
+     * @param question_id
+     * @param blog_id
+     * @param question
+     * @param notificationCreatedBy
+     * @param userFirstName
+     * @param notification_type
+     * @param approval_for_question
+     */
+    public notificationPojo(int comment_id, int question_id, int blog_id, String question, int notificationCreatedBy, String userFirstName, String notification_type, int approval_for_question) {
+        this.comment_id = comment_id;
+        this.question_id = question_id;
+        this.blog_id = blog_id;
+        this.question = question;
+        this.notificationCreatedBy = notificationCreatedBy;
+        this.userFirstName = userFirstName;
+        this.notification_type = notification_type;
+        this.approval_for_question = approval_for_question;
+    }
 }

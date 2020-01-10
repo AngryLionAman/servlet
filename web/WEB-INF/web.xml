@@ -4,6 +4,7 @@
     <welcome-file-list>
         <welcome-file>index</welcome-file>
     </welcome-file-list>
+    
     <servlet>
         <servlet-name>updateQuestion</servlet-name>
         <servlet-class>com.admin.question.updateQuestion</servlet-class>
@@ -222,7 +223,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>saveQuestionComment</servlet-name>
-        <url-pattern>/answer</url-pattern>
+        <url-pattern>/saveQuestionComment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>vote</servlet-name>

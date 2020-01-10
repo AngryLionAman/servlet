@@ -30,14 +30,15 @@ public class SaveBlogCommentClassFile {
 
     /**
      *
-     * @param sessionUserId
+     * @param userId
      * @param blogId
      * @param comment
+     * @param approved_by_admin
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean SaveBlogComment(int sessionUserId, int blogId, String comment) throws SQLException, ClassNotFoundException {
+    public boolean SaveBlogComment(int userId, int blogId, String comment, boolean approved_by_admin) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = DatabaseConnection.getInstance();
 
@@ -46,11 +47,13 @@ public class SaveBlogCommentClassFile {
 
         try {
             con = dc.getConnection();
-            String sql = "INSERT INTO comments (user_id,blog_id,comments)VALUES(?,?,?)";
+            String sql = "INSERT INTO comments (user_id,content_id,comments,comment_type,approved_by_admin)VALUES(?,?,?,?,?)";
             ps = con.prepareStatement(sql);
-            ps.setInt(1, sessionUserId);
+            ps.setInt(1, userId);
             ps.setInt(2, blogId);
             ps.setString(3, comment);
+            ps.setString(4, "comment_on_blog");
+            ps.setBoolean(5, approved_by_admin);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(SaveBlogCommentClassFile.class.getName()).log(Level.SEVERE, comment, msg);

@@ -6,7 +6,6 @@
 package com.index;
 
 import com.connect.DatabaseConnection;
-import com.connect.PoolConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
@@ -15,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  *
@@ -32,29 +30,34 @@ public class comments {
      * @throws Exception
      */
     public List<commentPojo> commentsOnQuestion(int questionId) throws SQLException, ClassNotFoundException, Exception {
-
+        
         DatabaseConnection ds = new DatabaseConnection();
-
+        
         List<commentPojo> list = new ArrayList<>();
-
+        
         Connection com = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-
+        
         try {
             com = ds.getConnection();
-            String sql = "select c.unique_id,c.comments,date_format(c.time,\"%e %b %Y,%h:%i%p\") as date,user.id,user.firstname,user.username from comments c right join newuser user on user.id = c.user_id where c.q_id = ? order by 1 desc";
+            String sql = "select c.unique_id,c.comments,date_format(c.time,\"%e %b %Y,%h:%i%p\") as date,user.id,user.firstname,"
+                    + "user.username,user.user_type from comments c right join newuser user on user.id = c.user_id "
+                    + "where c.content_id = ? AND c.comment_type = ? AND approved_by_admin = ? order by 1 desc";
             ps = com.prepareStatement(sql);
             ps.setInt(1, questionId);
+            ps.setString(2, "commet_on_question");
+            ps.setBoolean(3, true);
             rs = ps.executeQuery();
             while (rs.next()) {
                 int commentId = rs.getInt("c.unique_id");
                 String comment = rs.getString("c.comments");
                 String time = rs.getString("date");
+                String userType = rs.getString("user_type");
                 int userId = rs.getInt("user.id");
                 String userFullName = rs.getString("user.firstname");
                 String userUserName = rs.getString("user.username");
-                list.add(new commentPojo(commentId, comment, time, userId, userFullName, userUserName));
+                list.add(new commentPojo(commentId, comment, time, userType, userId, userFullName, userUserName));
             }
             return list;
         } catch (SQLException msg) {

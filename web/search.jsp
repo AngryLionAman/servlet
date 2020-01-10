@@ -101,24 +101,24 @@
                                             Your Activity
                                         </div>
 
-                                        <c:catch var="exe">     
-                                            <c:forEach items="${GetCountRowSearch}" var="c">
-                                                <c:set scope="page" value="${c.countQuestion}" var="countQuestion"/>
-                                                <c:set scope="page" value="${c.countAnswer}" var="countAnswer"/>
-                                                <c:set scope="page" value="${c.countTopic}" var="countTopic"/>
-                                                <c:set scope="page" value="${c.countUser}" var="countUser"/>
-                                            </c:forEach>
+                                        <c:if test="${GetCountRowSearch ne null and not empty GetCountRowSearch}">
+                                            <c:catch var="exe">     
+                                                <c:forEach items="${GetCountRowSearch}" var="c">
+                                                    <c:set scope="page" value="${c.countQuestion}" var="countQuestion"/>
+                                                    <c:set scope="page" value="${c.countAnswer}" var="countAnswer"/>
+                                                    <c:set scope="page" value="${c.countTopic}" var="countTopic"/>
+                                                    <c:set scope="page" value="${c.countUser}" var="countUser"/>
+                                                </c:forEach>
 
-                                            <div>
-                                                <a href="?tab=question&q=<c:out value="${query}"/>">Question (${countQuestion})</a><br>
-                                                <a href="?tab=answer&q=<c:out value="${query}"/>">Answer (${countAnswer})</a><br>
-                                                <a href="?tab=topic&q=<c:out value="${query}"/>">Topic (${countTopic}) </a><br>
-                                                <a href="?tab=profile&q=<c:out value="${query}"/>">User Profile (${countUser}) </a><br>
-                                            </div>
-                                        </c:catch>
-                                        <c:if test="${exe ne null}}">
-                                            ${exe}
-                                        </c:if>   
+                                                <div>
+                                                    <a href="?tab=question&q=<c:out value="${query}"/>">Question (${countQuestion})</a><br>
+                                                    <a href="?tab=answer&q=<c:out value="${query}"/>">Answer (${countAnswer})</a><br>
+                                                    <a href="?tab=topic&q=<c:out value="${query}"/>">Topic (${countTopic}) </a><br>
+                                                    <a href="?tab=profile&q=<c:out value="${query}"/>">User Profile (${countUser}) </a><br>
+                                                </div>
+                                            </c:catch>
+                                        </c:if>
+
 
                                     </div>
                                 </div>
@@ -226,9 +226,6 @@
                                                     </c:if>
                                                 </c:if>
                                             </div>
-
-
-
 
                                             <div class="themeBox" style="height:auto;margin-bottom:10px;">
                                                 <center><div class=boxHeading>Profile</div></center>

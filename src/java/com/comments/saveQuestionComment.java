@@ -43,7 +43,7 @@ public class saveQuestionComment extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -53,49 +53,61 @@ public class saveQuestionComment extends HttpServlet {
         CreateNotification notification = new CreateNotification();
         validateInput input = new validateInput();
 
-        int session_active_user_id = input.getInputInt(request.getParameter("session_active_user_id"));
-        int id_of_user_who_posted_question = input.getInputInt(request.getParameter("id_of_user_who_posted_question"));
-        int question_id = input.getInputInt(request.getParameter("question_id"));
-        String comments = input.getInputString(request.getParameter("comments"));
-        String question = input.getInputString(request.getParameter("question"));
-
         String message = null;
-        if (session_active_user_id != 0 && question_id != 0 && comments != null && question != null) {
-            try {
-                if (!file.SaveQuestionComment(session_active_user_id, question_id, comments)) {
-                    if (session.getAttribute("userIdForNotification") != null) {
-                        String allUserId = String.valueOf(session.getAttribute("userIdForNotification"));
-                        if (!notification.CreateNotificationOfQuestionForAllRealtedUsers(allUserId, session_active_user_id, question_id)) {
-                            message = "Commnted has been posted and notification has been sent to all related users";
-                        } else {
-                            message = "Comment has been saved, but notification not generated";
-                        }
-                    } else {
-                        if (id_of_user_who_posted_question != 0) {
-                            if (!notification.CreateNotificationForQuestionComment(id_of_user_who_posted_question, session_active_user_id, question_id)) {
-                                message = "Comment has been posted and notification has been sent to user";
+        int question_id = 0;
+        
+        try {
+
+            int userId = input.getInputInt(request.getParameter("session_active_user_id"));
+            int id_of_user_who_posted_question = input.getInputInt(request.getParameter("id_of_user_who_posted_question"));
+            question_id = input.getInputInt(request.getParameter("question_id"));
+            String comments = input.getInputString(request.getParameter("comments"));
+            //String question = input.getInputString(request.getParameter("question"));
+
+            if (question_id != 0 && comments != null) {
+                if (userId != 0) {
+                    if (!file.SaveQuestionComment(userId, question_id, comments, true)) {
+                        if (session.getAttribute("userIdForNotification") != null) {
+                            String allUserId = String.valueOf(session.getAttribute("userIdForNotification"));
+                            if (!notification.CreateNotificationOfQuestionForAllRealtedUsers(allUserId, userId, question_id)) {
+                                message = "Commnted has been posted and notification has been sent to all related users";
                             } else {
-                                message = "Comment has been posted, Notification not sent to user";
+                                message = "Comment has been saved, but notification not generated";
                             }
                         } else {
-                            message = "Comment has been saved, Notification will not generate for the guest post";
+                            if (id_of_user_who_posted_question != 0) {
+                                if (!notification.CreateNotificationForQuestionComment(id_of_user_who_posted_question, userId, question_id)) {
+                                    message = "Comment has been posted and notification has been sent to user";
+                                } else {
+                                    message = "Comment has been posted, Notification sent to user operation faild";
+                                }
+                            } else {
+                                message = "Comment has been saved, Notification will not generate for the guest post";
+                            }
                         }
+                    } else {
+                        message = "Comment not posted, Please try again";
                     }
                 } else {
-                    message = "Comment not posted";
+                    if (!file.SaveQuestionComment(userId, question_id, comments, false)) {
+                        message = "You are guest user so your comment will be visibale after admin approval";
+                    } else {
+                        message = "You are guest user and we failed to save your comment, Please try again or contact to administrator";
+                    }
                 }
-            } catch (SQLException | ClassNotFoundException ex) {
-                Logger.getLogger(saveQuestionComment.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(saveQuestionComment.class.getName()).log(Level.SEVERE, null, ex);
+            } else {
+                message = "Question id is zero, Or comment is empty. Please try agin or contact to admin administrator";
             }
-        } else {
-            message = "Comment not saved due to bad argument, Please try agian";
+        } catch (ClassNotFoundException | SQLException msg) {
+            Logger.getLogger(saveQuestionComment.class.getName()).log(Level.SEVERE, null, msg);
+        } catch (Exception ex) {
+            Logger.getLogger(saveQuestionComment.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            request.setAttribute("id", question_id);
+            request.setAttribute("message", message);
+            request.getRequestDispatcher("questions").forward(request, response);
         }
-        request.setAttribute("id", question_id);
-        request.setAttribute("q", question);
-        request.setAttribute("message", message);
-        request.getRequestDispatcher("questions").forward(request, response);
+
     }
 
 }

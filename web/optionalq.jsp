@@ -47,7 +47,6 @@
                 for (var i = 0; i < x.length; i++) {
                     x[i].style.display = 'block';
                 }
-                //d.style.display = 'block';
             }
         </script>
     </head>
@@ -73,71 +72,66 @@
                                 <div class="themeBox" onclick="location.href = 'optional.jsp'" style="font-family: serif;font-variant-position: super;font-size: 25px;text-align: center;background-color: #70f29c;cursor: pointer;">
                                     Upload Objective Question
                                 </div>
-                                <c:catch var="ex">
-                                    <c:forEach var="obj" items="${list}" varStatus="loop1">
-                                        <div class="themeBox" style="height:auto; background-color: #f5f4f4;">
-                                            <div class="boxHeading" style="font-size: 18px;background-color: #cccccc;">
-                                                <c:if test="${obj.onTopic ne null}">
-                                                    On Topic : <a href="optionalquestion?onTopic=${obj.onTopic}">${word.convertStringUpperToLower(obj.onTopic)}</a>,
-                                                </c:if>
-                                                <c:if test="${obj.totalOption ne null}">
-                                                    Option : <a href="optionalquestion?option=${obj.totalOption}">${obj.totalOption}</a>
-                                                </c:if>
+                                <c:if test="${list ne null and not empty list}">
+                                    <c:catch var="ex">
+                                        <c:forEach var="obj" items="${list}" varStatus="loop1">
+                                            <div class="themeBox" style="height:auto; background-color: #f5f4f4;">
+                                                <div class="boxHeading" style="font-size: 18px;background-color: #cccccc;">
+                                                    <c:if test="${obj.onTopic ne null}">
+                                                        On Topic : <a href="optionalquestion?onTopic=${obj.onTopic}">${word.convertStringUpperToLower(obj.onTopic)}</a>,
+                                                    </c:if>
+                                                    <c:if test="${obj.totalOption ne null}">
+                                                        Option : <a href="optionalquestion?option=${obj.totalOption}">${obj.totalOption}</a>
+                                                    </c:if>
+                                                </div>
+                                                <div style="background-color: #fbe7cc;padding-top: 5px; padding-left: 5px;font-size: 20px;">                                                
+                                                    <c:if test="${obj.question ne null}">
+                                                        ${obj.question}
+                                                    </c:if>
+                                                </div>     
+                                                <div class="row" style="padding-left: 10px; padding-right: 10px;padding-top: 10px;padding-bottom: 10px;">
+
+                                                    <c:forEach items="${opt_fun.optionOfQuestinById(obj.id)}" var="o" varStatus="loop">                                                 
+                                                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" onclick="CheckAnswer(this, '${o.aId}', '${o.option}', '${obj.correctAnswer}', 'myText${loop1.count}', 'p_dis${loop1.count}')"  style="font-family: sans-serif;margin-bottom: 10px; cursor: pointer;background-color: #d8c6ee; border-style: groove; padding-left: 10px; padding-right: 10px;padding-top: 10px;padding-bottom: 10px;">
+                                                            ${loop.count}. ${word.convertStringUpperToLower(o.option)} <div id="p_dis${loop1.count}" class="p_dis${loop1.count}" style="color: white; display: none;float: right;">${opt_fun.showPrecentage(obj.id, o.vote)}%</div>
+                                                        </div>                                                      
+                                                    </c:forEach>
+                                                    <span id="myText${loop1.count}"></span>
+                                                </div>
+
                                             </div>
-                                            <div style="background-color: #fbe7cc;padding-top: 5px; padding-left: 5px;font-size: 20px;">                                                
-                                                <c:if test="${obj.question ne null}">
-                                                    ${obj.question}
+                                        </c:forEach>
+                                        <c:if test="${totalNumberOfpage ne null and totalNumberOfpage ne 0 and totalNumberOfpage gt 1}">
+                                            <c:catch var="msg">
+                                                <c:set value="1" var="pageNo"/>
+                                                <c:if test="${param.p ne null}">
+                                                    <c:set value="${param.p}" var="pageNo"/>
                                                 </c:if>
-                                            </div>     
-                                            <div class="row" style="padding-left: 10px; padding-right: 10px;padding-top: 10px;padding-bottom: 10px;">
-
-                                                <c:forEach items="${opt_fun.optionOfQuestinById(obj.id)}" var="o" varStatus="loop">                                                 
-                                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" onclick="CheckAnswer(this, '${o.aId}', '${o.option}', '${obj.correctAnswer}', 'myText${loop1.count}', 'p_dis${loop1.count}')"  style="font-family: sans-serif;margin-bottom: 10px; cursor: pointer;background-color: #d8c6ee; border-style: groove; padding-left: 10px; padding-right: 10px;padding-top: 10px;padding-bottom: 10px;">
-                                                        ${loop.count}. ${word.convertStringUpperToLower(o.option)} <div id="p_dis${loop1.count}" class="p_dis${loop1.count}" style="color: white; display: none;float: right;">${opt_fun.showPrecentage(obj.id, o.vote)}%</div>
-                                                    </div>                                                      
-                                                </c:forEach>
-                                                <span id="myText${loop1.count}"></span>
-                                            </div>
-
-                                        </div>
-                                    </c:forEach>
-                                    <c:if test="${totalNumberOfpage ne null}">
-                                        <c:catch var="msg">
-                                            <c:set value="1" var="pageNo"/>
-                                            <c:if test="${param.p ne null}">
-                                                <c:set value="${param.p}" var="pageNo"/>
-                                            </c:if>
-                                            <c:if test="${pageNo gt 1}">
-                                                <a href="optionalquestion?p=${pageNo - 1}">Pre</a>&nbsp;
-                                            </c:if>
-                                            <c:if test="${totalNumberOfpage <= 15}">
-                                                <c:forEach begin="1" end="${totalNumberOfpage}" step="1" varStatus="loop">
-                                                    <a href="optionalquestion?p=${loop.count}">${loop.count}</a>&nbsp;
-                                                </c:forEach>
-                                            </c:if>
-                                            <c:if test="${totalNumberOfpage > 15}">
-                                                <c:forEach begin="1" end="8" step="1" varStatus="loop">
-                                                    <a href="optionalquestion?p=${loop.count}">${loop.count}</a>&nbsp;
-                                                </c:forEach>
-                                                ......
-                                                <c:set scope="page" value="${totalNumberOfpage - 8}" var="startFrom"/>
-                                                <c:forEach begin="${startFrom}" end="${totalNumberOfpage}" step="1">
-                                                    <a href="optionalquestion?p=${startFrom}">${startFrom}</a>&nbsp;
-                                                    <c:set scope="page" value="${startFrom + 1}" var="startFrom"/>
-                                                </c:forEach>
-                                            </c:if>
-                                            <c:if test="${pageNo lt totalNumberOfpage}">
-                                                <a href="optionalquestion?p=${pageNo + 1}">Next</a>&nbsp;
-                                            </c:if>
-                                        </c:catch>
-                                    </c:if>                                   
-                                    <c:if test="${msg ne null}">
-                                        ${msg}
-                                    </c:if>
-                                </c:catch>
-
-                                <c:if test="${ex ne null}">
-                                    ${ex}
+                                                <c:if test="${pageNo gt 1}">
+                                                    <a href="optionalquestion?p=${pageNo - 1}&onTopic=${param.onTopic}&option=${param.option}">Pre</a>&nbsp;
+                                                </c:if>
+                                                <c:if test="${totalNumberOfpage <= 15}">
+                                                    <c:forEach begin="1" end="${totalNumberOfpage}" step="1" varStatus="loop">
+                                                        <a href="optionalquestion?p=${loop.count}&onTopic=${param.onTopic}&option=${param.option}">${loop.count}</a>&nbsp;
+                                                    </c:forEach>
+                                                </c:if>
+                                                <c:if test="${totalNumberOfpage > 15}">
+                                                    <c:forEach begin="1" end="8" step="1" varStatus="loop">
+                                                        <a href="optionalquestion?p=${loop.count}&onTopic=${param.onTopic}&option=${param.option}">${loop.count}</a>&nbsp;
+                                                    </c:forEach>
+                                                    ......
+                                                    <c:set scope="page" value="${totalNumberOfpage - 8}" var="startFrom"/>
+                                                    <c:forEach begin="${startFrom}" end="${totalNumberOfpage}" step="1">
+                                                        <a href="optionalquestion?p=${startFrom}&onTopic=${param.onTopic}&option=${param.option}">${startFrom}</a>&nbsp;
+                                                        <c:set scope="page" value="${startFrom + 1}" var="startFrom"/>
+                                                    </c:forEach>
+                                                </c:if>
+                                                <c:if test="${pageNo lt totalNumberOfpage}">
+                                                    <a href="optionalquestion?p=${pageNo + 1}&onTopic=${param.onTopic}&option=${param.option}">Next</a>&nbsp;
+                                                </c:if>
+                                            </c:catch>
+                                        </c:if>   
+                                    </c:catch>
                                 </c:if>
 
                             </div>
@@ -151,15 +145,13 @@
                                     <ul>
                                         <li><a href="optionalquestion?onTopic=all">All</a></li>
                                         <li><a href="optionalquestion?onTopic=uncategorized">Uncategorized</a></li>
-                                            <c:catch var="msg">
-                                                <c:forEach items="${opt_fun.onTopicName()}" var="t">
-                                                <li> <a href="optionalquestion?onTopic=${t}">${word.convertStringUpperToLower(t)}</a></li>
-                                                </c:forEach>
-                                            </c:catch>
-                                            <c:if test="${msg ne null}">
-                                                ${msg}
+                                            <c:if test="${onTopicName ne null and not empty onTopicName}">
+                                                <c:catch var="msg">
+                                                    <c:forEach items="${onTopicName}" var="t">
+                                                    <li> <a href="optionalquestion?onTopic=${t}">${word.convertStringUpperToLower(t)}</a></li>
+                                                    </c:forEach>
+                                                </c:catch>
                                             </c:if>
-
                                     </ul>
                                 </div>
                             </div> 
@@ -169,15 +161,13 @@
                                 </div>
                                 <div>
                                     <ul>
-                                        <c:catch var="msg">
-                                            <c:forEach items="${opt_fun.totalNumberOfOption()}" var="m">
-                                                <li><a href="optionalquestion?option=${m}">${word.convertStringUpperToLower(m)}</a></li>
-                                                </c:forEach>
-                                            </c:catch>
-                                            <c:if test="${msg ne null}">
-                                                ${msg}
+                                        <c:if test="${totalNumberOfOption ne null and not empty totalNumberOfOption}">
+                                            <c:catch var="msg">
+                                                <c:forEach items="${opt_fun.totalNumberOfOption()}" var="m">
+                                                    <li><a href="optionalquestion?option=${m}">${word.convertStringUpperToLower(m)}</a></li>
+                                                    </c:forEach>
+                                                </c:catch>
                                             </c:if>
-
                                     </ul>
                                 </div>
                             </div>

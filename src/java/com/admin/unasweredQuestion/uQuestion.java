@@ -42,7 +42,8 @@ public class uQuestion {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            String sql = "select q_id as qId,posted_time as Date,question,(SELECT COUNT(a_id)as cnt FROM answer WHERE q_id = question.q_id group by q_id)as cnt,newuser.id as userId,firstname as userFullName from question inner join newuser on newuser.id = question.id group by q_id having cnt is null order by q_id desc";
+            String sql = "SELECT q_id as qId,posted_time AS Date,question,newuser.id AS userId,firstname AS userFullName "
+                    + "FROM question INNER JOIN newuser ON newuser.id = question.id WHERE q_id NOT IN(SELECT q_id FROM answer) ORDER BY q_id DESC";
             connection = con.getConnection();
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();

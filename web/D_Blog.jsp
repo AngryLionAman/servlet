@@ -46,20 +46,17 @@
         </c:if>
         <title>${blogSub}</title>
         <meta property="og:title" content="${blogSub} - inquiryhere.com" />
+        <meta property="title" content="${blogSub} - inquiryhere.com" />
+
         <meta property="og:description" content="<c:out value="${fn:substring(blogDes, 0, 300)}" escapeXml="false"/>"/>
+        <meta property="description" content="<c:out value="${fn:substring(blogDes, 0, 300)}" escapeXml="false"/>"/>
 
         <meta property="og:url" content="https://www.inquiryhere.com/">
         <meta property="og:site_name" content="https://www.inquiryhere.com/" />
         <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
         <meta property="og:type" content="website">
-        <meta property="og:locale" content="en_US">
-        <script type="text/javascript">
+        <meta property="og:locale" content="en">
 
-            function showCommentBox() {
-                var div = document.getElementById('comment');
-                div.className = 'visible';
-            }
-        </script>
         <style>
             input[type=text] {
                 width: 100%;
@@ -83,8 +80,6 @@
             }
             .button1 {width: 250px;}
         </style>
-
-
     </head>
 
     <body>
@@ -129,25 +124,26 @@
                                 </div>
 
                                 <div class="clear-fix"></div>
-                                Comments....<br>
-                                <div align="right">
-                                    <sql:query dataSource="jdbc/mydatabase" var="comment">
-                                        SELECT unique_id,user_id,(SELECT firstname FROM newuser WHERE id = user_id )AS fullname,q_id,comments,time FROM comments WHERE blog_id = ? ;
-                                        <sql:param value="${blogId}"/>
-                                    </sql:query>
-                                    <c:forEach items="${comment.rows}" var="cmt">
-                                        <c:out value="${cmt.comments}"/>:
-                                        <c:choose>
-                                            <c:when test="${cmt.fullname eq null or empty cmt.fullname}">
-                                                <font color="green"> <c:out value="Guest User"/> </font>  
-                                            </c:when>
-                                            <c:otherwise>
-                                                <a href="profile?user=${cmt.fullname}&id=${cmt.user_id}&ref=bc">${cmt.fullname}</a>    
-                                            </c:otherwise>  
-                                        </c:choose>                                                                                     
-                                        <br>________________________________<br>
-                                    </c:forEach>
-                                </div>
+                                <c:if test="${commentOfBlogByBlogId ne null and not empty commentOfBlogByBlogId}">
+                                    Comments....<br>
+                                    <div align="right">
+
+                                        <c:forEach items="${commentOfBlogByBlogId}" var="cmt">
+                                            <c:out value="${cmt.comment}"/>:
+                                            <c:choose>
+                                                <c:when test="${cmt.userType eq 'guest'}">
+                                                    <font style="color: red;">${word.convertStringUpperToLower(cmt.fullName)}</font> , ${cmt.date}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a href="profile?user=${cmt.userName}&id=${cmt.userId}&ref=qc">${word.convertStringUpperToLower(cmt.fullName)}</a> ${cmt.date} 
+                                                </c:otherwise>
+                                            </c:choose>                                                                                                  
+                                            <br>________________________________<br>
+                                        </c:forEach>
+
+                                    </div>
+                                </c:if>
+
 
                                 <form name="form_name_blog_save_comment" action="SaveBlogComment" method="post">
                                     <input type="hidden" name="blogSub" value="${blogSub}">

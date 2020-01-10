@@ -16,17 +16,27 @@ public class commentPojo {
      * @param commentId
      * @param comment
      * @param time
+     * @param userType
      * @param userId
      * @param userFullName
      * @param userUserName
      */
-    public commentPojo(int commentId, String comment, String time, int userId, String userFullName, String userUserName) {
+    public commentPojo(int commentId, String comment, String time, String userType, int userId, String userFullName, String userUserName) {
         this.commentId = commentId;
         this.comment = comment;
         this.time = time;
+        this.userType = userType;
         this.userId = userId;
         this.userFullName = userFullName;
         this.userUserName = userUserName;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getUserType() {
+        return userType;
     }
 
     /**
@@ -80,6 +90,7 @@ public class commentPojo {
     int commentId;
     String comment;
     String time;
+    String userType;
     int userId;
     String userFullName;
     String userUserName;

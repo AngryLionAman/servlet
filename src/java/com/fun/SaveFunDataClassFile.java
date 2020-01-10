@@ -29,6 +29,17 @@ import javax.sql.DataSource;
  */
 public class SaveFunDataClassFile {
 
+    /**
+     *
+     * @param userId
+     * @param title
+     * @param description
+     * @param category
+     * @param basedon
+     * @param type
+     * @return
+     * @throws Exception
+     */
     public boolean saveFunData(int userId, String title, String description, String category, String basedon, String type) throws Exception {
 
         SecondPoolConnection pc = new SecondPoolConnection();

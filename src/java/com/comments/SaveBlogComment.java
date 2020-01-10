@@ -63,43 +63,48 @@ public class SaveBlogComment extends HttpServlet {
         SaveBlogCommentClassFile blogClassFile = new SaveBlogCommentClassFile();
         CreateNotification createNotification = new CreateNotification();
 
-        int sessionUserId = input.getInputInt(request.getParameter("sessionUserId"));
-        int userIdWhoPosted = input.getInputInt(request.getParameter("bloggerUserId"));
-        int blogId = input.getInputInt(request.getParameter("blog_id"));
-        String comment = input.getInputString(request.getParameter("comments"));
-
         String message = null;
+        int blogId = 0;
 
-        if (blogId != 0 && comment != null) {
-            if (sessionUserId != 0) {
-                try {
-                    if (!blogClassFile.SaveBlogComment(sessionUserId, blogId, comment)) {
-                        if (userIdWhoPosted != 0) {
-                            if (!createNotification.CreateNotificationForBlogComment(sessionUserId, userIdWhoPosted, blogId)) {
-                                message = "Comment has been saved and notification has been sent to the user";
+        try {
+
+            int userId = input.getInputInt(request.getParameter("sessionUserId"));
+            int userIdWhoPostedBog = input.getInputInt(request.getParameter("bloggerUserId"));
+            blogId = input.getInputInt(request.getParameter("blog_id"));
+            String comment = input.getInputString(request.getParameter("comments"));
+
+            if (blogId != 0 && comment != null) {
+                if (userId != 0) {
+                    if (!blogClassFile.SaveBlogComment(userId, blogId, comment, true)) {
+                        if (userIdWhoPostedBog != 0) {
+                            if (!createNotification.CreateNotificationForBlogComment(userId, userIdWhoPostedBog, blogId)) {
+                                message = "Comment has been saved and notification has been sent to user";
                             } else {
-                                message = "Comment has been posted, but got some probelm createing notification";
+                                message = "Comment has been posted, but got some probelm in createing notification";
                             }
                         } else {
                             message = "This blog is posted by guest user, So comment has been posted but notification will not generate";
                         }
                     } else {
-                        message = "Command not saved, Please try again";
+                        message = "Storing the comment operation faield, Please try again";
                     }
-                } catch (SQLException |ClassNotFoundException  ex) {
-                    Logger.getLogger(SaveBlogComment.class.getName()).log(Level.SEVERE, null, ex);
-                }catch (Exception ex) {
-                    Logger.getLogger(SaveBlogComment.class.getName()).log(Level.SEVERE, null, ex);
+                } else {
+                    if (!blogClassFile.SaveBlogComment(userId, blogId, comment, false)) {
+                        message = "Dear Guest user, Your comment has been saved. Will display after admin approval";
+                    } else {
+                        message = "Dear user, Your comment is not saved. Please try again or report to admin";
+                    }
                 }
             } else {
-                message = "Guest user not allowed to post the comment";
+                message = "Blog id is zero, Or comment is empty. Plase try again or report to admin";
             }
-        } else {
-            message = "Bad argument, May comment is without word. Please try again with valid input";
+        } catch (Exception msg) {
+            Logger.getLogger(SaveBlogComment.class.getName()).log(Level.SEVERE, message, msg);
+        } finally {
+            request.setAttribute("message", message);
+            request.setAttribute("id", blogId);
+            request.getRequestDispatcher("blog").forward(request, response);
         }
-        request.setAttribute("message", message);
-        request.setAttribute("id", blogId);
-        request.getRequestDispatcher("blog").forward(request, response);
     }
 
     /**

@@ -29,6 +29,13 @@ import java.util.logging.Logger;
  */
 public class supportingFunctionTopic {
 
+    /**
+     *
+     * @param topicId
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public boolean isTopicPresentByTopicId(int topicId) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = new DatabaseConnection();

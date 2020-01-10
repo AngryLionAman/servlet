@@ -17,7 +17,7 @@
         <meta charset="UTF-8">        <!-- For IE -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       
+
         <c:if test="${GetUserDetailByUserId eq null}">
             <c:choose>
                 <c:when test="${param.ID ne null and not empty param.ID}">
@@ -25,36 +25,42 @@
                 </c:when>
             </c:choose>
         </c:if>
-        
-        <c:if test="${GetUserDetailByUserId ne null}">
-            <c:forEach items="${GetUserDetailByUserId}" var="user">
-                <c:set scope="page" var="userId" value="${user.userId}"/>
-                <c:set scope="page" var="userName" value="${user.username}"/>
-                <c:set scope="page" var="fullName" value="${user.fullName}"/>
-                <c:set scope="page" var="email" value="${user.email}"/>
-                <c:set scope="page" var="email_s" value="${user.email_s}"/>
-                <c:set scope="page" var="higherEdu" value="${user.higherEdu}"/>
-                <c:set scope="page" var="bestAchivement" value="${user.bestAchivement}"/>
-                <c:set scope="page" var="bio" value="${user.bio}"/>
-                <c:set scope="page" var="imagePath" value="${user.imagePath}"/>
-                <c:set scope="page" var="totalView" value="${user.totalView}"/>
-            </c:forEach>
-        </c:if>
+
+        <c:catch var="pr">
+            <c:if test="${GetUserDetailByUserId ne null}">
+                <c:forEach items="${GetUserDetailByUserId}" var="user">
+                    <c:set scope="page" var="userId" value="${user.userId}"/>
+                    <c:set scope="page" var="userName" value="${user.username}"/>
+                    <c:set scope="page" var="fullName" value="${user.fullName}"/>
+                    <c:set scope="page" var="email" value="${user.email}"/>
+                    <c:set scope="page" var="email_s" value="${user.email_s}"/>
+                    <c:set scope="page" var="higherEdu" value="${user.higherEdu}"/>
+                    <c:set scope="page" var="bestAchivement" value="${user.bestAchivement}"/>
+                    <c:set scope="page" var="bio" value="${user.bio}"/>
+                    <c:set scope="page" var="imagePath" value="${user.imagePath}"/>
+                    <c:set scope="page" var="totalView" value="${user.totalView}"/>
+                </c:forEach>
+            </c:if>
+        </c:catch>        
 
         <title>${fullName} Profile | inquiryhere.com</title>
+
+        <meta property="url" content="https://www.inquiryhere.com/" />
+        <meta property="title" content="${fullName} Profile | inquiryhere.com" />
+        <meta property="description" content="${bio}" />
+        <meta property="type" content="website">
+        <meta property="locale" content="en">
 
         <meta property="og:url" content="https://www.inquiryhere.com/" />
         <meta property="og:title" content="${fullName} Profile | inquiryhere.com" />
         <meta property="og:description" content="${bio}" />
         <meta property="og:type" content="website">
-        <meta property="og:locale" content="en_US">
+        <meta property="og:locale" content="en">
 
         <script type="text/javascript">
-            function showCommentBox(session_userid) {
-                if (session_userid !== null) {
-                    var div = document.getElementById('comment');
-                    div.className = 'visible';
-                }
+            function showCommentBox() {
+                var div = document.getElementById('comment');
+                div.className = 'visible';
             }
         </script>
         <script type="text/javascript">
@@ -108,21 +114,21 @@
                                     ${message}                                
                                 </div>
                             </c:if>
-                            
+
                             <c:if test="${gotException ne null}">                                
                                 <div class="clear-fix" align="center" style="font-size: 20px;color: red;background-color: white;">
                                     ${'Got some probelm, Please refresh this page or visit after some time'}                                
                                 </div>
                             </c:if>
-                            
+
                             <div class="themeBox" style="min-height:1px;">
                                 <div class="boxHeading">
                                     Profile details[ View(${totalView}) ]
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                    <img src="images/${imagePath}" alt="Image" style="width:90%; margin:10px 0px 0px; border:1px solid #ddd;">
+                                    <img src="images/${imagePath}" alt="inquiryhere" style="width:90%; margin:10px 0px 0px; border:1px solid #ddd;">
                                     <c:if test="${sessionScope.Session_id_of_user ne null and userId eq sessionScope.Session_id_of_user}">
-                                        <a href="UpdateUserProfile.jsp">UPDATE YOUR PROFILE IMAGE</a>
+                                        <a href="editP?id=${sessionScope.Session_id_of_user}" >UPDATE YOUR PROFILE IMAGE</a>
                                     </c:if>
 
                                     <c:catch var="excp">  
@@ -176,30 +182,27 @@
                                                     </c:otherwise>
                                                 </c:choose>
                                                 &nbsp;&nbsp;
-                                                <c:if test="${sessionScope.Session_id_of_user ne null}" >
-                                                    <c:if test="${userId eq sessionScope.Session_id_of_user}">
-                                                        <c:choose>
-                                                            <c:when test="${email_s eq 0}">
-                                                                <div style="padding: 5px; display: inline-block;" align="right">
-                                                                    <form name="form_name_hide_mail" method="post" action="hideMail">
-                                                                        <input type="hidden" name="sessionUserId" value="${sessionScope.Session_id_of_user}"/>
-                                                                        <input type="hidden" name="action" value="hide"/>
-                                                                        <input type="submit" value="Hide you mail">
-                                                                    </form>
-                                                                </div>
-                                                            </c:when>
-                                                            <c:when test="${email_s eq 1}">
-                                                                <div style="padding: 5px; display: inline-block;" align="right">
-                                                                    <form name="form_name_hide_mail" method="post" action="hideMail">
-                                                                        <input type="hidden" name="sessionUserId" value="${sessionScope.Session_id_of_user}"/>
-                                                                        <input type="hidden" name="action" value="show"/>
-                                                                        <input type="submit" value="Display your mail">
-                                                                    </form>
-                                                                </div>
-                                                            </c:when>
-                                                        </c:choose>
-                                                    </c:if>
-
+                                                <c:if test="${sessionScope.Session_id_of_user ne null and userId eq sessionScope.Session_id_of_user}" >
+                                                    <c:choose>
+                                                        <c:when test="${email_s eq 0}">
+                                                            <div style="padding: 5px; display: inline-block;" align="right">
+                                                                <form name="form_name_hide_mail" method="post" action="hideMail">
+                                                                    <input type="hidden" name="sessionUserId" value="${sessionScope.Session_id_of_user}"/>
+                                                                    <input type="hidden" name="action" value="hide"/>
+                                                                    <input type="submit" value="Hide you mail">
+                                                                </form>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:when test="${email_s eq 1}">
+                                                            <div style="padding: 5px; display: inline-block;" align="right">
+                                                                <form name="form_name_hide_mail" method="post" action="hideMail">
+                                                                    <input type="hidden" name="sessionUserId" value="${sessionScope.Session_id_of_user}"/>
+                                                                    <input type="hidden" name="action" value="show"/>
+                                                                    <input type="submit" value="Display your mail">
+                                                                </form>
+                                                            </div>
+                                                        </c:when>
+                                                    </c:choose>
                                                 </c:if>
                                             </td>
                                         </tr>
@@ -244,7 +247,7 @@
                                         </tr>
                                         <c:if test="${sessionScope.Session_id_of_user ne null and sessionScope.Session_id_of_user eq userId}">
                                             <tr>                                                   
-                                                <td><a href="UpdateUserProfile.jsp">Complete your profile</a></td>
+                                                <td><a href="editP?id=${sessionScope.Session_id_of_user}">Complete your profile</a></td>
                                             </tr>
                                         </c:if>
 
@@ -253,23 +256,33 @@
                                         </tr>
                                     </table>
 
-                                    <div align="right">
+                                    <c:catch var="cmt">
+                                        <c:if test="${GetCommentByProfileId ne null and not empty GetCommentByProfileId}">
+                                            <div align="right">                                        
+                                                <c:forEach items="${GetCommentByProfileId}" var="fc">
 
-                                        <c:forEach items="${GetCommentByProfileId}" var="fc">
-                                            <p>
-                                                <c:out value="${fc.comment}"/>:-                                           
-                                                <a href="profile?user=${fc.userName}&id=${fc.userId}&ref=pc">${fc.fullName}</a>, ${fc.date}  
-                                            </p>
-                                        </c:forEach>
-
-                                        <c:if test="${sessionScope.Session_id_of_user ne null and userId ne sessionScope.Session_id_of_user}">
-                                            <a href="javascript:void(0)" value="Comment" onclick="showCommentBox('<c:out value="${sessionScope.Session_id_of_user}"/>')">Write Good Thing About Him</a><br>
+                                                    <c:choose>
+                                                        <c:when test="${fc.userType eq 'guest'}">
+                                                            <p>
+                                                                <c:out value="${fc.comment}"/> :- 
+                                                                <font style="color: red;">${fc.fullName}</font>, ${fc.date}
+                                                            </p>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <p>    
+                                                                <c:out value="${fc.comment}"/> :- 
+                                                                <a href="profile?user=${fc.userName}&id=${fc.userId}&ref=pc">${fc.fullName}</a>, ${fc.date}  
+                                                            </p>
+                                                        </c:otherwise>
+                                                    </c:choose>                                           
+                                                </c:forEach>
+                                                <c:if test="${sessionScope.Session_id_of_user ne null and userId ne sessionScope.Session_id_of_user}">
+                                                    <a href="javascript:void(0)" value="Comment" onclick="showCommentBox()">Write Good Thing About Him</a><br>
+                                                </c:if>
+                                            </div>
                                         </c:if>
-                                        <c:if test="${sessionScope.Session_id_of_user eq null}">
-                                            <a href="javascript:void(0)" value="Comment" onclick="alert('Please Login To Comment');">Write Good Thing About Him</a><br>  
-                                        </c:if>
+                                    </c:catch>
 
-                                    </div>
                                     <form action="saveProfileComment" method="post">
                                         <div class="hidden" id="comment">
                                             <input type="hidden" name="session_userid" value="<c:out value="${sessionScope.Session_id_of_user}"/>">
@@ -293,15 +306,16 @@
                                     User Activity
                                 </div>
                                 <div>
-                                    <c:forEach items="${CountRowByUserIdController}" var="co">
-                                        <a href="profile?user=${userName}&id=${userId}&tab=question">Question(<c:out value="${co.countQestion}"/>)</a><br>
-                                        <a href="profile?user=${userName}&id=${userId}&tab=answer">Answer(<c:out value="${co.countAnswer}"/>)</a><br>
-                                        <a href="profile?user=${userName}&id=${userId}&tab=topic">Topic Followed(<c:out value="${co.countTopic}"/>)</a><br>
-                                        <a href="profile?user=${userName}&id=${userId}&tab=following">Following(<c:out value="${co.countFollowing}"/>)</a><br>
-                                        <a href="profile?user=${userName}&id=${userId}&tab=followers">Followers(<c:out value="${co.countFollowers}"/>)</a><br>
-                                        <a href="profile?user=${userName}&id=${userId}&tab=blog">Blog(<c:out value="${co.countBlog}"/>)</a><br>
-                                    </c:forEach>
-
+                                    <c:catch var="cnt">
+                                        <c:forEach items="${CountRowByUserIdController}" var="co">
+                                            <a href="profile?user=${userName}&id=${userId}&tab=question">Question(<c:out value="${co.countQestion}"/>)</a><br>
+                                            <a href="profile?user=${userName}&id=${userId}&tab=answer">Answer(<c:out value="${co.countAnswer}"/>)</a><br>
+                                            <a href="profile?user=${userName}&id=${userId}&tab=topic">Topic Followed(<c:out value="${co.countTopic}"/>)</a><br>
+                                            <a href="profile?user=${userName}&id=${userId}&tab=following">Following(<c:out value="${co.countFollowing}"/>)</a><br>
+                                            <a href="profile?user=${userName}&id=${userId}&tab=followers">Followers(<c:out value="${co.countFollowers}"/>)</a><br>
+                                            <a href="profile?user=${userName}&id=${userId}&tab=blog">Blog(<c:out value="${co.countBlog}"/>)</a><br>
+                                        </c:forEach>
+                                    </c:catch>
                                 </div>
 
                             </div>
@@ -314,7 +328,7 @@
 
                                         <c:choose>
 
-                                            <c:when test="${GetTotalQuestionPostedByUserId ne null}">
+                                            <c:when test="${GetTotalQuestionPostedByUserId ne null and not empty GetTotalQuestionPostedByUserId}">
 
                                                 <center><div class=boxHeading>QUESTION</div></center>                                                       
                                                     <c:set scope="page" value="0" var="count"/>
@@ -339,7 +353,7 @@
 
                                             </c:when>
 
-                                            <c:when test="${GetTotalAnswerPostedByUserId ne null}">
+                                            <c:when test="${GetTotalAnswerPostedByUserId ne null and not empty GetTotalAnswerPostedByUserId}">
 
                                                 <center><div class=boxHeading> ANSWER </div></center>                                                   
                                                     <c:set scope="page" value="0" var="count"/>
@@ -366,7 +380,7 @@
 
                                             </c:when>
 
-                                            <c:when test="${GetTotalTopicFollowedByUserId ne null}">
+                                            <c:when test="${GetTotalTopicFollowedByUserId ne null and not empty GetTotalTopicFollowedByUserId}">
 
                                                 <center><div class=boxHeading>TOPIC FOLLOWED </div></center>                                                    
                                                     <c:set scope="page" value="0" var="count"/>
@@ -408,7 +422,7 @@
 
                                             </c:when>
 
-                                            <c:when test="${GetTotalFollowingByUserId ne null}">
+                                            <c:when test="${GetTotalFollowingByUserId ne null and not empty GetTotalFollowingByUserId}">
 
                                                 <center><div class=boxHeading> FOLLOWING </div></center>                                                   
                                                     <c:set scope="page" value="0" var="count"/>
@@ -447,7 +461,7 @@
 
                                             </c:when>
 
-                                            <c:when test="${GetTotalFollowersByUserId ne null}">
+                                            <c:when test="${GetTotalFollowersByUserId ne null and not empty GetTotalFollowersByUserId}">
 
                                                 <center><div class=boxHeading> FOLLOWERS </div></center>                                                  
                                                     <c:set scope="page" value="0" var="count"/>
@@ -488,7 +502,7 @@
 
                                             </c:when>
 
-                                            <c:when test="${GetTotalBlogByUserId ne null}">
+                                            <c:when test="${GetTotalBlogByUserId ne null and not empty GetTotalBlogByUserId}">
 
                                                 <center><div class=boxHeading> BLOG </div></center>                                                  
                                                     <c:set scope="page" value="0" var="count"/>

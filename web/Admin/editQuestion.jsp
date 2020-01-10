@@ -7,6 +7,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:useBean class="com.index.indexPage" id="Question" scope="page" />
 <jsp:useBean class="com.answer.SEO" id="tag" scope="page" />
+<jsp:useBean class="com.admin.adminUserDetail" id="user" scope="page"/>
+<c:if test="${sessionScope.adminUserId eq null}">
+    <c:redirect url="visit.jsp?msg=Session is not valid"/>
+</c:if>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
@@ -17,6 +21,9 @@
         <title>Edit question and tag</title>
     </head>
     <body>
+        <h1>Hello,   ${sessionScope.userName} <br>Edit question and tag !!!
+            <a href="<%=request.getContextPath()%>/Admin/adminModule.jsp">HOME</a>
+        </h1>
         <h1>Question Details.. <a href="modifyQuestion.jsp?p=${param.p}"> Back</a></h1>
 
         <c:catch var="exp">

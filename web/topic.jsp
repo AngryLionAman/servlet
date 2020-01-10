@@ -46,11 +46,8 @@
                     <c:set value="${td.totalFollowers}" var="totalFollowers"/>
                 </c:forEach>
             </c:catch>
-            <c:if test="${ex ne null}">
-                ${ex}
-            </c:if>
         </c:if>
-   
+
         <%--
        Meta tag For the SEO
         --%>
@@ -83,7 +80,7 @@
         </c:if>
 
         <meta property="og:type" content="website">
-        <meta property="og:locale" content="en_US">
+        <meta property="og:locale" content="en">
         <meta property="og:url" content="https://www.inquiryhere.com/topic.jsp">
         <meta property="og:site_name" content="www.inquiryhere.com" />
 
@@ -122,7 +119,7 @@
                                         ${message}                               
                                     </div>
                                 </c:if>
-                                
+
                                 <c:if test="${gotException ne null}">
                                     <div class="clear-fix" align="center" style="font-size: 20px;color: red;background-color: white;">
                                         ${'Got some probelm, Please refresh this page or visit after some time'}
@@ -255,16 +252,16 @@
                                     <div class="clear-fix"></div>
 
                                 </div>
-
-                                <c:if test="${count lt 30}">
-                                    <div class="themeBox" style="height:auto;">
-                                        <h4 style="background-color: yellow;">Also Read..</h4>
-                                        <c:forEach items="${question.getRandomQuestionByLimit(30 - count)}" var="rq">
-                                            <a href="questions?id=${rq.key}&q=${word.UrlFormat(rq.value)}&ref=topic" >&nbsp;${rq.value}?</a><br><br>                                           
-                                        </c:forEach>
-                                    </div>
-                                </c:if>
-
+                                <c:catch var="cnt">
+                                    <c:if test="${count lt 30}">
+                                        <div class="themeBox" style="height:auto;">
+                                            <h4 style="background-color: yellow;">Also Read..</h4>
+                                            <c:forEach items="${question.getRandomQuestionByLimit(30 - count)}" var="rq">
+                                                <a href="questions?id=${rq.key}&q=${word.UrlFormat(rq.value)}&ref=topic" >&nbsp;${rq.value}?</a><br><br>                                           
+                                            </c:forEach>
+                                        </div>
+                                    </c:if>
+                                </c:catch>
                             </div>
                         </div>
                         <c:if test="${topicDetailByRefId ne null and not empty topicDetailByRefId}">
@@ -287,9 +284,6 @@
                                             <br>  <a href='moretopic' style='color:red;'>Follow More Topic</a>
 
                                         </c:catch>
-                                        <c:if test="${exp ne null}">
-                                            ${exp}
-                                        </c:if>
 
                                     </div>
                                 </div>

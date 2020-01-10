@@ -44,39 +44,22 @@ public class guestSaveQuestion extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException, ClassNotFoundException, Exception {
-        
+
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
         validateInput input = new validateInput();
-        // GuestUser guestUser = new GuestUser();
-        //newUser user = new newUser();
         questionClass funcation = new questionClass();
 
-        //String guestFullName = input.getInputString(request.getParameter("guestName"));
-        //String guestEmail = input.getInputString(request.getParameter("guestEmail"));
-        String question = input.getInputString(request.getParameter("question"));
-        String tag_of_question = input.getInputString(request.getParameter("tag_of_question"));
-
-        /*
-         * Got the null pointer excpeiton at creating the user name
-         * Work under process
-         */
- /*
-        String guestUserName;
-        if (guestFullName != null) {
-            guestUserName = guestUser.GenreateGuestName(guestFullName.replaceAll(" ", "").toLowerCase());
-        } else {
-            guestUserName = guestUser.GenreateGuestName("GuestUser");
-        }*/
-        String message;
-        int guestId;
+        String message = null;
         int questionId = 0;
-        if (question != null) {
+        int guestId = 0;
 
-            guestId = 291;//(Selected this id because user name of this id is 'GuestUser') user.saveNewGuestUser(guestUserName, guestFullName, guestEmail, "guest");
-            if (guestId != 0) {
+        try {
+            String question = input.getInputString(request.getParameter("question"));
+            String tag_of_question = input.getInputString(request.getParameter("tag_of_question"));
+            if (question != null) {
                 if (!funcation.SaveQuestionByQuestionAndTagandUserId(guestId, question)) {
                     questionId = funcation.GetQuestionIdByQuestion(question);
                     if (tag_of_question != null) {
@@ -100,16 +83,17 @@ public class guestSaveQuestion extends HttpServlet {
                     message = "question not saved";
                 }
             } else {
-                message = "Sorry user.Got some internal problem to getting the guest id, Please try again";
+                message = "Question can't be empty";
             }
+        } catch (Exception msg) {
+            Logger.getLogger(guestSaveQuestion.class.getName()).log(Level.SEVERE, message, msg);
+        } finally {
+            request.setAttribute("message", message);
+            request.setAttribute("id", questionId);
 
-        } else {
-            message = "Question can't be empty";
+            request.getRequestDispatcher("questions").forward(request, response);
         }
-        request.setAttribute("message", message);
-        request.setAttribute("id", questionId);
-        
-        request.getRequestDispatcher("questions").forward(request, response);
+
     }
 
     /**

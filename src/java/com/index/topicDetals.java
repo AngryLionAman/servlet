@@ -48,7 +48,7 @@ public class topicDetals {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            String sql = "select t.unique_id,t.topic_name from topic t right join topic_followers_detail de on t.unique_id = de.topic_id where user_or_followers_id =? and t.unique_id is not null and t.topic_name is not null limit 15";
+            String sql = "SELECT t.unique_id,t.topic_name FROM topic t INNER JOIN topic_followers_detail de ON t.unique_id = de.topic_id WHERE user_or_followers_id = ?  AND t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL AND t.topic_name != '' LIMIT 15";
             con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
@@ -103,7 +103,7 @@ public class topicDetals {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            String sql = "SELECT unique_id,topic_name FROM topic where unique_id IS NOT NULL AND topic_name IS NOT NULL ORDER BY RAND() LIMIT ?";
+            String sql = "SELECT unique_id,topic_name FROM topic WHERE crawl = 1 AND unique_id IS NOT NULL AND topic_name IS NOT NULL AND topic_name != '' ORDER BY RAND() LIMIT ?";
             con = ds.getConnection();
             ps = con.prepareStatement(sql);
             ps.setInt(1, Limit);

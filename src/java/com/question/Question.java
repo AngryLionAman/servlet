@@ -88,8 +88,7 @@ public class Question {
 
     /**
      *
-     * @return
-     * @throws Exception
+     * @return @throws Exception
      */
     public List<RecentPostQUestionHavingAtLeastOneAnswerPojo> RecentPostQUestionHavingAtLeastOneAnswer() throws Exception {
 
@@ -174,8 +173,7 @@ public class Question {
 
     /**
      *
-     * @return
-     * @throws SQLException
+     * @return @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
@@ -195,9 +193,9 @@ public class Question {
 
         try {
             con = ds.getConnection();
-            String sql = "select q.q_id,q.question,q.vote,q.total_view,q.posted_time,q.updated_time as date,"
-                    + "user.id,user.firstname,user.username,user.user_type,user.higher_edu,(SELECT COUNT(a_id)as cnt FROM answer WHERE q_id = q.q_id group by q_id)as cnt from question q inner join newuser user "
-                    + "on user.id = q.id having cnt is null ORDER BY q.q_id DESC";
+            String sql = " SELECT q.q_id,q.question,q.vote,q.total_view,q.posted_time,q.updated_time AS date,user.id,user.firstname,"
+                    + "user.username,user.user_type,user.higher_edu FROM question q INNER JOIN newuser user ON user.id = q.id "
+                    + "WHERE q.q_id NOT IN(SELECT q_id FROM answer) ORDER BY q.q_id DESC";
 
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();

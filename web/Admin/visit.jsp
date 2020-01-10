@@ -7,6 +7,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:useBean id="user" scope="page" class="com.security.validateUser"/>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -18,11 +19,37 @@
 
     <center>
         <h1>Hello Admin 
-            <c:if test="${message ne null}">
-                , ${message}
-            </c:if>
+            <c:choose>
+                <c:when test="${message ne null}">
+                    <br><font style="color: red;">${message}</font>
+                </c:when>
+                <c:when test="${param.msg}">
+                    <br><font style="color: red;">${param.msg}</font>
+                </c:when>
+            </c:choose>
         </h1>
-        <form action="" method="post">
+        <h1>
+            <%
+                if ((request.getParameter("email") != null
+                        && !request.getParameter("email").isEmpty())
+                        && (request.getParameter("password") != null
+                        && !request.getParameter("password").isEmpty())
+                        && (request.getParameter("code") != null
+                        && !request.getParameter("code").isEmpty())) {
+                    String eMail = request.getParameter("email").trim();
+                    String passWord = request.getParameter("password");
+                    String code = request.getParameter("code");
+                    if (code.equals("sampur")) {
+                        user.validateAdminUser(eMail, passWord, request, response);
+                    } else {
+                        out.print("<font style='color: red';>Invalid credential</font>");
+                    }
+                } else {
+                    //out.print("All input required");
+                }
+            %>
+        </h1>
+        <form action="<%=request.getContextPath()%>/Admin/visit.jsp" method="post">
             <table>
                 <tr>
                     <th>UserName</th>
@@ -31,6 +58,10 @@
                 <tr>
                     <th>Password</th>
                     <th><input type="password" name="password"></th>
+                </tr>
+                <tr>
+                    <th>Security code</th>
+                    <th><input type="password" name="code"></th>
                 </tr>
                 <tr>
                     <th></th>
@@ -42,10 +73,4 @@
     </center>
 </body>
 </html>
-<%
-    if ((request.getParameter("email") != null && !request.getParameter("email").isEmpty()) && (request.getParameter("password") != null && !request.getParameter("password").isEmpty())) {
-        String eMail = request.getParameter("email").trim();
-        String passWord = request.getParameter("password");
-        user.validateAdminUser(eMail, passWord, request, response);
-    }
-%>
+

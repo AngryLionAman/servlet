@@ -15,6 +15,7 @@
  */
 package com.comments;
 
+import com.notifications.CreateNotification;
 import com.string.validateInput;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -41,37 +42,50 @@ public class saveProfileComment extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
         validateInput input = new validateInput();
+        onProfileCommentClass commentClass = new onProfileCommentClass();
+        CreateNotification notification = new CreateNotification();
 
-        String comments = input.getInputString(request.getParameter("comments"));
-
-        int session_userid = input.getInputInt(request.getParameter("session_userid"));
-
-        int OnCommentUserId = input.getInputInt(request.getParameter("OnCommentUserId"));
-
+        int OnCommentUserId = 0;
         String message = null;
 
-        onProfileCommentClass commentClass = new onProfileCommentClass();
+        try {
+            String comments = input.getInputString(request.getParameter("comments"));
+            int userId = input.getInputInt(request.getParameter("session_userid"));
+            OnCommentUserId = input.getInputInt(request.getParameter("OnCommentUserId"));
 
-        if (comments != null && session_userid != 0 && OnCommentUserId != 0) {
-            try {
-                if (!commentClass.SaveCommentOfProfie(session_userid, OnCommentUserId, comments)) {
-                    if (!commentClass.CreateNotificationOfProfileComment(session_userid, OnCommentUserId)) {
-                        //Do nothing
+            if (OnCommentUserId != 0 && comments != null) {
+                if (userId != 0) {
+                    if (!commentClass.SaveCommentOfProfie(userId, OnCommentUserId, comments, true)) {
+                        if (!notification.CreateNotificationOfProfileComment(userId, OnCommentUserId)) {
+                            message = "Comment has been Posted and notification has been sent to user";
+                        } else {
+                            message = "Comment has been saved, But sending notification to user is failed";
+                        }
                     } else {
-                        message = "Comment has been save but notification not created";
+                        message = "Comment not saved, Please report to admin";
                     }
                 } else {
-                    message = "Comment not saved, Please try again";
+                    if (!commentClass.SaveCommentOfProfie(userId, OnCommentUserId, comments, false)) {
+                        message = "Comment has been saved and this will appear admin approved";
+                    } else {
+                        message = "Comment save operaion failed, Please try again";
+                    }
                 }
-            } catch (SQLException | ClassNotFoundException ex) {
-                Logger.getLogger(saveProfileComment.class.getName()).log(Level.SEVERE, null, ex);
+            } else {
+                message = "userId is zero or comment is empty. Pelase try agina or report to admin";
             }
-        } else {
-            message = "Got Some error, Please try again";
+        } catch (ClassNotFoundException | SQLException msg) {
+            Logger.getLogger(saveProfileComment.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            request.setAttribute("message", message);
+            request.setAttribute("id", OnCommentUserId);
+            request.getRequestDispatcher("profile").forward(request, response);
         }
-        request.setAttribute("message", message);
-        request.setAttribute("id", OnCommentUserId);
-        request.getRequestDispatcher("profile").forward(request, response);
     }
 }

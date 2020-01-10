@@ -9,6 +9,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:useBean class="com.topic.topicDetail" id="topic" scope="page"/>
 <jsp:useBean class="com.answer.SEO" id="tag" scope="page" />
+<c:if test="${sessionScope.adminUserId eq null}">
+    <c:redirect url="visit.jsp?msg=Session is not valid"/>
+</c:if>
 <!DOCTYPE html>
 <html>
     <head>

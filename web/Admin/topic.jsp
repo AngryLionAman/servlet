@@ -36,10 +36,8 @@
         <c:if test="${param.msg ne null and not empty param.msg}">
         <center><h1 style="color: green;">${param.msg}</h1></center>
         </c:if>
-         <h1>Hello, <c:if test="${sessionScope.userName ne null}">
-                ${sessionScope.userName}
-        </c:if>
-            <a href="adminModule.jsp">Home</a>  <a href="<%=request.getContextPath()%>/Logout">Logout</a>
+         <h1>Hello,   ${sessionScope.userName}
+            <a href="adminModule.jsp">Home</a>,  <a href="<%=request.getContextPath()%>/Logout">Logout</a>,  <a href="<%=request.getContextPath()%>/Admin/topic.jsp">Refresh</a>
         </h1>
         <c:catch var="ex">
             <c:set var="rowsPerPage" value="10" />

@@ -154,7 +154,7 @@ public class supportingFunction {
         ResultSet rs = null;
         try {
             con = dc.getConnection();
-            String sql = "select distinct on_topic from optional_question where on_topic != 'uncategorized'";
+            String sql = "SELECT DISTINCT on_topic FROM optional_question WHERE on_topic <> 'uncategorized'";
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {

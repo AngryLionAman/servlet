@@ -1,11 +1,11 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@page import="com.profile.userProfile" %>
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
         <meta charset="UTF-8">               <!-- For IE -->
+        <meta name="robots" content="noindex, nofollow" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge">        <!-- For Resposive Device -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Update User Profile | inquiryHere.com</title>
@@ -45,14 +45,14 @@
     </head>
     <body>
         <jsp:include page="header.jsp"/>
-            <c:catch var="ex">
-                <c:if test="${sessionScope.Session_id_of_user eq null}">
-                    <c:redirect url="login.jsp"/>
-                </c:if>   
-            </c:catch>
-            <c:if test="${ex ne null}">
-                ${ex}
-            </c:if>
+        <c:catch var="ex">
+            <c:if test="${sessionScope.Session_id_of_user eq null}">
+                <c:redirect url="login.jsp"/>
+            </c:if>   
+        </c:catch>
+        <c:if test="${ex ne null}">
+            ${ex}
+        </c:if>
         <div class="main-page-wrapper">
             <div class="clear-fix"></div>
             <div class="bodydata">
@@ -64,18 +64,14 @@
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">                                                   
                             <div class="row">
                                 <center>           
-                                    <c:if test="${sessionScope.Session_id_of_user ne null}">
-                                        <sql:query dataSource="jdbc/mydatabase" var="userProfile">
-                                            select * from newuser where id  = ?;
-                                            <sql:param value="${sessionScope.Session_id_of_user}"/>
-                                        </sql:query> 
-                                        <c:forEach var="user" items="${userProfile.rows}">
+                                    <c:if test="${profileDataById ne null and not empty profileDataById}">
+                                        <c:forEach var="user" items="${profileDataById}">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="themeBox" style="height:auto;">
                                                     <label for="fname">Update your profile image</label>
                                                     <div class="boxHeading">
                                                         <div>
-                                                            <img src="images/${user.imagepath}" alt="Update your profile" style="width:20%; margin:10px 0px 0px; border:1px solid #ddd;">
+                                                            <img src="images/${user.imagePath}" alt="Update your profile" style="width:20%; margin:10px 0px 0px; border:1px solid #ddd;">
                                                         </div>
                                                         <div>
                                                             <form action="imageUpload" method="post" enctype="multipart/form-data">
@@ -84,10 +80,11 @@
                                                             </form>
                                                         </div>
                                                     </div>
-                                                    <form action="profile" method="post" >
+                                                    <form action="UpdateProfile" method="post" >
+                                                        <input type="hidden" name="user_id" value="${user.userId}"/>
                                                         <label for="fname">Full Name (Not editable)</label>
                                                         <div class="boxHeading">
-                                                            <input type="text" id="fname" name="fullname" value="${user.firstname}" readonly="" required="">
+                                                            <input type="text" id="fname" name="fullname" value="${user.fullName}" readonly="" required="">
                                                         </div>
                                                         <label for="fname">Email (Not editable)</label>
                                                         <div class="boxHeading">
@@ -133,7 +130,7 @@
                                                 </div>
                                             </div>
                                         </c:forEach>
-                                    </c:if>
+                                    </c:if>                                        
                                 </center> 
                             </div>
                         </div>

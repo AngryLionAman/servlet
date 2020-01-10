@@ -6,7 +6,6 @@
 package com.security;
 
 import com.connect.DatabaseConnection;
-import com.connect.PoolConnection;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,7 +16,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 
 /**
  *
@@ -90,7 +88,7 @@ public class validateUser {
      */
     public void validateAdminUser(String eMail, String passWord, HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ClassNotFoundException, Exception {
         //HttpServletRequest request = null;
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
         
         DatabaseConnection ds = new DatabaseConnection();
         
@@ -98,21 +96,25 @@ public class validateUser {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            String sql = "select id from newuser where email = ? and password = ?";
+            String sql = "select id,username from newuser where email = ? and password = ?";
             connection = ds.getConnection();
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, eMail);
             preparedStatement.setString(2, passWord);
             resultSet = preparedStatement.executeQuery();
             int foundUserId = 0;
+            String userName = null;
             if (resultSet.next()) {
                 foundUserId = resultSet.getInt("id");
+                userName = resultSet.getString("username");
             }
             if (foundUserId != 0) {
                 session.setAttribute("adminUserId", foundUserId);
-                response.sendRedirect("adminModule.jsp");
+                session.setAttribute("userName", userName);
+                session.setMaxInactiveInterval(600);
+                request.getRequestDispatcher("adminModule.jsp").forward(request, response);
             } else {
-                response.sendRedirect("visit.jsp?msg=invalid crenditial");
+                request.getRequestDispatcher("visit.jsp").forward(request, response);
             }
 
         } catch (SQLException msg) {

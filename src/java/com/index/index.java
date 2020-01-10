@@ -40,24 +40,6 @@ public class index extends HttpServlet {
 
     /**
      *
-     * @param tab
-     * @return
-     */
-    protected static String Tab(String tab) {
-        validateInput input = new validateInput();
-        if (tab == null) {
-            return "recent";
-        } else if (tab.isEmpty()) {
-            return "recent";
-        } else if ("".equals(tab.trim())) {
-            return "recent";
-        } else {
-            return input.getInputString(tab);
-        }
-    }
-
-    /**
-     *
      * @param request
      * @param response
      * @throws ServletException
@@ -80,7 +62,6 @@ public class index extends HttpServlet {
         FunHelpingFunction function = new FunHelpingFunction();
         validateInput input = new validateInput();
 
-        // List<recentQuestionPojo> recentPostQuestion = null;
         List<recentQuestionPojo> relatedQuestion = null;
         List<recentQuestionPojo> UnAnsweredQuestion = null;
 
@@ -97,16 +78,43 @@ public class index extends HttpServlet {
 
         String message = null;
         String gotException = null;
-        
-        try {
-            String tab = Tab(request.getParameter("tab"));
-            int pageNo = input.getInputInt(request.getParameter("p"));
 
-            int userId = user.GetUserId(request);
-            if (userId != 0) {
-                userFollowedTopic = detals.userFollowedTopic(userId);
-            } else {
-                randomTopic = detals.randomTopic(15);
+        try {
+            String tab = "recent";
+
+            try {
+                tab = input.getInputString(request.getParameter("tab"));
+                if (tab == null) {
+                    tab = "recent";
+                }
+            } catch (Exception msg) {
+                Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
+            }
+
+            int pageNo = 0;
+
+            try {
+                pageNo = input.getInputInt(request.getParameter("p"));
+            } catch (Exception msg) {
+                Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
+            }
+
+            int userId = 0;
+
+            try {
+                userId = user.GetUserId(request);
+            } catch (Exception msg) {
+                Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
+            }
+
+            try {
+                if (userId != 0) {
+                    userFollowedTopic = detals.userFollowedTopic(userId);
+                } else {
+                    randomTopic = detals.randomTopic(15);
+                }
+            } catch (Exception msg) {
+                Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
             }
 
             try {
@@ -121,46 +129,51 @@ public class index extends HttpServlet {
                 Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
             }
 
-            switch (tab) {
-                case "recent":
-                    RecentPostQUestionHavingAtLeastOneAnswer = question.RecentPostQUestionHavingAtLeastOneAnswer();
-                    //recentPostQuestion = page.recentPostQuestion();
-                    break;
+            try {
+                switch (tab) {
+                    case "recent":
+                        RecentPostQUestionHavingAtLeastOneAnswer = question.RecentPostQUestionHavingAtLeastOneAnswer();
+                        //recentPostQuestion = page.recentPostQuestion();
+                        break;
 
-                case "allquestion":
-                    AllQuestion = allQuestionClass.AllQuestion(pageNo);
-                    TotalNoOfPage = allQuestionClass.TotalNoOfPage();
-                    break;
+                    case "allquestion":
+                        AllQuestion = allQuestionClass.AllQuestion(pageNo);
+                        TotalNoOfPage = allQuestionClass.TotalNoOfPage();
+                        break;
 
-                case "unanswered":
-                    UnAnsweredQuestion = question.UnAnsweredQuestion();
-                    break;
+                    case "unanswered":
+                        UnAnsweredQuestion = question.UnAnsweredQuestion();
+                        break;
 
-                case "related":
+                    case "related":
 
-                    if (userId != 0) {
-                        relatedQuestion = page.relatedQuestion(userId);
-                    } else {
-                        message = "Dear User, we are really sorry for this problem."
-                                + "<br>This problem occurred due to following reasong.."
-                                + "<br>After logout, you are trying to access this url."
-                                + "<br>You are hitting the invalid argument."
-                                + "<br>If you are not doing wrong and still getting this message. So, Please contect to administrator.";
+                        if (userId != 0) {
+                            relatedQuestion = page.relatedQuestion(userId);
+                        } else {
+                            message = "Dear User, we are really sorry for this problem."
+                                    + "<br>This problem occurred due to following reasong.."
+                                    + "<br>After logout, you are trying to access this url."
+                                    + "<br>You are hitting the invalid argument."
+                                    + "<br>If you are not doing wrong and still getting this message. So, Please contect to administrator.";
 
-                    }
-                    break;
+                        }
+                        break;
 
-                default:
-                    RecentPostQUestionHavingAtLeastOneAnswer = question.RecentPostQUestionHavingAtLeastOneAnswer();
-                    break;
+                    default:
+                        RecentPostQUestionHavingAtLeastOneAnswer = question.RecentPostQUestionHavingAtLeastOneAnswer();
+                        break;
 
+                }
+            } catch (Exception msg) {
+                Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
             }
+
         } catch (Exception msg) {
             gotException = "Not null";
             Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             request.setAttribute("gotException", gotException);
-            
+
             request.setAttribute("recentPostQuestion", RecentPostQUestionHavingAtLeastOneAnswer);
             request.setAttribute("relatedQuestion", relatedQuestion);
             request.setAttribute("userFollowedTopic", userFollowedTopic);

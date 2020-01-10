@@ -63,7 +63,7 @@ public class validate extends HttpServlet {
                     if (userId != 0) {
                         HttpSession session = request.getSession();
                         session.setAttribute("Session_id_of_user", userId);
-                        session.setMaxInactiveInterval(60);
+                        session.setMaxInactiveInterval(600);
                         try {
                             Cookie[] cookies = request.getCookies();
                             if (cookies != null) {

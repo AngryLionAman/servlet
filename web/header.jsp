@@ -3,32 +3,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <jsp:useBean class="com.header.headerData" id="userdetails" scope="page"/>
 <jsp:useBean class="com.string.WordFormating" id="fun" scope="page"/>
-<jsp:useBean class="com.security.validateUser" id="function" scope="page" />
-<c:catch var="ex">
-    <c:if test="${sessionScope.Session_id_of_user eq null}">
-        <c:if test="${pageContext.request.cookies ne null and not empty pageContext.request.cookies}">
-            <c:forEach var="cookieVal" items="${pageContext.request.cookies}" > 
-                <c:if test="${cookieVal.name eq 'usernamecookie'}">
-                    <c:set value="${cookieVal.value}" var="username" scope="page" />
-                </c:if>
-                <c:if test="${cookieVal.name eq 'passwordcookie'}">
-                    <c:set value="${cookieVal.value}" var="password" scope="page" />
-                </c:if>
-            </c:forEach>
-        </c:if>
-        <c:if test="${username ne null and not empty username and password ne null and not empty password}">
-            <c:if test="${function.validateUser(username, password)}">      
-                <jsp:include page="validate.jsp">
-                    <jsp:param name="email" value="${username}"/>
-                    <jsp:param name="password" value="${password}"/>
-                </jsp:include>        
-            </c:if>
-        </c:if> 
-    </c:if>
-</c:catch>
-<c:if test="${ex ne null}">
-    ${ex}
-</c:if>
 <header class="home-page">
     <div class="container clear-fix">
         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="padding-left:0px;">
@@ -49,8 +23,7 @@
                 if (a === null || a === "", a.trim() === "")
                 {
                     return false;
-                }
-                else
+                } else
                 {
                     var a = document.forms["Form"]["q"].value;
                     var http = new XMLHttpRequest();
@@ -70,36 +43,30 @@
         </div>
 
         <form id="myform" method="post" action="<%=request.getContextPath()%>/inbox?id=${sessionScope.Session_id_of_user}"></form>
-        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 float-right textalign-right">          
+        <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 float-right textalign-right">          
             <a href="#" data-toggle="modal" data-target="#myModal2" class="helpicon"  style="color: white;background-color: red; padding-left: 10px;padding-right: 80px; white-space: nowrap;">Ask Question</a>           
-            <c:if test="${sessionScope.Session_id_of_user eq null}">  
-                <%--
-                    String url = request.getRequestURL().toString();
-                    String arg = request.getQueryString();
-                    if (arg != null) {
-                        url = url + "?" + request.getQueryString();
-                    }
-                --%>                
-                <a href="signup.jsp" class="helpicon"  style="color: white;padding-left: 10px;padding-right: 30px;">SIgnUp</a>
-                <a href="login.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Login</a>
-            </c:if>
+            <c:choose>
+                <c:when test="${sessionScope.Session_id_of_user ne null}">
+                    <c:catch var="m">
+                        <c:forEach var="u" items="${userdetails.headerUser(sessionScope.Session_id_of_user)}">
+                            <a href="logout" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
 
-            <a href="index" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Home</a>
-            <c:if test="${sessionScope.Session_id_of_user ne null}">
-                <c:catch var="m">
-                    <c:forEach var="u" items="${userdetails.headerUser(sessionScope.Session_id_of_user)}">
-                        <a href="logout" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
-
-                        <a href="" onclick="document.getElementById('myform').submit(); return false;" class="helpicon" style="color: white;padding-left: 10px;padding-right: 10px;">Inbox</a>
-                        <a href="profile?user=${u.userName}&id=${u.userId}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 20px;">
-                            <b><c:out value="${fun.firstName(u.fullName)}"/></b>
-                        </a>             
-                    </c:forEach>    
-                </c:catch>
-                <c:if test="${m ne null}">
-                    ${m}
-                </c:if>
-            </c:if>
+                            <a href="" onclick="document.getElementById('myform').submit(); return false;" class="helpicon" style="color: white;padding-left: 10px;padding-right: 10px;">Inbox</a>
+                            <a href="profile?user=${u.userName}&id=${u.userId}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 20px;">
+                                <b><c:out value="${fun.firstName(u.fullName)}"/></b>
+                            </a>             
+                        </c:forEach>    
+                    </c:catch>
+                    <c:if test="${m ne null}">
+                        ${m}
+                    </c:if>
+                </c:when>
+                <c:otherwise>
+                    <a href="signup.jsp" class="helpicon"  style="color: white;padding-left: 10px;padding-right: 30px;">SIgnUp</a>
+                    <a href="login.jsp" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Login</a>
+                </c:otherwise>
+            </c:choose>
+            <a href="index" class="helpicon" style="color: white;">Home</a>
         </div>
     </div>
 </header>

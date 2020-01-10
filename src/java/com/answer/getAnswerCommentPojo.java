@@ -27,6 +27,7 @@ public class getAnswerCommentPojo {
     int commentPostedById;
     String userName;
     String fullName;
+    String userType;
 
     /**
      *
@@ -78,19 +79,30 @@ public class getAnswerCommentPojo {
 
     /**
      *
+     * @return
+     */
+    public String getUserType() {
+        return userType;
+    }
+
+    /**
+     *
      * @param commentId
      * @param comments
      * @param date
      * @param commentPostedById
      * @param userName
      * @param fullName
+     * @param userType
      */
-    public getAnswerCommentPojo(int commentId, String comments, String date, int commentPostedById, String userName, String fullName) {
+
+    public getAnswerCommentPojo(int commentId, String comments, String date, int commentPostedById, String userName, String fullName, String userType) {
         this.commentId = commentId;
         this.comments = comments;
         this.date = date;
         this.commentPostedById = commentPostedById;
         this.userName = userName;
         this.fullName = fullName;
+        this.userType = userType;
     }
 }

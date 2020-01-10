@@ -83,39 +83,92 @@ public class search extends HttpServlet {
         List<searchUserPojo> userByQuearyAndLimit = null;
 
         try {
-            String tab = Tab(request.getParameter("tab"));
-            query = input.getInputString(request.getParameter("q"));
+
+            String tab = "default";
+
+            try {
+                tab = Tab(request.getParameter("tab"));
+            } catch (Exception msg) {
+                Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
+            }
+
+            try {
+                query = input.getInputString(request.getParameter("q"));
+            } catch (Exception msg) {
+                Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
+            }
+
             try {
                 randomTopic = detals.randomTopic(50);
             } catch (Exception msg) {
                 Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
             }
-            
+
             if (query != null) {
 
-                GetCountRowSearch = file.GetCountRowSearch(query);
+                try {
+                    GetCountRowSearch = file.GetCountRowSearch(query);
+                } catch (Exception msg) {
+                    Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
+                }
                 switch (tab) {
                     case "question":
-                        questionByQueryAndLimit = file.getQuestionByQueryAndLimit(query, 0);
+                        try {
+                            questionByQueryAndLimit = file.getQuestionByQueryAndLimit(query, 0);
+                        } catch (Exception msg) {
+                            Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
+                        }
                         break;
 
                     case "answer":
-                        answerByQuearyAndLimit = file.getAnswerByQuearyAndLimit(query, 0);
+                        try {
+                            answerByQuearyAndLimit = file.getAnswerByQuearyAndLimit(query, 0);
+                        } catch (Exception msg) {
+                            Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
+                        }
                         break;
 
                     case "topic":
-                        topicByQuearyAndLimit = file.getTopicByQuearyAndLimit(query, 0);
+                        try {
+                            topicByQuearyAndLimit = file.getTopicByQuearyAndLimit(query, 0);
+                        } catch (Exception msg) {
+                            Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
+                        }
                         break;
 
                     case "profile":
-                        userByQuearyAndLimit = file.getUserByQuearyAndLimit(query, 0);
+                        try {
+                            userByQuearyAndLimit = file.getUserByQuearyAndLimit(query, 0);
+                        } catch (Exception msg) {
+                            Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
+                        }
                         break;
 
                     default:
-                        questionByQueryAndLimit = file.getQuestionByQueryAndLimit(query, 5);
-                        answerByQuearyAndLimit = file.getAnswerByQuearyAndLimit(query, 5);
-                        topicByQuearyAndLimit = file.getTopicByQuearyAndLimit(query, 5);
-                        userByQuearyAndLimit = file.getUserByQuearyAndLimit(query, 5);
+
+                        try {
+                            questionByQueryAndLimit = file.getQuestionByQueryAndLimit(query, 5);
+                        } catch (Exception msg) {
+                            Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
+                        }
+
+                        try {
+                            answerByQuearyAndLimit = file.getAnswerByQuearyAndLimit(query, 5);
+                        } catch (Exception msg) {
+                            Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
+                        }
+
+                        try {
+                            topicByQuearyAndLimit = file.getTopicByQuearyAndLimit(query, 5);
+                        } catch (Exception msg) {
+                            Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
+                        }
+
+                        try {
+                            userByQuearyAndLimit = file.getUserByQuearyAndLimit(query, 5);
+                        } catch (Exception msg) {
+                            Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
+                        }
                         break;
                 }
             } else {

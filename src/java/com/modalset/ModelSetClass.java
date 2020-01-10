@@ -30,6 +30,14 @@ import java.util.logging.Logger;
  */
 public class ModelSetClass {
 
+    /**
+     *
+     * @param questionId
+     * @param opt
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public boolean saveOptionalAnswer(int questionId, String[] opt) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = new DatabaseConnection();
@@ -74,6 +82,13 @@ public class ModelSetClass {
         return false;
     }
 
+    /**
+     *
+     * @param question
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public int getQuestionIdByModelSetQuestion(String question) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = new DatabaseConnection();
@@ -116,6 +131,16 @@ public class ModelSetClass {
         return 0;
     }
 
+    /**
+     *
+     * @param exam_of
+     * @param set_no
+     * @param question
+     * @param correct_ans
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public boolean saveSetQuestion(String exam_of, int set_no, String question, String correct_ans) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = new DatabaseConnection();

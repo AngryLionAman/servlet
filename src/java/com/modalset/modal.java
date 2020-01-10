@@ -59,11 +59,11 @@ public class modal extends HttpServlet {
 
         String gotException = null;
         String exam_of = null;
-        int set_no = 0;
+        int set_no = 1;
 
         try {
 
-            Object attribute = request.getAttribute("initilizeArrayListFromUser");
+           /* Object attribute = request.getAttribute("initilizeArrayListFromUser");
 
             System.out.println("Attrinbute ->" + attribute);
 
@@ -99,7 +99,7 @@ public class modal extends HttpServlet {
                 }
             } catch (Exception d) {
                 System.out.println(" q id Excaption in " + d);
-            }
+            }*/
 
             exam_of = "computer";//input.getInputString(request.getParameter("exam_of"));
             set_no = 1;// input.getInputInt("1");
@@ -115,7 +115,7 @@ public class modal extends HttpServlet {
             initilizeArrayList = mc.initilizeArrayList(exam_of, set_no);
 
             //fun(question_id, correct_answer, user_selected_anser)
-            int i = 0;
+          /*  int i = 0;
             for (QuestionSetPojo obj : initilizeArrayList) {
                 int questionId1 = obj.questionId;
                 //System.out.println("\n storing in array" + questionId1);
@@ -125,7 +125,7 @@ public class modal extends HttpServlet {
 
             for (int o : arr) {
                 System.out.println("Question Id -> " + o);
-            }
+            }*/
 
             setQuestionById = mc.getSetQuestionById(questionId + 1);
 

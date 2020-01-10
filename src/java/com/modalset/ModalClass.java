@@ -32,6 +32,13 @@ import java.util.logging.Logger;
  */
 public class ModalClass {
 
+    /**
+     *
+     * @param questionId
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public List<String> getOptionByQuestionId(int questionId) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = new DatabaseConnection();
@@ -78,6 +85,13 @@ public class ModalClass {
         return null;
     }
 
+    /**
+     *
+     * @param questionId
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public HashMap<Integer, String> getSetQuestionById(int questionId) throws SQLException, ClassNotFoundException {
 
         HashMap<Integer, String> map = new HashMap<>();
@@ -89,9 +103,9 @@ public class ModalClass {
 
         try {
             con = dc.getConnection();
-            String sql = "SELECT unique_id, question FROM set_question WHERE unique_id = ?";
+            String sql = "SELECT unique_id, question FROM set_question";
             ps = con.prepareStatement(sql);
-            ps.setInt(1, questionId);
+            //ps.setInt(1, questionId);
             rs = ps.executeQuery();
             while (rs.next()) {
 
@@ -125,6 +139,14 @@ public class ModalClass {
         return null;
     }
 
+    /**
+     *
+     * @param exam_of
+     * @param set_no
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public List<QuestionSetPojo> initilizeArrayList(String exam_of, int set_no) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = new DatabaseConnection();
@@ -174,6 +196,14 @@ public class ModalClass {
         return null;
     }
 
+    /**
+     *
+     * @param exam_of
+     * @param set_no
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public int arraySise(String exam_of, int set_no) throws SQLException, ClassNotFoundException {
 
         DatabaseConnection dc = new DatabaseConnection();

@@ -3,12 +3,15 @@
     Created on : 5 Sep, 2019, 2:12:39 AM
     Author     : AngryLion
 --%>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<c:if test="${sessionScope.adminUserId eq null}">
+    <c:redirect url="visit.jsp?msg=Session is not valid"/>
+</c:if>
 <!DOCTYPE html>
 <html>
     <head>
+        
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="robots" content="noindex, nofollow" />
         <title>Add a product</title>
@@ -18,7 +21,7 @@
             <h1 align="center" style="color: green;">${message}</h1>
         </c:if>
 
-        <h1>Upload image name and details..</h1>
+        <h1>Hello,   ${sessionScope.userName},  Upload image name and details.. <a href="<%=request.getContextPath()%>/Admin/adminModule.jsp">HOME</a></h1>
         <form action="<%=request.getContextPath()%>/saveAdvertise" name="advertise" method="post">
             Upload Image:- <input id="upload" type="file" name="filename" required=""/> (To get the specific name)<br><br>
             Image alt :- <input type="text" name="imageAlt" required=""/><br><br>

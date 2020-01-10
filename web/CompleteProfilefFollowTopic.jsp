@@ -35,7 +35,7 @@
                 <div class="container clear-fix">
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="padding-left:0px;">
                         <div class="logo float-left">
-                            <a href="index.jsp" style="vertical-align:middle;">
+                            <a href="index" style="vertical-align:middle;">
                                 <h4>
                                     <div class="logotext">
                                         inquiryhere.com

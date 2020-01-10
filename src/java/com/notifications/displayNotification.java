@@ -44,7 +44,10 @@ public class displayNotification {
         ResultSet resultSet = null;
         try {
             con = dc.getConnection();
-            String sql = "SELECT unique_id,user_id,user_email,notification_type,followers_id,(SELECT firstname FROM newuser WHERE id = notification.followers_id)AS firstname,question_id,(SELECT question FROM question WHERE q_id = notification.question_id)AS QUESTION,ans_id,blog_id,time FROM notification WHERE user_id = ? ORDER BY unique_id DESC LIMIT 20";
+            String sql = "SELECT n.unique_id AS unique_id,n.user_id AS user_id,n.notification_type AS notification_type,n.followers_id AS followers_id"
+                    + ",n.approval_for_question AS approval_for_question,newuser.firstname AS firstname,n.question_id AS question_id,q.question AS question"
+                    + ",n.blog_id AS blog_id,n.time AS time FROM notification n INNER JOIN newuser ON newuser.id = n.followers_id "
+                    + "LEFT JOIN question q ON q.q_id = n.question_id WHERE n.user_id = ? ORDER BY n.unique_id DESC LIMIT 20";
             ps = con.prepareStatement(sql);
             ps.setInt(1, UserId);
             resultSet = ps.executeQuery();
@@ -56,7 +59,8 @@ public class displayNotification {
                 int notificationCreatedBy = resultSet.getInt("followers_id");//who created the notification
                 String userFirstName = resultSet.getString("firstname");
                 String notification_type = resultSet.getString("notification_type");
-                list.add(new notificationPojo(comment_id, question_id, blog_id, question, notificationCreatedBy, userFirstName, notification_type));
+                int approval_for_question = resultSet.getInt("approval_for_question");
+                list.add(new notificationPojo(comment_id, question_id, blog_id, question, notificationCreatedBy, userFirstName, notification_type, approval_for_question));
             }
         } catch (SQLException msg) {
             throw msg;

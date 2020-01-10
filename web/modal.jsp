@@ -62,12 +62,8 @@
 
                                     <div class="themeBox" style="height:auto; background-color: #f5f4f4;">
                                         <c:if test="${setQuestionById ne null and not empty setQuestionById}">
-                                            initilizeArrayList:    <input type="text" name="initilizeArrayListFromUser" value="${initilizeArrayList}"/>
                                             <c:forEach items="${setQuestionById}" var="q">
-                                                question Id: <input type="text" value="${q.key}" name="questionId"/>
-                                                question : <input type="text" value="${q.value}" name="question"/>
-                                                Exam of: <input type="text" value="${exam_of}" name="exam_of"/>
-                                                Set no: <input type="text" value="${set_no}" name="set_no"/>
+                                                
                                                 <div style="background-color: #fbe7cc;padding-top: 5px; padding-left: 5px;font-size: 20px;">                                                
                                                     ${q.key}, ${q.value}
                                                 </div>
@@ -119,27 +115,8 @@
                                                 </tr>
                                             </c:forEach>
                                         </c:if>
-                                    </table><br>
-                                    <table style="width:100%">
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>QD</th>
-                                            <th>C_Ans</th>
-                                            <th>S_Ans</th>
-                                        </tr>
-                                        <c:if test="${initilizeArrayList ne null and not empty initilizeArrayList}">
-                                            <c:forEach items="${initilizeArrayList}" var="a" varStatus="loop">
-                                                <input type="text" value="${a.correct_ans}" name="v[]"/>
-                                                <input type="text" value="${a.questionId}" name="q[]"/>
-                                                <tr>
-                                                    <td>${loop.count}</td>
-                                                    <td>${a.questionId}</td>
-                                                    <td>${a.correct_ans}</td>
-                                                    <td>${a.selected_ans}</td>
-                                                </tr>
-                                            </c:forEach>
-                                        </c:if>
                                     </table>
+                                  
                                 </div>
                             </div>   
                             <input type="submit" value="Next"/>

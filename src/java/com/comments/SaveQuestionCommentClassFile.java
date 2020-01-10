@@ -30,16 +30,17 @@ public class SaveQuestionCommentClassFile {
 
     /**
      *
-     * @param activeSessionUserId
-     * @param questionId
+     * @param userId
+     * @param content_id
      * @param comment
+     * @param approved_by_admin
      * @return
      * @throws SQLException
-     * @throws java.lang.ClassNotFoundException
+     * @throws ClassNotFoundException
      */
-    public boolean SaveQuestionComment(int activeSessionUserId, int questionId, String comment) throws SQLException, ClassNotFoundException {
+    public boolean SaveQuestionComment(int userId, int content_id, String comment, boolean approved_by_admin) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+        DatabaseConnection dc = new DatabaseConnection();
 
         Connection con = null;
         PreparedStatement ps = null;
@@ -47,11 +48,13 @@ public class SaveQuestionCommentClassFile {
         try {
 
             con = dc.getConnection();
-            String sql = "INSERT INTO comments (user_id,q_id,comments)VALUES(?,?,?)";
+            String sql = "INSERT INTO comments (user_id,content_id,comments,comment_type,approved_by_admin)VALUES(?,?,?,?,?)";
             ps = con.prepareStatement(sql);
-            ps.setInt(1, activeSessionUserId);
-            ps.setInt(2, questionId);
+            ps.setInt(1, userId);
+            ps.setInt(2, content_id);
             ps.setString(3, comment);
+            ps.setString(4, "commet_on_question");
+            ps.setBoolean(5, approved_by_admin);
             return ps.execute();
 
         } catch (SQLException msg) {

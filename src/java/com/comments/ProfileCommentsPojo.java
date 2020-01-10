@@ -24,6 +24,7 @@ import java.util.Date;
 public class ProfileCommentsPojo {
 
     int userId;
+    String userType;
     String userName;
     String fullName;
     String comment;
@@ -32,17 +33,27 @@ public class ProfileCommentsPojo {
     /**
      *
      * @param userId
+     * @param userType
      * @param userName
      * @param fullName
      * @param comment
      * @param date
      */
-    public ProfileCommentsPojo(int userId, String userName, String fullName, String comment, Date date) {
+    public ProfileCommentsPojo(int userId, String userType, String userName, String fullName, String comment, Date date) {
         this.userId = userId;
+        this.userType = userType;
         this.userName = userName;
         this.fullName = fullName;
         this.comment = comment;
         this.date = date;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getUserType() {
+        return userType;
     }
 
     /**
