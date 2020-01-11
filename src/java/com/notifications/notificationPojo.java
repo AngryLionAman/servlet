@@ -22,97 +22,43 @@ package com.notifications;
 public class notificationPojo {
 
     int comment_id;
-    int question_id;
-    int blog_id;
-    String question;
-    int notificationCreatedBy;//user Id
-    String userFirstName;
+    int user_id;
+    int notificationCreatedBy;
+    int content_id;
     String notification_type;
-    int approval_for_question;
+    boolean seen;
 
-    /**
-     *
-     * @return
-     */
     public int getComment_id() {
         return comment_id;
     }
 
-    /**
-     *
-     * @return
-     */
-    public int getQuestion_id() {
-        return question_id;
+    public int getUser_id() {
+        return user_id;
     }
 
-    /**
-     *
-     * @return
-     */
-    public int getBlog_id() {
-        return blog_id;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getQuestion() {
-        return question;
-    }
-
-    /**
-     *
-     * @return
-     */
     public int getNotificationCreatedBy() {
         return notificationCreatedBy;
     }
 
-    /**
-     *
-     * @return
-     */
-    public String getUserFirstName() {
-        return userFirstName;
+    public int getContent_id() {
+        return content_id;
     }
 
-    /**
-     *
-     * @return
-     */
     public String getNotification_type() {
         return notification_type;
     }
 
-    /**
-     *
-     * @return
-     */
-    public int getApproval_for_question() {
-        return approval_for_question;
+    public boolean isSeen() {
+        return seen;
     }
 
-    /**
-     *
-     * @param comment_id
-     * @param question_id
-     * @param blog_id
-     * @param question
-     * @param notificationCreatedBy
-     * @param userFirstName
-     * @param notification_type
-     * @param approval_for_question
-     */
-    public notificationPojo(int comment_id, int question_id, int blog_id, String question, int notificationCreatedBy, String userFirstName, String notification_type, int approval_for_question) {
+    public notificationPojo(int comment_id, int user_id, int notificationCreatedBy, int content_id, String notification_type, boolean seen) {
         this.comment_id = comment_id;
-        this.question_id = question_id;
-        this.blog_id = blog_id;
-        this.question = question;
+        this.user_id = user_id;
         this.notificationCreatedBy = notificationCreatedBy;
-        this.userFirstName = userFirstName;
+        this.content_id = content_id;
         this.notification_type = notification_type;
-        this.approval_for_question = approval_for_question;
+        this.seen = seen;
     }
+
 }

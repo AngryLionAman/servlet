@@ -30,23 +30,28 @@
         </h1>
         <h1>
             <%
-                if ((request.getParameter("email") != null
-                        && !request.getParameter("email").isEmpty())
-                        && (request.getParameter("password") != null
-                        && !request.getParameter("password").isEmpty())
-                        && (request.getParameter("code") != null
-                        && !request.getParameter("code").isEmpty())) {
-                    String eMail = request.getParameter("email").trim();
-                    String passWord = request.getParameter("password");
-                    String code = request.getParameter("code");
-                    if (code.equals("sampur")) {
-                        user.validateAdminUser(eMail, passWord, request, response);
+                try {
+                    if ((request.getParameter("email") != null
+                            && !request.getParameter("email").isEmpty())
+                            && (request.getParameter("password") != null
+                            && !request.getParameter("password").isEmpty())
+                            && (request.getParameter("code") != null
+                            && !request.getParameter("code").isEmpty())) {
+                        String eMail = request.getParameter("email").trim();
+                        String passWord = request.getParameter("password");
+                        String code = request.getParameter("code");
+                        if (code.equals("sampur")) {
+                            user.validateAdminUser(eMail, passWord, request, response);
+                        } else {
+                            out.print("<font style='color: red';>Invalid credential</font>");
+                        }
                     } else {
-                        out.print("<font style='color: red';>Invalid credential</font>");
+                        //out.print("All input required");
                     }
-                } else {
-                    //out.print("All input required");
+                } catch (Exception msg) {
+                    out.print(msg);
                 }
+                
             %>
         </h1>
         <form action="<%=request.getContextPath()%>/Admin/visit.jsp" method="post">

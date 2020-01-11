@@ -148,7 +148,7 @@ public class supportingFunction {
      */
     public List<String> onTopicName() throws SQLException, ClassNotFoundException {
         List<String> list = new ArrayList<>();
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+        DatabaseConnection dc = new DatabaseConnection();
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -197,7 +197,7 @@ public class supportingFunction {
      */
     public List<Integer> totalNumberOfOption() throws SQLException, ClassNotFoundException {
         List<Integer> list = new ArrayList<>();
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+        DatabaseConnection dc = new DatabaseConnection();
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;

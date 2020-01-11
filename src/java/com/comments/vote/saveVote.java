@@ -40,7 +40,7 @@ public class saveVote {
      */
     public boolean saveVoteOfQuestionAndAnswer(String action, String section, int questionOrAnswerId, int userId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+        DatabaseConnection dc = new DatabaseConnection();
 
         Connection con = null;
         PreparedStatement ps = null;

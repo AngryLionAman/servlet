@@ -26,13 +26,13 @@ public class WordFormating {
                 String[] final_word = str.trim().split("\\s");
                 return final_word[0].substring(0, 1).toUpperCase() + final_word[0].substring(1).toLowerCase();
             } else {
-                return null;
+                return "Empty Name";
             }
 
         } catch (Exception msg) {
             Logger.getLogger(WordFormating.class.getName()).log(Level.SEVERE, str, msg);
         }
-        return null;
+        return "Empty Name";
     }
 
     /**

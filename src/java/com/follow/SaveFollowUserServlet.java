@@ -15,6 +15,7 @@
  */
 package com.follow;
 
+import com.notifications.CreateNotification;
 import com.string.validateInput;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -46,47 +47,74 @@ public class SaveFollowUserServlet extends HttpServlet {
         validateInput input = new validateInput();
         UserFollow follow = new UserFollow();
         SaveFollowUserClassFile file = new SaveFollowUserClassFile();
-
-        int userId = input.getInputInt(request.getParameter("userId"));// selected user id
-        int followersId = input.getInputInt(request.getParameter("followersId"));//Current active user id
-        String action = input.getInputString(request.getParameter("action"));//follow or followed
+        CreateNotification notification = new CreateNotification();
 
         String message = null;
 
-        if (userId != 0 && followersId != 0 && action != null) {
-            if (action.equalsIgnoreCase("followed")) {
-                try {
-                    if (follow.IsUserFollowingByUserId(userId, followersId)) {
-                        if (!file.UnfollowUser(userId, followersId)) {
-                            message = "User unfollow successfully";
-                        } else {
-                            message = "User not unfollow successfully, Please try again";
-                        }
-                    } else {
-                        message = "User clicked the unfollow action. this message mean user is already followed by active user but in database, data not mathced";
-                    }
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Logger.getLogger(SaveFollowUserServlet.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } else if (action.equalsIgnoreCase("follow")) {
-                try {
-                    if (!follow.IsUserFollowingByUserId(userId, followersId)) {
-                        if (!file.FollowUser(userId, followersId)) {
-                            message = "User followed successfully";
-                        } else {
-                            message = "user not followed successfully";
-                        }
-                    } else {
-                        message = "User is already followed by current active user";
-                    }
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Logger.getLogger(SaveFollowUserServlet.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        try {
+            int userId = 0;
+            try {
+                userId = input.getInputInt(request.getParameter("userId"));
+            } catch (Exception msg) {
+                Logger.getLogger(SaveFollowUserServlet.class.getName()).log(Level.SEVERE, null, msg);
             }
 
-        } else {
-            message = "Unvalid argument, Please try again";
+            int followersId = 0;
+            try {
+                followersId = input.getInputInt(request.getParameter("followersId"));
+            } catch (Exception msg) {
+                Logger.getLogger(SaveFollowUserServlet.class.getName()).log(Level.SEVERE, null, msg);
+            }
+
+            String action = null;
+            try {
+                action = input.getInputString(request.getParameter("action"));//follow or followed
+            } catch (Exception msg) {
+                Logger.getLogger(SaveFollowUserServlet.class.getName()).log(Level.SEVERE, null, msg);
+            }
+
+            if (userId != 0 && followersId != 0 && action != null) {
+                if (action.equalsIgnoreCase("followed")) {
+                    try {
+                        if (follow.IsUserFollowingByUserId(userId, followersId)) {
+                            if (!file.UnfollowUser(userId, followersId)) {
+                                message = "User unfollow successfully";
+                            } else {
+                                message = "User not unfollow successfully, Please try again";
+                            }
+                        } else {
+                            message = "User clicked the unfollow action. this message mean user is already followed by active user but in database, data not mathced";
+                        }
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        Logger.getLogger(SaveFollowUserServlet.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else if (action.equalsIgnoreCase("follow")) {
+                    try {
+                        if (!follow.IsUserFollowingByUserId(userId, followersId)) {
+                            if (!file.FollowUser(userId, followersId)) {
+                                if (!notification.userGetFollowed(userId, followersId, followersId)) {
+                                    message = "User followed successfully, Notification sent";
+                                } else {
+                                    message = "Failed to send folowers notifiaction";
+                                }
+                            } else {
+                                message = "user not followed successfully";
+                            }
+                        } else {
+                            message = "User is already followed by current active user";
+                        }
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        Logger.getLogger(SaveFollowUserServlet.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+            } else {
+                message = "Unvalid argument, Please try again";
+            }
+        } catch (Exception msg) {
+            Logger.getLogger(SaveFollowUserServlet.class.getName()).log(Level.SEVERE, null, msg);
         }
+
         //System.out.println("com.follow.SaveFollowUserServlet.doPost()" + message);
     }
 }

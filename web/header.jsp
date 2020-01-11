@@ -1,8 +1,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:useBean class="com.header.headerData" id="userdetails" scope="page"/>
 <jsp:useBean class="com.string.WordFormating" id="fun" scope="page"/>
+<jsp:useBean class="com.notifications.displayNotification" id="nt" scope="page"/>
+<jsp:useBean class="com.notifications.NotificationExtraSupportingClass" id="n_t" scope="page"/>
+
 <header class="home-page">
     <div class="container clear-fix">
         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" style="padding-left:0px;">
@@ -48,14 +50,17 @@
             <c:choose>
                 <c:when test="${sessionScope.Session_id_of_user ne null}">
                     <c:catch var="m">
-                        <c:forEach var="u" items="${userdetails.headerUser(sessionScope.Session_id_of_user)}">
                             <a href="logout" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
 
-                            <a href="" onclick="document.getElementById('myform').submit(); return false;" class="helpicon" style="color: white;padding-left: 10px;padding-right: 10px;">Inbox</a>
-                            <a href="profile?user=${u.userName}&id=${u.userId}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 20px;">
-                                <b><c:out value="${fun.firstName(u.fullName)}"/></b>
-                            </a>             
-                        </c:forEach>    
+                            <a href="" onclick="document.getElementById('myform').submit(); return false;" class="helpicon" style="display: inline; color: white;padding-left: 10px;padding-right: 10px;">
+                                Inbox 
+                                <c:if test="${nt.countNotificationByUserId(sessionScope.Session_id_of_user) gt 0}">
+                                    <span style="display: inline; top: -10px;right: -10px;padding: 5px 10px;border-radius: 50%;background-color: red;color: white;"> ${nt.countNotificationByUserId(sessionScope.Session_id_of_user)} </span>
+                                </c:if>
+                            </a>
+                            <a href="profile?user=${n_t.getUserNameById(sessionScope.Session_id_of_user)}&id=${sessionScope.Session_id_of_user}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 20px;">
+                                <b>${fun.firstName(n_t.getFullNameById(sessionScope.Session_id_of_user))}</b>
+                            </a>        
                     </c:catch>
                     <c:if test="${m ne null}">
                         ${m}

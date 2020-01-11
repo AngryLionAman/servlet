@@ -20,6 +20,7 @@ import com.connect.PoolConnection;
 import com.string.validateInput;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,8 +31,54 @@ import javax.sql.DataSource;
  * @author AngryLion
  */
 public class CreateNotification {
-    
-     /**
+
+    public boolean userGetFollowed(int notification_receiver_id, int notification_creater_id, int content_id) throws SQLException, ClassNotFoundException {
+
+        DatabaseConnection dc = new DatabaseConnection();
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = dc.getConnection();
+            String sql = "INSERT INTO notification (user_id, notification_type,creater_id, content_id)VALUES(?,?,?,?)";
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, notification_receiver_id);
+            ps.setString(2, "followed_by");
+            ps.setInt(3, notification_creater_id);
+            ps.setInt(4, content_id);
+            return ps.execute();
+        } catch (SQLException msg) {
+            Logger.getLogger(CreateNotification.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException msg) {
+
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException msg) {
+
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException msg) {
+
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      *
      * @param session_user_id
      * @param on_comment_user_id
@@ -51,7 +98,7 @@ public class CreateNotification {
 
             con = dc.getConnection();
 
-            String sql = "INSERT INTO notification (user_id,notification_type,followers_id) VALUES (?,?,?)";
+            String sql = "INSERT INTO notification (user_id,notification_type,creater_id, content_id) VALUES (?,?,?,?)";
 
             ps = con.prepareStatement(sql);
 
@@ -60,6 +107,7 @@ public class CreateNotification {
             ps.setString(2, "comment_on_Profile");
 
             ps.setInt(3, session_user_id);
+            ps.setInt(4, on_comment_user_id);
 
             return ps.execute();
 
@@ -101,7 +149,7 @@ public class CreateNotification {
 
         try {
             con = ds.getConnection();
-            String sql = "INSERT INTO notification (user_id,approval_for_question,notification_type,followers_id)VALUES(?,?,?,?)";
+            String sql = "INSERT INTO notification (user_id,content_id,notification_type,creater_id)VALUES(?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
             ps.setInt(2, oldQuestionId);
@@ -147,7 +195,7 @@ public class CreateNotification {
 
         try {
             con = ds.getConnection();
-            String sql = "INSERT INTO notification (user_id,approval_for_question,notification_type,followers_id)VALUES(?,?,?,?)";
+            String sql = "INSERT INTO notification (user_id,content_id,notification_type,creater_id)VALUES(?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
             ps.setInt(2, oldQuestionId);
@@ -193,7 +241,7 @@ public class CreateNotification {
 
         try {
             con = ds.getConnection();
-            String sql = "INSERT INTO notification (user_id,approval_for_question,notification_type,followers_id)VALUES(?,?,?,?)";
+            String sql = "INSERT INTO notification (user_id,content_id,notification_type,creater_id)VALUES(?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
             ps.setInt(2, oldQuestionId);
@@ -239,7 +287,7 @@ public class CreateNotification {
 
         try {
             con = ds.getConnection();
-            String sql = "INSERT INTO notification (user_id,approval_for_question,notification_type,followers_id)VALUES(?,?,?,?)";
+            String sql = "INSERT INTO notification (user_id,content_id,notification_type,creater_id)VALUES(?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
             ps.setInt(2, oldQuestionId);
@@ -285,12 +333,12 @@ public class CreateNotification {
 
         try {
             con = ds.getConnection();
-            String sql = "INSERT INTO notification (user_id,approval_for_question,notification_type,followers_id)VALUES(?,?,?,?)";
+            String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id)VALUES(?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
-            ps.setInt(2, oldQuestionId);
-            ps.setString(3, "modified_question_approved");
-            ps.setInt(4, 0);
+            ps.setString(2, "modified_question_approved");
+            ps.setInt(3, 0);
+            ps.setInt(4, oldQuestionId);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(CreateNotification.class.getName()).log(Level.SEVERE, null, msg);
@@ -331,7 +379,7 @@ public class CreateNotification {
 
         try {
             con = ds.getConnection();
-            String sql = "INSERT INTO notification (user_id,followers_id,approval_for_question,notification_type)VALUES(?,?,?,?)";
+            String sql = "INSERT INTO notification (user_id,creater_id,content_id,notification_type)VALUES(?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
             ps.setInt(2, followerdId);
@@ -381,7 +429,7 @@ public class CreateNotification {
 
         try {
             con = ds.getConnection();
-            String sql = "INSERT INTO notification (user_id,notification_type,followers_id,question_id)VALUES(?,?,?,?)";
+            String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id)VALUES(?,?,?,?)";
             /* In MySql
             @user_id - who will get the notification, mean who posted the questiion
             @notification_type - 
@@ -433,7 +481,7 @@ public class CreateNotification {
 
         try {
             con = ds.getConnection();
-            String sql = "INSERT INTO notification (user_id,notification_type,followers_id,blog_id ) VALUES (?,?,?,?)";
+            String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id) VALUES (?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setInt(1, bloggerId);
             ps.setString(2, "comment_on_Blog");
@@ -477,7 +525,7 @@ public class CreateNotification {
 
         try {
             con = ds.getConnection();
-            String sql = "INSERT INTO notification (user_id,notification_type,followers_id,question_id ) VALUES (?,?,?,?)";
+            String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id ) VALUES (?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setInt(1, userIdWhoPostedQuestion);
             ps.setString(2, "comment_on_question");
@@ -527,7 +575,7 @@ public class CreateNotification {
             con = ds.getConnection();
 
             String[] userId = allUserId.split(" ");
-            String sql = "INSERT INTO notification (user_id,notification_type,followers_id,question_id ) VALUES (?,?,?,?)";
+            String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id ) VALUES (?,?,?,?)";
             for (String obj : userId) {
                 ps = con.prepareStatement(sql);
                 ps.setInt(1, input.getOnlyInteger(obj));
@@ -580,14 +628,13 @@ public class CreateNotification {
         try {
             con = ds.getConnection();
             String[] userId = allUserId.split(" ");
-            String sql = "INSERT INTO notification (user_id,notification_type,followers_id,question_id,ans_id ) VALUES (?,?,?,?,?)";
+            String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id) VALUES (?,?,?,?)";
             for (String obj : userId) {
                 ps = con.prepareStatement(sql);
                 ps.setInt(1, input.getOnlyInteger(obj));
                 ps.setString(2, "comment_on_Answer");
                 ps.setInt(3, followersIdWhoCommentd);
-                ps.setInt(4, questionId);
-                ps.setInt(5, answerId);
+                ps.setInt(4, answerId);
                 status = ps.execute();
             }
             return status;
@@ -632,13 +679,12 @@ public class CreateNotification {
 
         try {
             con = ds.getConnection();
-            String sql = "INSERT INTO notification (user_id,notification_type,followers_id,question_id,ans_id ) VALUES (?,?,?,?,?)";
+            String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id) VALUES (?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setInt(1, userIdWhoPostedQuestion);
             ps.setString(2, "comment_on_Answer");
             ps.setInt(3, followersIdWhoCommentd);
-            ps.setInt(4, questionId);
-            ps.setInt(5, answerId);
+            ps.setInt(4, answerId);
             return ps.execute();
 
         } catch (SQLException msg) {
