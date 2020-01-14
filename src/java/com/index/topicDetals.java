@@ -15,7 +15,7 @@
  */
 package com.index;
 
-import com.connect.DatabaseConnection;
+import com.connect.JNDI_ConnectionPool;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,14 +42,12 @@ public class topicDetals {
         indexPageExtraFunction function = new indexPageExtraFunction();
         List<topicPojo> list = new ArrayList<>();
 
-        DatabaseConnection ds = new DatabaseConnection();
-
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             String sql = "SELECT t.unique_id,t.topic_name FROM topic t INNER JOIN topic_followers_detail de ON t.unique_id = de.topic_id WHERE user_or_followers_id = ?  AND t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL AND t.topic_name != '' LIMIT 15";
-            con = ds.getConnection();
+            con = JNDI_ConnectionPool.connect();
             ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
             rs = ps.executeQuery();
@@ -97,14 +95,12 @@ public class topicDetals {
         indexPageExtraFunction function = new indexPageExtraFunction();
         List<topicPojo> list = new ArrayList<>();
 
-        DatabaseConnection ds = new DatabaseConnection();
-
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             String sql = "SELECT unique_id,topic_name FROM topic WHERE crawl = 1 AND unique_id IS NOT NULL AND topic_name IS NOT NULL AND topic_name != '' ORDER BY RAND() LIMIT ?";
-            con = ds.getConnection();
+            con = JNDI_ConnectionPool.connect();
             ps = con.prepareStatement(sql);
             ps.setInt(1, Limit);
             rs = ps.executeQuery();

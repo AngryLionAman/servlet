@@ -150,23 +150,7 @@
             </sql:query>
             <c:forEach var="c" items="${comment.rows}">
                 <p style="color: red;"> ${c.comments}</p>, Commented on - 
-                <c:choose>
-                    <c:when test="${c.q_id ne null}">
-                        Question and question id : ${c.q_id}
-                    </c:when>
-                    <c:when test="${c.ans_id ne null}">
-                        Answer and answer id :${c.ans_id}
-                    </c:when>
-                    <c:when test="${c.blog_id ne null}">
-                        Blog and blog id :${c.blog_id}
-                    </c:when>
-                    <c:when test="${c.userprofileid ne null}">
-                        Profile and user id :${c.userprofileid}
-                    </c:when>
-                    <c:otherwise>
-                        Undefined
-                    </c:otherwise>
-                </c:choose>, Commented By Id - ${c.user_id},${c.time}<br><br>
+              ${c.comment_type}, Commented By Id - ${c.user_id},${c.time}<br><br>
             </c:forEach>
 
             <h2>Latest 10 Help Query</h2>

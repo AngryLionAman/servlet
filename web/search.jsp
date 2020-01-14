@@ -5,9 +5,6 @@
 <jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <jsp:useBean class="com.topic.topicFollow" id="topic" scope="page"/>
 <jsp:useBean class="com.follow.UserFollow" id="f" scope="page"/>
-<c:if test="${randomTopic eq null}">
-    <c:redirect url="search"/>
-</c:if>
 <!DOCTYPE html>
 <html lang="en">
     <head>

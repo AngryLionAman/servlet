@@ -15,12 +15,12 @@
  */
 package com.test;
 
-import com.connect.DatabaseConnection;
-import com.connect.SingletonDBConnection;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 
 /**
  *
@@ -35,41 +35,17 @@ public class mainMethode {
      */
     public static void main(String[] args) throws Exception {
 
-        Connection conn;
-        Statement stmt = null;
-        ResultSet rs;
         
-       
-        conn = SingletonDBConnection.getConnInst();
-
-        String strSQL = "SELECT id, UserName FROM newuser limit 10";
-
-        try {
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(strSQL);
-
-            while (rs.next()) {
-                System.out.println(rs.getInt(1));
-                System.out.println(rs.getString(2));
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException e) {
-                    System.out.println(e);
-                }
-            }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    System.out.println(e);
-                }
-            }
+        Context initCtx = new InitialContext();
+        Context envCtx = (Context) initCtx.lookup("java:comp/env");
+        DataSource ds = (DataSource) envCtx.lookup("jdbc/mydatabase");
+        Connection con = ds.getConnection();
+        PreparedStatement ps = con.prepareStatement("select * from newuser limit 10");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            System.out.println(rs.getInt(1));
+            System.out.println(rs.getString(2));
+            System.out.println(rs.getString(3));
         }
-
     }
 }

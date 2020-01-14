@@ -5,13 +5,13 @@
         <group>
             <file>file:/D:/Project/inquiryhere.com/src/java/com/connect/SecondPoolConnection.java</file>
             <file>file:/D:/Project/inquiryhere.com/src/java/com/connect/DBConnection.java</file>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/connect/ConfigServlet.java</file>
-            <file>file:/D:/Project/inquiryhere.com/web/Answer.jsp</file>
-            <file>file:/D:/Project/inquiryhere.com/web/Admin/approva_by_admin_answer.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/web/WEB-INF/web.xml</file>
+            <file>file:/D:/Project/inquiryhere.com/web/META-INF/context.xml</file>
             <file>file:/D:/Project/inquiryhere.com/src/java/com/connect/DatabaseConnection.java</file>
             <file>file:/D:/Project/inquiryhere.com/src/java/com/connect/PoolConnection.java</file>
             <file>file:/D:/Project/inquiryhere.com/src/java/com/connect/SingletonDBConnection.java</file>
-            <file>file:/D:/Project/inquiryhere.com/web/UpdateUserProfile.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/web/Admin/approva_by_admin_commet.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/test/mainMethode.java</file>
         </group>
     </open-files>
 </project-private>

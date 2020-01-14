@@ -63,6 +63,7 @@ public class questions extends HttpServlet {
         getAnswer answer = new getAnswer();
         getQuestion q = new getQuestion();
         indexPageExtraFunction function = new indexPageExtraFunction();
+        QuestionClassFile file = new QuestionClassFile();
 
         String message = null;
 
@@ -123,7 +124,7 @@ public class questions extends HttpServlet {
                         Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
                     }
 
-                    question = page.getQuestion(questionId);
+                    question = file.getQuestion(questionId);
 
                     answerById = answer.getAnswerById(questionId);
 

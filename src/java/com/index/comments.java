@@ -5,7 +5,7 @@
  */
 package com.index;
 
-import com.connect.DatabaseConnection;
+import com.connect.JNDI_ConnectionPool;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
@@ -30,9 +30,7 @@ public class comments {
      * @throws Exception
      */
     public List<commentPojo> commentsOnQuestion(int questionId) throws SQLException, ClassNotFoundException, Exception {
-        
-        DatabaseConnection ds = new DatabaseConnection();
-        
+                
         List<commentPojo> list = new ArrayList<>();
         
         Connection com = null;
@@ -40,7 +38,7 @@ public class comments {
         ResultSet rs = null;
         
         try {
-            com = ds.getConnection();
+            com = JNDI_ConnectionPool.connect();
             String sql = "select c.unique_id,c.comments,date_format(c.time,\"%e %b %Y,%h:%i%p\") as date,user.id,user.firstname,"
                     + "user.username,user.user_type from comments c right join newuser user on user.id = c.user_id "
                     + "where c.content_id = ? AND c.comment_type = ? AND approved_by_admin = ? order by 1 desc";

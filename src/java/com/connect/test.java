@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 AngryLion.
+ * Copyright 2020 AngryLion.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.test;
+package com.connect;
 
-import com.connect.JNDI_ConnectionPool;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -24,7 +23,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,8 +33,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author AngryLion
  */
-@WebServlet(name = "servlet", urlPatterns = {"/servlet"})
-public class servlet extends HttpServlet {
+@WebServlet(name = "test", urlPatterns = {"/test"})
+public class test extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,23 +44,36 @@ public class servlet extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
-     * @throws java.sql.SQLException
-     * @throws javax.naming.NamingException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException, NamingException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            Connection con = JNDI_ConnectionPool.connect();
-            PreparedStatement ps = con.prepareStatement("select * from newuser limit 10");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                out.println(rs.getInt(1));
-                out.println(rs.getString(2));
-                out.println(rs.getString(4) + "<br>");
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet test</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet test at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+            try {
+                try (Connection con = JNDI_ConnectionPool.connect(); 
+                        PreparedStatement ps = con.prepareStatement("select * from newuser"); 
+                        ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        out.print(rs.getString(1)+"<br>");
+                        out.print(rs.getString(2)+"<br>");
+                        out.print(rs.getString(6)+"<br>");
+                        out.print(rs.getString(4)+"<br><br>");
+                    }
+                }
+            } catch (SQLException msg) {
+                Logger.getLogger(test.class.getName()).log(Level.SEVERE, null, msg);
             }
         }
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -77,11 +88,7 @@ public class servlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (SQLException | NamingException ex) {
-            Logger.getLogger(servlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -95,11 +102,7 @@ public class servlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (SQLException | NamingException ex) {
-            Logger.getLogger(servlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
