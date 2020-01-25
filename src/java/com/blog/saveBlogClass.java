@@ -38,34 +38,19 @@ public class saveBlogClass {
      * @throws java.lang.ClassNotFoundException
      */
     public boolean saveBlog(String sub, String desc, int id) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = DatabaseConnection.getInstance();
-        Connection con = null;
-        PreparedStatement ps = null;
-        try {
-            con = dc.getConnection();
-            String sql = "insert into blog(subject,`desc`,posted_by) values(?,?,?)";
-            ps = con.prepareStatement(sql);
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql = "insert into blog(subject,`desc`,posted_by) values(?,?,?)";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, sub);
             ps.setString(2, desc);
             ps.setInt(3, id);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(saveBlogClass.class.getName()).log(Level.SEVERE, desc, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return true;
     }

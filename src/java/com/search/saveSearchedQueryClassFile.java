@@ -38,35 +38,17 @@ public class saveSearchedQueryClassFile {
      */
     public boolean SaveSearchedQuery(String query, int userId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
+        String sql = "insert into searched_queary(searched_queary,userid) values(?,?)";
 
-        try {
-            con = dc.getConnection();
-            String sql = "insert into searched_queary(searched_queary,userid) values(?,?)";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, query);
             ps.setInt(2, userId);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(saveSearchedQueryClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return true;
     }

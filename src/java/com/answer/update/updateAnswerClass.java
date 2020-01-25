@@ -15,14 +15,13 @@
  */
 package com.answer.update;
 
-import com.connect.PoolConnection;
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  *
@@ -39,45 +38,18 @@ public class updateAnswerClass {
      */
     public String GetAnswerByAnswerid(int anser_id) throws SQLException, ClassNotFoundException, Exception {
 
-        PoolConnection pc = new PoolConnection();
-        DataSource ds = pc.setUpPool();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            con = ds.getConnection();
-            String sql = "select answer from answer where a_id = ?";
-            ps = con.prepareStatement(sql);
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("select answer from answer where a_id = ?")) {
             ps.setInt(1, anser_id);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getString("answer");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getString("answer");
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(updateAnswerClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
-
         return null;
     }
 

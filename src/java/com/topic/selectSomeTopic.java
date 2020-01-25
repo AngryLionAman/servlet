@@ -34,50 +34,24 @@ public class selectSomeTopic {
 
     /**
      *
-     * @return
-     * @throws SQLException
+     * @return @throws SQLException
      * @throws ClassNotFoundException
      */
     public Map<Integer, String> SelectSomeTopic() throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = DatabaseConnection.getInstance();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         Map<Integer, String> map = new HashMap<>();
 
-        try {
-            con = dc.getConnection();
-            String sql = "select unique_id,topic_name from topic where crawl = 1 order by rand() limit 500";
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("select unique_id,topic_name from topic where crawl = 1 order by rand() limit 500");
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 map.put(rs.getInt("unique_id"), rs.getString("topic_name"));
             }
             return map;
         } catch (SQLException msg) {
             Logger.getLogger(saveNewUser.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return null;
     }

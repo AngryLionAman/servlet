@@ -45,15 +45,15 @@ public class deleteQuestionById extends HttpServlet {
             throws ServletException, IOException {
         int questionId = Integer.parseInt(request.getParameter("qId"));
         int pageNumber = Integer.parseInt(request.getParameter("p"));
-        
-        try{
+
+        try {
             boolean status = deleteQuestionById(questionId);
-            if(status){
-                response.sendRedirect("Admin/modifyQuestion.jsp?p="+pageNumber+"&msg=Question not deleted");
-            }else{
-                response.sendRedirect("Admin/modifyQuestion.jsp?p="+pageNumber+"&msg=Question has been successfully deleted");
+            if (status) {
+                response.sendRedirect("Admin/modifyQuestion.jsp?p=" + pageNumber + "&msg=Question not deleted");
+            } else {
+                response.sendRedirect("Admin/modifyQuestion.jsp?p=" + pageNumber + "&msg=Question has been successfully deleted");
             }
-        }catch(SQLException msg){
+        } catch (SQLException msg) {
             try {
                 throw msg;
             } catch (SQLException ex) {
@@ -62,52 +62,28 @@ public class deleteQuestionById extends HttpServlet {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(deleteQuestionById.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    private boolean deleteQuestionById(int questionId) throws SQLException, ClassNotFoundException{
+
+    private boolean deleteQuestionById(int questionId) throws SQLException, ClassNotFoundException {
         boolean status = false;
-        DatabaseConnection dc = new DatabaseConnection();
-        Connection con = null;
-        PreparedStatement ps = null;
-        PreparedStatement ps1 = null;
-        try{
-            con = dc.getConnection();
-            String sqlForDeleteTagedTopic = "delete from question_topic_tag where question_id = ?";
-            ps = con.prepareStatement(sqlForDeleteTagedTopic);
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("delete from question_topic_tag where question_id = ?")) {
+
             ps.setInt(1, questionId);
             status = ps.execute();
-            if(!status){
-                String sqlForDeleteQuestion = "delete from question where q_id = ?";
-                 ps1 = con.prepareStatement(sqlForDeleteQuestion);
-                 ps1.setInt(1, questionId);
-                 status = ps1.execute();
-            }
-        }catch(SQLException msg){
-            throw msg;
-        }finally{
-            if(ps != null){
-                try{
-                    ps.close();
-                }catch(SQLException msg){
-                    
+            if (!status) {
+                try (PreparedStatement ps1 = con.prepareStatement("delete from question where q_id = ?")) {
+                    ps1.setInt(1, questionId);
+                    status = ps1.execute();
                 }
+
             }
-            if(ps1 != null){
-                try{
-                    ps1.close();
-                }catch(SQLException msg){
-                    
-                }
-            }
-            if(con != null){
-                try{
-                    con.close();
-                }catch(SQLException msg){
-                    
-                }
-            }
+        } catch (SQLException msg) {
+            Logger.getLogger(deleteQuestionById.class.getName()).log(Level.SEVERE, null, msg);
         }
         return status;
-        
+
     }
 }

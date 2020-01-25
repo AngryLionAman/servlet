@@ -9,7 +9,7 @@
     <head>
         <%@include file="googleAnalytics.jsp" %>
         <meta charset="UTF-8">  
-        
+
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Forger Password | inquiryhere.com</title>        
@@ -80,22 +80,12 @@
                         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <div class="row">
                                 <center>
-                                    <c:if test="${param.msg ne null or not empty param.msg}">
-                                        <c:choose>
-                                            <c:when test="${param.msg eq 'nf'}">
-                                                <center><b style=color:red;>Email Not found</b></center>
-                                                </c:when>
-                                                <c:when test="${param.msg eq 'ef'}">
-                                                <center><b style=color:red;>Email found</b></center>
-                                                </c:when>
-                                                <c:when test="${param.msg eq 'sf'}">
-                                                <center><b style=color:red;>Your password has been successfully sent to your mail</b></center>
-                                                </c:when>
-                                            </c:choose> 
-                                        </c:if>
+                                    <c:if test="${message ne null}">
+                                        ${message}
+                                    </c:if>
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="themeBox" style="height:270px;">
-                                            <form action="forgotpassword.jsp" method="post" name="" >
+                                            <form action="forgotpassword" method="post" name="" >
                                                 <div align="left">
                                                     <label for="fname">Email  &#8628;</label><a href="help.jsp#f-pass-email">&#10067;</a>
                                                 </div>
@@ -119,27 +109,3 @@
         <script type="text/javascript" src="vendor/bootstrap-select/dist/js/bootstrap-select.js"></script>
     </body>
 </html>
-<c:if test="${param.mail ne null or not empty fn:trim(param.mail)}">
-    <c:catch var="ex">
-        <sql:query var="mail" dataSource="jdbc/mydatabase">
-            select count(*)as cnt,email,password from newuser where email = ? limit 1;
-            <sql:param value="${fn:trim(param.mail)}"/>
-        </sql:query>
-        <c:forEach items="${mail.rows}" var="f">
-            <c:set var="found" value="${f.cnt}"/> 
-            <c:set var="email" value="${f.email}"/> 
-            <c:set var="password" value="${f.password}"/> 
-        </c:forEach>
-        <c:if test="${found ne 1}">
-            <c:redirect url="forgotpassword.jsp?msg=nf"/>
-        </c:if>
-        <c:if test="${found eq 1}">
-            <jsp:useBean id="fun" class="com.mail.sendMail"/>
-            <c:out value="${fun.sendMail(email, password)}" default="This is default message"/>
-            <c:redirect url="forgotpassword.jsp?msg=sf"/>
-        </c:if>
-    </c:catch>
-    <c:if test="${ex ne null}">
-        ${ex}
-    </c:if>
-</c:if>

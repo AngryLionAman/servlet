@@ -3,14 +3,18 @@
     <Resource  name="jdbc/mydatabase" 
                auth="Container" 
                driverClassName="com.mysql.jdbc.Driver" 
+               poolPreparedStatements="true"
+               maxOpenPreparedStatements="100"          
                initialSize="10" 
                maxActive="100" 
-               maxWait="10000" 
-               minIdle="10"              
+               maxWait="1000"            
                type="javax.sql.DataSource" 
                url="jdbc:mysql://localhost/bharat?useUnicode=true&amp;characterEncoding=utf-8" 
                username="root" 
                password=""
                validationInterval="30000" 
-               validationQuery="select 1"/>
+               validationQuery="select 1"
+               logAbandoned="true"
+               removeAbandoned="true"
+               removeAbandonedTimeout="30"/>
 </Context>

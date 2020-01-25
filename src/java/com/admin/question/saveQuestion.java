@@ -20,6 +20,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -35,34 +37,19 @@ public class saveQuestion {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    protected boolean updateQuestionById(int questionId,String question) throws SQLException, ClassNotFoundException{
-        DatabaseConnection dc = new DatabaseConnection();
-        Connection con = null;
-        PreparedStatement ps = null;
-        boolean status = true;
-        try {
-            String sql = "update question set question = ? where q_id = ?";
-            con = dc.getConnection();
-            ps = con.prepareStatement(sql);
+    protected boolean updateQuestionById(int questionId, String question) throws SQLException, ClassNotFoundException {
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "update question set question = ? where q_id = ?";
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, question);
             ps.setInt(2, questionId);
-            status = ps.execute();
-        }catch(SQLException msg){
-            throw msg;
-        }finally{
-            if(ps != null){
-                try{
-                    ps.close();
-                }catch(SQLException msg){}
-            }
-            if(con != null){
-                try{
-                    con.close();
-                }catch(SQLException msg){}
-            }
+            return ps.execute();
+        } catch (SQLException msg) {
+            Logger.getLogger(saveQuestion.class.getName()).log(Level.SEVERE, null, msg);
         }
-        return status;
-        
+        return true;
+
     }
 
     /**
@@ -73,35 +60,17 @@ public class saveQuestion {
      * @throws ClassNotFoundException
      */
     protected boolean deleteQuesstionTag(int questionId) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = new DatabaseConnection();
-        Connection con = null;
-        PreparedStatement ps = null;
-        boolean status = true;
-        try {
-            String sql = "delete from question_topic_tag where question_id = ?";
-            con = dc.getConnection();
-            ps = con.prepareStatement(sql);
+
+        String sql = "delete from question_topic_tag where question_id = ?";
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
-            status = ps.execute();
+            return ps.execute();
         } catch (SQLException msg) {
-            throw msg;
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
+            Logger.getLogger(saveQuestion.class.getName()).log(Level.SEVERE, null, msg);
         }
-        return status;
+        return true;
 
     }
 
@@ -113,17 +82,9 @@ public class saveQuestion {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public void saveQuestionWithIdAndTag(int questionId,String question, String questionTag) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = new DatabaseConnection();
-        Connection con = null;
-        PreparedStatement ps = null;
-        PreparedStatement ps1 = null;
-        PreparedStatement ps2 = null;
-        PreparedStatement ps3 = null;
-        ResultSet rs = null;
-        ResultSet rs2 = null;
-        try {
-            con = dc.getConnection();
+    public void saveQuestionWithIdAndTag(int questionId, String question, String questionTag) throws SQLException, ClassNotFoundException {
+
+        try (Connection con = DatabaseConnection.makeConnection()) {
             //Delete the stored question tag
             boolean status = deleteQuesstionTag(questionId);
             boolean status2 = updateQuestionById(questionId, question);
@@ -138,21 +99,25 @@ public class saveQuestion {
                         boolean fountStatus = true;
                         try {
                             String sql = "select topic_name from topic where lower(topic_name) = ?";
-                            ps = con.prepareStatement(sql);
-                            ps.setString(1, arrSplit1.trim().toLowerCase());
-                            rs = ps.executeQuery();
-                            if (rs.next()) {
-                                fountStatus = false;
-                            }
-                            if (fountStatus) {
-                                String sql1 = "insert into topic(topic_name) values(?)";
-                                ps1 = con.prepareStatement(sql1);
-                                ps1.setString(1, arrSplit1.trim().toLowerCase());
-                                ps1.execute();
+                            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                                ps.setString(1, arrSplit1.trim().toLowerCase());
+                                try (ResultSet rs = ps.executeQuery()) {
+                                    if (rs.next()) {
+                                        fountStatus = false;
+                                    }
+                                }
+
+                                if (fountStatus) {
+                                    String sql1 = "insert into topic(topic_name) values(?)";
+                                    try (PreparedStatement ps1 = con.prepareStatement(sql1)) {
+                                        ps1.setString(1, arrSplit1.trim().toLowerCase());
+                                        ps1.execute();
+                                    }
+                                }
                             }
 
-                        } catch (SQLException ms) {
-                            throw ms;
+                        } catch (SQLException msg) {
+                            Logger.getLogger(saveQuestion.class.getName()).log(Level.SEVERE, null, msg);
                         }
                     }
                 }
@@ -164,80 +129,29 @@ public class saveQuestion {
                     if (!arrSplit1.isEmpty()) {
                         try {
                             String sql2 = "select unique_id from topic where lower(topic_name) = ?";
-                            ps2 = con.prepareStatement(sql2);
-                            ps2.setString(1, arrSplit1.trim().toLowerCase());
-                            rs2 = ps2.executeQuery();
-                            if (rs2.next()) {
-                                int topicId = rs2.getInt("unique_id");
-                                try {
-                                    String sql3 = "insert into question_topic_tag(question_id,tag_id) values(?,?)";
-                                    ps3 = con.prepareStatement(sql3);
-                                    ps3.setInt(1, questionId);
-                                    ps3.setInt(2, topicId);
-                                    ps3.execute();
-                                } catch (SQLException msg) {
-                                    throw msg;
+                            try (PreparedStatement ps2 = con.prepareStatement(sql2)) {
+                                ps2.setString(1, arrSplit1.trim().toLowerCase());
+                                try (ResultSet rs2 = ps2.executeQuery()) {
+                                    if (rs2.next()) {
+                                        int topicId = rs2.getInt("unique_id");
+                                        String sql3 = "insert into question_topic_tag(question_id,tag_id) values(?,?)";
+                                        try (PreparedStatement ps3 = con.prepareStatement(sql3)) {
+                                            ps3.setInt(1, questionId);
+                                            ps3.setInt(2, topicId);
+                                            ps3.execute();
+                                        }
+                                    }
                                 }
                             }
 
                         } catch (SQLException msg) {
-                            throw msg;
+                            Logger.getLogger(saveQuestion.class.getName()).log(Level.SEVERE, null, msg);
                         }
                     }
                 }
             }
         } catch (SQLException msg) {
-            throw msg;
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (rs2 != null) {
-                try {
-                    rs2.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps1 != null) {
-                try {
-                    ps1.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps2 != null) {
-                try {
-                    ps2.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps3 != null) {
-                try {
-                    ps3.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
+            Logger.getLogger(saveQuestion.class.getName()).log(Level.SEVERE, null, msg);
         }
     }
 }

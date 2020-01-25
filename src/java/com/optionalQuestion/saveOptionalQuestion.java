@@ -87,86 +87,82 @@ public class saveOptionalQuestion extends HttpServlet {
             msg += "Topic can't be empty<br>";
         }
         if (question != null && onTopic != null) {
+            Connection con = null;
+            PreparedStatement ps = null;
+            ResultSet rs = null;
             try {
-                DatabaseConnection dc = DatabaseConnection.getInstance();
-                Connection con = null;
-                PreparedStatement ps = null;
-                ResultSet rs = null;
-                try {
-                    con = dc.getConnection();
-                    String sql = "insert into optional_question(question,answer,on_topic,posted_by,total_option)values(?,?,?,?,?);";
-                    ps = con.prepareStatement(sql);
-                    ps.setString(1, question);
-                    ps.setString(2, correctAnswer);
-                    ps.setString(3, onTopic);
-                    ps.setInt(4, postedBy);
-                    ps.setInt(5, numberOfOption);
-                    Boolean value = ps.execute();
-                    if (value) {
-
-                    } else {
-                        int questionId = 0;
-                        try {
-
-                            sql = "select id from optional_question where question = ?";
-                            ps = con.prepareStatement(sql);
-                            ps.setString(1, question);
-                            rs = ps.executeQuery();
-                            while (rs.next()) {
-                                questionId = rs.getInt("id");
-                            }
-                        } catch (SQLException expIngettigTheQuestionId) {
-                            throw expIngettigTheQuestionId;
-                        }
-                        sql = "insert into option_of_question(question_id,option_value)values(?,?)";
-                        for (String obj : opt) {
-                            ps = con.prepareStatement(sql);
-                            ps.setInt(1, questionId);
-                            ps.setString(2, obj.trim());
-                            boolean r_value = ps.execute();
-                            if (!r_value) {
-                                msg = "Question has been posted<br>";
-                            } else {
-                                msg += "Got some Problem<br>";
-                            }
-                        }
-                    }
-                } catch (SQLException err) {
+                DatabaseConnection connection = new DatabaseConnection();
+                con = DatabaseConnection.makeConnection();
+                String sql = "insert into optional_question(question,answer,on_topic,posted_by,total_option)values(?,?,?,?,?);";
+                ps = con.prepareStatement(sql);
+                ps.setString(1, question);
+                ps.setString(2, correctAnswer);
+                ps.setString(3, onTopic);
+                ps.setInt(4, postedBy);
+                ps.setInt(5, numberOfOption);
+                Boolean value = ps.execute();
+                if (value) {
+                    
+                } else {
+                    int questionId = 0;
                     try {
-                        throw err;
-                    } catch (SQLException ex) {
-                        Logger.getLogger(saveOptionalQuestion.class.getName()).log(Level.SEVERE, null, ex);
+                        
+                        sql = "select id from optional_question where question = ?";
+                        ps = con.prepareStatement(sql);
+                        ps.setString(1, question);
+                        rs = ps.executeQuery();
+                        while (rs.next()) {
+                            questionId = rs.getInt("id");
+                        }
+                    } catch (SQLException expIngettigTheQuestionId) {
+                        throw expIngettigTheQuestionId;
                     }
-                } finally {
-                    if (rs != null) {
-                        try {
-                            rs.close();
-                        } catch (SQLException err) {
-
+                    sql = "insert into option_of_question(question_id,option_value)values(?,?)";
+                    for (String obj : opt) {
+                        ps = con.prepareStatement(sql);
+                        ps.setInt(1, questionId);
+                        ps.setString(2, obj.trim());
+                        boolean r_value = ps.execute();
+                        if (!r_value) {
+                            msg = "Question has been posted<br>";
+                        } else {
+                            msg += "Got some Problem<br>";
                         }
                     }
-                    if (ps != null) {
-                        try {
-                            ps.close();
-                        } catch (SQLException err) {
-
-                        }
-                    }
-                    if (con != null) {
-                        try {
-                            con.close();
-                        } catch (SQLException err) {
-
-                        }
-                    }
-
                 }
-                response.sendRedirect("optionalquestion?msg=" + msg);
-            } catch (SQLException ex) {
-                Logger.getLogger(saveOptionalQuestion.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException err) {
+                try {
+                    throw err;
+                } catch (SQLException ex) {
+                    Logger.getLogger(saveOptionalQuestion.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(saveOptionalQuestion.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                if (rs != null) {
+                    try {
+                        rs.close();
+                    } catch (SQLException err) {
+                        
+                    }
+                }
+                if (ps != null) {
+                    try {
+                        ps.close();
+                    } catch (SQLException err) {
+                        
+                    }
+                }
+                if (con != null) {
+                    try {
+                        con.close();
+                    } catch (SQLException err) {
+                        
+                    }
+                }
+
             }
+            response.sendRedirect("optionalquestion?msg=" + msg);
         } else {
             response.sendRedirect("optional.jsp?msg=" + msg);
         }

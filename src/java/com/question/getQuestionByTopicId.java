@@ -43,11 +43,7 @@ public class getQuestionByTopicId {
 
         HashMap<Integer, String> map = new HashMap<>();
 
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         if (pageNo < 1) {
             pageNo = 1;
@@ -55,45 +51,24 @@ public class getQuestionByTopicId {
 
         int startPage = (pageNo * recordPerPage) - recordPerPage;
 
-        try {
-            String sql = "select q.question as question,q.q_id as questionid from question q right join question_topic_tag qtt on qtt.question_id=q.q_id where tag_id = ? limit ?,?";
-            con = dc.getConnection();
-            ps = con.prepareStatement(sql);
+        String sql = "select q.question as question,q.q_id as questionid from question q right join question_topic_tag qtt on qtt.question_id=q.q_id where tag_id = ? limit ?,?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicId);
             ps.setInt(2, startPage);
             ps.setInt(3, recordPerPage);
 
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int questionId = rs.getInt("questionid");
-                String question = rs.getString("question");
-                map.putIfAbsent(questionId, question);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int questionId = rs.getInt("questionid");
+                    String question = rs.getString("question");
+                    map.putIfAbsent(questionId, question);
+                }
+                return map;
             }
-            return map;
         } catch (SQLException msg) {
             Logger.getLogger(getQuestionByTopicId.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }

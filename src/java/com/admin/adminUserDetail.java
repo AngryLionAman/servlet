@@ -22,6 +22,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -38,47 +40,29 @@ public class adminUserDetail {
      */
     public List<adminUserPojo> userDetail(int userid) throws SQLException, ClassNotFoundException {
         List<adminUserPojo> list = new ArrayList<>();
-        DatabaseConnection con = new DatabaseConnection();
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        try {
-            String v = "select id,username,firstname,email from newuser where id = ?";
-            connection = con.getConnection();
-            preparedStatement = connection.prepareStatement(v);
+
+        //Connection connection = null;
+        //PreparedStatement preparedStatement = null;
+        //ResultSet resultSet = null;
+        String v = "select id,username,firstname,email from newuser where id = ?";
+        DatabaseConnection databaseConnection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement preparedStatement = con.prepareStatement(v)) {
             preparedStatement.setInt(1, userid);
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                int userId = resultSet.getInt("id");
-                String userName = resultSet.getString("username");
-                String fullName = resultSet.getString("firstname");
-                String eMail = resultSet.getString("email");
-                list.add(new adminUserPojo(userId, userName, fullName, eMail));
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    int userId = resultSet.getInt("id");
+                    String userName = resultSet.getString("username");
+                    String fullName = resultSet.getString("firstname");
+                    String eMail = resultSet.getString("email");
+                    list.add(new adminUserPojo(userId, userName, fullName, eMail));
+                }
+                return list;
             }
 
         } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException msg) {
-                }
-            }
-
+            Logger.getLogger(adminUserDetail.class.getName()).log(Level.SEVERE, null, e);
         }
-        return list;
+        return null;
     }
 }

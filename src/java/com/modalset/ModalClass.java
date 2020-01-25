@@ -41,46 +41,24 @@ public class ModalClass {
      */
     public List<String> getOptionByQuestionId(int questionId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
         List<String> list = new ArrayList<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT answer FROM set_question_option WHERE question_id  = ? ORDER BY 1";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT answer FROM set_question_option WHERE question_id  = ? ORDER BY 1";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                String opt = rs.getString("answer");
-                list.add(opt);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String opt = rs.getString("answer");
+                    list.add(opt);
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(ModalClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return null;
     }
@@ -95,18 +73,12 @@ public class ModalClass {
     public HashMap<Integer, String> getSetQuestionById(int questionId) throws SQLException, ClassNotFoundException {
 
         HashMap<Integer, String> map = new HashMap<>();
-        DatabaseConnection dc = new DatabaseConnection();
+        
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT unique_id, question FROM set_question";
-            ps = con.prepareStatement(sql);
-            //ps.setInt(1, questionId);
-            rs = ps.executeQuery();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("SELECT unique_id, question FROM set_question");
+                ResultSet rs = ps.executeQuery()){
             while (rs.next()) {
 
                 int q_Id = rs.getInt("unique_id");
@@ -116,26 +88,7 @@ public class ModalClass {
             return map;
         } catch (SQLException msg) {
             Logger.getLogger(ModalClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
-        }
+        } 
         return null;
     }
 
@@ -149,7 +102,6 @@ public class ModalClass {
      */
     public List<QuestionSetPojo> initilizeArrayList(String exam_of, int set_no) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
         List<QuestionSetPojo> list = new ArrayList<>();
 
         Connection con = null;
@@ -157,7 +109,7 @@ public class ModalClass {
         ResultSet rs = null;
 
         try {
-            con = dc.getConnection();
+            con = DatabaseConnection.makeConnection();
             String sql = "SELECT unique_id,question,correct_ans FROM set_question WHERE exam_of = ? AND set_no = ?";
             ps = con.prepareStatement(sql);
             ps.setString(1, exam_of);
@@ -206,14 +158,12 @@ public class ModalClass {
      */
     public int arraySise(String exam_of, int set_no) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
-            con = dc.getConnection();
+            con = DatabaseConnection.makeConnection();
             String sql = "SELECT COUNT(*) AS cnt FROM set_question WHERE exam_of = ? AND set_no = ? GROUP BY exam_of";
             ps = con.prepareStatement(sql);
             ps.setString(1, exam_of);

@@ -15,13 +15,12 @@
  */
 package com.fun;
 
-import com.connect.SecondPoolConnection;
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  *
@@ -42,17 +41,12 @@ public class SaveFunDataClassFile {
      */
     public boolean saveFunData(int userId, String title, String description, String category, String basedon, String type) throws Exception {
 
-        SecondPoolConnection pc = new SecondPoolConnection();
-        DataSource ds = pc.setUpPool();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        
-        try {
-            
-            con = ds.getConnection();
-            String sql = "insert into fun(posted_by_id,title,description,category,based_on,type)value(?,?,?,?,?,?)";
-            ps = con.prepareStatement(sql);
+        String sql = "insert into fun(posted_by_id,title,description,category,based_on,type)value(?,?,?,?,?,?)";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, title);
             ps.setString(3, description);
@@ -63,19 +57,6 @@ public class SaveFunDataClassFile {
 
         } catch (SQLException msg) {
             Logger.getLogger(SaveFunDataClassFile.class.getName()).log(Level.SEVERE, type, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return true;
     }

@@ -43,50 +43,23 @@ public class SEO {
      */
     public HashMap<Integer, String> getQuestionTagWithId(int qId) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection ds = new DatabaseConnection();
-
         HashMap<Integer, String> map = new HashMap<>();
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "select tag_id as unique_id,(select topic_name from topic where unique_id = question_topic_tag.tag_id)topic_name from question_topic_tag where question_id =?";
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            con = ds.getConnection();
-            String sql = "select tag_id as unique_id,(select topic_name from topic where unique_id = question_topic_tag.tag_id)topic_name from question_topic_tag where question_id =?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int questionTagId = rs.getInt("unique_id");
-                String questionTag = rs.getString("topic_name");
-                map.put(questionTagId, questionTag);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int questionTagId = rs.getInt("unique_id");
+                    String questionTag = rs.getString("topic_name");
+                    map.put(questionTagId, questionTag);
+                }
+                return map;
             }
-            return map;
         } catch (SQLException msg) {
             Logger.getLogger(SEO.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }
@@ -100,49 +73,22 @@ public class SEO {
      */
     public List<String> getQuestionTag(int qId) throws SQLException, Exception {
 
-        DatabaseConnection ds = new DatabaseConnection();
-
         List<String> list = new ArrayList<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            con = ds.getConnection();
-            String sql = "select tag_id as unique_id,(select topic_name from topic where unique_id = question_topic_tag.tag_id)topic_name from question_topic_tag where question_id =?";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT topic.unique_id AS tag_id, topic.topic_name AS topic_name FROM topic INNER JOIN question_topic_tag ON topic.unique_id = question_topic_tag.tag_id WHERE question_id = ? AND tag_id IS NOT NULL ORDER BY tag_id";
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                String questionTag = rs.getString("topic_name");
-                list.add(questionTag);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String questionTag = rs.getString("topic_name");
+                    list.add(questionTag);
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(SEO.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }
@@ -168,68 +114,43 @@ public class SEO {
                 + "([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)*)*"
                 + "(#([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)?\\b");
 
-        DatabaseConnection ds = new DatabaseConnection();
+        String sql = "SELECT q.q_id AS q_id,q.question AS question,SUBSTRING(a.answer,1,500) AS answer,a.answer as imageLinkHtml "
+                + "FROM question q LEFT JOIN answer a on q.q_id = a.q_id WHERE q.q_id = ? limit 1";
 
         List<SEOPojo> list = new ArrayList<>();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            String sql = "SELECT q.q_id AS q_id,q.question AS question,SUBSTRING(a.answer,1,500) AS answer,a.answer as imageLinkHtml FROM question q LEFT JOIN answer a on q.q_id = a.q_id WHERE q.q_id = ? limit 1";
-            con = ds.getConnection();
-            ps = con.prepareStatement(sql);
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int questionId = rs.getInt("q_id");
-                String question = rs.getString("question");//Title
-                String answer = rs.getString("answer");//Description
-                String imageLinkHtml = rs.getString("imageLinkHtml");//For the link image
-                if (imageLinkHtml != null && !imageLinkHtml.isEmpty()) {
-                    String imageLinkResult = null;
-                    Matcher matcher = pattern.matcher(imageLinkHtml);
-                    boolean foundImage = false;
-                    if (matcher.find()) {
-                        foundImage = true;
-                        imageLinkResult = matcher.group();
-                    }
-                    if (foundImage) {
-                        list.add(new SEOPojo(questionId, question, answer, imageLinkResult));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int questionId = rs.getInt("q_id");
+                    String question = rs.getString("question");//Title
+                    String answer = rs.getString("answer");//Description
+                    String imageLinkHtml = rs.getString("imageLinkHtml");//For the link image
+                    if (imageLinkHtml != null && !imageLinkHtml.isEmpty()) {
+                        String imageLinkResult = null;
+                        Matcher matcher = pattern.matcher(imageLinkHtml);
+                        boolean foundImage = false;
+                        if (matcher.find()) {
+                            foundImage = true;
+                            imageLinkResult = matcher.group();
+                        }
+                        if (foundImage) {
+                            list.add(new SEOPojo(questionId, question, answer, imageLinkResult));
+                        } else {
+                            list.add(new SEOPojo(questionId, question, answer));
+                        }
                     } else {
                         list.add(new SEOPojo(questionId, question, answer));
                     }
-                } else {
-                    list.add(new SEOPojo(questionId, question, answer));
-                }
 
+                }
+                return list;
             }
-            return list;
+
         } catch (SQLException msg) {
             Logger.getLogger(SEO.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }

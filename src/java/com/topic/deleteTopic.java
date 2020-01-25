@@ -44,80 +44,41 @@ public class deleteTopic extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int topicId = Integer.parseInt(request.getParameter("topicId"));
-        DatabaseConnection dc = null;
-        try {
-            dc = new DatabaseConnection();
-        } catch (SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(deleteTopic.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        Connection con = null;
-        PreparedStatement ps = null;
-        PreparedStatement ps1 = null;
-        PreparedStatement ps2 = null;
-        try {
-            con = dc.getConnection();
+
+        try (Connection con = DatabaseConnection.makeConnection()) {
             /**
              * ***************
              * deleting the question tag form question_tag_table
              * *************************
              */
-            String sql1 = "delete from question_topic_tag where tag_id = ?";
-            ps1 = con.prepareStatement(sql1);
-            ps1.setInt(1, topicId);
-            ps1.execute();
-            /*******
-             Deleting the followers detail
-             ***********************/
-            String sql2 = "delete from topic_followers_detail where topic_id = ?";
-            ps2 = con.prepareStatement(sql2);
-            ps2.setInt(1, topicId);
-            ps2.execute();
+
+            try (PreparedStatement ps = con.prepareStatement("delete from question_topic_tag where tag_id = ?")) {
+                ps.setInt(1, topicId);
+                ps.execute();
+            }
+
+            /**
+             * *****
+             * Deleting the followers detail *********************
+             */
+            try (PreparedStatement ps = con.prepareStatement("delete from topic_followers_detail where topic_id = ?")) {
+                ps.setInt(1, topicId);
+                ps.execute();
+            }
             /**
              * ************
              * delteting topic from topic table ************
              */
 
-            String sql = "delete from topic where unique_id = ?";
-            ps = con.prepareStatement(sql);
-            ps.setInt(1, topicId);
-            ps.execute();
-
-            response.sendRedirect("Admin/topic.jsp?msg=Topic has been deleted");
+            try (PreparedStatement ps = con.prepareStatement("delete from topic where unique_id = ?")) {
+                ps.setInt(1, topicId);
+                ps.execute();
+            }
+            
+            request.getRequestDispatcher("Admin/topic.jsp").forward(request, response);
+            
         } catch (SQLException msg) {
-            try {
-                throw msg;
-            } catch (SQLException ex) {
-                Logger.getLogger(deleteTopic.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps1 != null) {
-                try {
-                    ps1.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps2 != null) {
-                try {
-                    ps2.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
+            Logger.getLogger(deleteTopic.class.getName()).log(Level.SEVERE, null, msg);
         }
     }
 }

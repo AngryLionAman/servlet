@@ -65,60 +65,50 @@ public class SearchClassFile {
     public List<searchUserPojo> getUserByQuearyAndLimit(String query, int Limit) throws SQLException, Exception {
         List<searchUserPojo> list = new ArrayList<>();
 
-        DatabaseConnection ds = new DatabaseConnection();
-        
         WordFormating formating = new WordFormating();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            con = ds.getConnection();
-            String sql;
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        try (Connection con = DatabaseConnection.makeConnection()) {
+            // String sql;
             if (0 == Limit) {
-                sql = "select id as userId,username,firstname as fullName,bio,imagepath as imageLink from newuser WHERE lower(firstname) LIKE ? order by userId limit 50";
-                ps = con.prepareStatement(sql);
-                ps.setString(1, "%" + query + "%");
+                String sql = "select id as userId,username,firstname as fullName,bio,imagepath as imageLink from newuser WHERE lower(firstname) LIKE ? order by userId limit 50";
+                try (PreparedStatement ps = con.prepareStatement(sql)) {
+                    ps.setString(1, "%" + query + "%");
+                    try (ResultSet rs = ps.executeQuery()) {
+                        while (rs.next()) {
+                            int userId = rs.getInt("userId");
+                            String userName = rs.getString("username");
+                            String userFullName = formating.convertStringUpperToLower(rs.getString("fullName"));
+                            String bio = rs.getString("bio");
+                            String imageLink = rs.getString("imageLink");
+                            int totalFollowers = 0;//profile.getTotalFollowersByUserId(userId);//showing an exception error "Operation now allowed result set close"
+                            list.add(new searchUserPojo(userId, userName, userFullName, bio, imageLink, totalFollowers));
+                        }
+                        return list;
+                    }
+                }
             } else {
-                sql = "select id as userId,username,firstname as fullName,bio,imagepath as imageLink from newuser WHERE lower(firstname) LIKE ? order by userId limit ?";
-                ps = con.prepareStatement(sql);
-                ps.setString(1, "%" + query + "%");
-                ps.setInt(2, Limit);
+                String sql = "select id as userId,username,firstname as fullName,bio,imagepath as imageLink from newuser WHERE lower(firstname) LIKE ? order by userId limit ?";
+                try (PreparedStatement ps = con.prepareStatement(sql)) {
+                    ps.setString(1, "%" + query + "%");
+                    ps.setInt(2, Limit);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        while (rs.next()) {
+                            int userId = rs.getInt("userId");
+                            String userName = rs.getString("username");
+                            String userFullName = formating.convertStringUpperToLower(rs.getString("fullName"));
+                            String bio = rs.getString("bio");
+                            String imageLink = rs.getString("imageLink");
+                            int totalFollowers = 0;//profile.getTotalFollowersByUserId(userId);//showing an exception error "Operation now allowed result set close"
+                            list.add(new searchUserPojo(userId, userName, userFullName, bio, imageLink, totalFollowers));
+                        }
+                        return list;
+                    }
+                }
             }
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int userId = rs.getInt("userId");
-                String userName = rs.getString("username");
-                String userFullName = formating.convertStringUpperToLower(rs.getString("fullName"));
-                String bio = rs.getString("bio");
-                String imageLink = rs.getString("imageLink");
-                int totalFollowers = 0;//profile.getTotalFollowersByUserId(userId);//showing an exception error "Operation now allowed result set close"
-                list.add(new searchUserPojo(userId, userName, userFullName, bio, imageLink, totalFollowers));
-            }
-             return list;
         } catch (SQLException msg) {
             Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }
@@ -132,64 +122,53 @@ public class SearchClassFile {
      * @throws Exception
      */
     public List<searchTopicPojo> getTopicByQuearyAndLimit(String query, int Limit) throws SQLException, Exception {
+
         indexPageExtraFunction function = new indexPageExtraFunction();
         List<searchTopicPojo> list = new ArrayList<>();
 
-        DatabaseConnection ds = new DatabaseConnection();
-
         WordFormating formating = new WordFormating();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            String sql;
-            con = ds.getConnection();
-            if (Limit == 0) {
-                sql = "select unique_id as topicid,topic_name as topicname,image_url as imagelink from topic WHERE lower(topic_name) LIKE ? order by topicid limit 100";
-                ps = con.prepareStatement(sql);
-                ps.setString(1, "%" + query + "%");
-            } else {
-                sql = "select unique_id as topicid,topic_name as topicname,image_url as imagelink from topic WHERE lower(topic_name) LIKE ? order by topicid limit ?";
-                ps = con.prepareStatement(sql);
-                ps.setString(1, "%" + query + "%");
-                ps.setInt(2, Limit);
-            }
 
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int topicId = rs.getInt("topicid");
-                String topic = formating.convertStringUpperToLower(rs.getString("topicname"));
-                int totalrelatedQuestion = function.totalRelatedQuestion(topicId);
-                String imagePath = rs.getString("imagelink");
-                list.add(new searchTopicPojo(topicId, topic, totalrelatedQuestion, imagePath));
+        DatabaseConnection connection = new DatabaseConnection();
+
+        try (Connection con = DatabaseConnection.makeConnection()) {
+
+            if (Limit == 0) {
+                String sql = "select unique_id as topicid,topic_name as topicname,image_url as imagelink from topic WHERE lower(topic_name) LIKE ? order by topicid limit 100";
+                try (PreparedStatement ps = con.prepareStatement(sql)) {
+                    ps.setString(1, "%" + query + "%");
+                    try (ResultSet rs = ps.executeQuery()) {
+                        while (rs.next()) {
+                            int topicId = rs.getInt("topicid");
+                            String topic = formating.convertStringUpperToLower(rs.getString("topicname"));
+                            int totalrelatedQuestion = function.totalRelatedQuestion(topicId);
+                            String imagePath = rs.getString("imagelink");
+                            list.add(new searchTopicPojo(topicId, topic, totalrelatedQuestion, imagePath));
+                        }
+                        return list;
+                    }
+                }
+
+            } else {
+                String sql = "select unique_id as topicid,topic_name as topicname,image_url as imagelink from topic WHERE lower(topic_name) LIKE ? order by topicid limit ?";
+                try (PreparedStatement ps = con.prepareStatement(sql)) {
+                    ps.setString(1, "%" + query + "%");
+                    ps.setInt(2, Limit);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        while (rs.next()) {
+                            int topicId = rs.getInt("topicid");
+                            String topic = formating.convertStringUpperToLower(rs.getString("topicname"));
+                            int totalrelatedQuestion = function.totalRelatedQuestion(topicId);
+                            String imagePath = rs.getString("imagelink");
+                            list.add(new searchTopicPojo(topicId, topic, totalrelatedQuestion, imagePath));
+                        }
+                        return list;
+                    }
+                }
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
-        return null;  
+        return null;
     }
 
     /**
@@ -204,60 +183,49 @@ public class SearchClassFile {
         indexPage page = new indexPage();
         List<searchAnswerPojo> list = new ArrayList<>();
 
-        DatabaseConnection ds = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            String sql;
-            con = ds.getConnection();
+        try (Connection con = DatabaseConnection.makeConnection()) {
             if (Limit == 0) {
-                sql = "Select q.question as question,q.total_view as totalview,q.q_id as questionid,ans.answer as answer from question q right join answer ans on ans.q_id = q.q_id where lower(answer) LIKE ? and question is not null limit 50";
-                ps = con.prepareStatement(sql);
-                ps.setString(1, "%" + query + "%");
+                String sql = "Select q.question as question,q.total_view as totalview,q.q_id as questionid,ans.answer as answer from question q right join answer ans on ans.q_id = q.q_id where lower(answer) LIKE ? and question is not null limit 50";
+                try (PreparedStatement ps = con.prepareStatement(sql)) {
+                    ps.setString(1, "%" + query + "%");
+                    try (ResultSet rs = ps.executeQuery()) {
+                        while (rs.next()) {
+                            int questionId = rs.getInt("questionid");
+                            String question = rs.getString("question");
+                            String answer = rs.getString("answer");
+                            int totalViewOfQuestion = rs.getInt("totalview");
+                            int totalAnswerOfQuestion = page.totalAnswer(questionId);
+                            list.add(new searchAnswerPojo(questionId, question, answer, totalViewOfQuestion, totalAnswerOfQuestion));
+                        }
+                        return list;
+                    }
+                }
+
             } else {
-                sql = "Select q.question as question,q.total_view as totalview,q.q_id as questionid,ans.answer as answer from question q right join answer ans on ans.q_id = q.q_id where lower(answer) LIKE ? and question is not null limit ?";
-                ps = con.prepareStatement(sql);
-                ps.setString(1, "%" + query + "%");
-                ps.setInt(2, Limit);
+                String sql = "Select q.question as question,q.total_view as totalview,q.q_id as questionid,ans.answer as answer from question q right join answer ans on ans.q_id = q.q_id where lower(answer) LIKE ? and question is not null limit ?";
+                try (PreparedStatement ps = con.prepareStatement(sql)) {
+                    ps.setString(1, "%" + query + "%");
+                    ps.setInt(2, Limit);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        while (rs.next()) {
+                            int questionId = rs.getInt("questionid");
+                            String question = rs.getString("question");
+                            String answer = rs.getString("answer");
+                            int totalViewOfQuestion = rs.getInt("totalview");
+                            int totalAnswerOfQuestion = page.totalAnswer(questionId);
+                            list.add(new searchAnswerPojo(questionId, question, answer, totalViewOfQuestion, totalAnswerOfQuestion));
+                        }
+                        return list;
+                    }
+                }
             }
 
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int questionId = rs.getInt("questionid");
-                String question = rs.getString("question");
-                String answer = rs.getString("answer");
-                int totalViewOfQuestion = rs.getInt("totalview");
-                int totalAnswerOfQuestion = page.totalAnswer(questionId);
-                list.add(new searchAnswerPojo(questionId, question, answer, totalViewOfQuestion, totalAnswerOfQuestion));
-            }
         } catch (SQLException msg) {
             Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
-        return list;
+        return null;
     }
 
     /**
@@ -272,14 +240,13 @@ public class SearchClassFile {
         indexPage page = new indexPage();
         List<searchQuestionPojo> list = new ArrayList<>();
 
-        DatabaseConnection ds = new DatabaseConnection();
-
-        Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        try {
+        
+        DatabaseConnection connection = new DatabaseConnection();
+        
+        try(Connection con = DatabaseConnection.makeConnection()) {
             String sql;
-            con = ds.getConnection();
             if (Limit == 0) {
                 sql = "SELECT q_id as questionid,question,total_view as totalview FROM question WHERE lower(question) LIKE ? order by 1 desc limit 30";
                 ps = con.prepareStatement(sql);
@@ -435,15 +402,7 @@ public class SearchClassFile {
 
                 }
             }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return list;
-
     }
 }

@@ -16,7 +16,6 @@
 package com.profile;
 
 import com.connect.DatabaseConnection;
-import com.connect.PoolConnection;
 import com.string.WordFormating;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  *
@@ -44,44 +42,20 @@ public class profileDetailClassFile {
      */
     public int GetUserIdByUserName(String username) throws SQLException, ClassNotFoundException, Exception {
 
-        PoolConnection pc = new PoolConnection();
-        DataSource ds = pc.setUpPool();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "select id from newuser where not user_type <=> 'guest' and firstname is not null and username = ? limit 1";
 
-        try {
-            con = ds.getConnection();
-            String sql = "select id from newuser where not user_type <=> 'guest' and firstname is not null and username = ? limit 1";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, username);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt("id");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getInt("id");
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(profileDetailClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return 0;
     }
@@ -96,59 +70,36 @@ public class profileDetailClassFile {
      */
     public List<profileDetialPojoFile> GetUserDetailByUserId(int userid) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection ds = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         List<profileDetialPojoFile> list = new ArrayList<>();
 
         WordFormating word = new WordFormating();
 
-        try {
-            con = ds.getConnection();
-            String sql = "select id,username,firstname,email,email_s,higher_edu,best_achievement,bio,imagepath,total_view "
-                    + "from newuser where not user_type <=> 'guest' and firstname is not null and id = ? limit 1";
-            ps = con.prepareStatement(sql);
+        String sql = "select id,username,firstname,email,email_s,higher_edu,best_achievement,bio,imagepath,total_view "
+                + "from newuser where not user_type <=> 'guest' and firstname is not null and id = ? limit 1";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userid);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int userId = rs.getInt("id");
-                String username = rs.getString("username");
-                String fullName = word.convertStringUpperToLower(rs.getString("firstname"));
-                String email = rs.getString("email");
-                int email_s = rs.getInt("email_s");
-                String higherEdu = rs.getString("higher_edu");
-                String bestAchivement = rs.getString("best_achievement");
-                String bio = rs.getString("bio");
-                String imagePath = rs.getString("imagepath");
-                int totalView = rs.getInt("total_view");
-                list.add(new profileDetialPojoFile(userId, username, fullName, email, email_s, higherEdu, bestAchivement, bio, imagePath, totalView));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int userId = rs.getInt("id");
+                    String username = rs.getString("username");
+                    String fullName = word.convertStringUpperToLower(rs.getString("firstname"));
+                    String email = rs.getString("email");
+                    int email_s = rs.getInt("email_s");
+                    String higherEdu = rs.getString("higher_edu");
+                    String bestAchivement = rs.getString("best_achievement");
+                    String bio = rs.getString("bio");
+                    String imagePath = rs.getString("imagepath");
+                    int totalView = rs.getInt("total_view");
+                    list.add(new profileDetialPojoFile(userId, username, fullName, email, email_s, higherEdu, bestAchivement, bio, imagePath, totalView));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(profileDetailClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return null;
     }
@@ -163,41 +114,18 @@ public class profileDetailClassFile {
      */
     public boolean IsUserPresent(int userId) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection ds = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT username FROM newuser where not user_type <=> 'guest' and firstname is not null and id = ? limit 1";
 
-        try {
-            con = ds.getConnection();
-            String sql = "SELECT username FROM newuser where not user_type <=> 'guest' and firstname is not null and id = ? limit 1";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            rs = ps.executeQuery();
-            return rs.first();
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.first();
+            }
         } catch (SQLException msg) {
             Logger.getLogger(profileDetailClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return false;
     }
@@ -212,44 +140,18 @@ public class profileDetailClassFile {
      */
     public boolean IsUserPresent(String username) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection ds = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT username FROM newuser where not user_type <=> 'guest' and firstname is not null and username = ? limit 1";
 
-        try {
-            con = ds.getConnection();
-            String sql = "SELECT username FROM newuser where not user_type <=> 'guest' and firstname is not null and username = ? limit 1";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, username);
-            rs = ps.executeQuery();
-            return rs.first();
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.first();
+            }
         } catch (SQLException msg) {
             Logger.getLogger(profileDetailClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-
-                }
-            }
         }
         return false;
     }

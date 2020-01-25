@@ -1,1 +1,1 @@
-<!-- This is Google Analytice code -->
+<!-- Global site tag (gtag.js) - Google Analytics -->

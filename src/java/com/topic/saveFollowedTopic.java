@@ -41,16 +41,15 @@ public class saveFollowedTopic extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String userid = request.getParameter("userid");
-        String[] topicName = request.getParameterValues("MultipleSelectedTopic");
-
         saveTopic topic = new saveTopic();
         try {
+            String userid = request.getParameter("userid");
+            String[] topicName = request.getParameterValues("MultipleSelectedTopic");
             topic.SaveTopicByTopicIdAndUserId(userid, topicName);
-            response.sendRedirect("index.jsp?ref=f_t");
-            //request.getRequestDispatcher("index.jsp").forward(request, response);
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(saveFollowedTopic.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            request.getRequestDispatcher("index").forward(request, response);
         }
     }
 }

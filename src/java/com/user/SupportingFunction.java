@@ -37,44 +37,49 @@ public class SupportingFunction {
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int GetUserIdByEmail(String email) throws SQLException, ClassNotFoundException {
-        
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+    public String GetFullNameByEmail(String email) throws SQLException, ClassNotFoundException {
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-                
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT id FROM newuser WHERE email = ? limit 1";
-            ps = con.prepareStatement(sql);
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "SELECT firstname FROM newuser WHERE email = ? limit 1";
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, email);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt("id");                
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getString("firstname");
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(SupportingFunction.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @param email
+     * @return
+     * @throws SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public int GetUserIdByEmail(String email) throws SQLException, ClassNotFoundException {
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql = "SELECT id FROM newuser WHERE email = ? limit 1";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, email);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getInt("id");
                 }
             }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
+
+        } catch (SQLException msg) {
+            Logger.getLogger(SupportingFunction.class.getName()).log(Level.SEVERE, null, msg);
         }
         return 0;
     }
@@ -87,47 +92,26 @@ public class SupportingFunction {
      * @throws ClassNotFoundException
      */
     public String CreateUsername(String username) throws SQLException, ClassNotFoundException {
-        
-        DatabaseConnection dc = DatabaseConnection.getInstance();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT username FROM newuser WHERE username = ?";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT username FROM newuser WHERE username = ?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, username);
-            rs = ps.executeQuery();
-            if(rs.first()){
-                Random rand = new Random();
-                int number = rand.nextInt(100);
-                CreateUsername(username + number);
-            }else{
-                return username;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.first()) {
+                    Random rand = new Random();
+                    int number = rand.nextInt(100);
+                    return CreateUsername(username + number);
+                } else {
+                    return username;
+                }
             }
+
         } catch (SQLException msg) {
             Logger.getLogger(SupportingFunction.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return null;
     }
@@ -141,40 +125,19 @@ public class SupportingFunction {
      */
     public boolean EmailIsAvaliabe(String args) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT email FROM newuser WHERE email = ?";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT email FROM newuser WHERE email = ?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, args);
-            rs = ps.executeQuery();
-            return rs.first();
-           
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.first();
+            }
+
         } catch (SQLException msg) {
             Logger.getLogger(SupportingFunction.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return false;
     }

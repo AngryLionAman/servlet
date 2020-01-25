@@ -32,42 +32,13 @@ import java.util.logging.Logger;
 public class getAnswer {
 
     private void updateAnswerCountByOne(int answerId) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection ds = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            String sql = "UPDATE answer SET total_view = total_view + 1 WHERE a_id =?";
-            con = ds.getConnection();
-            ps = con.prepareStatement(sql);
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("UPDATE answer SET total_view = total_view + 1 WHERE a_id =?")) {
             ps.setInt(1, answerId);
             ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
     }
 
@@ -79,65 +50,42 @@ public class getAnswer {
      * @throws java.lang.ClassNotFoundException
      */
     public List<getAnswerPojo> getAnswerById(int qId) throws SQLException, ClassNotFoundException, Exception {
+
         List<getAnswerPojo> list = new ArrayList<>();
 
-        DatabaseConnection ds = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            String sql = "SELECT ans.Answer_by_id AS userid, user.user_type AS usertype ,user.username AS username,user.firstname AS fullname,"
-                    + "ans.answer AS answer,ans.a_id AS answerid,ans.total_view AS totalview,ans.vote AS vote FROM newuser user "
-                    + "RIGHT JOIN answer ans ON user.id = ans.Answer_by_id WHERE q_id = ? AND ans.approved_by_admin = 1 "
-                    + "AND approved_by_user = 1 ORDER BY vote DESC";
-            con = ds.getConnection();
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT ans.Answer_by_id AS userid, user.user_type AS usertype ,user.username AS username,user.firstname AS fullname,"
+                + "ans.answer AS answer,ans.a_id AS answerid,ans.total_view AS totalview,ans.vote AS vote FROM newuser user "
+                + "RIGHT JOIN answer ans ON user.id = ans.Answer_by_id WHERE q_id = ? AND ans.approved_by_admin = 1 "
+                + "AND approved_by_user = 1 ORDER BY vote DESC";
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int userId = rs.getInt("userid");
-                String userType = rs.getString("usertype");
-                String userName = rs.getString("username");
-                String fullName = rs.getString("fullname");
-                String answer = rs.getString("answer");
-                int answerId = rs.getInt("answerid");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int userId = rs.getInt("userid");
+                    String userType = rs.getString("usertype");
+                    String userName = rs.getString("username");
+                    String fullName = rs.getString("fullname");
+                    String answer = rs.getString("answer");
+                    int answerId = rs.getInt("answerid");
 
-                try {
-                    updateAnswerCountByOne(answerId);
-                } catch (Exception msg) {
-                    Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
+                    try {
+                        updateAnswerCountByOne(answerId);
+                    } catch (Exception msg) {
+                        Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
+                    }
+
+                    int totalView = rs.getInt("totalview");
+                    int vote = rs.getInt("vote");
+                    list.add(new getAnswerPojo(userId, userType, userName, fullName, answer, answerId, totalView, vote));
                 }
-
-                int totalView = rs.getInt("totalview");
-                int vote = rs.getInt("vote");
-                list.add(new getAnswerPojo(userId, userType, userName, fullName, answer, answerId, totalView, vote));
+                return list;
             }
-            return list;
+
         } catch (SQLException msg) {
             Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }

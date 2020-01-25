@@ -40,45 +40,21 @@ public class onProfileCommentClass {
      */
     public boolean SaveCommentOfProfie(int userId, int comment_on_id, String comment, boolean approval_by_admin) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
+        String sql = "INSERT INTO comments (user_id,content_id,comments,comment_type,approved_by_admin)VALUES(?,?,?,?,?)";
 
-        PreparedStatement ps = null;
-
-        try {
-
-            con = dc.getConnection();
-
-            String sql = "INSERT INTO comments (user_id,content_id,comments,comment_type,approved_by_admin)VALUES(?,?,?,?,?)";
-
-            ps = con.prepareStatement(sql);
-
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, comment_on_id);
             ps.setString(3, comment);
             ps.setString(4, "comment_on_user_profile");
             ps.setBoolean(5, approval_by_admin);
-
             return ps.execute();
 
         } catch (SQLException msg) {
             Logger.getLogger(onProfileCommentClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return true;
     }

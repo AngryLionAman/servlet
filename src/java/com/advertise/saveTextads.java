@@ -38,12 +38,13 @@ public class saveTextads {
      * @throws java.lang.ClassNotFoundException
      */
     public boolean textAds(String promoterName, String title, String desc, String link, int days) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+
         Connection con = null;
         PreparedStatement ps = null;
         boolean execute = false;
         try {
-            con = dc.getConnection();
+            DatabaseConnection connection = new DatabaseConnection();
+            con = DatabaseConnection.makeConnection();
             String sql = "insert into textads(title,description,link,promoted_by,days)values(?,?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setString(1, title);
@@ -55,7 +56,7 @@ public class saveTextads {
         } catch (SQLException msg) {
             throw msg;
         } finally {
-            
+
             if (ps != null) {
                 try {
                     ps.close();

@@ -60,17 +60,19 @@ public class updateVoteOfAnswerById extends HttpServlet {
         int answerId = getInput(request.getParameter("answerId"));
         if (answerId != 0) {
             try {
-                DatabaseConnection dc = DatabaseConnection.getInstance();
                 Connection con = null;
                 PreparedStatement ps = null;
                 try {
-                    con = dc.getConnection();
+                    DatabaseConnection connection = new DatabaseConnection();
+                    con = DatabaseConnection.makeConnection();
                     String sql = "update option_of_question set vote = vote + 1 where unique_id = ?";
                     ps = con.prepareStatement(sql);
                     ps.setInt(1, answerId);
                     ps.execute();
                 } catch (SQLException msg) {
                     throw msg;
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(updateVoteOfAnswerById.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
                     if (ps != null) {
                         try {
@@ -87,7 +89,7 @@ public class updateVoteOfAnswerById extends HttpServlet {
                         }
                     }
                 }
-            } catch (SQLException | ClassNotFoundException ex) {
+            } catch (SQLException ex) {
                 Logger.getLogger(updateVoteOfAnswerById.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

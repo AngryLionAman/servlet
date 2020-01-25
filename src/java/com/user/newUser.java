@@ -30,51 +30,27 @@ import java.util.logging.Logger;
 public class newUser {
 
     private int getUserId(String userName, String email) throws SQLException, ClassNotFoundException, Exception {
-        
-        DatabaseConnection ds = new DatabaseConnection();
-        
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            con = ds.getConnection();
-            String sql;
-            if(email != null){
-                sql = "select id from newuser where username = ? and email = ?";
-            }else{
-                sql = "select id from newuser where username = ? and email is ?";
-            }            
-            ps = con.prepareStatement(sql);
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql;
+        if (email != null) {
+            sql = "select id from newuser where username = ? and email = ?";
+        } else {
+            sql = "select id from newuser where username = ? and email is ?";
+        }
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, userName);
             ps.setString(2, email);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt("id");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getInt("id");
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(newUser.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return 0;
     }
@@ -90,16 +66,14 @@ public class newUser {
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int saveNewGuestUser(String userName,String userFullName, String email,String userType) throws SQLException, ClassNotFoundException, Exception {
-       
-        DatabaseConnection ds = new DatabaseConnection();
-        
-        Connection con = null;
-        PreparedStatement ps = null;
-        try {
-            con = ds.getConnection();
-            String sql = "insert into newuser(username,firstname,user_type,email)values(?,?,?,?)";
-            ps = con.prepareStatement(sql);
+    public int saveNewGuestUser(String userName, String userFullName, String email, String userType) throws SQLException, ClassNotFoundException, Exception {
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql = "insert into newuser(username,firstname,user_type,email)values(?,?,?,?)";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, userName);
             ps.setString(2, userFullName);
             ps.setString(3, userType);
@@ -109,21 +83,6 @@ public class newUser {
             return getUserId(userName, email);
         } catch (SQLException msg) {
             Logger.getLogger(newUser.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return 0;
     }

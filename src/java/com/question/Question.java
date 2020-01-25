@@ -45,44 +45,19 @@ public class Question {
      */
     public boolean IsQuestionPresentByQuestionId(int questionId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection ds = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT q_id FROM question WHERE q_id = ? LIMIT 1";
 
-        try {
-            con = ds.getConnection();
-
-            String sql = "SELECT q_id FROM question WHERE q_id = ? LIMIT 1";
-
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
-            rs = ps.executeQuery();
-            return rs.first();
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.first();
+            }
         } catch (SQLException msg) {
             Logger.getLogger(Question.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
-
         return false;
     }
 
@@ -92,44 +67,41 @@ public class Question {
      */
     public List<RecentPostQUestionHavingAtLeastOneAnswerPojo> RecentPostQUestionHavingAtLeastOneAnswer() throws Exception {
 
-        DatabaseConnection ds = new DatabaseConnection();
-
         DateAndTime day = new DateAndTime();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         List<RecentPostQUestionHavingAtLeastOneAnswerPojo> list = new ArrayList<>();
-        try {
-            con = ds.getConnection();
-            String sql = "SELECT "
-                    + "u.username AS userName,"
-                    + "u.firstname AS fullName,"
-                    + "u.user_type AS userType,"
-                    + "u.higher_edu AS higherEdu,"
-                    + "q.id AS userId,"
-                    + "q.q_id AS questionId,"
-                    + "q.question AS question,"
-                    + "q.total_view AS questionView,"
-                    + "q.vote AS questionVote,"
-                    + "q.updated_time AS lastModify,"
-                    + "count(a.a_id) as ansCount "
-                    + "FROM "
-                    + "question q,"
-                    + "answer a,"
-                    + "newuser u "
-                    + "WHERE "
-                    + "q.q_id = a.q_id "
-                    + "AND "
-                    + "u.id = q.id "
-                    + "GROUP BY "
-                    + "a.q_id "
-                    + "ORDER BY "
-                    + "q.q_id "
-                    + "DESC LIMIT 20;";
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+
+        String sql = "SELECT "
+                + "u.username AS userName,"
+                + "u.firstname AS fullName,"
+                + "u.user_type AS userType,"
+                + "u.higher_edu AS higherEdu,"
+                + "q.id AS userId,"
+                + "q.q_id AS questionId,"
+                + "q.question AS question,"
+                + "q.total_view AS questionView,"
+                + "q.vote AS questionVote,"
+                + "q.updated_time AS lastModify,"
+                + "count(a.a_id) as ansCount "
+                + "FROM "
+                + "question q,"
+                + "answer a,"
+                + "newuser u "
+                + "WHERE "
+                + "q.q_id = a.q_id "
+                + "AND "
+                + "u.id = q.id "
+                + "GROUP BY "
+                + "a.q_id "
+                + "ORDER BY "
+                + "q.q_id "
+                + "DESC LIMIT 20;";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 String userName = rs.getString("userName");
                 String fullName = rs.getString("fullName");
@@ -148,25 +120,6 @@ public class Question {
             return list;
         } catch (SQLException msg) {
             Logger.getLogger(Question.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return null;
     }
@@ -179,26 +132,21 @@ public class Question {
      */
     public List<recentQuestionPojo> UnAnsweredQuestion() throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection ds = new DatabaseConnection();
-
         indexPageExtraFunction function = new indexPageExtraFunction();
         List<recentQuestionPojo> list = new ArrayList<>();
 
         time time = new time();
         indexPage index = new indexPage();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = ds.getConnection();
-            String sql = " SELECT q.q_id,q.question,q.vote,q.total_view,q.posted_time,q.updated_time AS date,user.id,user.firstname,"
-                    + "user.username,user.user_type,user.higher_edu FROM question q INNER JOIN newuser user ON user.id = q.id "
-                    + "WHERE q.q_id NOT IN(SELECT q_id FROM answer) ORDER BY q.q_id DESC";
+        String sql = " SELECT q.q_id,q.question,q.vote,q.total_view,q.posted_time,q.updated_time AS date,user.id,user.firstname,"
+                + "user.username,user.user_type,user.higher_edu FROM question q INNER JOIN newuser user ON user.id = q.id "
+                + "WHERE q.q_id NOT IN(SELECT q_id FROM answer) ORDER BY q.q_id DESC";
 
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int totalView = rs.getInt("q.total_view");
                 String date = rs.getString("date");
@@ -219,25 +167,6 @@ public class Question {
             return list;
         } catch (Exception msg) {
             Logger.getLogger(Question.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return null;
     }

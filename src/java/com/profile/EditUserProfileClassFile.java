@@ -23,56 +23,31 @@ public class EditUserProfileClassFile {
 
     public List<EditProfilePojoClass> getProfileDataById(int profileId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
         List<EditProfilePojoClass> list = new ArrayList<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT id,username,firstname AS fullname, email,higher_edu,best_achievement,bio,imagepath FROM newuser WHERE id  = ? LIMIT 1";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT id,username,firstname AS fullname, email,higher_edu,best_achievement,bio,imagepath FROM newuser WHERE id  = ? LIMIT 1";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, profileId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int userId = rs.getInt("id");
-                String userName = rs.getString("username");
-                String fullName = rs.getString("fullname");
-                String email = rs.getString("email");
-                String higher_edu = rs.getString("higher_edu");
-                String best_achievement = rs.getString("best_achievement");
-                String bio = rs.getString("bio");
-                String imagePath = rs.getString("imagepath");
-                list.add(new EditProfilePojoClass(userId, userName, fullName, email, higher_edu, best_achievement, bio, imagePath));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int userId = rs.getInt("id");
+                    String userName = rs.getString("username");
+                    String fullName = rs.getString("fullname");
+                    String email = rs.getString("email");
+                    String higher_edu = rs.getString("higher_edu");
+                    String best_achievement = rs.getString("best_achievement");
+                    String bio = rs.getString("bio");
+                    String imagePath = rs.getString("imagepath");
+                    list.add(new EditProfilePojoClass(userId, userName, fullName, email, higher_edu, best_achievement, bio, imagePath));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(EditUserProfileClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-
-            }
         }
         return null;
     }
@@ -92,13 +67,10 @@ public class EditUserProfileClassFile {
 
         DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement preparedStatement = null;
+        String sql = "update newuser set higher_edu = ?,best_achievement = ? ,bio = ? where id = ?";
 
-        try {
-            String UpdateQuiry = "update newuser set higher_edu = ?,best_achievement = ? ,bio = ? where id = ?";
-            con = connection.getConnection();
-            preparedStatement = con.prepareStatement(UpdateQuiry);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement preparedStatement = con.prepareStatement(sql)) {
             preparedStatement.setString(1, higherQualification);
             preparedStatement.setString(2, bestAchievement);
             preparedStatement.setString(3, Bio);
@@ -107,22 +79,6 @@ public class EditUserProfileClassFile {
             return true;
         } catch (SQLException msg) {
             Logger.getLogger(EditUserProfileClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }
-
         }
         return false;
     }

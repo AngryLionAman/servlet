@@ -33,122 +33,66 @@ public class DisplayOptionalQuestionClassFile {
 
     public int getTotalNoOfPageByNoOfPage(int recordPerPage, int noOfOption) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT count(*) AS cnt FROM optional_question WHERE total_option  = ?";
 
         float totalNumberOfpage = 0;
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT count(*) AS cnt FROM optional_question WHERE total_option  = ?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, noOfOption);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                totalNumberOfpage = rs.getInt("cnt");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    totalNumberOfpage = rs.getInt("cnt");
+                }
+                totalNumberOfpage = totalNumberOfpage / recordPerPage;
+                int newnumber = (int) totalNumberOfpage;
+                if (totalNumberOfpage > newnumber) {
+                    totalNumberOfpage = totalNumberOfpage + 1;
+                }
+                return (int) totalNumberOfpage;
             }
-            totalNumberOfpage = totalNumberOfpage / recordPerPage;
-            int newnumber = (int) totalNumberOfpage;
-            if (totalNumberOfpage > newnumber) {
-                totalNumberOfpage = totalNumberOfpage + 1;
-            }
-            return (int) totalNumberOfpage;
+
         } catch (SQLException msg) {
             Logger.getLogger(DisplayOptionalQuestionClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return 0;
     }
 
     public int getTotalNoOfPageByBasedOn(int recordPerPage, String basedOn) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "SELECT COUNT(*) AS cnt FROM optional_question WHERE on_topic = ?";
 
         float totalNumberOfpage = 0;
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT COUNT(*) AS cnt FROM optional_question WHERE on_topic = ?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, basedOn);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                totalNumberOfpage = rs.getInt("cnt");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    totalNumberOfpage = rs.getInt("cnt");
+                }
+                totalNumberOfpage = totalNumberOfpage / recordPerPage;
+                int newnumber = (int) totalNumberOfpage;
+                if (totalNumberOfpage > newnumber) {
+                    totalNumberOfpage = totalNumberOfpage + 1;
+                }
+                return (int) totalNumberOfpage;
             }
-            totalNumberOfpage = totalNumberOfpage / recordPerPage;
-            int newnumber = (int) totalNumberOfpage;
-            if (totalNumberOfpage > newnumber) {
-                totalNumberOfpage = totalNumberOfpage + 1;
-            }
-            return (int) totalNumberOfpage;
         } catch (SQLException msg) {
             Logger.getLogger(DisplayOptionalQuestionClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return 0;
     }
 
     public int getTotalNoOfPage(int recordPerPage) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         float totalNumberOfpage = 0;
-        try {
-            con = dc.getConnection();
-            String sql = "select count(*) as cnt from optional_question";
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("select count(*) as cnt from optional_question");
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 totalNumberOfpage = rs.getInt("cnt");
             }
@@ -160,207 +104,113 @@ public class DisplayOptionalQuestionClassFile {
             return (int) totalNumberOfpage;
         } catch (SQLException msg) {
             Logger.getLogger(DisplayOptionalQuestionClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return 0;
     }
 
     public List<optionalQuestionPojo> getOptionalQuestionByBasedOn(String basedOn, int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
         List<optionalQuestionPojo> list = new ArrayList<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         if (pageNo < 1) {
             pageNo = 1;
         }
         int startPage = (pageNo * recordPerPage) - recordPerPage;
 
-        try {
-            con = dc.getConnection();
-            String sql = "select id,question,answer,on_topic,posted_by,total_option from optional_question where on_topic = ? limit ?,?";
-            ps = con.prepareStatement(sql);
+        String sql = "select id,question,answer,on_topic,posted_by,total_option from optional_question where on_topic = ? limit ?,?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, basedOn);
             ps.setInt(2, startPage);
             ps.setInt(3, recordPerPage);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String question = rs.getString("question");
-                String correctAnswer = rs.getString("answer");
-                String onTopic = rs.getString("on_topic");
-                int postedBy = rs.getInt("posted_by");
-                int totalOption = rs.getInt("total_option");
-                list.add(new optionalQuestionPojo(id, question, correctAnswer, onTopic, postedBy, totalOption));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String question = rs.getString("question");
+                    String correctAnswer = rs.getString("answer");
+                    String onTopic = rs.getString("on_topic");
+                    int postedBy = rs.getInt("posted_by");
+                    int totalOption = rs.getInt("total_option");
+                    list.add(new optionalQuestionPojo(id, question, correctAnswer, onTopic, postedBy, totalOption));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(DisplayOptionalQuestionClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }
 
     public List<optionalQuestionPojo> getOptionalQuestionByNoOfPage(int noOfOption, int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
         List<optionalQuestionPojo> list = new ArrayList<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         if (pageNo < 1) {
             pageNo = 1;
         }
         int startPage = (pageNo * recordPerPage) - recordPerPage;
 
-        try {
-            con = dc.getConnection();
-            String sql = "select id,question,answer,on_topic,posted_by,total_option from optional_question where total_option = ? limit ?,?";
-            ps = con.prepareStatement(sql);
+        String sql = "select id,question,answer,on_topic,posted_by,total_option from optional_question where total_option = ? limit ?,?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, noOfOption);
             ps.setInt(2, startPage);
             ps.setInt(3, recordPerPage);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String question = rs.getString("question");
-                String correctAnswer = rs.getString("answer");
-                String onTopic = rs.getString("on_topic");
-                int postedBy = rs.getInt("posted_by");
-                int totalOption = rs.getInt("total_option");
-                list.add(new optionalQuestionPojo(id, question, correctAnswer, onTopic, postedBy, totalOption));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String question = rs.getString("question");
+                    String correctAnswer = rs.getString("answer");
+                    String onTopic = rs.getString("on_topic");
+                    int postedBy = rs.getInt("posted_by");
+                    int totalOption = rs.getInt("total_option");
+                    list.add(new optionalQuestionPojo(id, question, correctAnswer, onTopic, postedBy, totalOption));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(DisplayOptionalQuestionClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }
 
     public List<optionalQuestionPojo> getOptionalQuestionByLimit(int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
         List<optionalQuestionPojo> list = new ArrayList<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         if (pageNo < 1) {
             pageNo = 1;
         }
         int startPage = (pageNo * recordPerPage) - recordPerPage;
 
-        try {
-            con = dc.getConnection();
-            String sql = "select id,question,answer,on_topic,posted_by,total_option from optional_question order by rand() limit ?,?";
-            ps = con.prepareStatement(sql);
+        String sql = "select id,question,answer,on_topic,posted_by,total_option from optional_question order by rand() limit ?,?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, startPage);
             ps.setInt(2, recordPerPage);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String question = rs.getString("question");
-                String correctAnswer = rs.getString("answer");
-                String onTopic = rs.getString("on_topic");
-                int postedBy = rs.getInt("posted_by");
-                int totalOption = rs.getInt("total_option");
-                list.add(new optionalQuestionPojo(id, question, correctAnswer, onTopic, postedBy, totalOption));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String question = rs.getString("question");
+                    String correctAnswer = rs.getString("answer");
+                    String onTopic = rs.getString("on_topic");
+                    int postedBy = rs.getInt("posted_by");
+                    int totalOption = rs.getInt("total_option");
+                    list.add(new optionalQuestionPojo(id, question, correctAnswer, onTopic, postedBy, totalOption));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(DisplayOptionalQuestionClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }

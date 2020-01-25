@@ -34,44 +34,20 @@ public class validateUser {
      */
     public boolean validateUser(String username, String password) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection ds = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        try {
-            String v = "SELECT id FROM newuser WHERE email = ? AND password = ? LIMIT 1";
-            connection = ds.getConnection();
-            preparedStatement = connection.prepareStatement(v);
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
-            resultSet = preparedStatement.executeQuery();
-            return resultSet.first();
+        String sql = "SELECT id FROM newuser WHERE email = ? AND password = ? LIMIT 1";
 
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ps.setString(2, password);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.first();
+            }
         } catch (SQLException e) {
             Logger.getLogger(validateUser.class.getName()).log(Level.SEVERE, username, e);
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException msg) {
-                }
-            }
-
         }
-
         return false;
     }
 
@@ -89,25 +65,25 @@ public class validateUser {
     public void validateAdminUser(String eMail, String passWord, HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ClassNotFoundException, Exception {
         //HttpServletRequest request = null;
         HttpSession session = request.getSession(false);
-        
-        DatabaseConnection ds = new DatabaseConnection();
-        
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        try {
-            String sql = "select id,username from newuser where email = ? and password = ?";
-            connection = ds.getConnection();
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, eMail);
-            preparedStatement.setString(2, passWord);
-            resultSet = preparedStatement.executeQuery();
-            int foundUserId = 0;
-            String userName = null;
-            if (resultSet.next()) {
-                foundUserId = resultSet.getInt("id");
-                userName = resultSet.getString("username");
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql = "select id,username from newuser where email = ? and password = ?";
+
+        int foundUserId = 0;
+        String userName = null;
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, eMail);
+            ps.setString(2, passWord);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    foundUserId = rs.getInt("id");
+                    userName = rs.getString("username");
+                }
             }
+
             if (foundUserId != 0) {
                 session.setAttribute("adminUserId", foundUserId);
                 session.setAttribute("userName", userName);
@@ -119,25 +95,6 @@ public class validateUser {
 
         } catch (SQLException msg) {
             Logger.getLogger(validateUser.class.getName()).log(Level.SEVERE, eMail, msg);
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
     }
 }

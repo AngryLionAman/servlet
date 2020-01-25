@@ -40,10 +40,7 @@ public class ModifiedQuestionClassFile {
      */
     public boolean saveModifiedQuestion(int userId, int questionId, String modified_question, int questionPostedBy) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection ds = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         boolean approvelByUser = false;
 
@@ -51,13 +48,11 @@ public class ModifiedQuestionClassFile {
             approvelByUser = true;
         }
 
-        try {
+        String sql = "INSERT INTO modified_question_table (question_id,modified_question,modified_question_by,approved_by_user)VALUES(?,?,?,?)";
 
-            con = ds.getConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(modified_question)) {
 
-            String sql = "INSERT INTO modified_question_table (question_id,modified_question,modified_question_by,approved_by_user)VALUES(?,?,?,?)";
-
-            ps = con.prepareStatement(sql);
             ps.setInt(1, questionId);
             ps.setString(2, modified_question);
             ps.setInt(3, userId);
@@ -66,19 +61,6 @@ public class ModifiedQuestionClassFile {
 
         } catch (SQLException msg) {
             Logger.getLogger(ModifiedQuestionClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return true;
     }

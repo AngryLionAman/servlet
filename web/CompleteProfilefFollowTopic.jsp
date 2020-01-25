@@ -66,9 +66,11 @@
                                 <input type="hidden" name="userid" value="${sessionScope.Session_id_of_user}"/>
                                 <select id="s5" multiple="multiple" name="MultipleSelectedTopic" size="10" autofocus="" required="">
                                     <c:catch var="exp">
-                                        <c:forEach items="${topic}" var="t">
-                                            <option value="${t.key}"><c:out value="${fun.convertStringUpperToLower(t.value)}"/></option>
-                                        </c:forEach> 
+                                        <c:if test="${topic ne null and not empty topic}">
+                                            <c:forEach items="${topic}" var="t">
+                                                <option value="${t.key}"><c:out value="${fun.convertStringUpperToLower(t.value)}"/></option>
+                                            </c:forEach> 
+                                        </c:if>
                                     </c:catch>
                                     <c:if test="${exp ne null}">
                                         ${exp}

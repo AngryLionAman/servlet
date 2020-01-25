@@ -42,53 +42,35 @@ public class allTopic {
      * @throws Exception
      */
     public List<allTopicPojo> topic(int pageNo, int recordPerPage) throws SQLException, Exception {
-        
-        DatabaseConnection ds = new DatabaseConnection();
-        
+
         totalQuestion q = new totalQuestion();
         indexPageExtraFunction function = new indexPageExtraFunction();
         List<allTopicPojo> list = new ArrayList<>();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+
         int startPage = (pageNo * recordPerPage) - recordPerPage;
-        try {
-            con = ds.getConnection();
-            String sql = "select unique_id,topic_name,image_url from topic limit ?,?";
-            ps = con.prepareStatement(sql);
+
+        String sql = "select unique_id,topic_name,image_url from topic limit ?,?";
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, startPage);
             ps.setInt(2, recordPerPage);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int topicId = rs.getInt("unique_id");
-                String topicName = rs.getString("topic_name") == null ? "Unknown Topic" : rs.getString("topic_name");
-                String imageUrl = rs.getString("image_url");
-                int totalQuestion = q.totalQestion(topicId);
-                int totalFollowers = function.totalFollowersOfTopic(topicId);
-                list.add(new allTopicPojo(topicId, topicName, imageUrl, totalQuestion, totalFollowers));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int topicId = rs.getInt("unique_id");
+                    String topicName = rs.getString("topic_name") == null ? "Unknown Topic" : rs.getString("topic_name");
+                    String imageUrl = rs.getString("image_url");
+                    int totalQuestion = q.totalQestion(topicId);
+                    int totalFollowers = function.totalFollowersOfTopic(topicId);
+                    list.add(new allTopicPojo(topicId, topicName, imageUrl, totalQuestion, totalFollowers));
+                }
+                return list;
             }
-            return list;
+
         } catch (SQLException msg) {
             Logger.getLogger(allTopic.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return null;
     }

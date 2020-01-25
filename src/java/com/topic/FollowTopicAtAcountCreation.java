@@ -42,12 +42,15 @@ public class FollowTopicAtAcountCreation extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         selectSomeTopic topic = new selectSomeTopic();
+
+        Map<Integer, String> SelectSomeTopic = null;
         try {
-            Map<Integer, String> SelectSomeTopic = topic.SelectSomeTopic();
-            request.setAttribute("topic", SelectSomeTopic);
-            request.getRequestDispatcher("CompleteProfilefFollowTopic.jsp").forward(request, response);
+            SelectSomeTopic = topic.SelectSomeTopic();
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(FollowTopicAtAcountCreation.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            request.setAttribute("topic", SelectSomeTopic);
+            request.getRequestDispatcher("CompleteProfilefFollowTopic.jsp").forward(request, response);
         }
     }
 }

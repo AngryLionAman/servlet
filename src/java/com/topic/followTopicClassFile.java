@@ -38,38 +38,23 @@ public class followTopicClassFile {
      * @throws ClassNotFoundException
      */
     public boolean FollowTopic(int topicId, int userId, String action) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = DatabaseConnection.getInstance();
 
-        Connection con = null;
-        PreparedStatement ps = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = dc.getConnection();
-            String sql;
-            if (action.equalsIgnoreCase("follow")) {
-                sql = "INSERT INTO topic_followers_detail(topic_id,user_or_followers_id) VALUES(?,?)";
-            } else {
-                sql = "DELETE FROM topic_followers_detail WHERE  topic_id=? AND user_or_followers_id=?";
-            }
-            ps = con.prepareStatement(sql);
+        String sql;
+        if (action.equalsIgnoreCase("follow")) {
+            sql = "INSERT INTO topic_followers_detail(topic_id,user_or_followers_id) VALUES(?,?)";
+        } else {
+            sql = "DELETE FROM topic_followers_detail WHERE  topic_id=? AND user_or_followers_id=?";
+        }
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicId);
             ps.setInt(2, userId);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(followTopicClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return true;
     }

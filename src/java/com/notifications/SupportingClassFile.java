@@ -40,33 +40,16 @@ public class SupportingClassFile {
      */
     public boolean deleteNotificationByNotificationId(int notificationId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
+        String sql = "DELETE FROM notification WHERE unique_id = ?";
 
-        try {
-            con = dc.getConnection();
-            String sql = "DELETE FROM notification WHERE unique_id = ?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, notificationId);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(SupportingClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-            }
         }
         return true;
     }
@@ -80,51 +63,28 @@ public class SupportingClassFile {
      */
     public List<QuestionForApprovalPojo> getQuestionForApprobval(int questionId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT q.q_id AS old_question_id,q.question AS old_question,qt.unique_id AS new_question_id,qt.modified_question AS new_question FROM question q INNER JOIN modified_question_table qt ON q.q_id = qt.question_id WHERE q.q_id = ? AND qt.modified_question IS NOT NULL";
 
         List<QuestionForApprovalPojo> list = new ArrayList<>();
-        try {
-            con = dc.getConnection();
-
-            String sql = "SELECT q.q_id AS old_question_id,q.question AS old_question,qt.unique_id AS new_question_id,qt.modified_question AS new_question FROM question q INNER JOIN modified_question_table qt ON q.q_id = qt.question_id WHERE q.q_id = ? AND qt.modified_question IS NOT NULL";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int oldQuestionId = rs.getInt("old_question_id");
-                String oldQuestion = rs.getString("old_question");
-                int newQuestionId = rs.getInt("new_question_id");
-                String newQuestion = rs.getString("new_question");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int oldQuestionId = rs.getInt("old_question_id");
+                    String oldQuestion = rs.getString("old_question");
+                    int newQuestionId = rs.getInt("new_question_id");
+                    String newQuestion = rs.getString("new_question");
 
-                list.add(new QuestionForApprovalPojo(oldQuestionId, oldQuestion, newQuestionId, newQuestion));
+                    list.add(new QuestionForApprovalPojo(oldQuestionId, oldQuestion, newQuestionId, newQuestion));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(SupportingClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-            }
-        }
+        } 
         return null;
     }
 }

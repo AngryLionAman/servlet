@@ -15,7 +15,7 @@
  */
 package com.fun;
 
-import com.connect.SecondPoolConnection;
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  *
@@ -40,20 +39,13 @@ public class FunClassFile {
      */
     public int totalNumberOfpage(int recordPerPage) throws Exception {
 
-        SecondPoolConnection pc = new SecondPoolConnection();
-        DataSource ds = pc.setUpPool();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         float totalNumberOfpage = 0;
 
-        try {
-            con = ds.getConnection();
-            String sql = "select count(*) as cnt from fun";
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("select count(*) as cnt from fun");
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 totalNumberOfpage = rs.getInt("cnt");
             }
@@ -62,34 +54,9 @@ public class FunClassFile {
             if (totalNumberOfpage > newnumber) {
                 totalNumberOfpage = totalNumberOfpage + 1;
             }
-            rs.close();
-            ps.close();
-            con.close();
             return (int) totalNumberOfpage;
         } catch (SQLException msg) {
             Logger.getLogger(FunClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
         }
         return 0;
     }
@@ -104,58 +71,27 @@ public class FunClassFile {
 
         List<funPojo> list = new ArrayList<>();
 
-        SecondPoolConnection pc = new SecondPoolConnection();
-        DataSource ds = pc.setUpPool();
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "SELECT * FROM fun WHERE based_on = ? ORDER BY RAND()";
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            con = ds.getConnection();
-
-            String sql = "SELECT * FROM fun WHERE based_on = ? ORDER BY RAND()";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, based_on);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("unique_id");
-                int postedBy = rs.getInt("posted_by_id");
-                String title = rs.getString("title");
-                String desc = rs.getString("description");
-                String category = rs.getString("category");
-                String basedOn = rs.getString("based_on");
-                String type = rs.getString("type");
-                list.add(new funPojo(id, postedBy, title, desc, category, basedOn, type));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("unique_id");
+                    int postedBy = rs.getInt("posted_by_id");
+                    String title = rs.getString("title");
+                    String desc = rs.getString("description");
+                    String category = rs.getString("category");
+                    String basedOn = rs.getString("based_on");
+                    String type = rs.getString("type");
+                    list.add(new funPojo(id, postedBy, title, desc, category, basedOn, type));
+                }
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
         } catch (SQLException msg) {
             Logger.getLogger(FunClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
         }
         return null;
     }
@@ -170,58 +106,28 @@ public class FunClassFile {
 
         List<funPojo> list = new ArrayList<>();
 
-        SecondPoolConnection pc = new SecondPoolConnection();
-        DataSource ds = pc.setUpPool();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT * FROM fun WHERE type = ? ORDER BY RAND()";
 
-        try {
-            con = ds.getConnection();
-
-            String sql = "SELECT * FROM fun WHERE type = ? ORDER BY RAND()";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, type_);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("unique_id");
-                int postedBy = rs.getInt("posted_by_id");
-                String title = rs.getString("title");
-                String desc = rs.getString("description");
-                String category = rs.getString("category");
-                String basedOn = rs.getString("based_on");
-                String type = rs.getString("type");
-                list.add(new funPojo(id, postedBy, title, desc, category, basedOn, type));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("unique_id");
+                    int postedBy = rs.getInt("posted_by_id");
+                    String title = rs.getString("title");
+                    String desc = rs.getString("description");
+                    String category = rs.getString("category");
+                    String basedOn = rs.getString("based_on");
+                    String type = rs.getString("type");
+                    list.add(new funPojo(id, postedBy, title, desc, category, basedOn, type));
+                }
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
         } catch (SQLException msg) {
             Logger.getLogger(FunClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
         }
         return null;
     }
@@ -236,58 +142,26 @@ public class FunClassFile {
 
         List<funPojo> list = new ArrayList<>();
 
-        SecondPoolConnection pc = new SecondPoolConnection();
-        DataSource ds = pc.setUpPool();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            con = ds.getConnection();
-
-            String sql = "SELECT * FROM fun WHERE category = ? ORDER BY RAND()";
-            ps = con.prepareStatement(sql);
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "SELECT * FROM fun WHERE category = ? ORDER BY RAND()";
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, category_);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("unique_id");
-                int postedBy = rs.getInt("posted_by_id");
-                String title = rs.getString("title");
-                String desc = rs.getString("description");
-                String category = rs.getString("category");
-                String basedOn = rs.getString("based_on");
-                String type = rs.getString("type");
-                list.add(new funPojo(id, postedBy, title, desc, category, basedOn, type));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("unique_id");
+                    int postedBy = rs.getInt("posted_by_id");
+                    String title = rs.getString("title");
+                    String desc = rs.getString("description");
+                    String category = rs.getString("category");
+                    String basedOn = rs.getString("based_on");
+                    String type = rs.getString("type");
+                    list.add(new funPojo(id, postedBy, title, desc, category, basedOn, type));
+                }
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
         } catch (SQLException msg) {
             Logger.getLogger(FunClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
         }
         return null;
     }
@@ -303,64 +177,33 @@ public class FunClassFile {
 
         List<funPojo> list = new ArrayList<>();
 
-        SecondPoolConnection pc = new SecondPoolConnection();
-        DataSource ds = pc.setUpPool();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        if (pageNo == 0) {
+        if (pageNo < 1) {
             pageNo = 1;
         }
         int startPage = (pageNo * recordPerPage) - recordPerPage;
+        String sql = "SELECT * FROM fun ORDER BY RAND() LIMIT ?,?";
 
-        try {
-            con = ds.getConnection();
-
-            String sql = "SELECT * FROM fun ORDER BY RAND() LIMIT ?,?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, startPage);
             ps.setInt(2, recordPerPage);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("unique_id");
-                int postedBy = rs.getInt("posted_by_id");
-                String title = rs.getString("title");
-                String desc = rs.getString("description");
-                String category = rs.getString("category");
-                String basedOn = rs.getString("based_on");
-                String type = rs.getString("type");
-                list.add(new funPojo(id, postedBy, title, desc, category, basedOn, type));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("unique_id");
+                    int postedBy = rs.getInt("posted_by_id");
+                    String title = rs.getString("title");
+                    String desc = rs.getString("description");
+                    String category = rs.getString("category");
+                    String basedOn = rs.getString("based_on");
+                    String type = rs.getString("type");
+                    list.add(new funPojo(id, postedBy, title, desc, category, basedOn, type));
+                }
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
         } catch (SQLException msg) {
             Logger.getLogger(FunClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException ignore) {
-
-                }
-            }
         }
         return null;
     }

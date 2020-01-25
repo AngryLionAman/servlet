@@ -49,15 +49,7 @@ public class SaveQuestionForAdmin extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
-        DatabaseConnection databaseConnection = null;
-        try {
-            databaseConnection = new DatabaseConnection();
-        } catch (SQLException ex) {
-            out.print(ex);
-            Logger.getLogger(SaveQuestionForAdmin.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SaveQuestionForAdmin.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       
         Connection con = null;
         PreparedStatement ps = null;
         PreparedStatement ps1 = null;
@@ -75,7 +67,8 @@ public class SaveQuestionForAdmin extends HttpServlet {
             out.println(userId);
             if ((question != null && question.length() > 0) && (questionTag != null && questionTag.length() > 0) && userId != 0) {
                 String sql = "insert into question(id,question,vote) values(?,?,?)";
-                con = databaseConnection.getConnection();
+                DatabaseConnection connection = new DatabaseConnection();
+                con = DatabaseConnection.makeConnection();
                 ps = con.prepareStatement(sql);
                 ps.setInt(1, userId);
                 ps.setString(2, question);
@@ -166,6 +159,8 @@ public class SaveQuestionForAdmin extends HttpServlet {
             } catch (NumberFormatException | SQLException ex) {
                 Logger.getLogger(SaveQuestionForAdmin.class.getName()).log(Level.SEVERE, null, ex);
             }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(SaveQuestionForAdmin.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             if (rs != null) {
                 try {

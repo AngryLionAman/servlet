@@ -40,53 +40,34 @@ public class topicDetail {
      * @throws Exception
      */
     public List<topicPojo> topic(int topicid) throws SQLException, Exception {
-        
+
         indexPageExtraFunction function = new indexPageExtraFunction();
-        
-        DatabaseConnection connection = new DatabaseConnection();
-        
+
         List<topicPojo> list = new ArrayList<>();
-        
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        
-        try {
-            String sql = "select * from topic where unique_id = ?";
-            con = connection.getConnection();
-            ps = con.prepareStatement(sql);
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql = "select * from topic where unique_id = ?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicid);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                String topicName = rs.getString("topic_name");
-                int topicId = rs.getInt("unique_id");
-                String imageUrl = rs.getString("image_url");
-                String descHindi = rs.getString("desc_hindi");
-                String descEng = rs.getString("desc_english");
-                boolean crawl = rs.getBoolean("crawl");
-                int totalFollowers = function.totalFollowersOfTopic(topicId);
-                int relatedQuestion = function.totalRelatedQuestion(topicId);
-                list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, crawl, totalFollowers, relatedQuestion));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String topicName = rs.getString("topic_name");
+                    int topicId = rs.getInt("unique_id");
+                    String imageUrl = rs.getString("image_url");
+                    String descHindi = rs.getString("desc_hindi");
+                    String descEng = rs.getString("desc_english");
+                    boolean crawl = rs.getBoolean("crawl");
+                    int totalFollowers = function.totalFollowersOfTopic(topicId);
+                    int relatedQuestion = function.totalRelatedQuestion(topicId);
+                    list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, crawl, totalFollowers, relatedQuestion));
+                }
+                return list;
             }
-            return list;
         } catch (Exception msg) {
-           Logger.getLogger(topicDetail.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if(rs != null){
-                try{
-                    rs.close();
-                }catch(SQLException msg){}
-            }
-            if(ps != null){
-                try{
-                    ps.close();
-                }catch(SQLException msg){}
-            }
-            if(con != null){
-                try{
-                    con.close();
-                }catch(SQLException msg){}
-            }
+            Logger.getLogger(topicDetail.class.getName()).log(Level.SEVERE, null, msg);
         }
         return null;
     }

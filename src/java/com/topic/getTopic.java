@@ -38,49 +38,26 @@ public class getTopic {
      * @throws Exception
      */
     public HashMap<Integer, String> getTopicDetailByRefId(int topicid) throws SQLException, Exception {
-        
-        DatabaseConnection ds = new DatabaseConnection();
-        
+
         HashMap<Integer, String> map = new HashMap<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            String sql = "SELECT DISTINCT t.unique_id,t.topic_name FROM topic t INNER JOIN question_topic_tag qtt ON t.unique_id=qtt.tag_id WHERE question_id IN (SELECT question_id FROM question_topic_tag WHERE tag_id = ? ) AND t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL AND crawl = 1 GROUP BY t.unique_id LIMIT 30";
-            con = ds.getConnection();
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT DISTINCT t.unique_id,t.topic_name FROM topic t INNER JOIN question_topic_tag qtt ON t.unique_id=qtt.tag_id WHERE question_id IN (SELECT question_id FROM question_topic_tag WHERE tag_id = ? ) AND t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL AND crawl = 1 GROUP BY t.unique_id LIMIT 30";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicid);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                String topicName = rs.getString("t.topic_name").trim();
-                int topicId = rs.getInt("t.unique_id");
-                map.putIfAbsent(topicId, topicName);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String topicName = rs.getString("t.topic_name").trim();
+                    int topicId = rs.getInt("t.unique_id");
+                    map.putIfAbsent(topicId, topicName);
+                }
+                return map;
             }
-            return map;
         } catch (SQLException msg) {
             Logger.getLogger(getTopic.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return null;
     }

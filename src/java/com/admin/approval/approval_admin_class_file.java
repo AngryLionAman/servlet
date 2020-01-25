@@ -23,6 +23,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -32,28 +34,20 @@ public class approval_admin_class_file {
 
     /**
      *
-     * @return
-     * @throws SQLException
+     * @return @throws SQLException
      * @throws ClassNotFoundException
      */
     public List<QuestionForApprovalPojo> approvalForQuestion() throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT q.q_id AS old_question_id,q.question AS old_question,o.unique_id AS new_question_id,o.modified_question AS new_question,"
+                + "o.approved_by_user,o.approved_by_admin,o.rejected_by_user,o.rejected_by_admin,o.message,o.time "
+                + "FROM modified_question_table o INNER JOIN question q ON o.question_id = q.q_id  WHERE o.modified_question IS NOT NULL";
 
         List<QuestionForApprovalPojo> list = new ArrayList<>();
-
-        try {
-            con = dc.getConnection();
-
-            String sql = "SELECT q.q_id AS old_question_id,q.question AS old_question,o.unique_id AS new_question_id,o.modified_question AS new_question,"
-                    + "o.approved_by_user,o.approved_by_admin,o.rejected_by_user,o.rejected_by_admin,o.message,o.time "
-                    + "FROM modified_question_table o INNER JOIN question q ON o.question_id = q.q_id  WHERE o.modified_question IS NOT NULL";
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 int old_question_id = rs.getInt("old_question_id");
@@ -70,26 +64,8 @@ public class approval_admin_class_file {
             }
             return list;
         } catch (SQLException msg) {
-            throw msg;
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-            }
+            Logger.getLogger(approval_admin_class_file.class.getName()).log(Level.SEVERE, null, msg);
         }
+        return null;
     }
 }

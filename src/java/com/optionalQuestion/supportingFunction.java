@@ -22,6 +22,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -38,51 +40,28 @@ public class supportingFunction {
      * @throws java.lang.ClassNotFoundException
      */
     public int showPrecentage(int questionId, int vote) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = DatabaseConnection.getInstance();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql = "select sum(vote)as sum from option_of_question where question_id = ?";
+
         int precentege = 0;
-        try {
-            int sum = 0;
-            con = dc.getConnection();
-            String sql = "select sum(vote)as sum from option_of_question where question_id = ?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
-            rs = ps.executeQuery();
-            while(rs.next()){
-                sum = rs.getInt("sum");
+            try (ResultSet rs = ps.executeQuery()) {
+                int sum = 0;
+                while (rs.next()) {
+                    sum = rs.getInt("sum");
+                }
+                if (sum != 0) {
+                    precentege = (vote * 100) / sum;
+                }
             }
-            if(sum != 0){
-                precentege = (vote * 100) / sum;
-            }
-            
         } catch (SQLException msg) {
-            throw msg;
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
+            Logger.getLogger(supportingFunction.class.getName()).log(Level.SEVERE, null, msg);
         }
-        return precentege ;
+        return precentege;
     }
 
     /**
@@ -94,146 +73,72 @@ public class supportingFunction {
      */
     public List<optionalQuestionAnswerPojo> optionOfQuestinById(int qId) throws SQLException, ClassNotFoundException {
         List<optionalQuestionAnswerPojo> list = new ArrayList<>();
-        //HashMap<Integer, String> map = new HashMap<>();
-        DatabaseConnection dc = DatabaseConnection.getInstance();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            con = dc.getConnection();
-            String sql = "select unique_id,option_value,vote from option_of_question where question_id = ?";
-            ps = con.prepareStatement(sql);
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql = "select unique_id,option_value,vote from option_of_question where question_id = ?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int aId = rs.getInt("unique_id");
-                String option = rs.getString("option_value");
-                int vote = rs.getInt("vote");
-                list.add(new optionalQuestionAnswerPojo(aId, option, vote));
-                //map.put(aId, option);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int aId = rs.getInt("unique_id");
+                    String option = rs.getString("option_value");
+                    int vote = rs.getInt("vote");
+                    list.add(new optionalQuestionAnswerPojo(aId, option, vote));
+                }
             }
         } catch (SQLException msg) {
-            throw msg;
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
+            Logger.getLogger(supportingFunction.class.getName()).log(Level.SEVERE, null, msg);
         }
         return list;
     }
 
     /**
      *
-     * @return
-     * @throws SQLException
+     * @return @throws SQLException
      * @throws ClassNotFoundException
      */
     public List<String> onTopicName() throws SQLException, ClassNotFoundException {
         List<String> list = new ArrayList<>();
-        DatabaseConnection dc = new DatabaseConnection();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT DISTINCT on_topic FROM optional_question WHERE on_topic <> 'uncategorized'";
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql = "SELECT DISTINCT on_topic FROM optional_question WHERE on_topic <> 'uncategorized'";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 String onTopic = rs.getString("on_topic");
                 list.add(onTopic);
             }
         } catch (SQLException msg) {
-            throw msg;
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
+            Logger.getLogger(supportingFunction.class.getName()).log(Level.SEVERE, null, msg);
         }
         return list;
     }
 
     /**
      *
-     * @return
-     * @throws SQLException
+     * @return @throws SQLException
      * @throws ClassNotFoundException
      */
     public List<Integer> totalNumberOfOption() throws SQLException, ClassNotFoundException {
         List<Integer> list = new ArrayList<>();
-        DatabaseConnection dc = new DatabaseConnection();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            con = dc.getConnection();
-            String sql = "select distinct total_option from optional_question";
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("select distinct total_option from optional_question");
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int count = rs.getInt("total_option");
                 list.add(count);
             }
         } catch (SQLException msg) {
-            throw msg;
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
+            Logger.getLogger(supportingFunction.class.getName()).log(Level.SEVERE, null, msg);
         }
         return list;
     }

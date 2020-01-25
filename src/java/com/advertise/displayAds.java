@@ -16,7 +16,6 @@
 package com.advertise;
 
 import com.connect.DatabaseConnection;
-import com.connect.PoolConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  *
@@ -34,67 +32,33 @@ import javax.sql.DataSource;
 public class displayAds {
 
     private void updateImpressionOfads(int adsId) throws SQLException, ClassNotFoundException, Exception {
-        
-        PoolConnection pc = new PoolConnection();
-        DataSource ds = pc.setUpPool();
-        
-        Connection con = null;
-        PreparedStatement ps1 = null;
-        ResultSet rs1 = null;
-        try {
-            con = ds.getConnection();
-            String sql = "UPDATE advertise SET impression = impression+1 WHERE id = ?";
-            ps1 = con.prepareStatement(sql);
-            ps1.setInt(1, adsId);
-            ps1.execute();
+
+        String sql = "UPDATE advertise SET impression = impression+1 WHERE id = ?";
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, adsId);
+            ps.execute();
         } catch (SQLException msg) {
-           Logger.getLogger(displayAds.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs1 != null) {
-                try {
-                    rs1.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps1 != null) {
-                try {
-                    ps1.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
+            Logger.getLogger(displayAds.class.getName()).log(Level.SEVERE, null, msg);
         }
     }
 
     /**
      *
-     * @return
-     * @throws SQLException
+     * @return @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
     public List<displayAdsPojo> displayRandomAds() throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection ds = new DatabaseConnection();
-
         List<displayAdsPojo> list = new ArrayList<>();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            con = ds.getConnection();
-            String sql = "select * from advertise where display = 1 order by rand() limit 1";
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
-            if (rs.next()) {
+        String sql = "select * from advertise where display = 1 order by rand() limit 1";
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
                 int adsId = rs.getInt("id");
                 updateImpressionOfads(adsId);
                 String imageName = rs.getString("image_name");
@@ -105,31 +69,10 @@ public class displayAds {
                 String forwardUrl = rs.getString("forward_link");
                 list.add(new displayAdsPojo(adsId, imageName, imageAlt, imageHeight, imageWidth, promotedBy, forwardUrl));
             }
+            return list;
         } catch (SQLException msg) {
             Logger.getLogger(displayAds.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
-        return list;
+        return null;
     }
 }

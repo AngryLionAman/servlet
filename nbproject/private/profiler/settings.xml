@@ -7,7 +7,7 @@
 <entry key="ACTIVATED_FEATURES">#org.netbeans.modules.profiler.v2.features.MonitorFeature@</entry>
 <entry key="org.netbeans.modules.profiler.v2.features.MethodsFeature_SelectedMethodsMode_SELECTION_FLAG">java.sql.DriverManager,getConnection,(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/sql/Connection; </entry>
 <entry key="org.netbeans.modules.profiler.v2.features.MethodsFeature_SETTINGS_FLAG">true</entry>
-<entry key="org.netbeans.modules.profiler.v2.features.ObjectsFeature_MODE_FLAG">ProjectClassesMode</entry>
+<entry key="org.netbeans.modules.profiler.v2.features.ObjectsFeature_MODE_FLAG">AllClassesMode</entry>
 <entry key="org.netbeans.modules.profiler.v2.features.ObjectsFeature_SelectedClassesMode_SELECTION_FLAG">com.topic.topicPojo,*, char[],*, com.index.recentQuestionPojo,*, </entry>
 <entry key="org.netbeans.modules.profiler.v2.features.ObjectsFeature_SETTINGS_FLAG">true</entry>
 <entry key="PROFILING_POINTS">false</entry>

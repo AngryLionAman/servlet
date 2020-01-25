@@ -36,33 +36,14 @@ public class CommentApprovalClassFile {
      * @throws ClassNotFoundException
      */
     public boolean changePermissionOfComment(int comment_id) throws SQLException, ClassNotFoundException {
-
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-
-        try {
-            con = dc.getConnection();
-            String sql = "UPDATE comments SET approved_by_admin = 1 WHERE unique_id = ?";
-            ps = con.prepareStatement(sql);
+        String sql = "UPDATE comments SET approved_by_admin = 1 WHERE unique_id = ?";
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, comment_id);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(CommentApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-            }
         }
         return true;
     }

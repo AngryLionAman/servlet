@@ -39,43 +39,19 @@ public class UserFollow {
      */
     public boolean IsUserFollowingByUserId(int userId, int followersId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT * FROM ak_follower_detail WHERE followers_id = ? AND user_id = ? LIMIT 1";
 
-        try {
-            con = dc.getConnection();
-
-            String sql = "SELECT * FROM ak_follower_detail WHERE followers_id = ? AND user_id = ? LIMIT 1";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, followersId);
             ps.setInt(2, userId);
-            rs = ps.executeQuery();
-            return rs.first();
-
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.first();
+            }
         } catch (SQLException msg) {
             Logger.getLogger(UserFollow.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return false;
     }

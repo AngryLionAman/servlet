@@ -38,56 +38,31 @@ public class GuestUser {
      * @throws java.lang.ClassNotFoundException
      */
     public String GenreateGuestName(String guestName) throws SQLException, ClassNotFoundException {
-        
-        if(guestName == null){
+
+        if (guestName == null) {
             return "NoString";
         }
-        if(guestName.equals("")){
+        if (guestName.equals("")) {
             return "NoString";
         }
 
-        DatabaseConnection ds = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "SELECT LOWER(username) FROM newuser WHERE username =? LIMIT 1";
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            String sql = "SELECT LOWER(username) FROM newuser WHERE username =? LIMIT 1";
-            con = ds.getConnection();
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, guestName);
-            rs = ps.executeQuery();
-            if (rs.first()) {
-                Random rand = new Random();
-                int number = rand.nextInt(1000);
-                return GenreateGuestName(guestName + number);
-            } else {
-                return guestName;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.first()) {
+                    Random rand = new Random();
+                    int number = rand.nextInt(1000);
+                    return GenreateGuestName(guestName + number);
+                } else {
+                    return guestName;
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(GuestUser.class.getName()).log(Level.SEVERE, guestName, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }

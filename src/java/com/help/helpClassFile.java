@@ -39,34 +39,18 @@ public class helpClassFile {
      */
     public boolean SaveHelp(String name, String email, String query) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        
-        try {
-            con = dc.getConnection();
-            String sql = "insert into asked_help_query(name,Email,Query) values(?,?,?)";
-            ps = con.prepareStatement(sql);
+        String sql = "insert into asked_help_query(name,Email,Query) values(?,?,?)";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, name);
             ps.setString(2, email);
             ps.setString(3, query);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(helpClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return true;
     }

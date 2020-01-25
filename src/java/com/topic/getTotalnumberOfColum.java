@@ -41,55 +41,29 @@ public class getTotalnumberOfColum {
 
         DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
         float totalNumberOfpage = 0;
 
-        try {
-            con = connection.getConnection();
-            String sql = "select count(*) as cnt from question q right join question_topic_tag qtt on qtt.question_id = q.q_id where tag_id = ?";
-            ps = con.prepareStatement(sql);
+        String sql = "select count(*) as cnt from question q right join question_topic_tag qtt on qtt.question_id = q.q_id where tag_id = ?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicId);
-            rs = ps.executeQuery();
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    totalNumberOfpage = rs.getInt("cnt");
+                }
 
-            while (rs.next()) {
-                totalNumberOfpage = rs.getInt("cnt");
+                totalNumberOfpage = totalNumberOfpage / recordPerPage;
+                int newnumber = (int) totalNumberOfpage;
+                if (totalNumberOfpage > newnumber) {
+                    totalNumberOfpage = totalNumberOfpage + 1;
+                }
+                return (int) totalNumberOfpage;
             }
-
-            totalNumberOfpage = totalNumberOfpage / recordPerPage;
-            int newnumber = (int) totalNumberOfpage;
-            if (totalNumberOfpage > newnumber) {
-                totalNumberOfpage = totalNumberOfpage + 1;
-            }
-            return (int) totalNumberOfpage;
         } catch (SQLException msg) {
             Logger.getLogger(getTotalnumberOfColum.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-             if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }
-              if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }           
         }
-        return 0;  
+        return 0;
     }
 
     /**
@@ -102,20 +76,13 @@ public class getTotalnumberOfColum {
      */
     public int totalNumberOfColumnOfTopic(int recordPerPage) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection ds = new DatabaseConnection();
-
-        Connection com = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         float totalNumberOfpage = 0;
 
-        try {
-            com = ds.getConnection();
-            String sql = "select count(*) as cnt from topic";
-            ps = com.prepareStatement(sql);
-            rs = ps.executeQuery();
-
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("select count(*) as cnt from topic");
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 totalNumberOfpage = rs.getInt("cnt");
             }
@@ -127,29 +94,7 @@ public class getTotalnumberOfColum {
             return (int) totalNumberOfpage;
         } catch (SQLException msg) {
             Logger.getLogger(getTotalnumberOfColum.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-             if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }
-              if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }
-            if (com != null) {
-                try {
-                    com.close();
-                } catch (SQLException sqlex) {
-                    // ignore -- as we can't do anything about it here
-                }
-            }           
         }
-        return 0; 
+        return 0;
     }
 }

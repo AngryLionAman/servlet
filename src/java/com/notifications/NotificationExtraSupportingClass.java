@@ -28,231 +28,104 @@ import java.util.logging.Logger;
  * @author AngryLion
  */
 public class NotificationExtraSupportingClass {
-    
-    
 
     public int getQuestionIdByAnswerId(int answerId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT q_id AS content FROM answer WHERE a_id = ? LIMIT 1";
 
-        try {
-            con = dc.getConnection();
-
-            String sql = "SELECT q_id AS content FROM answer WHERE a_id = ? LIMIT 1";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, answerId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt("content");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getInt("content");
+                }
             }
-
         } catch (SQLException msg) {
             Logger.getLogger(NotificationExtraSupportingClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-            }
         }
-
         return 0;
     }
 
     public String getQuestionByAnswerId(int answerId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT question AS content FROM question INNER JOIN answer ON question.q_id = answer.q_id WHERE answer.a_id = ? LIMIT 1";
 
-        try {
-            con = dc.getConnection();
-
-            String sql = "SELECT question AS content FROM question INNER JOIN answer ON question.q_id = answer.q_id WHERE answer.a_id = ? LIMIT 1";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, answerId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getString("content");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getString("content");
+                }
             }
-
         } catch (SQLException msg) {
             Logger.getLogger(NotificationExtraSupportingClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-            }
         }
-
         return null;
     }
 
     public String getQuestionById(int questionId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT question AS content FROM question WHERE q_id = ? LIMIT 1";
 
-        try {
-            con = dc.getConnection();
-
-            String sql = "SELECT question AS content FROM question WHERE q_id = ? LIMIT 1";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getString("content");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getString("content");
+                }
             }
-
         } catch (SQLException msg) {
             Logger.getLogger(NotificationExtraSupportingClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-            }
         }
-
         return null;
     }
 
     public String getFullNameById(int userId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT firstname FROM newuser WHERE id = ? LIMIT 1";
 
-        try {
-            con = dc.getConnection();
-
-            String sql = "SELECT firstname FROM newuser WHERE id = ? LIMIT 1";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getString("firstname");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getString("firstname");
+                }
             }
-
         } catch (SQLException msg) {
             Logger.getLogger(NotificationExtraSupportingClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-            }
         }
-
         return null;
     }
 
     public String getUserNameById(int userId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT username FROM newuser WHERE id = ? LIMIT 1";
 
-        try {
-            con = dc.getConnection();
-
-            String sql = "SELECT username FROM newuser WHERE id = ? LIMIT 1";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getString("username");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getString("username");
+                }
             }
-
         } catch (SQLException msg) {
             Logger.getLogger(NotificationExtraSupportingClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-            }
         }
-
-        return null;
+        return "userName";
     }
 }

@@ -15,7 +15,7 @@
  */
 package com.fun;
 
-import com.connect.SecondPoolConnection;
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  *
@@ -40,51 +39,20 @@ public class FunHelpingFunction {
      */
     public List<String> getFunCategory() throws SQLException, ClassNotFoundException, Exception {
 
-        SecondPoolConnection pc = new SecondPoolConnection();
-        DataSource ds = pc.setUpPool();
-
         List<String> list = new ArrayList<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            con = ds.getConnection();
-            String sql = "SELECT DISTINCT category FROM fun WHERE category IS NOT NULL ORDER BY RAND()";
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+        DatabaseConnection connection = new DatabaseConnection();
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("SELECT DISTINCT category FROM fun WHERE category IS NOT NULL ORDER BY RAND()");
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 String category = rs.getString("category");
                 list.add(category);
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
         } catch (SQLException msg) {
             Logger.getLogger(FunHelpingFunction.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }
@@ -96,52 +64,20 @@ public class FunHelpingFunction {
      */
     public List<String> getFunType() throws SQLException, ClassNotFoundException, Exception {
 
-        SecondPoolConnection pc = new SecondPoolConnection();
-        DataSource ds = pc.setUpPool();
-
         List<String> list = new ArrayList<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = ds.getConnection();
-            String sql = "SELECT DISTINCT type FROM fun WHERE type IS NOT NULL ORDER BY RAND()";
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("SELECT DISTINCT type FROM fun WHERE type IS NOT NULL ORDER BY RAND()");
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 String type = rs.getString("type");
                 list.add(type);
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
         } catch (SQLException msg) {
             Logger.getLogger(FunHelpingFunction.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }
@@ -153,52 +89,20 @@ public class FunHelpingFunction {
      */
     public List<String> getFunBasedOn() throws SQLException, ClassNotFoundException, Exception {
 
-        SecondPoolConnection pc = new SecondPoolConnection();
-        DataSource ds = pc.setUpPool();
-
         List<String> list = new ArrayList<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = ds.getConnection();
-            String sql = "SELECT DISTINCT based_on FROM fun WHERE based_on IS NOT NULL ORDER BY RAND()";
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("SELECT DISTINCT based_on FROM fun WHERE based_on IS NOT NULL ORDER BY RAND()");
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 String basedOn = rs.getString("based_on");
                 list.add(basedOn);
             }
-            rs.close();
-            ps.close();
-            con.close();
             return list;
         } catch (SQLException msg) {
             Logger.getLogger(FunHelpingFunction.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }

@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -27,44 +29,21 @@ public class topicFollow {
      * @throws Exception
      */
     public boolean topicFollw(int topicId, int userId) throws SQLException, ClassNotFoundException, Exception {
+
         DatabaseConnection connection = new DatabaseConnection();
-        Connection con = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        boolean status = false;
-        try {
-            String sql = "select topic_id from topic_followers_detail where topic_id = ? and user_or_followers_id =?";
-            con = connection.getConnection();
-            preparedStatement = con.prepareStatement(sql);
-            preparedStatement.setInt(1, topicId);
-            preparedStatement.setInt(2, userId);
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                status = true;
+
+        String sql = "select topic_id from topic_followers_detail where topic_id = ? and user_or_followers_id =?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, topicId);
+            ps.setInt(2, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.first();
             }
         } catch (SQLException msg) {
-            throw msg;
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
+            Logger.getLogger(topicFollow.class.getName()).log(Level.SEVERE, null, msg);
         }
-
-        return status;
+        return false;
     }
 }

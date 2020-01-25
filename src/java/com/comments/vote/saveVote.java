@@ -40,55 +40,37 @@ public class saveVote {
      */
     public boolean saveVoteOfQuestionAndAnswer(String action, String section, int questionOrAnswerId, int userId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
+        String sql = null ;
+        if (section.equals("answer") && action.equals("upvote")) {
 
-        try {
-            con = dc.getConnection();
-            String sql = null;
-            if (section.equals("answer") && action.equals("upvote")) {
+            sql = "insert into vote_by_user(answer_id,user_id)values(?,?)";
 
-                sql = "insert into vote_by_user(answer_id,user_id)values(?,?)";
+        }
+        if (section.equals("answer") && action.equals("downvote")) {
 
-            }
-            if (section.equals("answer") && action.equals("downvote")) {
+            sql = "delete from vote_by_user where answer_id = ? and user_id  = ?";
 
-                sql = "delete from vote_by_user where answer_id = ? and user_id  = ?";
+        }
+        if (section.equals("question") && action.equals("upvote")) {
 
-            }
-            if (section.equals("question") && action.equals("upvote")) {
+            sql = "insert into vote_by_user(question_id,user_id)values(?,?)";
 
-                sql = "insert into vote_by_user(question_id,user_id)values(?,?)";
+        }
+        if (section.equals("question") && action.equals("downvote")) {
 
-            }
-            if (section.equals("question") && action.equals("downvote")) {
+            sql = "delete from vote_by_user where question_id = ? and user_id  = ?";
 
-                sql = "delete from vote_by_user where question_id = ? and user_id  = ?";
+        }
 
-            }
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionOrAnswerId);
             ps.setInt(2, userId);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(saveVote.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return true;
     }

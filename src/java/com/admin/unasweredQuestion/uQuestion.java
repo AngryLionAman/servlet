@@ -22,6 +22,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -31,53 +33,31 @@ public class uQuestion {
 
     /**
      *
-     * @return
-     * @throws SQLException
+     * @return @throws SQLException
      * @throws ClassNotFoundException
      */
     public List<uQuestionPojo> question() throws SQLException, ClassNotFoundException {
         List<uQuestionPojo> list = new ArrayList<>();
-        DatabaseConnection con = new DatabaseConnection();
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        try {
-            String sql = "SELECT q_id as qId,posted_time AS Date,question,newuser.id AS userId,firstname AS userFullName "
-                    + "FROM question INNER JOIN newuser ON newuser.id = question.id WHERE q_id NOT IN(SELECT q_id FROM answer) ORDER BY q_id DESC";
-            connection = con.getConnection();
-            preparedStatement = connection.prepareStatement(sql);
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                int questionId = resultSet.getInt("qId");
-                String question = resultSet.getString("question");
-                String date = resultSet.getString("Date");
-                int postedById = resultSet.getInt("userId");
-                String postedByName = resultSet.getString("userFullName");
+
+        String sql = "SELECT q_id as qId,posted_time AS Date,question,newuser.id AS userId,firstname AS userFullName "
+                + "FROM question INNER JOIN newuser ON newuser.id = question.id WHERE q_id NOT IN(SELECT q_id FROM answer) ORDER BY q_id DESC";
+
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int questionId = rs.getInt("qId");
+                String question = rs.getString("question");
+                String date = rs.getString("Date");
+                int postedById = rs.getInt("userId");
+                String postedByName = rs.getString("userFullName");
                 list.add(new uQuestionPojo(questionId, question, date, postedById, postedByName));
             }
-
+            return list;
         } catch (SQLException msg) {
-            throw msg;
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException msg) {
-                }
-            }
+            Logger.getLogger(uQuestion.class.getName()).log(Level.SEVERE, null, msg);
         }
-        return list;
+        return null;
     }
 }

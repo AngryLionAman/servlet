@@ -40,15 +40,11 @@ public class SaveAnswer {
      */
     public boolean SaveAnswerByQuestionIdAndIdUserId(int userid, int questionid, String answer, boolean approved_by_admin) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection ds = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "insert into answer(q_id,answer,Answer_by_id,approved_by_admin) values(?,?,?,?)";
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
-        Connection con = null;
-        PreparedStatement ps = null;
-
-        try {
-            con = ds.getConnection();
-            String sql = "insert into answer(q_id,answer,Answer_by_id,approved_by_admin) values(?,?,?,?)";
-            ps = con.prepareStatement(sql);
             ps.setInt(1, questionid);
             ps.setString(2, answer);
             ps.setInt(3, userid);
@@ -56,21 +52,6 @@ public class SaveAnswer {
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(SaveAnswer.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    //out.println("Exception in closing preparedStatement " + e);
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                    //out.println("Exception in closing connection " + e);
-                }
-            }
         }
         return true;
     }

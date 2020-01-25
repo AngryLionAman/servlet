@@ -42,35 +42,17 @@ public class userSupportingClass {
      * @throws java.lang.ClassNotFoundException
      */
     public void UpdateProfileViewBy1ByUserId(int userId) throws SQLException, ClassNotFoundException {
-        
-       DatabaseConnection ds = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = ds.getConnection();
-            String sql = "UPDATE newuser SET total_view = total_view + 1 WHERE ID =?";
-            ps = con.prepareStatement(sql);
+        String sql = "UPDATE newuser SET total_view = total_view + 1 WHERE ID =?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(userSupportingClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
     }
 
@@ -108,52 +90,29 @@ public class userSupportingClass {
      */
     public List<BlogByUserIdPojo> GetTotalBlogByUserId(int userid) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         List<BlogByUserIdPojo> list = new ArrayList<>();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT unique_id,subject,updated_time,posted_by,view FROM blog WHERE posted_by = ? ORDER BY 1 DESC";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT unique_id,subject,updated_time,posted_by,view FROM blog WHERE posted_by = ? ORDER BY 1 DESC";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userid);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int blogId = rs.getInt("unique_id");
-                String blogSub = rs.getString("subject");
-                Date lastModifiedTime = rs.getDate("updated_time");
-                int postedById = rs.getInt("posted_by");
-                int totalView = rs.getInt("view");
-                
-                list.add(new BlogByUserIdPojo(blogId, blogSub, lastModifiedTime, postedById,totalView));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int blogId = rs.getInt("unique_id");
+                    String blogSub = rs.getString("subject");
+                    Date lastModifiedTime = rs.getDate("updated_time");
+                    int postedById = rs.getInt("posted_by");
+                    int totalView = rs.getInt("view");
+
+                    list.add(new BlogByUserIdPojo(blogId, blogSub, lastModifiedTime, postedById, totalView));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(userSupportingClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return null;
     }
@@ -167,53 +126,30 @@ public class userSupportingClass {
      */
     public List<FollowingByUserIdPojo> GetTotalFollowingByUserId(int userid) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         List<FollowingByUserIdPojo> list = new ArrayList<>();
 
         WordFormating word = new WordFormating();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT user.ID,user.username,user.firstname,user.imagepath FROM newuser user INNER JOIN ak_follower_detail ak ON ak.user_id=user.ID WHERE followers_id = ? AND user.id <> ? ORDER BY 2";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT user.ID,user.username,user.firstname,user.imagepath FROM newuser user INNER JOIN ak_follower_detail ak ON ak.user_id=user.ID WHERE followers_id = ? AND user.id <> ? ORDER BY 2";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userid);
             ps.setInt(2, userid);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int userId = rs.getInt("user.ID");
-                String userName = rs.getString("user.username");
-                String fullName = word.convertStringUpperToLower(rs.getString("user.firstname"));
-                String imagePath = rs.getString("user.imagepath");
-                list.add(new FollowingByUserIdPojo(userId, userName, fullName, imagePath));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int userId = rs.getInt("user.ID");
+                    String userName = rs.getString("user.username");
+                    String fullName = word.convertStringUpperToLower(rs.getString("user.firstname"));
+                    String imagePath = rs.getString("user.imagepath");
+                    list.add(new FollowingByUserIdPojo(userId, userName, fullName, imagePath));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(userSupportingClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return null;
 
@@ -227,53 +163,31 @@ public class userSupportingClass {
      * @throws java.lang.ClassNotFoundException
      */
     public List<FollowersByUserIdPojo> GetTotalFollowersByUserId(int userid) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         List<FollowersByUserIdPojo> list = new ArrayList<>();
 
         WordFormating word = new WordFormating();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT user.ID,user.username,user.firstname,user.imagepath FROM newuser user INNER JOIN ak_follower_detail ak ON ak.followers_id=user.ID WHERE user_id = ? AND user.id <> ?";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT user.ID,user.username,user.firstname,user.imagepath FROM newuser user INNER JOIN ak_follower_detail ak ON ak.followers_id=user.ID WHERE user_id = ? AND user.id <> ?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userid);
             ps.setInt(2, userid);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int userId = rs.getInt("user.ID");
-                String userName = rs.getString("user.username");
-                String fullName = word.convertStringUpperToLower(rs.getString("user.firstname"));
-                String imagePath = rs.getString("user.imagepath");
-                list.add(new FollowersByUserIdPojo(userId, userName, fullName, imagePath));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int userId = rs.getInt("user.ID");
+                    String userName = rs.getString("user.username");
+                    String fullName = word.convertStringUpperToLower(rs.getString("user.firstname"));
+                    String imagePath = rs.getString("user.imagepath");
+                    list.add(new FollowersByUserIdPojo(userId, userName, fullName, imagePath));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(userSupportingClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return null;
     }
@@ -287,51 +201,28 @@ public class userSupportingClass {
      */
     public List<TopicByUserIdPojo> GetTotalTopicFollowedByUserId(int userid) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         List<TopicByUserIdPojo> list = new ArrayList<>();
 
         WordFormating word = new WordFormating();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT DISTINCT t.unique_id,t.topic_name, t.image_url FROM topic t INNER JOIN topic_followers_detail de ON t.unique_id = de.topic_id WHERE user_or_followers_id= ? AND t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT DISTINCT t.unique_id,t.topic_name, t.image_url FROM topic t INNER JOIN topic_followers_detail de ON t.unique_id = de.topic_id WHERE user_or_followers_id= ? AND t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userid);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int topicId = rs.getInt("t.unique_id");
-                String topicName = word.convertStringUpperToLower(rs.getString("t.topic_name"));
-                String imagePath = rs.getString("image_url");
-                list.add(new TopicByUserIdPojo(topicId, topicName, imagePath));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int topicId = rs.getInt("t.unique_id");
+                    String topicName = word.convertStringUpperToLower(rs.getString("t.topic_name"));
+                    String imagePath = rs.getString("image_url");
+                    list.add(new TopicByUserIdPojo(topicId, topicName, imagePath));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(userSupportingClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return null;
     }
@@ -345,54 +236,31 @@ public class userSupportingClass {
      */
     public List<answerByUserIdPojo> GetTotalAnswerPostedByUserId(int userid) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         List<answerByUserIdPojo> list = new ArrayList<>();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT q.q_id,q.question,SUBSTRING(ans.answer,1,200) as short_ans,ans.a_id,ans.Answer_by_id,ans.updatedtime,ans.total_view "
-                    + "FROM answer ans INNER JOIN question q ON q.q_id = ans.q_id where Answer_by_id = ? order by 4 DESC";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT q.q_id,q.question,SUBSTRING(ans.answer,1,200) as short_ans,ans.a_id,ans.Answer_by_id,ans.updatedtime,ans.total_view "
+                + "FROM answer ans INNER JOIN question q ON q.q_id = ans.q_id where Answer_by_id = ? order by 4 DESC";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userid);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int questionId = rs.getInt("q.q_id");
-                String question = rs.getString("q.question");
-                String shortAnswer = rs.getString("short_ans");
-                int answerid = rs.getInt("ans.a_id");
-                int answerById = rs.getInt("ans.Answer_by_id");
-                Date lastModifiedTime = rs.getDate("ans.updatedtime");
-                int totalView = rs.getInt("ans.total_view");
-                list.add(new answerByUserIdPojo(questionId, question, shortAnswer, answerid, answerById, lastModifiedTime, totalView));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int questionId = rs.getInt("q.q_id");
+                    String question = rs.getString("q.question");
+                    String shortAnswer = rs.getString("short_ans");
+                    int answerid = rs.getInt("ans.a_id");
+                    int answerById = rs.getInt("ans.Answer_by_id");
+                    Date lastModifiedTime = rs.getDate("ans.updatedtime");
+                    int totalView = rs.getInt("ans.total_view");
+                    list.add(new answerByUserIdPojo(questionId, question, shortAnswer, answerid, answerById, lastModifiedTime, totalView));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(userSupportingClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return null;
     }
@@ -406,55 +274,31 @@ public class userSupportingClass {
      */
     public List<questionByUserIdPojo> GetTotalQuestionPostedByUserId(int userid) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection dc = new DatabaseConnection();
-        
         CountExtraActivity count = new CountExtraActivity();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         List<questionByUserIdPojo> list = new ArrayList<>();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT id,q_id,question,total_view,updated_time FROM question WHERE id = ? ORDER BY 2 DESC";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT id,q_id,question,total_view,updated_time FROM question WHERE id = ? ORDER BY 2 DESC";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userid);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int questionId = rs.getInt("q_id");
-                String question = rs.getString("question");
-                int totalView = rs.getInt("total_view");
-                int questionPostedById = rs.getInt("id");
-                Date lastModifiedTime = rs.getDate("updated_time");
-                int totalAnswer = count.CountTotalAnswerOfQuestionByQuestionId(questionId);
-                list.add(new questionByUserIdPojo(questionId, question, totalView, questionPostedById, lastModifiedTime, totalAnswer));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int questionId = rs.getInt("q_id");
+                    String question = rs.getString("question");
+                    int totalView = rs.getInt("total_view");
+                    int questionPostedById = rs.getInt("id");
+                    Date lastModifiedTime = rs.getDate("updated_time");
+                    int totalAnswer = count.CountTotalAnswerOfQuestionByQuestionId(questionId);
+                    list.add(new questionByUserIdPojo(questionId, question, totalView, questionPostedById, lastModifiedTime, totalAnswer));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(userSupportingClass.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return null;
     }

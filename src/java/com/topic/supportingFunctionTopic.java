@@ -38,46 +38,19 @@ public class supportingFunctionTopic {
      */
     public boolean isTopicPresentByTopicId(int topicId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        String sql = "SELECT unique_id FROM topic WHERE unique_id = ? LIMIT 1";
 
-        try {
-            con = dc.getConnection();
-
-            String sql = "SELECT unique_id FROM topic WHERE unique_id = ? LIMIT 1";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicId);
-            rs = ps.executeQuery();
-            return rs.first();
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.first();
+            }
         } catch (SQLException msg) {
             Logger.getLogger(supportingFunctionTopic.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
-
         return false;
     }
 
@@ -90,47 +63,21 @@ public class supportingFunctionTopic {
      */
     public String GetAllTopicByQuestionId(int questionid) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
         String questionTag = "";
+        String sql = "select tag_id as unique_id,(select topic_name from topic where unique_id = question_topic_tag.tag_id)topic_name from question_topic_tag where question_id =?";
 
-        try {
-            con = dc.getConnection();
-            String sql = "select tag_id as unique_id,(select topic_name from topic where unique_id = question_topic_tag.tag_id)topic_name from question_topic_tag where question_id =?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionid);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                questionTag += rs.getString("topic_name") + ",";
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    questionTag += rs.getString("topic_name") + ",";
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(supportingFunctionTopic.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return questionTag;
     }

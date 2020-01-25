@@ -15,7 +15,7 @@
  */
 package com.index;
 
-import com.connect.JNDI_ConnectionPool;
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,44 +42,25 @@ public class topicDetals {
         indexPageExtraFunction function = new indexPageExtraFunction();
         List<topicPojo> list = new ArrayList<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            String sql = "SELECT t.unique_id,t.topic_name FROM topic t INNER JOIN topic_followers_detail de ON t.unique_id = de.topic_id WHERE user_or_followers_id = ?  AND t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL AND t.topic_name != '' LIMIT 15";
-            con = JNDI_ConnectionPool.connect();
-            ps = con.prepareStatement(sql);
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql = "SELECT t.unique_id,t.topic_name FROM topic t INNER JOIN topic_followers_detail de ON t.unique_id = de.topic_id WHERE user_or_followers_id = ?  AND t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL AND t.topic_name != '' LIMIT 15";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                String topicName = rs.getString("t.topic_name");
-                int topicId = rs.getInt("t.unique_id");
-                int totalFollowers = function.totalFollowersOfTopic(topicId);
-                int relatedQuestion = function.totalRelatedQuestion(topicId);
-                list.add(new topicPojo(topicName, topicId, totalFollowers, relatedQuestion));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String topicName = rs.getString("t.topic_name");
+                    int topicId = rs.getInt("t.unique_id");
+                    int totalFollowers = function.totalFollowersOfTopic(topicId);
+                    int relatedQuestion = function.totalRelatedQuestion(topicId);
+                    list.add(new topicPojo(topicName, topicId, totalFollowers, relatedQuestion));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(topicDetals.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return null;
     }
@@ -95,44 +76,25 @@ public class topicDetals {
         indexPageExtraFunction function = new indexPageExtraFunction();
         List<topicPojo> list = new ArrayList<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            String sql = "SELECT unique_id,topic_name FROM topic WHERE crawl = 1 AND unique_id IS NOT NULL AND topic_name IS NOT NULL AND topic_name != '' ORDER BY RAND() LIMIT ?";
-            con = JNDI_ConnectionPool.connect();
-            ps = con.prepareStatement(sql);
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql = "SELECT unique_id,topic_name FROM topic WHERE crawl = 1 AND unique_id IS NOT NULL AND topic_name IS NOT NULL AND topic_name != '' ORDER BY RAND() LIMIT ?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, Limit);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                String topicName = rs.getString("topic_name");
-                int topicId = rs.getInt("unique_id");
-                int totalFollowers = function.totalFollowersOfTopic(topicId);
-                int relatedQuestion = function.totalRelatedQuestion(topicId);
-                list.add(new topicPojo(topicName, topicId, totalFollowers, relatedQuestion));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String topicName = rs.getString("topic_name");
+                    int topicId = rs.getInt("unique_id");
+                    int totalFollowers = function.totalFollowersOfTopic(topicId);
+                    int relatedQuestion = function.totalRelatedQuestion(topicId);
+                    list.add(new topicPojo(topicName, topicId, totalFollowers, relatedQuestion));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(topicDetals.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return null;
     }

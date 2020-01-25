@@ -44,30 +44,32 @@ public class createNewUser extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
         validateInput input = new validateInput();
-
         saveNewUser newUser = new saveNewUser();
-
         SupportingFunction function = new SupportingFunction();
-
         ValidateWithRegularExpression expression = new ValidateWithRegularExpression();
 
         String message = null;
+        String path = "signup.jsp";
 
-        String fullName, password, email;
-        fullName = input.getInputString(request.getParameter("firstname"));
-        email = input.getInputString(request.getParameter("email"));
-        password = request.getParameter("password");
+        try {
 
-        if (fullName == null || email == null || password == null) {
-            message = "Input field can't be empty";
-        } else {
-            if (expression.validateFullName(fullName) && 
-                    expression.validatePassword(password) && 
-                    (expression.validateEamil(email) || expression.validateMobileNumber(email))) {
-                try {
+            String fullName = input.getInputString(request.getParameter("firstname"));
+            String email = input.getInputString(request.getParameter("email"));
+            String password = request.getParameter("password");
+
+            if (fullName == null || email == null || password == null) {
+                message = "Input field can't be empty";
+            } else {
+                if (expression.validateFullName(fullName)
+                        && expression.validatePassword(password)
+                        && (expression.validateEamil(email) || expression.validateMobileNumber(email))) {
+
                     if (!function.EmailIsAvaliabe(email)) {
                         if (!newUser.saveUser(fullName, email, password)) {
                             try {
@@ -85,45 +87,43 @@ public class createNewUser extends HttpServlet {
                             int userId = function.GetUserIdByEmail(email);
                             HttpSession session = request.getSession();
                             session.setAttribute("Session_id_of_user", userId);
-                            
+
                             message = "Please select at least five topic to get the best result";
-                            request.setAttribute("message", message);
-                            request.getRequestDispatcher("FollowTopicAtAcountCreation").forward(request, response);
-                            return; /*
+                            path = "FollowTopicAtAcountCreation";
+                            /*
                             @if you don't use return statement the will got the exception error
                             @Exception error :- Cannot forward after response has been committed
                             @Referance :- https://stackoverflow.com/questions/2123514/java-lang-illegalstateexception-cannot-forward-sendredirect-create-session
-                            */
+                             */
                         } else {
                             message = "user not saved";
-                            request.setAttribute("message", message);
-                            request.getRequestDispatcher("signup.jsp").forward(request, response);
-                            return;
                         }
                     } else {
                         message = "Mail Id is already registred, please use another one";
                     }
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Logger.getLogger(createNewUser.class.getName()).log(Level.SEVERE, null, ex);
+
+                } else {
+                    message = "  <center>\n"
+                            + "            <b style=\"color: red;\">We got some problem</b><br><br>\n"
+                            + "            <b>1. May be you are putting the wrong email and email pattern</b><br><br>\n"
+                            + "            <b>2. May be you are using the spacial character with full name</b><br><br>\n"
+                            + "            <b>3. Your password length may be shorter then 6 character </b><br><br>\n"
+                            + "            <a href=\"login.jsp?ref=nuser\">Click here to login</a><br><br>\n"
+                            + "            <a href=\"signup.jsp?ref=nuser\">Click here for Sign up page</a><br><br>\n"
+                            + "            <p>\n"
+                            + "                Or it's seem like you are doing effort to break the site rule\n"
+                            + "                    <br>Plese follow the procedure ,don't try to break the rule other wise your activity \n"
+                            + "                    will be recorded for the monitoring purpose\n"
+                            + "            </p>\n"
+                            + "            </center>";
                 }
-            } else {
-                message = "  <center>\n"
-                        + "            <b style=\"color: red;\">We got some problem</b><br><br>\n"
-                        + "            <b>1. May be you are putting the wrong email and email pattern</b><br><br>\n"
-                        + "            <b>2. May be you are using the spacial character with full name</b><br><br>\n"
-                        + "            <b>3. Your password length may be shorter then 6 character </b><br><br>\n"
-                        + "            <a href=\"login.jsp?ref=nuser\">Click here to login</a><br><br>\n"
-                        + "            <a href=\"signup.jsp?ref=nuser\">Click here for Sign up page</a><br><br>\n"
-                        + "            <p>\n"
-                        + "                Or it's seem like you are doing effort to break the site rule\n"
-                        + "                    <br>Plese follow the procedure ,don't try to break the rule other wise your activity \n"
-                        + "                    will be recorded for the monitoring purpose\n"
-                        + "            </p>\n"
-                        + "            </center>";
             }
+
+        } catch (SQLException | ClassNotFoundException msg) {
+            Logger.getLogger(createNewUser.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            request.setAttribute("message", message);
+            request.getRequestDispatcher(path).forward(request, response);
         }
-        request.setAttribute("message", message);
-        request.getRequestDispatcher("signup.jsp").forward(request, response);
-        //return; //unnecessary return statemen
     }
 }

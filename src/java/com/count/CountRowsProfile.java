@@ -37,44 +37,19 @@ public class CountRowsProfile {
      * @throws java.lang.ClassNotFoundException
      */
     public int CountBlogRowByUserId(int userId) throws SQLException, ClassNotFoundException {
-        
-        DatabaseConnection dc = new DatabaseConnection();
-        
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT COUNT(*) AS cnt FROM blog WHERE posted_by = ?";
-            ps = con.prepareStatement(sql);
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "SELECT COUNT(*) AS cnt FROM blog WHERE posted_by = ?";
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt("cnt");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getInt("cnt");
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return 0;
     }
@@ -87,45 +62,22 @@ public class CountRowsProfile {
      * @throws java.lang.ClassNotFoundException
      */
     public int CountFollowersRowByUserId(int userId) throws SQLException, ClassNotFoundException {
-        
-        DatabaseConnection dc = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "SELECT COUNT(*) AS cnt FROM newuser user INNER JOIN ak_follower_detail ak ON ak.followers_id=user.ID WHERE user_id = ? AND user.id <> ?";
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT COUNT(*) AS cnt FROM newuser user INNER JOIN ak_follower_detail ak ON ak.followers_id=user.ID WHERE user_id = ? AND user.id <> ?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setInt(1, userId);
             ps.setInt(2, userId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt("cnt");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getInt("cnt");
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return 0;
     }
@@ -138,44 +90,23 @@ public class CountRowsProfile {
      * @throws java.lang.ClassNotFoundException
      */
     public int CountFollowingRowByUserId(int userId) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT count(*) AS cnt FROM newuser user INNER JOIN ak_follower_detail ak ON ak.user_id=user.ID WHERE followers_id = ? AND user.id <> ?";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT count(*) AS cnt FROM newuser user INNER JOIN ak_follower_detail ak ON ak.user_id=user.ID WHERE followers_id = ? AND user.id <> ?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, userId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt("cnt");
-            }
-        } catch (SQLException msg) {
-            Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getInt("cnt");
                 }
             }
 
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
+        } catch (SQLException msg) {
+            Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
         }
         return 0;
     }
@@ -188,44 +119,21 @@ public class CountRowsProfile {
      * @throws java.lang.ClassNotFoundException
      */
     public int CountTopicRowByUserId(int userId) throws SQLException, ClassNotFoundException {
-        
-        DatabaseConnection dc = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT COUNT(*) AS cnt FROM topic t INNER JOIN topic_followers_detail de ON t.unique_id = de.topic_id WHERE user_or_followers_id = ? AND t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT COUNT(*) AS cnt FROM topic t INNER JOIN topic_followers_detail de ON t.unique_id = de.topic_id WHERE user_or_followers_id = ? AND t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt("cnt");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getInt("cnt");
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return 0;
     }
@@ -238,43 +146,21 @@ public class CountRowsProfile {
      * @throws java.lang.ClassNotFoundException
      */
     public int CountAnswerRowByUserId(int userId) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT COUNT(*) AS cnt FROM answer WHERE Answer_by_id = ?";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT COUNT(*) AS cnt FROM answer WHERE Answer_by_id = ?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt("cnt");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getInt("cnt");
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return 0;
     }
@@ -287,44 +173,21 @@ public class CountRowsProfile {
      * @throws java.lang.ClassNotFoundException
      */
     public int CountQuestionRowByUserId(int userId) throws SQLException, ClassNotFoundException {
-        
-        DatabaseConnection dc = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT COUNT(*) AS cnt FROM question WHERE id = ?";
-            ps = con.prepareStatement(sql);
+        String sql = "SELECT COUNT(*) AS cnt FROM question WHERE id = ?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt("cnt");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getInt("cnt");
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return 0;
     }

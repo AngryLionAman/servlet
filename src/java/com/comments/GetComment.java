@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  * @author AngryLion
  */
 public class GetComment {
-    
+
     /**
      *
      * @param blogId
@@ -40,54 +40,32 @@ public class GetComment {
      * @throws SQLException
      */
     public List<BlogCommentPojoFile> getCommentOfBlogByBlogId(int blogId) throws ClassNotFoundException, SQLException {
-        
-        DatabaseConnection dc = new DatabaseConnection();
+
         List<BlogCommentPojoFile> list = new ArrayList<>();
-        
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        
-        try {
-            con = dc.getConnection();
-            
-            String sql = "SELECT c.comments AS comment, c.time AS date, u.id AS userid,u.username AS username, "
-                    + "u.firstname AS fullname, u.user_type AS usertype from comments c INNER JOIN newuser u ON c.user_id = u.id "
-                    + "WHERE c.content_id = ? AND approved_by_user = 1 AND approved_by_admin = 1 ORDER BY unique_id DESC";
-            ps = con.prepareStatement(sql);
+
+        String sql = "SELECT c.comments AS comment, c.time AS date, u.id AS userid,u.username AS username, "
+                + "u.firstname AS fullname, u.user_type AS usertype from comments c INNER JOIN newuser u ON c.user_id = u.id "
+                + "WHERE c.content_id = ? AND approved_by_user = 1 AND approved_by_admin = 1 ORDER BY unique_id DESC";
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, blogId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                String comment = rs.getString("comment");
-                Date date = rs.getDate("date");
-                int userId = rs.getInt("userid");
-                String userName = rs.getString("username");
-                String fullName = rs.getString("fullname");
-                String userType = rs.getString("usertype");
-                list.add(new BlogCommentPojoFile(comment, date, userId, userName, fullName, userType));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String comment = rs.getString("comment");
+                    Date date = rs.getDate("date");
+                    int userId = rs.getInt("userid");
+                    String userName = rs.getString("username");
+                    String fullName = rs.getString("fullname");
+                    String userType = rs.getString("usertype");
+                    list.add(new BlogCommentPojoFile(comment, date, userId, userName, fullName, userType));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(GetComment.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return null;
     }
@@ -100,53 +78,32 @@ public class GetComment {
      * @throws java.lang.ClassNotFoundException
      */
     public List<ProfileCommentsPojo> GetCommentByProfileId(int profileId) throws SQLException, ClassNotFoundException {
-        
-        DatabaseConnection dc = new DatabaseConnection();
+
         List<ProfileCommentsPojo> list = new ArrayList<>();
-        
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT user_id,comments,time,user_type,username,firstname from comments INNER JOIN newuser ON comments.user_id = newuser.id "
-                    + "WHERE content_id = ? AND comment_type='comment_on_user_profile' "
-                    + "AND approved_by_user = 1 AND approved_by_admin = 1 ORDER BY time DESC LIMIT 10";
-            ps = con.prepareStatement(sql);
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql = "SELECT user_id,comments,time,user_type,username,firstname from comments INNER JOIN newuser ON comments.user_id = newuser.id "
+                + "WHERE content_id = ? AND comment_type='comment_on_user_profile' "
+                + "AND approved_by_user = 1 AND approved_by_admin = 1 ORDER BY time DESC LIMIT 10";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, profileId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int userId = rs.getInt("user_id");
-                String userType = rs.getString("user_type");
-                String userName = rs.getString("username");
-                String fullName = rs.getString("firstname");
-                String comment = rs.getString("comments");
-                Date date = rs.getDate("time");
-                list.add(new ProfileCommentsPojo(userId, userType, userName, fullName, comment, date));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int userId = rs.getInt("user_id");
+                    String userType = rs.getString("user_type");
+                    String userName = rs.getString("username");
+                    String fullName = rs.getString("firstname");
+                    String comment = rs.getString("comments");
+                    Date date = rs.getDate("time");
+                    list.add(new ProfileCommentsPojo(userId, userType, userName, fullName, comment, date));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(GetComment.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return null;
     }

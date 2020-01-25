@@ -15,13 +15,12 @@
  */
 package com.question.update;
 
-import com.connect.PoolConnection;
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  *
@@ -38,37 +37,18 @@ public class updateQuestionClassByUser {
      * @throws java.lang.ClassNotFoundException
      */
     public boolean UpdateQuestionByQuestionId(String question, int questionId) throws SQLException, ClassNotFoundException, Exception {
-        
-        PoolConnection pc = new PoolConnection();
-        DataSource ds = pc.setUpPool();
 
-        Connection con = null;
-        PreparedStatement ps = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = ds.getConnection();
-            String sql = "update question set question = ? where q_id=?";
-            ps = con.prepareStatement(sql);
+        String sql = "update question set question = ? where q_id=?";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, question);
             ps.setInt(2, questionId);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(updateQuestionClassByUser.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return true;
     }

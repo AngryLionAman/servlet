@@ -38,43 +38,20 @@ public class CountExtraActivity {
      */
     public int CountTotalAnswerOfQuestionByQuestionId(int questionId) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection ds = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+        String sql = "SELECT COUNT(a_id) AS cnt FROM answer WHERE q_id = ? group by q_id limit 1";
 
-        try {
-            connection = ds.getConnection();
-            String sql = "SELECT COUNT(a_id) AS cnt FROM answer WHERE q_id = ? group by q_id limit 1";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, questionId);
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                return resultSet.getInt("cnt");
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, questionId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getInt("cnt");
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(CountExtraActivity.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                }
-            }
-
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                }
-            }
         }
         return 0;
     }

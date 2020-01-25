@@ -17,7 +17,6 @@ package com.topic;
 
 import com.connect.DatabaseConnection;
 import com.string.validateInput;
-import com.user.saveNewUser;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -32,38 +31,22 @@ public class saveTopic {
 
     void SaveTopicByTopicIdAndUserId(String userid, String[] topicName) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = DatabaseConnection.getInstance();
-
         validateInput input = new validateInput();
 
-        Connection con = null;
-        PreparedStatement ps = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = dc.getConnection();
+        try (Connection con = DatabaseConnection.makeConnection()) {
             String sql = "insert into topic_followers_detail(topic_id,user_or_followers_id) values(?,?)";
             for (String obj : topicName) {
-                ps = con.prepareStatement(sql);
-                ps.setInt(1, input.getInputInt(obj));
-                ps.setInt(2, input.getInputInt(userid));
-                ps.execute();
+                try (PreparedStatement ps = con.prepareStatement(sql)) {
+                    ps.setInt(1, input.getInputInt(obj));
+                    ps.setInt(2, input.getInputInt(userid));
+                    ps.execute();
+                }
             }
 
         } catch (SQLException msg) {
             Logger.getLogger(saveTopic.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
     }
 }

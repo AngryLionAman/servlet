@@ -63,12 +63,13 @@ public class saveAdvertise extends HttpServlet {
             String description = request.getParameter("description");
             if (userName.equals(username) && passWord.equals(password)) {
                 if (!forwoarlink.isEmpty() && forwoarlink != null && !imageFileName.isEmpty() && imageFileName != null && height > 0 && width > 0 && !promatedBy.isEmpty() && promatedBy != null && (viewStatus == 0 || viewStatus == 1) && days > 0) {
-                    DatabaseConnection dc = DatabaseConnection.getInstance();
+                    
                     Connection con = null;
                     PreparedStatement ps = null;
 
                     try {
-                        con = dc.getConnection();
+                        DatabaseConnection connection = new DatabaseConnection();
+                        con = DatabaseConnection.makeConnection();
                         String sql = "insert into advertise (image_name,image_alt,height,width,promoted_by,display,days,forward_link,ads_type,description)values(?,?,?,?,?,?,?,?,?,?)";
                         ps = con.prepareStatement(sql);
                         ps.setString(1, imageFileName);
@@ -89,6 +90,8 @@ public class saveAdvertise extends HttpServlet {
                         }
                     } catch (SQLException msg) {
                         throw msg;
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(saveAdvertise.class.getName()).log(Level.SEVERE, null, ex);
                     } finally {
                         if (ps != null) {
                             try {
@@ -115,7 +118,7 @@ public class saveAdvertise extends HttpServlet {
                 request.setAttribute("message", "username or password is worng");
                 request.getRequestDispatcher("Admin/advertise.jsp").forward(request, response);
             }
-        } catch (SQLException | ClassNotFoundException | NumberFormatException ex) {
+        } catch (SQLException | NumberFormatException ex) {
             Logger.getLogger(saveAdvertise.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

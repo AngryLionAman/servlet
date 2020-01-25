@@ -39,43 +39,15 @@ public class ActionApprovalClassFile {
      */
     public boolean questionRequestRejectedByAdmin(int newQuestionId, String message) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            con = dc.getConnection();
-            String sql = "UPDATE modified_question_table SET rejected_by_admin = 1, message = ? WHERE unique_id = ?";
-            ps = con.prepareStatement(sql);
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "UPDATE modified_question_table SET rejected_by_admin = 1, message = ? WHERE unique_id = ?";
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, message);
             ps.setInt(2, newQuestionId);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-
-            }
         }
         return true;
     }
@@ -90,43 +62,16 @@ public class ActionApprovalClassFile {
      */
     public boolean questionRequestRejectedByUser(int newQuestionId, String message) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "UPDATE modified_question_table SET rejected_by_user = 1, message = ? WHERE unique_id = ?";
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            con = dc.getConnection();
-            String sql = "UPDATE modified_question_table SET rejected_by_user = 1, message = ? WHERE unique_id = ?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, message);
             ps.setInt(2, newQuestionId);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-
-            }
         }
         return true;
     }
@@ -140,48 +85,21 @@ public class ActionApprovalClassFile {
      */
     public int whoModifiedTheQuestion(int newQuestionId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "SELECT modified_question_by AS userid FROM modified_question_table WHERE unique_id = ? LIMIT 1";
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT modified_question_by AS userid FROM modified_question_table WHERE unique_id = ? LIMIT 1";
-            ps = con.prepareStatement(sql);
             ps.setInt(1, newQuestionId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt("userid");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getInt("userid");
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-
-            }
         }
         return 0;
-
     }
 
     /**
@@ -194,39 +112,20 @@ public class ActionApprovalClassFile {
      * @throws ClassNotFoundException
      */
     public boolean replaceOldQuestionWithNewQuestionAndNewQuestionWithNullAndChangePermission(int oldQuestionId, int newQuestionId, String message) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "UPDATE question q INNER JOIN modified_question_table n ON q.q_id = n.question_id SET q.question = n.modified_question , n.modified_question = NULL,n.approved_by_user = 1,n.message = ? WHERE q.q_id = ?  AND n.unique_id = ?";
 
-        try {
-            con = dc.getConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
-            String sql = "UPDATE question q INNER JOIN modified_question_table n ON q.q_id = n.question_id SET q.question = n.modified_question , n.modified_question = NULL,n.approved_by_user = 1,n.message = ? WHERE q.q_id = ?  AND n.unique_id = ?";
-            ps = con.prepareStatement(sql);
             ps.setString(1, message);
             ps.setInt(2, oldQuestionId);
             ps.setInt(3, newQuestionId);
-            
             return ps.execute();
 
         } catch (SQLException msg) {
             Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-
-            }
         }
         return true;
     }
@@ -239,38 +138,18 @@ public class ActionApprovalClassFile {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-
     public boolean changePermissionOfQuestionByAdmin(int newQuestionId, String message) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = new DatabaseConnection();
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "UPDATE modified_question_table SET approved_by_admin = 1,message = ? WHERE unique_id = ?";
 
-        Connection con = null;
-        PreparedStatement ps = null;
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
-        try {
-            con = dc.getConnection();
-
-            String sql = "UPDATE modified_question_table SET approved_by_admin = 1,message = ? WHERE unique_id = ?";
-            ps = con.prepareStatement(sql);
             ps.setString(1, message);
             ps.setInt(2, newQuestionId);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-
-            }
         }
         return true;
     }
@@ -284,36 +163,16 @@ public class ActionApprovalClassFile {
      * @throws ClassNotFoundException
      */
     public boolean changePermissionOfQuestionByUser(int newQuestionId, String message) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-
-        try {
-            con = dc.getConnection();
-
-            String sql = "UPDATE modified_question_table SET approved_by_user = 1,message = ? WHERE unique_id = ?";
-            ps = con.prepareStatement(sql);
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "UPDATE modified_question_table SET approved_by_user = 1,message = ? WHERE unique_id = ?";
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, message);
             ps.setInt(2, newQuestionId);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-
-            }
         }
         return true;
     }
@@ -326,47 +185,19 @@ public class ActionApprovalClassFile {
      * @throws ClassNotFoundException
      */
     public boolean isApprovedByAdmin(int newQuestionId) throws SQLException, ClassNotFoundException {
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "SELECT approved_by_admin AS permission FROM modified_question_table WHERE unique_id = ?";
 
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            con = dc.getConnection();
-
-            String sql = "SELECT approved_by_admin AS permission FROM modified_question_table WHERE unique_id = ?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, newQuestionId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getBoolean("permission");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getBoolean("permission");
+                }
             }
         } catch (SQLException msg) {
             Logger.getLogger(ActionApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException msg) {
-
-            }
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException msg) {
-
-            }
         }
         return false;
     }

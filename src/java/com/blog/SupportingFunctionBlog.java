@@ -38,44 +38,16 @@ public class SupportingFunctionBlog {
      */
     public boolean IsBlogPresentByBlogId(int blogId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT unique_id FROM blog WHERE unique_id = ? LIMIT 1";
-            ps = con.prepareStatement(sql);
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "SELECT unique_id FROM blog WHERE unique_id = ? LIMIT 1";
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, blogId);
-            rs = ps.executeQuery();
-            return rs.first();
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.first();
+            }
         } catch (SQLException msg) {
             Logger.getLogger(SupportingFunctionBlog.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return false;
     }
@@ -87,34 +59,15 @@ public class SupportingFunctionBlog {
      * @throws java.lang.ClassNotFoundException
      */
     public void increateBlogViewByBlogId(int blogId) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = new DatabaseConnection();
-        
-        Connection con = null;
-        PreparedStatement ps = null;
-        try {
-            con = dc.getConnection();
-            String sql = "UPDATE blog SET view = view + 1 WHERE unique_id = ?";
-            ps = con.prepareStatement(sql);
+
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "UPDATE blog SET view = view + 1 WHERE unique_id = ?";
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, blogId);
             ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(SupportingFunctionBlog.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
     }
 }

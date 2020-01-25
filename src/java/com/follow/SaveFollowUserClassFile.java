@@ -18,7 +18,6 @@ package com.follow;
 import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,43 +37,19 @@ public class SaveFollowUserClassFile {
      * @throws java.lang.ClassNotFoundException
      */
     public boolean FollowUser(int userId, int followersId) throws SQLException, ClassNotFoundException {
-        
-        DatabaseConnection dc = DatabaseConnection.getInstance();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = dc.getConnection();
+        String sql = "INSERT INTO ak_follower_detail(user_id,followers_id) VALUES (?,?)";
 
-            String sql = "INSERT INTO ak_follower_detail(user_id,followers_id) VALUES (?,?)";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, followersId);
             return ps.execute();
 
         } catch (SQLException msg) {
             Logger.getLogger(SaveFollowUserClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return true;
     }
@@ -88,42 +63,19 @@ public class SaveFollowUserClassFile {
      * @throws java.lang.ClassNotFoundException
      */
     public boolean UnfollowUser(int userId, int followersId) throws SQLException, ClassNotFoundException {
-        DatabaseConnection dc = DatabaseConnection.getInstance();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = dc.getConnection();
+        String sql = "DELETE FROM ak_follower_detail WHERE  user_id = ? AND followers_id = ?";
 
-            String sql = "DELETE FROM ak_follower_detail WHERE  user_id = ? AND followers_id = ?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, followersId);
             return ps.execute();
 
         } catch (SQLException msg) {
             Logger.getLogger(SaveFollowUserClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return true;
     }

@@ -38,37 +38,21 @@ public class hideMailClassFile {
      */
     public boolean HideMail(int userId, String action) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
+        String sql;
+        if (action.equalsIgnoreCase("hide")) {
+            sql = "UPDATE newuser SET email_s = '1' WHERE id=?";
+        } else {
+            sql = "UPDATE newuser SET email_s = '0' WHERE id=?";
+        }
 
-        try {
-            con = dc.getConnection();
-            String sql;
-            if (action.equalsIgnoreCase("hide")) {
-                sql = "UPDATE newuser SET email_s = '1' WHERE id=?";
-            } else {
-                sql = "UPDATE newuser SET email_s = '0' WHERE id=?";
-            }
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(hideMailClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return true;
     }

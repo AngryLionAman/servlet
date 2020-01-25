@@ -40,7 +40,6 @@ public class ModelSetClass {
      */
     public boolean saveOptionalAnswer(int questionId, String[] opt) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
         WordFormating wf = new WordFormating();
 
         Connection con = null;
@@ -48,7 +47,7 @@ public class ModelSetClass {
         ResultSet rs = null;
 
         try {
-            con = dc.getConnection();
+            con = DatabaseConnection.makeConnection();
             String sql = "INSERT INTO set_question_option (question_id, answer) VALUES (?,?)";
             for (String obj : opt) {
                 ps = con.prepareStatement(sql);
@@ -91,14 +90,12 @@ public class ModelSetClass {
      */
     public int getQuestionIdByModelSetQuestion(String question) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
-            con = dc.getConnection();
+            con = DatabaseConnection.makeConnection();
             String sql = "SELECT unique_id FROM set_question WHERE question = ? ORDER BY 1 DESC LIMIT 1";
             ps = con.prepareStatement(sql);
             ps.setString(1, question);
@@ -143,13 +140,11 @@ public class ModelSetClass {
      */
     public boolean saveSetQuestion(String exam_of, int set_no, String question, String correct_ans) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
         Connection con = null;
         PreparedStatement ps = null;
 
         try {
-            con = dc.getConnection();
+            con = DatabaseConnection.makeConnection();
             String sql = "INSERT INTO set_question(exam_of,set_no,question,correct_ans) VALUES (?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setString(1, exam_of);

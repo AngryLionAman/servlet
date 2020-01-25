@@ -40,56 +40,29 @@ public class getAllBlog {
      */
     public List<blogPojo> blogByLimit(int limit) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
         List<blogPojo> list = new ArrayList<>();
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
+        String sql = "SELECT unique_id,subject,posted_by as userId,username,firstname FROM blog LEFT JOIN newuser ON newuser.id = blog.posted_by order by rand() limit ?";
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT unique_id,subject,posted_by as userId,username,firstname FROM blog LEFT JOIN newuser ON newuser.id = blog.posted_by order by rand() limit ?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, limit);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int userId = rs.getInt("userId");
-                String userName = rs.getString("username");
-                String fullName = rs.getString("firstname");
-                int unique_id = rs.getInt("unique_id");
-                String subject = rs.getString("subject");
-                list.add(new blogPojo(userId, userName, fullName, unique_id, subject));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int userId = rs.getInt("userId");
+                    String userName = rs.getString("username");
+                    String fullName = rs.getString("firstname");
+                    int unique_id = rs.getInt("unique_id");
+                    String subject = rs.getString("subject");
+                    list.add(new blogPojo(userId, userName, fullName, unique_id, subject));
+                }
+                return list;
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(getAllBlog.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
-
     }
 
     /**
@@ -101,55 +74,30 @@ public class getAllBlog {
      */
     public List<blogPojoById> blogByBlogId(int blogid) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-        
         List<blogPojoById> list = new ArrayList<>();
+        String sql = "SELECT b.subject,b.view,b.unique_id,b.desc,user.firstname,user.username,user.id FROM blog b left join newuser user on b.posted_by = user.Id WHERE unique_id =?";
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        DatabaseConnection connection = new DatabaseConnection();
 
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT b.subject,b.view,b.unique_id,b.desc,user.firstname,user.username,user.id FROM blog b left join newuser user on b.posted_by = user.Id WHERE unique_id =?";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, blogid);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int uniqueId = rs.getInt("b.unique_id");
-                String subject = rs.getString("b.subject");
-                String desc = rs.getString("b.desc");
-                int view = rs.getInt("b.view");
-                int userId = rs.getInt("user.id");
-                String userName = rs.getString("user.username");
-                String fullName = rs.getString("user.firstname");
-                list.add(new blogPojoById(uniqueId, subject, desc, view, userId, userName, fullName));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int uniqueId = rs.getInt("b.unique_id");
+                    String subject = rs.getString("b.subject");
+                    String desc = rs.getString("b.desc");
+                    int view = rs.getInt("b.view");
+                    int userId = rs.getInt("user.id");
+                    String userName = rs.getString("user.username");
+                    String fullName = rs.getString("user.firstname");
+                    list.add(new blogPojoById(uniqueId, subject, desc, view, userId, userName, fullName));
+                }
+                return list;
             }
-            return list;
+
         } catch (SQLException msg) {
             Logger.getLogger(getAllBlog.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
 
@@ -162,17 +110,14 @@ public class getAllBlog {
      */
     public List<blogPojo> blog() throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection dc = new DatabaseConnection();
-
         List<blogPojo> list = new ArrayList<>();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            con = dc.getConnection();
-            String sql = "SELECT unique_id,subject,posted_by as userId,username,firstname FROM blog LEFT JOIN newuser ON newuser.id = blog.posted_by";
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+
+        String sql = "SELECT unique_id,subject,posted_by as userId,username,firstname FROM blog LEFT JOIN newuser ON newuser.id = blog.posted_by";
+
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int userId = rs.getInt("userId");
                 String userName = rs.getString("username");
@@ -184,28 +129,6 @@ public class getAllBlog {
             return list;
         } catch (SQLException msg) {
             Logger.getLogger(getAllBlog.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }

@@ -47,15 +47,12 @@ public class saveNewUser {
         SupportingFunction function = new SupportingFunction();
         String userName = function.CreateUsername(fullName.trim().replaceAll(" ", ""));
 
-        DatabaseConnection dc = DatabaseConnection.getInstance();
+        DatabaseConnection connection = new DatabaseConnection();
 
-        Connection con = null;
-        PreparedStatement ps = null;
+        String sql = "insert into newuser(firstname,username,user_type,email,password) values(?,?,?,?,?)";
 
-        try {
-            con = dc.getConnection();
-            String sql = "insert into newuser(firstname,username,user_type,email,password) values(?,?,?,?,?)";
-            ps = con.prepareStatement(sql);
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, fullName);
             ps.setString(2, userName);
             ps.setString(3, "registered");
@@ -64,19 +61,6 @@ public class saveNewUser {
             return ps.execute();
         } catch (SQLException msg) {
             Logger.getLogger(saveNewUser.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-                }
-            }
         }
         return true;
     }

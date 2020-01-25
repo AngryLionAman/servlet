@@ -39,69 +39,40 @@ public class getQuestion {
      */
     public HashMap<Integer, String> getRandomQuestionByLimit(int limit) throws SQLException, ClassNotFoundException {
         HashMap<Integer, String> map = new HashMap<>();
-        DatabaseConnection dc = new DatabaseConnection();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            String sql = "select q_id as questionid,question from question order by rand() limit ?";
-            con = dc.getConnection();
-            ps = con.prepareStatement(sql);
+
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("select q_id as questionid,question from question order by rand() limit ?")) {
+
             ps.setInt(1, limit);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int questionId = rs.getInt("questionid");
-                String question = rs.getString("question");
-                map.putIfAbsent(questionId, question);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int questionId = rs.getInt("questionid");
+                    String question = rs.getString("question");
+                    map.putIfAbsent(questionId, question);
+                }
+                return map;
             }
-            return map;
         } catch (SQLException msg) {
             Logger.getLogger(getQuestion.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
-
     }
 
     /**
      *
-     * @return
-     * @throws SQLException
+     * @return @throws SQLException
      * @throws ClassNotFoundException
      */
     public HashMap<Integer, String> getRandomQuestion() throws SQLException, ClassNotFoundException {
-        
+
         HashMap<Integer, String> map = new HashMap<>();
-        DatabaseConnection dc = new DatabaseConnection();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            String sql = "select q_id as questionid,question from question order by rand() limit 20";
-            con = dc.getConnection();
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement("select q_id as questionid,question from question order by rand() limit 20");
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int questionId = rs.getInt("questionid");
                 String question = rs.getString("question");
@@ -110,31 +81,8 @@ public class getQuestion {
             return map;
         } catch (SQLException msg) {
             Logger.getLogger(getQuestion.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
-
     }
 
     /**
@@ -145,52 +93,28 @@ public class getQuestion {
      * @throws ClassNotFoundException
      */
     public HashMap<Integer, String> getRelatedQuestionById(int qId) throws SQLException, ClassNotFoundException {
-        
+
         HashMap<Integer, String> map = new HashMap<>();
-        
-        DatabaseConnection dc = new DatabaseConnection();
-        
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            String sql = "SELECT DISTINCT q.question as question,q.q_id as questionid FROM question q RIGHT JOIN question_topic_tag qtt ON qtt.question_id=q.q_id WHERE tag_id IN (SELECT DISTINCT(tag_id) AS tag_id FROM question_topic_tag WHERE question_id = ?) AND q_id IS NOT NULL LIMIT 20";
-            con = dc.getConnection();
-            ps = con.prepareStatement(sql);
+
+        DatabaseConnection connection = new DatabaseConnection();
+
+        String sql = "SELECT DISTINCT q.question as question,q.q_id as questionid FROM question q RIGHT JOIN question_topic_tag qtt ON qtt.question_id=q.q_id WHERE tag_id IN (SELECT DISTINCT(tag_id) AS tag_id FROM question_topic_tag WHERE question_id = ?) AND q_id IS NOT NULL LIMIT 20";
+
+        try (Connection con = DatabaseConnection.makeConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                int questionId = rs.getInt("questionid");
-                String question = rs.getString("question");
-                if (questionId != qId) {
-                    map.putIfAbsent(questionId, question);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int questionId = rs.getInt("questionid");
+                    String question = rs.getString("question");
+                    if (questionId != qId) {
+                        map.putIfAbsent(questionId, question);
+                    }
                 }
+                return map;
             }
-            return map;
         } catch (SQLException msg) {
             Logger.getLogger(getQuestion.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException msg) {
-
-                }
-            }
-            if (con != null) {
-                try {
-                    con.close();
-                } catch (SQLException msg) {
-
-                }
-            }
         }
         return null;
     }
