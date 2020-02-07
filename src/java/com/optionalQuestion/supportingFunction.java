@@ -41,11 +41,10 @@ public class supportingFunction {
      */
     public int showPrecentage(int questionId, int vote) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "select sum(vote)as sum from option_of_question where question_id = ?";
 
         int precentege = 0;
+        DatabaseConnection connection = new DatabaseConnection();
         try (Connection con = DatabaseConnection.makeConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
@@ -74,10 +73,9 @@ public class supportingFunction {
     public List<optionalQuestionAnswerPojo> optionOfQuestinById(int qId) throws SQLException, ClassNotFoundException {
         List<optionalQuestionAnswerPojo> list = new ArrayList<>();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "select unique_id,option_value,vote from option_of_question where question_id = ?";
 
+        DatabaseConnection connection = new DatabaseConnection();
         try (Connection con = DatabaseConnection.makeConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
@@ -97,18 +95,16 @@ public class supportingFunction {
 
     /**
      *
+     * @param con
      * @return @throws SQLException
      * @throws ClassNotFoundException
      */
-    public List<String> onTopicName() throws SQLException, ClassNotFoundException {
+    public List<String> onTopicName(Connection con) throws SQLException, ClassNotFoundException {
         List<String> list = new ArrayList<>();
-
-        DatabaseConnection connection = new DatabaseConnection();
 
         String sql = "SELECT DISTINCT on_topic FROM optional_question WHERE on_topic <> 'uncategorized'";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql);
+        try (PreparedStatement ps = con.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 String onTopic = rs.getString("on_topic");
@@ -122,16 +118,14 @@ public class supportingFunction {
 
     /**
      *
+     * @param con
      * @return @throws SQLException
      * @throws ClassNotFoundException
      */
-    public List<Integer> totalNumberOfOption() throws SQLException, ClassNotFoundException {
+    public List<Integer> totalNumberOfOption(Connection con) throws SQLException, ClassNotFoundException {
         List<Integer> list = new ArrayList<>();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement("select distinct total_option from optional_question");
+        try (PreparedStatement ps = con.prepareStatement("select distinct total_option from optional_question");
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int count = rs.getInt("total_option");

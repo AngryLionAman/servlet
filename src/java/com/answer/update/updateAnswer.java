@@ -15,8 +15,10 @@
  */
 package com.answer.update;
 
+import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +43,7 @@ public class updateAnswer extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -52,22 +54,27 @@ public class updateAnswer extends HttpServlet {
         int question_id = input.getInputInt(request.getParameter("q_id"));
         int answer_id = input.getInputInt(request.getParameter("ans_id"));
         //int answer_by_id = input.getInputInt(request.getParameter("ans_by_id"));
-        
+
         String message = null;
         String answer = null;
-        
+
         updateAnswerClass update = new updateAnswerClass();
-        
-        if(question_id != 0 && answer_id != 0){
+
+        if (question_id != 0 && answer_id != 0) {
             try {
-                //get answer of selected the id
-                 answer = update.GetAnswerByAnswerid(answer_id);
+                DatabaseConnection connection = new DatabaseConnection();
+                try (Connection con = DatabaseConnection.makeConnection()) {
+                    //get answer of selected the id
+                    answer = update.GetAnswerByAnswerid(con, answer_id);
+                } catch (SQLException | ClassNotFoundException ex) {
+                    Logger.getLogger(updateAnswer.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(updateAnswer.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } catch (SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(updateAnswer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(updateAnswer.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }else{
+        } else {
             message = "Invalid argument";
         }
         request.setAttribute("answer", answer);
@@ -75,7 +82,7 @@ public class updateAnswer extends HttpServlet {
         request.setAttribute("question", question);
         request.setAttribute("answerid", answer_id);
         request.setAttribute("message", message);
-        
+
         request.getRequestDispatcher("edit_a.jsp").forward(request, response);
     }
 }

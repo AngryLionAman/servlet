@@ -30,17 +30,16 @@ public class saveUpdatedAnswerClass {
 
     /**
      *
+     * @param con
      * @param answerid
      * @param answer
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean SaveupdatedAnswerByAnswerId(int answerid, String answer) throws SQLException, ClassNotFoundException, Exception {
+    public boolean SaveupdatedAnswerByAnswerId(Connection con, int answerid, String answer) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement("update answer set answer = ? where a_id=?")) {
+        try (PreparedStatement ps = con.prepareStatement("update answer set answer = ? where a_id=?")) {
 
             ps.setString(1, answer);
             ps.setInt(2, answerid);

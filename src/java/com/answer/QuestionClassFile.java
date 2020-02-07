@@ -15,7 +15,6 @@
  */
 package com.answer;
 
-import com.connect.DatabaseConnection;
 import com.index.recentQuestionPojo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,7 +31,15 @@ import java.util.logging.Logger;
  */
 public class QuestionClassFile {
 
-    public List<recentQuestionPojo> getQuestion(int qId) throws SQLException, Exception {
+    /**
+     *
+     * @param con
+     * @param qId
+     * @return
+     * @throws SQLException
+     * @throws Exception
+     */
+    public List<recentQuestionPojo> getQuestion(Connection con, int qId) throws SQLException, Exception {
 
         time time = new time();
         List<recentQuestionPojo> list = new ArrayList<>();
@@ -41,16 +48,14 @@ public class QuestionClassFile {
                 + "user.id,user.firstname,user.username,user.user_type,user.higher_edu from question q inner join newuser user "
                 + "on user.id = q.id WHERE q.q_id = ?";
 
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int totalView = rs.getInt("q.total_view");
                     String date = rs.getString("date");
                     int questionId = rs.getInt("q.q_id");
-                    int days = time.showTime(questionId);
+                    int days = time.showTime(con, questionId);
                     String question = rs.getString("q.question");
                     int vote = rs.getInt("q.vote");
                     String fullName = rs.getString("user.firstname");
@@ -66,7 +71,7 @@ public class QuestionClassFile {
             }
         } catch (SQLException msg) {
             Logger.getLogger(QuestionClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } 
+        }
         return null;
     }
 

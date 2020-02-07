@@ -1,13 +1,10 @@
 package com.connect;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 
 /**
  *
@@ -15,13 +12,20 @@ import javax.sql.DataSource;
  */
 public class DatabaseConnection {
 
-    private static DataSource dataSource;
-    private static Connection dbConnect;
+    // private static Database instance;
+    public static Connection connection;
+    private final String url = "jdbc:mysql://localhost/bharat?useUnicode=true&characterEncoding=utf-8";
+    private String username = "root";
+    private String password = null;
 
     public DatabaseConnection() throws SQLException, ClassNotFoundException {
-        System.out.println("\nConstructor is initilizing....");
-        ConnectionCode();
-        System.out.println("Constructor is initilized");
+        System.out.println("com.connect.DatabaseConnection.<init>()" + "Constructor execuated");
+        try {
+            Class.forName("com.mysql.jdbc.Driver"); // Throws classNotFoundException
+            connection = DriverManager.getConnection(url, username, password); //Throws SQLException
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -29,34 +33,6 @@ public class DatabaseConnection {
      * @return @throws java.sql.SQLException
      */
     public static Connection makeConnection() throws SQLException {
-        System.out.println("Create connection is processing.. ");
-        if (dbConnect == null || dbConnect.isClosed()) {
-            ConnectionCode();
-            System.out.println("connection is null\n ");
-        } else {
-            System.out.println("connection is not null\n ");
-        }
-        return dbConnect;
-    }
-
-    private static void ConnectionCode() {
-
-        try {
-            Context initCtx = new InitialContext();
-            System.out.println("initCtx obj created");
-            //Context envCtx = (Context) initCtx.lookup("java:comp/env");
-            dataSource = (DataSource) initCtx.lookup("java:comp/env/jdbc/mydatabase");
-            System.out.println("dataSource valuse has been asigned");
-
-            try {
-                dbConnect = dataSource.getConnection();
-                System.out.println("dbConnect has been created");
-            } catch (SQLException ex) {
-                Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        } catch (NamingException msg) {
-            Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, msg);
-        }
+        return connection;
     }
 }

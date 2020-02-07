@@ -15,9 +15,10 @@
  */
 package com.notifications;
 
+import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -43,9 +44,11 @@ public class approval_for_question extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException, ClassNotFoundException {
         response.setContentType("text/html;charset=UTF-8");
 
         validateInput input = new validateInput();
@@ -54,11 +57,12 @@ public class approval_for_question extends HttpServlet {
         
         int comment_id = 0 ;
 
-        try {
+        DatabaseConnection connection = new DatabaseConnection();
+        try(Connection con = DatabaseConnection.makeConnection()) {
             int questionId = input.getInputInt(request.getParameter("q_id"));
             comment_id = input.getInputInt(request.getParameter("c_id"));
 
-            questionForApprobval = file.getQuestionForApprobval(questionId);
+            questionForApprobval = file.getQuestionForApprobval(con,questionId);
         } catch (ClassNotFoundException | SQLException msg) {
             Logger.getLogger(approval_for_question.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
@@ -80,7 +84,11 @@ public class approval_for_question extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(approval_for_question.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -94,7 +102,11 @@ public class approval_for_question extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(approval_for_question.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

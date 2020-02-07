@@ -21,18 +21,34 @@ package com.string;
  */
 public class validateInput {
 
+    private static String onlyInteger(String args) {
+        if (args == null) {
+            return null;
+        } else if (args.isEmpty()) {
+            return null;
+        } else if ((args.trim()).equals("null") || (args.trim()).equals("")) {
+            return null;
+        } else if (args.equals("")) {
+            return null;
+        } else {
+            return args.replaceAll("[^0-9]", "");
+        }
+    }
+
     /**
      *
      * @param args
      * @return
      */
     public int getInputInt(String args) {
-        
+
+        args = onlyInteger(args);
+
         if (args == null) {
             return 0;
         } else if (args.isEmpty()) {
             return 0;
-        } else if ((args.trim()).equals("null")) {
+        } else if ((args.trim()).equals("null") || (args.trim()).equals("")) {
             return 0;
         } else if (args.equals("")) {
             return 0;
@@ -50,13 +66,9 @@ public class validateInput {
 
         if (args == null) {
             return null;
-        } else if (args.isEmpty()) {
+        } else if (args.isEmpty() || args.trim().isEmpty()) {
             return null;
-        } else if (args.trim().isEmpty()) {
-            return null;
-        } else if (((args.trim()).equals("null"))) {
-            return null;
-        } else if (args.equals("")) {
+        } else if ((args.trim()).equals("null") || (args.trim()).equals("") || args.equals("")) {
             return null;
         } else {
             return args.trim();
@@ -69,6 +81,6 @@ public class validateInput {
      * @return
      */
     public int getOnlyInteger(String args) {
-        return Integer.valueOf(args.trim().replaceAll("[^0-9]", ""));
+        return Integer.valueOf(args.replaceAll("[^0-9]", ""));
     }
 }

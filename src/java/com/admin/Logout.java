@@ -16,6 +16,8 @@
 package com.admin;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,14 +37,35 @@ public class Logout extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
+    protected void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+        } catch (Exception msg) {
+            Logger.getLogger(Logout.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            request.setAttribute("message", "Logged out");
+            request.getRequestDispatcher("Admin/visit.jsp").forward(request, response);
+        }
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        process(req, resp);
+    }
+
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-        request.setAttribute("message", "Logged out");
-        request.getRequestDispatcher("Admin/visit.jsp").forward(request, response);
+        process(request, response);
     }
 }

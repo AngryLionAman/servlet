@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 AngryLion.
+ * Copyright 2020 AngryLion.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.string;
+package com.test;
+
+import com.string.validateInput;
 
 /**
  *
  * @author AngryLion
  */
-public class regularExpression {
+public class thisClass {
 
-    /**
-     *
-     * @param args
-     * @return
-     */
-    public String removeSpacialChar(String args) {
-        String regs = "[\\\"/[|!@#$%^&*]/g]";
-        args = args.replaceAll(regs, "").replaceAll(" ", "+");
-        return args;
+    public static void main(String[] agrs) {
+        validateInput input = new validateInput();
+        int inputInt = input.getInputInt("@7h3");
+        String n = String.valueOf(inputInt);
+        System.out.println("value is - " + inputInt);
+        System.out.println("length - " + n.length());
+      
     }
-    
-    
 }

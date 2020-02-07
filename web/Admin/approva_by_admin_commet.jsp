@@ -37,40 +37,45 @@
     <body>
         <h1>Hello,   ${sessionScope.userName}. Comment for approval !  
             <a href="<%=request.getContextPath()%>/Admin/approva_by_admin_commet.jsp">Refresh</a> 
-        <a href="<%=request.getContextPath()%>/Admin/adminModule.jsp">HOME</a>
+            <a href="<%=request.getContextPath()%>/Admin/adminModule.jsp">HOME</a>
         </h1>
-        
+
+
         <c:if test="${message ne null}">
-            ${message}<br><br>
+            <font style="color: green;font-size: 30px;text-align: center;">${message}</font><br><br>
         </c:if>
-        
+
+
         <sql:query dataSource="jdbc/mydatabase" var="c" >
             select * from comments where approved_by_admin = 0 or approved_by_user = 0;
         </sql:query>
-            
-              <table> 
+
+        <table> 
+            <tr>
+                <th>unique_id</th>
+                <th>comment_type</th>
+                <th>content_id</th>
+                <th>Comment</th>                    
+                <th>approved_by_user</th>
+                <th>approved_by_admin</th>
+                <th>Time</th>
+                <th>Action</th>
+            </tr>
+            <c:forEach items="${c.rows}" var="t">
                 <tr>
-                    <th>unique_id</th>
-                    <th>comment_type</th>
-                    <th>content_id</th>
-                    <th>Comment</th>                    
-                    <th>approved_by_user</th>
-                    <th>approved_by_admin</th>
-                    <th>Time</th>
-                    <th>Action</th>
+                    <td>${t.unique_id}</td>
+                    <td>${t.comment_type}</td>
+                    <td>${t.content_id}</td>
+                    <td>${t.comments}</td>
+                    <td>${t.approved_by_user}</td>
+                    <td>${t.approved_by_admin}</td>
+                    <td>${t.time}</td>
+                    <td>
+                        <a href="<%=request.getContextPath()%>/commet_approval?commet_id=${t.unique_id}&action=accept">Accept</a>&nbsp;
+                        <a href="<%=request.getContextPath()%>/commet_approval?commet_id=${t.unique_id}&action=delete">Delete</a>
+                    </td>
                 </tr>
-                <c:forEach items="${c.rows}" var="t">
-                    <tr>
-                        <td>${t.unique_id}</td>
-                        <td>${t.comment_type}</td>
-                        <td>${t.content_id}</td>
-                        <td>${t.comments}</td>
-                        <td>${t.approved_by_user}</td>
-                        <td>${t.approved_by_admin}</td>
-                        <td>${t.time}</td>
-                        <td><a href="<%=request.getContextPath()%>/commet_approval?commet_id=${t.unique_id}&action=accept">Accept</a></td>
-                    </tr>
-                </c:forEach>
-            </table>
+            </c:forEach>
+        </table>
     </body>
 </html>

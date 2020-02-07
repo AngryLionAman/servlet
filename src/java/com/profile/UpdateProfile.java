@@ -15,8 +15,11 @@
  */
 package com.profile;
 
+import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -36,37 +39,43 @@ public class UpdateProfile extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        validateInput input = new validateInput();
-        EditUserProfileClassFile classFile = new EditUserProfileClassFile();
-
-        String message = null;
-        int user_id = 0;
-
-        String path = "profile";
         try {
 
-            user_id = input.getInputInt(request.getParameter("user_id"));
-            //String fullname = input.getInputString(request.getParameter("fullname"));
-            //String email = input.getInputString(request.getParameter("email"));
-            String HigherQualification = input.getInputString(request.getParameter("HigherQualification"));
-            String BestAchievement = input.getInputString(request.getParameter("BestAchievement"));
-            String bio = input.getInputString(request.getParameter("bio"));
+            validateInput input = new validateInput();
+            EditUserProfileClassFile classFile = new EditUserProfileClassFile();
 
-            if (user_id != 0) {
-                if (classFile.saveUserProfile(user_id, HigherQualification, BestAchievement, bio)) {
-                    message = "Profile updated successfully";
-                } else {
-                    message = "Profile update operation failed";
+            String message = null;
+            int user_id = 0;
+
+            String path = "profile";
+            DatabaseConnection connection = new DatabaseConnection();
+            try (Connection con = DatabaseConnection.makeConnection()) {
+
+                user_id = input.getInputInt(request.getParameter("user_id"));
+                //String fullname = input.getInputString(request.getParameter("fullname"));
+                //String email = input.getInputString(request.getParameter("email"));
+                String HigherQualification = input.getInputString(request.getParameter("HigherQualification"));
+                String BestAchievement = input.getInputString(request.getParameter("BestAchievement"));
+                String bio = input.getInputString(request.getParameter("bio"));
+
+                if (user_id != 0) {
+                    if (classFile.saveUserProfile(con, user_id, HigherQualification, BestAchievement, bio)) {
+                        message = "Profile updated successfully";
+                    } else {
+                        message = "Profile update operation failed";
+                    }
                 }
-            }
 
-        } catch (Exception msg) {
-            Logger.getLogger(UpdateProfile.class.getName()).log(Level.SEVERE, null, msg);
-        }finally{
-            request.setAttribute("message", message);
-            request.setAttribute("id", user_id);
-            
-            request.getRequestDispatcher(path).forward(request, response);
+            } catch (Exception msg) {
+                Logger.getLogger(UpdateProfile.class.getName()).log(Level.SEVERE, null, msg);
+            } finally {
+                request.setAttribute("message", message);
+                request.setAttribute("id", user_id);
+
+                request.getRequestDispatcher(path).forward(request, response);
+            }
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(UpdateProfile.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

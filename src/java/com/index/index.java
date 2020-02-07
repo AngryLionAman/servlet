@@ -17,6 +17,7 @@ package com.index;
 
 import com.advertise.displayAds;
 import com.advertise.displayAdsPojo;
+import com.connect.DatabaseConnection;
 import com.fun.FunHelpingFunction;
 import com.profile.profile;
 import com.question.GetAllQuestionClass;
@@ -24,6 +25,7 @@ import com.question.Question;
 import com.question.RecentPostQUestionHavingAtLeastOneAnswerPojo;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,7 +81,8 @@ public class index extends HttpServlet {
         String message = null;
         String gotException = null;
 
-        try {
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection()) {
             String tab = "recent";
 
             try {
@@ -102,29 +105,29 @@ public class index extends HttpServlet {
             int userId = 0;
 
             try {
-                userId = user.GetUserId(request);
+                userId = user.GetUserId(con,request);
             } catch (Exception msg) {
                 Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
             }
 
             try {
                 if (userId != 0) {
-                    userFollowedTopic = detals.userFollowedTopic(userId);
+                    userFollowedTopic = detals.userFollowedTopic(con,userId);
                 } else {
-                    randomTopic = detals.randomTopic(15);
+                    randomTopic = detals.randomTopic(con,15);
                 }
             } catch (Exception msg) {
                 Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
             }
 
             try {
-                displayRandomAds = ads.displayRandomAds();
+                displayRandomAds = ads.displayRandomAds(con);
             } catch (Exception msg) {
                 Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
             }
 
             try {
-                CategoryDetail = function.getFunCategory();
+                CategoryDetail = function.getFunCategory(con);
             } catch (Exception msg) {
                 Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, msg);
             }
@@ -132,23 +135,23 @@ public class index extends HttpServlet {
             try {
                 switch (tab) {
                     case "recent":
-                        RecentPostQUestionHavingAtLeastOneAnswer = question.RecentPostQUestionHavingAtLeastOneAnswer();
+                        RecentPostQUestionHavingAtLeastOneAnswer = question.RecentPostQUestionHavingAtLeastOneAnswer(con);
                         //recentPostQuestion = page.recentPostQuestion();
                         break;
 
                     case "allquestion":
-                        AllQuestion = allQuestionClass.AllQuestion(pageNo);
-                        TotalNoOfPage = allQuestionClass.TotalNoOfPage();
+                        AllQuestion = allQuestionClass.AllQuestion(con,pageNo);
+                        TotalNoOfPage = allQuestionClass.TotalNoOfPage(con);
                         break;
 
                     case "unanswered":
-                        UnAnsweredQuestion = question.UnAnsweredQuestion();
+                        UnAnsweredQuestion = question.UnAnsweredQuestion(con);
                         break;
 
                     case "related":
 
                         if (userId != 0) {
-                            relatedQuestion = page.relatedQuestion(userId);
+                            relatedQuestion = page.relatedQuestion(con,userId);
                         } else {
                             message = "Dear User, we are really sorry for this problem."
                                     + "<br>This problem occurred due to following reasong.."
@@ -160,7 +163,7 @@ public class index extends HttpServlet {
                         break;
 
                     default:
-                        RecentPostQUestionHavingAtLeastOneAnswer = question.RecentPostQUestionHavingAtLeastOneAnswer();
+                        RecentPostQUestionHavingAtLeastOneAnswer = question.RecentPostQUestionHavingAtLeastOneAnswer(con);
                         break;
 
                 }

@@ -15,10 +15,12 @@
  */
 package com.admin.unasweredQuestion;
 
+import com.answer.user.saveanswer.SaveAnswer;
 import com.connect.DatabaseConnection;
+import com.notifications.CreateNotification;
+import com.string.validateInput;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,45 +47,61 @@ public class SaveAnswerAdminModule extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("text/html;charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-
-        String answer = request.getParameter("answer");
-        int questionId = Integer.parseInt(request.getParameter("qId"));
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        int PostedByuserId = Integer.parseInt(request.getParameter("postedById"));
-
-        String sql = "insert into answer(q_id,answer,Answer_by_id,vote) values(?,?,?,?)";
         try {
+
+            response.setContentType("text/html;charset=UTF-8");
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+
+            validateInput input = new validateInput();
+            SaveAnswer saveAnswer = new SaveAnswer();
+            CreateNotification notification = new CreateNotification();
+
+            String message = null;
+
+            String path = "Admin/unanswerQuestion.jsp";
+
             DatabaseConnection connection = new DatabaseConnection();
+            try (Connection con = DatabaseConnection.makeConnection()) {
+
+                int userId = input.getInputInt(request.getParameter("userId"));
+                int questionId = input.getInputInt(request.getParameter("qId"));
+                int id_of_user_who_posted_question = input.getInputInt(request.getParameter("postedById"));
+                String answer = input.getInputString(request.getParameter("answer"));
+
+                if (questionId != 0 && answer != null) {
+                    if (userId != 0) {
+                        if (!saveAnswer.SaveAnswerByQuestionIdAndIdUserId(con, userId, questionId, answer, true)) {
+                            if (id_of_user_who_posted_question != 0) {
+                                if (!notification.UserGotAnswerOfQuestion(con, userId, id_of_user_who_posted_question, questionId)) {
+                                    message = "Answer has been posted and notification has been successfully sent to user";
+                                } else {
+                                    message = "Answer has been posted but notification not sent to user";
+                                }
+                            } else {
+                                message = "Answer has been posted, Notification will not generate for the guest post";
+                            }
+                        } else {
+                            message = "Answer not saved, Please try agina or report to admin";
+                        }
+                    } else {
+                        if (!saveAnswer.SaveAnswerByQuestionIdAndIdUserId(con, userId, questionId, answer, false)) {
+                            message = "Dear user, Your answer has been saved. it will visible after admin approval";
+                        } else {
+                            message = "Dear Guest user, Your answer not saved. Please try again or report to admin";
+                        }
+                    }
+                } else {
+                    message = "Question id is zero, or Answer is empty. Please try agian or contact to adminstrator";
+                }
+            } catch (Exception msg) {
+                Logger.getLogger(SaveAnswerAdminModule.class.getName()).log(Level.SEVERE, null, msg);
+            } finally {
+                request.setAttribute("message", message);
+                request.getRequestDispatcher(path).forward(request, response);
+            }
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(SaveAnswerAdminModule.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, questionId);
-            ps.setString(2, answer);
-            ps.setInt(3, userId);
-            ps.setInt(4, 0);
-            ps.execute();
-            /**
-             * ****save the comment**********
-             *
-             * String sql_notification = "INSERT INTO notification
-             * (user_id,notification_type,followers_id,question_id)VALUES(?,?,?,?)";
-             * try (PreparedStatement ps1 =
-             * con.prepareStatement(sql_notification)) { ps1.setInt(1,
-             * PostedByuserId); ps1.setString(2, "got_answer_of_a_question");
-             * ps1.setInt(3, userId); ps1.setInt(4, questionId); ps1.execute();
-             * }
-             */
-
-        } catch (SQLException msg) {
-            Logger.getLogger(SaveAnswerAdminModule.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            request.getRequestDispatcher("Admin/unanswerQuestion.jsp").forward(request, response);
         }
     }
 }

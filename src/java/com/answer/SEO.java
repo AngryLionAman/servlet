@@ -15,7 +15,6 @@
  */
 package com.answer;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,19 +35,19 @@ public class SEO {
 
     /**
      *
+     * @param con
      * @param qId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public HashMap<Integer, String> getQuestionTagWithId(int qId) throws SQLException, ClassNotFoundException, Exception {
+    public HashMap<Integer, String> getQuestionTagWithId(Connection con, int qId) throws SQLException, ClassNotFoundException, Exception {
 
         HashMap<Integer, String> map = new HashMap<>();
-        DatabaseConnection connection = new DatabaseConnection();
+        
         String sql = "select tag_id as unique_id,(select topic_name from topic where unique_id = question_topic_tag.tag_id)topic_name from question_topic_tag where question_id =?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -66,19 +65,19 @@ public class SEO {
 
     /**
      *
+     * @param con
      * @param qId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public List<String> getQuestionTag(int qId) throws SQLException, Exception {
+    public List<String> getQuestionTag(Connection con, int qId) throws SQLException, Exception {
 
         List<String> list = new ArrayList<>();
 
         String sql = "SELECT topic.unique_id AS tag_id, topic.topic_name AS topic_name FROM topic INNER JOIN question_topic_tag ON topic.unique_id = question_topic_tag.tag_id WHERE question_id = ? AND tag_id IS NOT NULL ORDER BY tag_id";
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -95,12 +94,13 @@ public class SEO {
 
     /**
      *
+     * @param con
      * @param qId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public List<SEOPojo> getTitleAndDescripiton(int qId) throws SQLException, ClassNotFoundException, Exception {
+    public List<SEOPojo> getTitleAndDescripiton(Connection con, int qId) throws SQLException, ClassNotFoundException, Exception {
 
         Pattern pattern = Pattern.compile(
                 "\\b(((ht|f)tp(s?)\\:\\/\\/|~\\/|\\/)|www.)"
@@ -118,9 +118,8 @@ public class SEO {
                 + "FROM question q LEFT JOIN answer a on q.q_id = a.q_id WHERE q.q_id = ? limit 1";
 
         List<SEOPojo> list = new ArrayList<>();
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

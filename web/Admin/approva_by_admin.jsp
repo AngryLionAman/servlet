@@ -23,7 +23,7 @@
     </head>
     <body>
         <h1>Hello,   ${sessionScope.userName} <br>Request for modified Question approval !!!
-        <a href="<%=request.getContextPath()%>/approval_request_for_admin_servlet">Refresh</a>
+            <a href="<%=request.getContextPath()%>/approval_request_for_admin_servlet">Refresh</a>
             <a href="<%=request.getContextPath()%>/Admin/adminModule.jsp">HOME</a>
         </h1>
 
@@ -61,7 +61,11 @@
                             <td>${q.rejected_by_admin}</td>
                             <td>${q.message}</td>
                             <td>${q.date}</td>
-                            <td><a href="<%=request.getContextPath()%>/action_servlet_question_approval?action=Accept&o_q_id=${q.old_question_id}&n_q_id=${q.new_question_id}">Accept</a>&nbsp;&nbsp;&nbsp;<a href="<%=request.getContextPath()%>/action_servlet_question_approval?action=Delete&o_q_id=${q.old_question_id}&n_q_id=${q.new_question_id}">Reject</a></td>
+                            <td>
+                                <a href="<%=request.getContextPath()%>/action_servlet_question_approval?action=Accept&o_q_id=${q.old_question_id}&n_q_id=${q.new_question_id}">Accept</a>&nbsp;&nbsp;&nbsp;
+                                <a href="<%=request.getContextPath()%>/action_servlet_question_approval?action=Delete&o_q_id=${q.old_question_id}&n_q_id=${q.new_question_id}">Reject</a>&nbsp;&nbsp;&nbsp;
+                                <a href="<%=request.getContextPath()%>/action_servlet_question_approval?action=Remove&o_q_id=${q.old_question_id}&n_q_id=${q.new_question_id}">Delete</a>
+                            </td>
                         </tr>
                     </c:forEach>
                 </table>

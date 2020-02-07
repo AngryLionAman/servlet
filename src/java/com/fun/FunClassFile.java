@@ -15,7 +15,6 @@
  */
 package com.fun;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,18 +32,16 @@ public class FunClassFile {
 
     /**
      *
+     * @param con
      * @param recordPerPage
      * @return
      * @throws Exception
      */
-    public int totalNumberOfpage(int recordPerPage) throws Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public int totalNumberOfpage(Connection con, int recordPerPage) throws Exception {
 
         float totalNumberOfpage = 0;
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement("select count(*) as cnt from fun");
+        try (PreparedStatement ps = con.prepareStatement("select count(*) as cnt from fun");
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 totalNumberOfpage = rs.getInt("cnt");
@@ -63,19 +60,18 @@ public class FunClassFile {
 
     /**
      *
+     * @param con
      * @param based_on
      * @return
      * @throws Exception
      */
-    public List<funPojo> getFunDataByBasedOn(String based_on) throws Exception {
+    public List<funPojo> getFunDataByBasedOn(Connection con, String based_on) throws Exception {
 
         List<funPojo> list = new ArrayList<>();
 
-        DatabaseConnection connection = new DatabaseConnection();
         String sql = "SELECT * FROM fun WHERE based_on = ? ORDER BY RAND()";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, based_on);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -98,20 +94,18 @@ public class FunClassFile {
 
     /**
      *
+     * @param con
      * @param type_
      * @return
      * @throws Exception
      */
-    public List<funPojo> getFunDataByType(String type_) throws Exception {
+    public List<funPojo> getFunDataByType(Connection con, String type_) throws Exception {
 
         List<funPojo> list = new ArrayList<>();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "SELECT * FROM fun WHERE type = ? ORDER BY RAND()";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, type_);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -134,18 +128,17 @@ public class FunClassFile {
 
     /**
      *
+     * @param con
      * @param category_
      * @return
      * @throws Exception
      */
-    public List<funPojo> getFunDataByCategory(String category_) throws Exception {
+    public List<funPojo> getFunDataByCategory(Connection con, String category_) throws Exception {
 
         List<funPojo> list = new ArrayList<>();
 
-        DatabaseConnection connection = new DatabaseConnection();
         String sql = "SELECT * FROM fun WHERE category = ? ORDER BY RAND()";
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, category_);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -168,16 +161,15 @@ public class FunClassFile {
 
     /**
      *
+     * @param con
      * @param pageNo
      * @param recordPerPage
      * @return
      * @throws Exception
      */
-    public List<funPojo> getRandomFunData(int pageNo, int recordPerPage) throws Exception {
+    public List<funPojo> getRandomFunData(Connection con, int pageNo, int recordPerPage) throws Exception {
 
         List<funPojo> list = new ArrayList<>();
-
-        DatabaseConnection connection = new DatabaseConnection();
 
         if (pageNo < 1) {
             pageNo = 1;
@@ -185,8 +177,7 @@ public class FunClassFile {
         int startPage = (pageNo * recordPerPage) - recordPerPage;
         String sql = "SELECT * FROM fun ORDER BY RAND() LIMIT ?,?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, startPage);
             ps.setInt(2, recordPerPage);
             try (ResultSet rs = ps.executeQuery()) {

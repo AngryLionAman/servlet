@@ -15,8 +15,10 @@
  */
 package com.question.user;
 
+import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,11 +43,11 @@ public class savequestion extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        
+
         validateInput input = new validateInput();
 
         int userId = input.getInputInt(request.getParameter("userid"));
@@ -61,31 +63,36 @@ public class savequestion extends HttpServlet {
 
         if (userId != 0 && question != null) {
             try {
-                if (!funcation.SaveQuestionByQuestionAndTagandUserId(userId, question)) {
-                    questionId = funcation.GetQuestionIdByQuestion(question);  //*Get the question id*/
-                    if (tag_of_question != null) {
-                        if (questionId != 0) {
-                            if (!funcation.SaveTag(tag_of_question)) {
-                                if (!funcation.SaveTagWithQuestionId(questionId, tag_of_question)) {
-                                    message = "Question has been successfully Posted";
+                DatabaseConnection connection = new DatabaseConnection();
+                try (Connection con = DatabaseConnection.makeConnection()) {
+                    if (!funcation.SaveQuestionByQuestionAndTagandUserId(con, userId, question)) {
+                        questionId = funcation.GetQuestionIdByQuestion(con, question);  //*Get the question id*/
+                        if (tag_of_question != null) {
+                            if (questionId != 0) {
+                                if (!funcation.SaveTag(con, tag_of_question)) {
+                                    if (!funcation.SaveTagWithQuestionId(con, questionId, tag_of_question)) {
+                                        message = "Question has been successfully Posted";
+                                    } else {
+                                        message = "Tag saved but not integrated with the question id, Please inform us at contact us from";
+                                    }
                                 } else {
-                                    message = "Tag saved but not integrated with the question id, Please inform us at contact us from";
+                                    message = "Tag not saved in the database, Please inform us at contact us form";
                                 }
                             } else {
-                                message = "Tag not saved in the database, Please inform us at contact us form";
+                                message = "Question has been save but question not found in database";
                             }
                         } else {
-                            message = "Question has been save but question not found in database";
+                            message = "Question has been saved but tag is empty";
                         }
                     } else {
-                        message = "Question has been saved but tag is empty";
+                        message = "question not saved";
                     }
-                } else {
-                    message = "question not saved";
+                } catch (SQLException | ClassNotFoundException ex) {
+                    Logger.getLogger(savequestion.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(savequestion.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } catch (SQLException | ClassNotFoundException ex) {
-                Logger.getLogger(savequestion.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
                 Logger.getLogger(savequestion.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {

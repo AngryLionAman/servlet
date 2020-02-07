@@ -15,7 +15,6 @@
  */
 package com.topic;
 
-import com.connect.DatabaseConnection;
 import com.index.indexPageExtraFunction;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,23 +33,21 @@ public class topicDetail {
 
     /**
      *
+     * @param con
      * @param topicid
      * @return
      * @throws SQLException
      * @throws Exception
      */
-    public List<topicPojo> topic(int topicid) throws SQLException, Exception {
+    public List<topicPojo> topic(Connection con, int topicid) throws SQLException, Exception {
 
         indexPageExtraFunction function = new indexPageExtraFunction();
 
         List<topicPojo> list = new ArrayList<>();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "select * from topic where unique_id = ?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (  PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicid);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -60,8 +57,8 @@ public class topicDetail {
                     String descHindi = rs.getString("desc_hindi");
                     String descEng = rs.getString("desc_english");
                     boolean crawl = rs.getBoolean("crawl");
-                    int totalFollowers = function.totalFollowersOfTopic(topicId);
-                    int relatedQuestion = function.totalRelatedQuestion(topicId);
+                    int totalFollowers = function.totalFollowersOfTopic(con,topicId);
+                    int relatedQuestion = function.totalRelatedQuestion(con,topicId);
                     list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, crawl, totalFollowers, relatedQuestion));
                 }
                 return list;

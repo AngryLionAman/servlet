@@ -6,8 +6,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<c:if test="${sessionScope.adminUserId eq null}">
-    <c:set scope="application" var="message" value="Session is not valid"/>    
+<c:if test="${sessionScope.adminUserId eq null}">  
     <c:redirect url="visit.jsp?msg=Session is not valid"/>
 </c:if>
 <!DOCTYPE html>

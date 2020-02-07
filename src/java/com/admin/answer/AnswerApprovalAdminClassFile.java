@@ -15,7 +15,6 @@
  */
 package com.admin.answer;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -28,19 +27,32 @@ import java.util.logging.Logger;
  */
 public class AnswerApprovalAdminClassFile {
 
+    public boolean deleteAnswerApprovalById(Connection con, int answer_id) throws SQLException, ClassNotFoundException {
+
+        String sql = "DELETE FROM answer WHERE approved_by_admin = 0 AND a_id = ?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, answer_id);
+            return ps.execute();
+        } catch (SQLException msg) {
+            Logger.getLogger(AnswerApprovalAdminClassFile.class.getName()).log(Level.SEVERE, null, msg);
+        }
+        return true;
+    }
+
     /**
      *
+     * @param con
      * @param answer_id
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean changeApprovaByAdmin(int answer_id) throws SQLException, ClassNotFoundException {
+    public boolean changeApprovaByAdmin(Connection con, int answer_id) throws SQLException, ClassNotFoundException {
 
         String sql = "UPDATE answer SET approved_by_admin = 1 WHERE a_id = ?";
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, answer_id);
             return ps.execute();
         } catch (SQLException msg) {

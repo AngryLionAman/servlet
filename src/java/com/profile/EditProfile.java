@@ -15,8 +15,10 @@
  */
 package com.profile;
 
+import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -46,35 +48,40 @@ public class EditProfile extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        validateInput input = new validateInput();
-        EditUserProfileClassFile classFile = new EditUserProfileClassFile();
-
-        String message = null;
-        String path = "UpdateUserProfile.jsp";
-        int id = 0;
-
-        List<EditProfilePojoClass> profileDataById = null;
-
         try {
 
-            try {
-                id = input.getInputInt(request.getParameter("id"));
-            } catch (Exception msg) {
-                Logger.getLogger(EditProfile.class.getName()).log(Level.SEVERE, null, msg);
-            }
+            validateInput input = new validateInput();
+            EditUserProfileClassFile classFile = new EditUserProfileClassFile();
 
-            if (id != 0) {
-                profileDataById = classFile.getProfileDataById(id);
-            } else {
-                message = "Invalid profile url";
-                path = "Error404.jsp";
+            String message = null;
+            String path = "UpdateUserProfile.jsp";
+            int id = 0;
+
+            List<EditProfilePojoClass> profileDataById = null;
+            DatabaseConnection connection = new DatabaseConnection();
+            try (Connection con = DatabaseConnection.makeConnection()) {
+
+                try {
+                    id = input.getInputInt(request.getParameter("id"));
+                } catch (Exception msg) {
+                    Logger.getLogger(EditProfile.class.getName()).log(Level.SEVERE, null, msg);
+                }
+
+                if (id != 0) {
+                    profileDataById = classFile.getProfileDataById(con, id);
+                } else {
+                    message = "Invalid profile url";
+                    path = "Error404.jsp";
+                }
+            } catch (ClassNotFoundException | SQLException msg) {
+                Logger.getLogger(EditProfile.class.getName()).log(Level.SEVERE, null, msg);
+            } finally {
+                request.setAttribute("message", message);
+                request.setAttribute("profileDataById", profileDataById);
+                request.getRequestDispatcher(path).forward(request, response);
             }
-        } catch (ClassNotFoundException | SQLException msg) {
-            Logger.getLogger(EditProfile.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            request.setAttribute("message", message);
-            request.setAttribute("profileDataById", profileDataById);
-            request.getRequestDispatcher(path).forward(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(EditProfile.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

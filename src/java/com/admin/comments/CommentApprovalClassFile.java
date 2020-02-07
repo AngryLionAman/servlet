@@ -15,7 +15,6 @@
  */
 package com.admin.comments;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -28,18 +27,28 @@ import java.util.logging.Logger;
  */
 public class CommentApprovalClassFile {
 
+    public boolean deleteApprovalCommentById(Connection con, int comment_id) throws SQLException, ClassNotFoundException {
+        String sql = " DELETE FROM comments WHERE unique_id  = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, comment_id);
+            return ps.execute();
+        } catch (SQLException msg) {
+            Logger.getLogger(CommentApprovalClassFile.class.getName()).log(Level.SEVERE, null, msg);
+        }
+        return true;
+    }
+
     /**
      *
+     * @param con
      * @param comment_id
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean changePermissionOfComment(int comment_id) throws SQLException, ClassNotFoundException {
+    public boolean changePermissionOfComment(Connection con, int comment_id) throws SQLException, ClassNotFoundException {
         String sql = "UPDATE comments SET approved_by_admin = 1 WHERE unique_id = ?";
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, comment_id);
             return ps.execute();
         } catch (SQLException msg) {

@@ -15,7 +15,6 @@
  */
 package com.notifications;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,14 +37,11 @@ public class SupportingClassFile {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean deleteNotificationByNotificationId(int notificationId) throws SQLException, ClassNotFoundException {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean deleteNotificationByNotificationId(Connection con, int notificationId) throws SQLException, ClassNotFoundException {
 
         String sql = "DELETE FROM notification WHERE unique_id = ?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, notificationId);
             return ps.execute();
         } catch (SQLException msg) {
@@ -61,15 +57,12 @@ public class SupportingClassFile {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public List<QuestionForApprovalPojo> getQuestionForApprobval(int questionId) throws SQLException, ClassNotFoundException {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public List<QuestionForApprovalPojo> getQuestionForApprobval(Connection con, int questionId) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT q.q_id AS old_question_id,q.question AS old_question,qt.unique_id AS new_question_id,qt.modified_question AS new_question FROM question q INNER JOIN modified_question_table qt ON q.q_id = qt.question_id WHERE q.q_id = ? AND qt.modified_question IS NOT NULL";
 
         List<QuestionForApprovalPojo> list = new ArrayList<>();
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -84,7 +77,7 @@ public class SupportingClassFile {
             }
         } catch (SQLException msg) {
             Logger.getLogger(SupportingClassFile.class.getName()).log(Level.SEVERE, null, msg);
-        } 
+        }
         return null;
     }
 }

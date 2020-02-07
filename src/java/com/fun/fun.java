@@ -15,8 +15,11 @@
  */
 package com.fun;
 
+import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,8 +40,10 @@ public class fun extends HttpServlet {
      * @param response
      * @throws ServletException
      * @throws IOException
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException, ClassNotFoundException {
 
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
@@ -69,36 +74,37 @@ public class fun extends HttpServlet {
             message = (String) request.getAttribute("message");
         }
 
-        try {
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection()) {
             if (category != null) {
 
-                funData = file.getFunDataByCategory(category);
+                funData = file.getFunDataByCategory(con,category);
 
             } else if (type != null) {
 
-                funData = file.getFunDataByType(type);
+                funData = file.getFunDataByType(con,type);
 
             } else if (basedOn != null) {
 
-                funData = file.getFunDataByBasedOn(basedOn);
+                funData = file.getFunDataByBasedOn(con,basedOn);
 
             } else {
 
-                funData = file.getRandomFunData(pageNo, recordPerPage);
-                totalNumberOfpage = file.totalNumberOfpage(recordPerPage);
+                funData = file.getRandomFunData(con,pageNo, recordPerPage);
+                totalNumberOfpage = file.totalNumberOfpage(con,recordPerPage);
 
             }
 
-            funBasedOn = function.getFunBasedOn();
-            funCategory = function.getFunCategory();
-            funType = function.getFunType();
+            funBasedOn = function.getFunBasedOn(con);
+            funCategory = function.getFunCategory(con);
+            funType = function.getFunType(con);
 
         } catch (Exception msg) {
             gotException = "Not null";
             Logger.getLogger(fun.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             request.setAttribute("gotException", gotException);
-            
+
             request.setAttribute("funDataByCategory", funData);
             request.setAttribute("totalNumberOfpage", totalNumberOfpage);
 
@@ -122,7 +128,11 @@ public class fun extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(fun.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -135,6 +145,10 @@ public class fun extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(fun.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

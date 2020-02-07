@@ -17,8 +17,11 @@ package com.blog;
 
 import com.comments.BlogCommentPojoFile;
 import com.comments.GetComment;
+import com.connect.DatabaseConnection;
+import com.fun.FunHelpingFunction;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -49,10 +52,10 @@ public class blog extends HttpServlet {
         getAllBlog blog = new getAllBlog();
         SupportingFunctionBlog function = new SupportingFunctionBlog();
         GetComment comment = new GetComment();
+        FunHelpingFunction fhf = new FunHelpingFunction();
 
         int blogId;
         String page = "blog.jsp";
-        String gotException = null;
 
         if (request.getAttribute("id") != null) {
             blogId = (int) request.getAttribute("id");
@@ -71,48 +74,56 @@ public class blog extends HttpServlet {
 
         List<blogPojo> blog1 = null;
         List<BlogCommentPojoFile> commentOfBlogByBlogId = null;
-        
+        List<String> funCategory = null;
+
         try {
+            DatabaseConnection connection = new DatabaseConnection();
+            try (final Connection con = DatabaseConnection.makeConnection()) {
 
-            if (blogId != 0) {
-                if (function.IsBlogPresentByBlogId(blogId)) {
-
-                    blogByBlogId = blog.blogByBlogId(blogId);
-                    try {
-                        function.increateBlogViewByBlogId(blogId);
-                    } catch (ClassNotFoundException | SQLException msg) {
-                        Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
-                    }
-
-                    try {
-                        blogByLimit = blog.blogByLimit(10);
-                    } catch (ClassNotFoundException | SQLException msg) {
-                        Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
-                    }
-
-                    try {
-                        commentOfBlogByBlogId = comment.getCommentOfBlogByBlogId(blogId);
-                    } catch (ClassNotFoundException | SQLException msg) {
-                        Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
-                    }
-
-                    page = "D_Blog.jsp";
-
-                } else {
-                    message = "The blog you are looking for has been removed or delete. Sorry for the inconvenience";
-                    blog1 = blog.blog();
+                try{
+                   funCategory = fhf.getFunCategory(con);
+                }catch(Exception msg){
+                    Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
                 }
-            } else {
-                blog1 = blog.blog();
+                
+                if (blogId != 0) {
+                    if (function.IsBlogPresentByBlogId(blogId, con)) {
+
+                        blogByBlogId = blog.blogByBlogId(blogId, con);
+                        try {
+                            function.increateBlogViewByBlogId(blogId, con);
+                        } catch (ClassNotFoundException | SQLException msg) {
+                            Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
+                        }
+
+                        try {
+                            blogByLimit = blog.blogByLimit(10, con);
+                        } catch (ClassNotFoundException | SQLException msg) {
+                            Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
+                        }
+
+                        try {
+                            commentOfBlogByBlogId = comment.getCommentOfBlogByBlogId(blogId, con);
+                        } catch (ClassNotFoundException | SQLException msg) {
+                            Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
+                        }
+
+                        page = "D_Blog.jsp";
+
+                    } else {
+                        message = "The blog you are looking for has been removed or delete. Sorry for the inconvenience";
+                        blog1 = blog.blog(con);
+                    }
+                } else {
+                    blog1 = blog.blog(con);
+                }
             }
         } catch (ClassNotFoundException | SQLException msg) {
-            gotException = "not null";
             Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
-            request.setAttribute("gotException", gotException);
-
             request.setAttribute("message", message);
 
+            request.setAttribute("funCategory", funCategory);
             request.setAttribute("blogByLimit", blogByLimit);
             request.setAttribute("blogByBlogId", blogByBlogId);
 

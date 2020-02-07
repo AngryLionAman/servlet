@@ -15,8 +15,10 @@
  */
 package com.admin.answer;
 
+import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,16 +52,23 @@ public class admin_answer_approval extends HttpServlet {
         AnswerApprovalAdminClassFile file = new AnswerApprovalAdminClassFile();
 
         String message = null;
-        try {
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection()) {
             int answerId = input.getInputInt(request.getParameter("answer_id"));
             String action = input.getInputString(request.getParameter("action"));
 
             if (answerId != 0 && action != null) {
                 if (action.equalsIgnoreCase("accept")) {
-                    if (!file.changeApprovaByAdmin(answerId)) {
+                    if (!file.changeApprovaByAdmin(con, answerId)) {
                         message = "Answer approved";
                     } else {
                         message = "Changing permission failed";
+                    }
+                } else if (action.equalsIgnoreCase("delete")) {
+                    if (!file.deleteAnswerApprovalById(con, answerId)) {
+                        message = "Answer delete successfully";
+                    } else {
+                        message = "Answer Not deleted, Please try again";
                     }
                 } else {
                     message = "There is no any other option";

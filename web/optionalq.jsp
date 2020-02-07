@@ -1,12 +1,8 @@
-<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <jsp:useBean class="com.optionalQuestion.supportingFunction" id="opt_fun" scope="page"/>
-<c:if test="${list eq null}">
-    <c:redirect url="optionalquestion"/>
-</c:if>
+
 <html lang="en">
     <head>
         <%@include file="googleAnalytics.jsp" %>
@@ -163,7 +159,7 @@
                                     <ul>
                                         <c:if test="${totalNumberOfOption ne null and not empty totalNumberOfOption}">
                                             <c:catch var="msg">
-                                                <c:forEach items="${opt_fun.totalNumberOfOption()}" var="m">
+                                                <c:forEach items="${totalNumberOfOption}" var="m">
                                                     <li><a href="optionalquestion?option=${m}">${word.convertStringUpperToLower(m)}</a></li>
                                                     </c:forEach>
                                                 </c:catch>

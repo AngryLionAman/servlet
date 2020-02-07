@@ -15,11 +15,12 @@
  */
 package com.approval.user;
 
+import com.connect.DatabaseConnection;
 import com.notifications.CreateNotification;
 import com.notifications.SupportingClassFile;
 import com.string.validateInput;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,9 +45,11 @@ public class action_approval_by_user extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException, ClassNotFoundException {
         response.setContentType("text/html;charset=UTF-8");
 
         validateInput input = new validateInput();
@@ -58,7 +61,8 @@ public class action_approval_by_user extends HttpServlet {
         int oldQuestionId = 0;
         String path = "questions";
 
-        try {
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection()) {
 
             int notifiaction_id = input.getInputInt(request.getParameter("notifiaction_id"));
             oldQuestionId = input.getInputInt(request.getParameter("old_question_id"));
@@ -68,13 +72,13 @@ public class action_approval_by_user extends HttpServlet {
 
             if (oldQuestionId != 0 && newQuestionId != 0 && action != null) {
                 if (action.equalsIgnoreCase("Accept")) {
-                    if (classFile.isApprovedByAdmin(newQuestionId)) {
-                        if (!classFile.replaceOldQuestionWithNewQuestionAndNewQuestionWithNullAndChangePermission(oldQuestionId, newQuestionId, reason_message)) {
-                            if (!file.deleteNotificationByNotificationId(notifiaction_id)) {
-                                if (!classFile.changePermissionOfQuestionByUser(newQuestionId, reason_message)) {
-                                    int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(newQuestionId);
+                    if (classFile.isApprovedByAdmin(con, newQuestionId)) {
+                        if (!classFile.replaceOldQuestionWithNewQuestionAndNewQuestionWithNullAndChangePermission(con, oldQuestionId, newQuestionId, reason_message)) {
+                            if (!file.deleteNotificationByNotificationId(con, notifiaction_id)) {
+                                if (!classFile.changePermissionOfQuestionByUser(con, newQuestionId, reason_message)) {
+                                    int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(con, newQuestionId);
                                     if (whoModifiedTheQuestion != 0) {
-                                        if (!notification.requestHasBeenApprovedForQuestion(whoModifiedTheQuestion, oldQuestionId)) {
+                                        if (!notification.requestHasBeenApprovedForQuestion(con, whoModifiedTheQuestion, oldQuestionId)) {
                                             message = "Approval successful, Notification has been successfully sent to user";
                                         } else {
                                             message = "Approval notification failed to send";
@@ -92,9 +96,9 @@ public class action_approval_by_user extends HttpServlet {
                             message = "Question modification operaion failed, Please try agin or report to admin";
                         }
                     } else {
-                        if (!classFile.changePermissionOfQuestionByUser(newQuestionId, reason_message)) {
-                            if (!file.deleteNotificationByNotificationId(notifiaction_id)) {
-                                int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(newQuestionId);
+                        if (!classFile.changePermissionOfQuestionByUser(con, newQuestionId, reason_message)) {
+                            if (!file.deleteNotificationByNotificationId(con, notifiaction_id)) {
+                                int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(con, newQuestionId);
                                 if (whoModifiedTheQuestion != 0) {
                                     if (!notification.questionApprovedByUser(whoModifiedTheQuestion, oldQuestionId)) {
                                         message = "Question is approved by You, Approval is panding by the admin";
@@ -112,11 +116,11 @@ public class action_approval_by_user extends HttpServlet {
                         }
                     }
                 } else if (action.equalsIgnoreCase("Delete")) {
-                    if (!classFile.questionRequestRejectedByUser(newQuestionId, reason_message)) {
-                        if (!file.deleteNotificationByNotificationId(notifiaction_id)) {
-                            int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(newQuestionId);
+                    if (!classFile.questionRequestRejectedByUser(con, newQuestionId, reason_message)) {
+                        if (!file.deleteNotificationByNotificationId(con, notifiaction_id)) {
+                            int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(con, newQuestionId);
                             if (whoModifiedTheQuestion != 0) {
-                                if (!notification.questionRejectedByUser(whoModifiedTheQuestion, oldQuestionId)) {
+                                if (!notification.questionRejectedByUser(con, whoModifiedTheQuestion, oldQuestionId)) {
                                     message = "You have rejected the modification of question request, it has been informaed to the user";
                                 } else {
                                     message = "Failed to send the rejection notification to the user.";
@@ -157,7 +161,11 @@ public class action_approval_by_user extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(action_approval_by_user.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -171,7 +179,11 @@ public class action_approval_by_user extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(action_approval_by_user.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

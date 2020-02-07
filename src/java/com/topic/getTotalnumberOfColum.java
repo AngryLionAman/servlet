@@ -15,7 +15,6 @@
  */
 package com.topic;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,22 +30,20 @@ public class getTotalnumberOfColum {
 
     /**
      *
+     * @param con
      * @param topicId
      * @param recordPerPage
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public int totalNumberOfPageOfTopicByTopicId(int topicId, int recordPerPage) throws SQLException, ClassNotFoundException {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public int totalNumberOfPageOfTopicByTopicId(Connection con, int topicId, int recordPerPage) throws SQLException, ClassNotFoundException {
 
         float totalNumberOfpage = 0;
 
         String sql = "select count(*) as cnt from question q right join question_topic_tag qtt on qtt.question_id = q.q_id where tag_id = ?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -68,20 +65,18 @@ public class getTotalnumberOfColum {
 
     /**
      *
+     * @param con
      * @param recordPerPage
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int totalNumberOfColumnOfTopic(int recordPerPage) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public int totalNumberOfColumnOfTopic(Connection con, int recordPerPage) throws SQLException, ClassNotFoundException, Exception {
 
         float totalNumberOfpage = 0;
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement("select count(*) as cnt from topic");
+        try (PreparedStatement ps = con.prepareStatement("select count(*) as cnt from topic");
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 totalNumberOfpage = rs.getInt("cnt");

@@ -16,7 +16,6 @@
 package com.question;
 
 import com.answer.time;
-import com.connect.DatabaseConnection;
 import com.index.indexPage;
 import com.index.recentQuestionPojo;
 import java.sql.Connection;
@@ -36,18 +35,16 @@ public class GetAllQuestionClass {
 
     /**
      *
+     * @param con
      * @return @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int TotalNoOfPage() throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public int TotalNoOfPage(Connection con) throws SQLException, ClassNotFoundException, Exception {
 
         int totalNumberOfpage = 0;
         int recordPerPage = 20;
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement("select count(*) as cnt from question");
+        try (PreparedStatement ps = con.prepareStatement("select count(*) as cnt from question");
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 totalNumberOfpage = rs.getInt("cnt");
@@ -66,20 +63,19 @@ public class GetAllQuestionClass {
 
     /**
      *
+     * @param con
      * @param pageNo
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public List<recentQuestionPojo> AllQuestion(int pageNo) throws SQLException, ClassNotFoundException, Exception {
+    public List<recentQuestionPojo> AllQuestion(Connection con, int pageNo) throws SQLException, ClassNotFoundException, Exception {
 
         List<recentQuestionPojo> list = new ArrayList<>();
-       // indexPageExtraFunction function = new indexPageExtraFunction();
+        // indexPageExtraFunction function = new indexPageExtraFunction();
         indexPage index = new indexPage();
         time time = new time();
-
-        DatabaseConnection connection = new DatabaseConnection();
 
         if (pageNo < 1) {
             pageNo = 1;
@@ -91,8 +87,7 @@ public class GetAllQuestionClass {
                 + "user.id,user.firstname,user.username,user.user_type,user.higher_edu from question q inner join newuser user "
                 + "on user.id = q.id ORDER BY q.q_id DESC limit ?,?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, startPage);
             ps.setInt(2, recordPerPage);
             try (ResultSet rs = ps.executeQuery()) {
@@ -100,7 +95,7 @@ public class GetAllQuestionClass {
                     int totalView = rs.getInt("q.total_view");
                     String date = rs.getString("date");
                     int questionId = rs.getInt("q.q_id");
-                    int days = time.showTime(questionId);
+                    int days = time.showTime(con, questionId);
                     String question = rs.getString("q.question");
                     int vote = rs.getInt("q.vote");
                     String fullName = rs.getString("user.firstname");
@@ -108,7 +103,7 @@ public class GetAllQuestionClass {
                     String userType = rs.getString("user.user_type");
                     String higherEdu = rs.getString("user.higher_edu");
                     int userId = rs.getInt("user.id");
-                    int totalAnswer = index.totalAnswer(questionId);
+                    int totalAnswer = index.totalAnswer(con,questionId);
                     //function.updateQuestionView(questionId); //Creating some problem
                     recentQuestionPojo recentQuestionPojo = new recentQuestionPojo(totalView, date, days, questionId, question, vote, fullName, userName, userType, higherEdu, userId, totalAnswer);
                     list.add(recentQuestionPojo);

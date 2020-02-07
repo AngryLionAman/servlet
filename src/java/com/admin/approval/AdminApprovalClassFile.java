@@ -15,7 +15,6 @@
  */
 package com.admin.approval;
 
-import com.approval.user.ActionApprovalClassFile;
 import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,12 +36,11 @@ public class AdminApprovalClassFile {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean isApprovedByUser(int newQuestionId) throws SQLException, ClassNotFoundException {
+    public boolean isApprovedByUser(Connection con, int newQuestionId) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT approved_by_user AS permission FROM modified_question_table WHERE unique_id = ?";
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, newQuestionId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

@@ -15,9 +15,11 @@
  */
 package com.question.modify;
 
+import com.connect.DatabaseConnection;
 import com.question.Question;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,11 +70,15 @@ public class modify_question extends HttpServlet {
             userIdWhoPostedQuestion = input.getInputInt(request.getParameter("q_u_id"));
 
             if (questionId != 0) {
-                if (ques.IsQuestionPresentByQuestionId(questionId)) {
-                    path = "modify_question.jsp";
-                } else {
-                    message = "The question id you are looking for is not availabe in database, please try again";
+                DatabaseConnection connection = new DatabaseConnection();
+                try (Connection con = DatabaseConnection.makeConnection()) {
+                    if (ques.IsQuestionPresentByQuestionId(con, questionId)) {
+                        path = "modify_question.jsp";
+                    } else {
+                        message = "The question id you are looking for is not availabe in database, please try again";
+                    }
                 }
+
             } else {
                 message = "Hitting the invalid argumet, Please try again";
             }

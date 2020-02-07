@@ -5,7 +5,6 @@
  */
 package com.profile;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,16 +20,13 @@ import java.util.logging.Logger;
  */
 public class EditUserProfileClassFile {
 
-    public List<EditProfilePojoClass> getProfileDataById(int profileId) throws SQLException, ClassNotFoundException {
+    public List<EditProfilePojoClass> getProfileDataById(Connection con, int profileId) throws SQLException, ClassNotFoundException {
 
         List<EditProfilePojoClass> list = new ArrayList<>();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "SELECT id,username,firstname AS fullname, email,higher_edu,best_achievement,bio,imagepath FROM newuser WHERE id  = ? LIMIT 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, profileId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -63,14 +59,11 @@ public class EditUserProfileClassFile {
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public boolean saveUserProfile(int userId, String higherQualification, String bestAchievement, String Bio) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean saveUserProfile(Connection con, int userId, String higherQualification, String bestAchievement, String Bio) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "update newuser set higher_edu = ?,best_achievement = ? ,bio = ? where id = ?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement preparedStatement = con.prepareStatement(sql)) {
+        try (PreparedStatement preparedStatement = con.prepareStatement(sql)) {
             preparedStatement.setString(1, higherQualification);
             preparedStatement.setString(2, bestAchievement);
             preparedStatement.setString(3, Bio);

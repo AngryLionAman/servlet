@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.admin.comments;
+package com.admin.login;
 
 import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -27,13 +28,15 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import com.user.SupportingFunction;
 
 /**
  *
  * @author AngryLion
  */
-@WebServlet(name = "commet_approval", urlPatterns = {"/commet_approval"})
-public class commet_approval extends HttpServlet {
+@WebServlet(name = "login", urlPatterns = {"/login"})
+public class login extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,48 +46,22 @@ public class commet_approval extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
-     * @throws java.sql.SQLException
-     * @throws java.lang.ClassNotFoundException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException, ClassNotFoundException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
-        validateInput input = new validateInput();
-        CommentApprovalClassFile file = new CommentApprovalClassFile();
-
-        String message = null;
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection()) {
-            int commet_id = input.getInputInt(request.getParameter("commet_id"));
-            String action = input.getInputString(request.getParameter("action"));
-
-            if (commet_id != 0 && action != null) {
-                if (action.equalsIgnoreCase("accept")) {
-                    if (!file.changePermissionOfComment(con, commet_id)) {
-                        message = "permission changed successful";
-                    } else {
-                        message = "Change permission failed";
-                    }
-                } else if (action.equalsIgnoreCase("delete")) {
-                    if (!file.deleteApprovalCommentById(con, commet_id)) {
-                        message = "Comment deleted successfully";
-                    } else {
-                        message = "Comment not deleted, Please try again";
-                    }
-                } else {
-                    message = "There is no any another option except 'Accept' ";
-                }
-            } else {
-                message = "Comment is null";
-            }
-        } catch (ClassNotFoundException | SQLException msg) {
-            Logger.getLogger(commet_approval.class.getName()).log(Level.SEVERE, null, msg);
-        } finally {
-            request.setAttribute("message", message);
-            request.getRequestDispatcher("Admin/approva_by_admin_commet.jsp").forward(request, response);
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet login</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet login at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         }
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -99,11 +76,7 @@ public class commet_approval extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(commet_approval.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -117,10 +90,47 @@ public class commet_approval extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String message = null;
+        String path = "Admin/visit.jsp";
         try {
-            processRequest(request, response);
+            HttpSession session = request.getSession(false);
+            validateInput input = new validateInput();
+            AdminLoginClassFile file = new AdminLoginClassFile();
+            SupportingFunction function = new SupportingFunction();
+
+            DatabaseConnection connection = new DatabaseConnection();
+            try (Connection con = DatabaseConnection.makeConnection()) {
+
+                String email = input.getInputString(request.getParameter("email"));
+                String password = input.getInputString(request.getParameter("password"));
+                String code = input.getInputString(request.getParameter("code"));
+
+                if (email != null && password != null && code != null) {
+                    if (code.equals("sampur")) {
+                        if (file.validateAdminUser(con, email, password)) {
+
+                            session.setAttribute("adminUserId", function.GetUserIdByEmail(con, email));
+                            session.setAttribute("userName", function.GetUserNameByEmail(con, email));
+                            session.setMaxInactiveInterval(600);
+                            path = "Admin/adminModule.jsp";
+                        } else {
+                            message = "UserName and Password not valid";
+                        }
+                    } else {
+                        message = "Security code not valid, Contact to admin";
+                    }
+                } else {
+                    message = "All field value required";
+                }
+
+            } catch (Exception msg) {
+                Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, msg);
+            }
         } catch (SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(commet_approval.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            request.setAttribute("message", message);
+            request.getRequestDispatcher(path).forward(request, response);
         }
     }
 

@@ -15,7 +15,6 @@
  */
 package com.question.user;
 
-import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,19 +31,17 @@ public class questionClass {
 
     /**
      *
+     * @param con
      * @param tagid
      * @param questionid
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public void SaveTagIdAndQuestionId(int tagid, int questionid) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public void SaveTagIdAndQuestionId(Connection con, int tagid, int questionid) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "insert into question_topic_tag(question_id,tag_id) values(?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionid);
             ps.setInt(2, tagid);
             ps.execute();
@@ -56,21 +53,19 @@ public class questionClass {
 
     /**
      *
+     * @param con
      * @param topicname
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public static int GetTopicIdByTopicName(String topicname) throws SQLException, ClassNotFoundException, Exception {
+    public static int GetTopicIdByTopicName(Connection con, String topicname) throws SQLException, ClassNotFoundException, Exception {
 
         validateInput input = new validateInput();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "select unique_id from topic where lower(topic_name) = ? limit 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, input.getInputString(topicname).toLowerCase());
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -85,20 +80,18 @@ public class questionClass {
 
     /**
      *
+     * @param con
      * @param tagId
      * @param questionId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean IsTagIdIntegratedWithQuestionId(int tagId, int questionId) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean IsTagIdIntegratedWithQuestionId(Connection con, int tagId, int questionId) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "SELECT unique_id FROM question_topic_tag WHERE question_id = ? AND tag_id = ? LIMIT 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
             ps.setInt(2, tagId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -112,20 +105,21 @@ public class questionClass {
 
     /**
      *
+     * @param con
      * @param questionid
      * @param complete_tag
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean SaveTagWithQuestionId(int questionid, String complete_tag) throws SQLException, ClassNotFoundException, Exception {
+    public boolean SaveTagWithQuestionId(Connection con, int questionid, String complete_tag) throws SQLException, ClassNotFoundException, Exception {
 
         String[] tag = complete_tag.split(",");
         for (String obj : tag) {
-            int topicid = GetTopicIdByTopicName(obj);
+            int topicid = GetTopicIdByTopicName(con, obj);
             if (topicid != 0) {
-                if (!IsTagIdIntegratedWithQuestionId(topicid, questionid)) {
-                    SaveTagIdAndQuestionId(topicid, questionid);
+                if (!IsTagIdIntegratedWithQuestionId(con, topicid, questionid)) {
+                    SaveTagIdAndQuestionId(con, topicid, questionid);
                 } else {
                     //Do Nothing
                 }
@@ -138,21 +132,18 @@ public class questionClass {
 
     /**
      *
+     * @param con
      * @param topic
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean IsTopicIsPresent(String topic) throws SQLException, ClassNotFoundException, Exception {
+    public boolean IsTopicIsPresent(Connection con, String topic) throws SQLException, ClassNotFoundException, Exception {
 
         validateInput input = new validateInput();
-
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "select topic_name from topic where lower(topic_name) = ? limit 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, input.getInputString(topic).toLowerCase());
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.first();
@@ -165,21 +156,19 @@ public class questionClass {
 
     /**
      *
+     * @param con
      * @param topic
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean SaveTopic(String topic) throws SQLException, ClassNotFoundException, Exception {
+    public boolean SaveTopic(Connection con, String topic) throws SQLException, ClassNotFoundException, Exception {
 
         validateInput input = new validateInput();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "insert into topic(topic_name) values(?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, input.getInputString(topic).toLowerCase());
             return ps.execute();
         } catch (SQLException msg) {
@@ -190,16 +179,17 @@ public class questionClass {
 
     /**
      *
+     * @param con
      * @param tag
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean SaveTag(String tag) throws SQLException, ClassNotFoundException, Exception {
+    public boolean SaveTag(Connection con, String tag) throws SQLException, ClassNotFoundException, Exception {
         String[] arrSplit = tag.split(",");
         for (String obj : arrSplit) {
-            if (!IsTopicIsPresent(obj)) {
-                SaveTopic(obj);
+            if (!IsTopicIsPresent(con, obj)) {
+                SaveTopic(con, obj);
             }
         }
         return false;
@@ -207,19 +197,17 @@ public class questionClass {
 
     /**
      *
+     * @param con
      * @param question
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int GetQuestionIdByQuestion(String question) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public int GetQuestionIdByQuestion(Connection con, String question) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "SELECT q_id FROM question WHERE question = ? ORDER BY q_id DESC LIMIT 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, question);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -234,19 +222,17 @@ public class questionClass {
 
     /**
      *
+     * @param con
      * @param userid
      * @param question
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean SaveQuestionByQuestionAndTagandUserId(int userid, String question) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean SaveQuestionByQuestionAndTagandUserId(Connection con, int userid, String question) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "INSERT INTO question(id,question) VALUES(?,?)";
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userid);
             ps.setString(2, question);
             return ps.execute();

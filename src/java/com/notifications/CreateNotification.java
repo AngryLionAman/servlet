@@ -84,14 +84,11 @@ public class CreateNotification {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean questionRejectedByAdmin(int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean questionRejectedByAdmin(Connection con, int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
 
         String sql = "INSERT INTO notification (user_id,content_id,notification_type,creater_id)VALUES(?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, oldQuestionId);
             ps.setString(3, "question_approvel_rejected_by_admin");
@@ -112,14 +109,12 @@ public class CreateNotification {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean questionRejectedByUser(int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
+    public boolean questionRejectedByUser(Connection con,int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
 
         String sql = "INSERT INTO notification (user_id,content_id,notification_type,creater_id)VALUES(?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try ( PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, oldQuestionId);
             ps.setString(3, "question_approvel_rejected_by_user");
@@ -140,14 +135,11 @@ public class CreateNotification {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean questionApprovedByAdmin(int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean questionApprovedByAdmin(Connection con, int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
 
         String sql = "INSERT INTO notification (user_id,content_id,notification_type,creater_id)VALUES(?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, oldQuestionId);
             ps.setString(3, "question_approved_by_admin");
@@ -194,14 +186,11 @@ public class CreateNotification {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean requestHasBeenApprovedForQuestion(int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean requestHasBeenApprovedForQuestion(Connection con, int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
 
         String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id)VALUES(?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, "modified_question_approved");
             ps.setInt(3, 0);
@@ -215,6 +204,7 @@ public class CreateNotification {
 
     /**
      *
+     * @param con
      * @param userId
      * @param followerdId
      * @param questionId
@@ -222,14 +212,11 @@ public class CreateNotification {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean modificationOfQuestionRequest(int userId, int followerdId, int questionId) throws SQLException, ClassNotFoundException {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean modificationOfQuestionRequest(Connection con, int userId, int followerdId, int questionId) throws SQLException, ClassNotFoundException {
 
         String sql = "INSERT INTO notification (user_id,creater_id,content_id,notification_type)VALUES(?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, followerdId);
             ps.setInt(3, questionId);
@@ -243,6 +230,7 @@ public class CreateNotification {
 
     /**
      *
+     * @param con
      * @param userid
      * @param useridWhoPostedQuestion
      * @param questionid
@@ -250,19 +238,16 @@ public class CreateNotification {
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean UserGotAnswerOfQuestion(int userid, int useridWhoPostedQuestion, int questionid) throws SQLException, ClassNotFoundException, Exception {
+    public boolean UserGotAnswerOfQuestion(Connection con, int userid, int useridWhoPostedQuestion, int questionid) throws SQLException, ClassNotFoundException, Exception {
         /*
         @userid - aslo consider as followers_id, Who gave the answer, id of current active user
         @useridWhoPostedQuestion - who asked the question
         @questionid - id of question
          */
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id)VALUES(?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             /* In MySql
             @user_id - who will get the notification, mean who posted the questiion
             @notification_type - 

@@ -15,8 +15,10 @@
  */
 package com.optionalQuestion;
 
+import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -33,7 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 public class displayOptionalQuestion extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException, ClassNotFoundException {
+        
         validateInput input = new validateInput();
         DisplayOptionalQuestionClassFile file = new DisplayOptionalQuestionClassFile();
         supportingFunction function = new supportingFunction();
@@ -44,7 +47,8 @@ public class displayOptionalQuestion extends HttpServlet {
 
         int totalNoOfPage = 0;
 
-        try {
+        DatabaseConnection connection = new DatabaseConnection(); 
+        try (Connection con = DatabaseConnection.makeConnection()) {
             final int recordPerPage = 30;
 
             int pageNo = 0;
@@ -69,26 +73,26 @@ public class displayOptionalQuestion extends HttpServlet {
             }
 
             try {
-                onTopicName = function.onTopicName();
+                onTopicName = function.onTopicName(con);
             } catch (ClassNotFoundException | SQLException msg) {
                 Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, msg);
             }
 
             try {
-                totalNumberOfOption = function.totalNumberOfOption();
+                totalNumberOfOption = function.totalNumberOfOption(con);
             } catch (ClassNotFoundException | SQLException msg) {
                 Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, msg);
             }
 
             if (numOfoption != 0) {
-                optionalQuestionByLimit = file.getOptionalQuestionByNoOfPage(numOfoption, pageNo, recordPerPage);
-                totalNoOfPage = file.getTotalNoOfPageByNoOfPage(recordPerPage, numOfoption);
+                optionalQuestionByLimit = file.getOptionalQuestionByNoOfPage(con,numOfoption, pageNo, recordPerPage);
+                totalNoOfPage = file.getTotalNoOfPageByNoOfPage(con,recordPerPage, numOfoption);
             } else if (basedOn != null && !"all".equalsIgnoreCase(basedOn)) {
-                optionalQuestionByLimit = file.getOptionalQuestionByBasedOn(basedOn, pageNo, recordPerPage);
-                totalNoOfPage = file.getTotalNoOfPageByBasedOn(recordPerPage, basedOn);
+                optionalQuestionByLimit = file.getOptionalQuestionByBasedOn(con,basedOn, pageNo, recordPerPage);
+                totalNoOfPage = file.getTotalNoOfPageByBasedOn(con,recordPerPage, basedOn);
             } else {
-                optionalQuestionByLimit = file.getOptionalQuestionByLimit(pageNo, recordPerPage);
-                totalNoOfPage = file.getTotalNoOfPage(recordPerPage);
+                optionalQuestionByLimit = file.getOptionalQuestionByLimit(con,pageNo, recordPerPage);
+                totalNoOfPage = file.getTotalNoOfPage(con,recordPerPage);
             }
 
         } catch (ClassNotFoundException | SQLException msg) {
@@ -104,7 +108,11 @@ public class displayOptionalQuestion extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        processRequest(req, resp);
+        try {
+            processRequest(req, resp);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -116,6 +124,10 @@ public class displayOptionalQuestion extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

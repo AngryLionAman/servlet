@@ -15,12 +15,13 @@
  */
 package com.password;
 
+import com.connect.DatabaseConnection;
 import com.mail.Mail;
 import com.string.ValidateWithRegularExpression;
 import com.string.validateInput;
 import com.user.SupportingFunction;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,9 +44,11 @@ public class ForgetPasswordsServlet extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException, ClassNotFoundException {
 
         validateInput input = new validateInput();
         ValidateWithRegularExpression expression = new ValidateWithRegularExpression();
@@ -53,12 +56,13 @@ public class ForgetPasswordsServlet extends HttpServlet {
 
         String message = null;
         String path = "forgotpassword.jsp";
-        try {
+        DatabaseConnection connection = new DatabaseConnection();
+        try (Connection con = DatabaseConnection.makeConnection()){
             String userEmail = input.getInputString(request.getParameter("mail"));
             if (userEmail != null) {
                 if (expression.validateEamil(userEmail)) {
-                    if (supportingFunction.EmailIsAvaliabe(userEmail)) {
-                        Mail.sendMail(userEmail, supportingFunction.GetFullNameByEmail(userEmail), 8901);
+                    if (supportingFunction.EmailIsAvaliabe(con,userEmail)) {
+                        Mail.sendMail(userEmail, supportingFunction.GetFullNameByEmail(con,userEmail), 8901);
                         message = "Mail has been sent, Please check your inbox";
                     } else {
                         message = "This Email is not available in our database, Please create the new account";
@@ -91,7 +95,11 @@ public class ForgetPasswordsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(ForgetPasswordsServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -105,7 +113,11 @@ public class ForgetPasswordsServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(ForgetPasswordsServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 

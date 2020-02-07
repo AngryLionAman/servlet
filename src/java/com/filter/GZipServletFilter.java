@@ -63,5 +63,4 @@ public class GZipServletFilter implements Filter {
     public void destroy() {
 
     }
-
 }

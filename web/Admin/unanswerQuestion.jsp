@@ -22,9 +22,13 @@
     </head>
     <body>
         <h1>Hello, ${sessionScope.userName}
-            <a href="adminModule.jsp">Home</a>, <a href="<%=request.getContextPath()%>/Logout">Logout</a>
+            <a href="<%=request.getContextPath()%>/Admin/adminModule.jsp">Home</a>, <a href="<%=request.getContextPath()%>/Logout">Logout</a>
             , <a href="<%=request.getContextPath()%>/Admin/unanswerQuestion.jsp">Refresh</a>
         </h1>
+        <c:if test="${message ne null}">
+            <h1>${message}</h1>
+        </c:if>
+
         <c:choose>
             <c:when test="${param.qId ne null and not empty param.qId}">
                 <h1>Q : ${param.question}(${param.qId})</h1>
@@ -40,27 +44,27 @@
                 <c:if test="${param.msg ne null}">
                 <center> <h1 style="color: green;">${param.msg}</h1></center>
                 </c:if>
-                <h1>Total answered question.....</h1>
-                <table border="1">
+            <h1>Total answered question.....</h1>
+            <table border="1">
+                <tr>
+                    <th>ID</th>
+                    <th>Question</th>
+                    <th>Date</th>
+                    <th>Posted by</th>
+                    <th>Action</th>
+                </tr>
+                <c:forEach items="${question.question()}" var="q">
                     <tr>
-                        <th>ID</th>
-                        <th>Question</th>
-                        <th>Date</th>
-                        <th>Posted by</th>
-                        <th>Action</th>
+                        <td>${q.questionId}</td>
+                        <td>${q.question}</td>
+                        <td>${q.date}</td>
+                        <td>${q.postedByName}(${q.postedById})</td>
+                        <td><a href="?qId=${q.questionId}&question=${word.UrlFormat(q.question)}&postedById=${q.postedById}">Answer This</a></td>
                     </tr>
-                    <c:forEach items="${question.question()}" var="q">
-                        <tr>
-                            <td>${q.questionId}</td>
-                            <td>${q.question}</td>
-                            <td>${q.date}</td>
-                            <td>${q.postedByName}(${q.postedById})</td>
-                            <td><a href="?qId=${q.questionId}&question=${word.UrlFormat(q.question)}&postedById=${q.postedById}">Answer This</a></td>
-                        </tr>
-                    </c:forEach>
-                </table>
-            </c:otherwise>
-        </c:choose>
+                </c:forEach>
+            </table>
+        </c:otherwise>
+    </c:choose>
 
-    </body>
+</body>
 </html>

@@ -15,7 +15,6 @@
  */
 package com.profile;
 
-import com.connect.DatabaseConnection;
 import com.string.WordFormating;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,20 +33,18 @@ public class profileDetailClassFile {
 
     /**
      *
+     * @param con
      * @param username
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int GetUserIdByUserName(String username) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public int GetUserIdByUserName(Connection con, String username) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "select id from newuser where not user_type <=> 'guest' and firstname is not null and username = ? limit 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -62,15 +59,14 @@ public class profileDetailClassFile {
 
     /**
      *
+     * @param con
      * @param userid
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public List<profileDetialPojoFile> GetUserDetailByUserId(int userid) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public List<profileDetialPojoFile> GetUserDetailByUserId(Connection con, int userid) throws SQLException, ClassNotFoundException, Exception {
 
         List<profileDetialPojoFile> list = new ArrayList<>();
 
@@ -79,8 +75,7 @@ public class profileDetailClassFile {
         String sql = "select id,username,firstname,email,email_s,higher_edu,best_achievement,bio,imagepath,total_view "
                 + "from newuser where not user_type <=> 'guest' and firstname is not null and id = ? limit 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userid);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -106,20 +101,18 @@ public class profileDetailClassFile {
 
     /**
      *
+     * @param con
      * @param userId
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public boolean IsUserPresent(int userId) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean IsUserPresent(Connection con, int userId) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "SELECT username FROM newuser where not user_type <=> 'guest' and firstname is not null and id = ? limit 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.first();
@@ -132,20 +125,18 @@ public class profileDetailClassFile {
 
     /**
      *
+     * @param con
      * @param username
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public boolean IsUserPresent(String username) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean IsUserPresent(Connection con, String username) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "SELECT username FROM newuser where not user_type <=> 'guest' and firstname is not null and username = ? limit 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.first();

@@ -15,7 +15,6 @@
  */
 package com.user;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,9 +28,7 @@ import java.util.logging.Logger;
  */
 public class newUser {
 
-    private int getUserId(String userName, String email) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    private int getUserId(Connection con, String userName, String email) throws SQLException, ClassNotFoundException, Exception {
 
         String sql;
         if (email != null) {
@@ -40,8 +37,7 @@ public class newUser {
             sql = "select id from newuser where username = ? and email is ?";
         }
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, userName);
             ps.setString(2, email);
             try (ResultSet rs = ps.executeQuery()) {
@@ -57,6 +53,7 @@ public class newUser {
 
     /**
      *
+     * @param con
      * @param userName
      * @param userFullName
      * @param email
@@ -66,21 +63,18 @@ public class newUser {
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int saveNewGuestUser(String userName, String userFullName, String email, String userType) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public int saveNewGuestUser(Connection con, String userName, String userFullName, String email, String userType) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "insert into newuser(username,firstname,user_type,email)values(?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, userName);
             ps.setString(2, userFullName);
             ps.setString(3, userType);
             ps.setString(4, email);
             ps.execute();
             //Get the userId
-            return getUserId(userName, email);
+            return getUserId(con, userName, email);
         } catch (SQLException msg) {
             Logger.getLogger(newUser.class.getName()).log(Level.SEVERE, null, msg);
         }

@@ -41,7 +41,7 @@
         </h1>
 
         <c:if test="${message ne null}">
-            ${message}<br><br>
+            <font style="color: green;font-size: 30px;text-align: center;">${message}</font><br><br>
         </c:if>
 
         <sql:query dataSource="jdbc/mydatabase" var="c" >
@@ -68,7 +68,10 @@
                     <td>${t.approved_by_user}</td>
                     <td>${t.approved_by_admin}</td>
                     <td>${t.postedtime}</td>
-                    <td><a href="<%=request.getContextPath()%>/admin_answer_approval?answer_id=${t.a_id}&action=accept">Accept</a></td>
+                    <td>
+                        <a href="<%=request.getContextPath()%>/admin_answer_approval?answer_id=${t.a_id}&action=accept">Accept</a>&nbsp;
+                        <a href="<%=request.getContextPath()%>/admin_answer_approval?answer_id=${t.a_id}&action=delete">Delete</a>
+                    </td>
                 </tr>
             </c:forEach>
         </table>

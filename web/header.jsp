@@ -27,11 +27,11 @@
                     return false;
                 } else
                 {
-                    var a = document.forms["Form"]["q"].value;
-                    var http = new XMLHttpRequest();
-                    http.open("POST", "saveSearchedQuaryServlet?query=" + a + "&id=${sessionScope.Session_id_of_user}", true);
-                    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    http.send();
+                    /* var a = document.forms["Form"]["q"].value;
+                     var http = new XMLHttpRequest();
+                     http.open("POST", "saveSearchedQuaryServlet?query=" + a + "&id=${sessionScope.Session_id_of_user}", true);
+                     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                     http.send();*/
                     return true;
                 }
             }
@@ -50,17 +50,17 @@
             <c:choose>
                 <c:when test="${sessionScope.Session_id_of_user ne null}">
                     <c:catch var="m">
-                            <a href="logout" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
+                        <a href="logout" class="helpicon" style="color: white;padding-left: 10px;padding-right: 30px;">Logout</a>
 
-                            <a href="" onclick="document.getElementById('myform').submit(); return false;" class="helpicon" style="display: inline; color: white;padding-left: 10px;padding-right: 10px;">
-                                Inbox 
-                                <c:if test="${nt.countNotificationByUserId(sessionScope.Session_id_of_user) gt 0}">
-                                    <span style="display: inline; top: -10px;right: -10px;padding: 5px 10px;border-radius: 50%;background-color: red;color: white;"> ${nt.countNotificationByUserId(sessionScope.Session_id_of_user)} </span>
-                                </c:if>
-                            </a>
-                            <a href="profile?user=${n_t.getUserNameById(sessionScope.Session_id_of_user)}&id=${sessionScope.Session_id_of_user}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 20px;">
-                                <b>${fun.firstName(n_t.getFullNameById(sessionScope.Session_id_of_user))}</b>
-                            </a>        
+                        <a href="" onclick="document.getElementById('myform').submit(); return false;" class="helpicon" style="display: inline; color: white;padding-left: 10px;padding-right: 10px;">
+                            Inbox 
+                            <c:if test="${nt.countNotificationByUserId(sessionScope.Session_id_of_user) gt 0}">
+                                <span style="display: inline; top: -10px;right: -10px;padding: 5px 10px;border-radius: 50%;background-color: red;color: white;"> ${nt.countNotificationByUserId(sessionScope.Session_id_of_user)} </span>
+                            </c:if>
+                        </a>
+                        <a href="profile?user=${n_t.getUserNameById(sessionScope.Session_id_of_user)}&id=${sessionScope.Session_id_of_user}" class="helpicon" style="color: white;padding-left: 10px;padding-right: 20px;">
+                            <b>${fun.firstName(n_t.getFullNameById(sessionScope.Session_id_of_user))}</b>
+                        </a>        
                     </c:catch>
                     <c:if test="${m ne null}">
                         ${m}

@@ -7,8 +7,6 @@
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<jsp:useBean class="com.topic.topicDetail" id="topic" scope="page"/>
-<jsp:useBean class="com.answer.SEO" id="tag" scope="page" />
 <c:if test="${sessionScope.adminUserId eq null}">
     <c:redirect url="visit.jsp?msg=Session is not valid"/>
 </c:if>
@@ -25,18 +23,21 @@
             </c:if>
             <a href="adminModule.jsp">Home</a>  <a href="topic.jsp?p=${param.p}">Back</a> <a href="<%=request.getContextPath()%>/Logout">Logout</a>
         </h1>
-        <c:forEach items="${topic.topic(param.id)}" var="t">
-            <h1>Edit Topic : ${t.topicName}</h1>
-            <h3>Topic Id :- <b style="color: green;">${t.topicId}</b></h3>
-            <h3>Total followers :- <b style="color: green;">${t.totalFollowers}</b></h3>
+        <sql:query dataSource="jdbc/mydatabase" var="topic_d">
+            select * from topic where unique_id = ?;
+            <sql:param value="${param.id}"/>
+        </sql:query>
+        <c:forEach items="${topic_d.rows}" var="t">
+            <h1>Edit Topic : ${t.topic_name}</h1>
+            <h3>Topic Id :- <b style="color: green;">${t.unique_id}</b></h3>
             <form action="saveTopicDetail.jsp" name="saveTopicDetail">            
                 <input name="p" value="${param.p}" type="hidden"/>
-                <input name="topicId" value="${t.topicId}" type="hidden"/>
-                <h3>Topic Name :- <input required="" size="60" style="color: green;" name="topic_name" type="text" value="${t.topicName}"/></h3>
-                <h3>Image Url:- <input size="60" style="color: green;" name="topic_url" type="text" value="${t.imageUrl}"/>
-                    <img src="<c:out value="${t.imageUrl}"/>" alt="Image" height="100" width="100"></h3>
-                <h3>Desc Hindi :- <textarea rows="10" cols="60" name="topic_desc_hindi" placeholder="This is description in hindi">${t.descHindi}</textarea></h3>
-                <h3>Desc English :- <textarea rows="10" cols="60" name="topic_desc_eng" placeholder="This is description in englsih">${t.descEng}</textarea></h3>
+                <input name="topicId" value="${t.unique_id}" type="hidden"/>
+                <h3>Topic Name :- <input required="" size="60" style="color: green;" name="topic_name" type="text" value="${t.topic_name}"/></h3>
+                <h3>Image Url:- <input size="60" style="color: green;" name="topic_url" type="text" value="${t.image_url}"/>
+                    <img src="<c:out value="${t.image_url}"/>" alt="Image" height="100" width="100"></h3>
+                <h3>Desc Hindi :- <textarea rows="10" cols="60" name="topic_desc_hindi" placeholder="This is description in hindi">${t.desc_hindi}</textarea></h3>
+                <h3>Desc English :- <textarea rows="10" cols="60" name="topic_desc_eng" placeholder="This is description in englsih">${t.desc_english}</textarea></h3>
                 Crawl Status status :
                 <select name="crawl">
                     <option value="1" selected="">Display</option>
@@ -62,8 +63,13 @@
                     <td>${q.q_id}</td>
                     <td>${q.question}</td>
                     <td>${q.id}</td>
-                    <td><c:forEach items="${tag.getQuestionTag(q.q_id)}" var="t">
-                            ${t},&nbsp;
+                    <td>
+                        <sql:query dataSource="jdbc/mydatabase" var="t">
+                            SELECT topic.unique_id AS tag_id, topic.topic_name AS topic_name FROM topic INNER JOIN question_topic_tag ON topic.unique_id = question_topic_tag.tag_id WHERE question_id = ? AND tag_id IS NOT NULL ORDER BY tag_id;
+                            <sql:param value="${q.q_id}"/>
+                        </sql:query> 
+                        <c:forEach items="${t.rows}" var="t">
+                            ${t.topic_name},&nbsp;
                         </c:forEach>
                     </td>
                 </tr>
@@ -71,7 +77,8 @@
         </table>
         <br><br>
         <form name="delete" action="<%=request.getContextPath()%>/deleteTopic" method="get">
-            <input type="hidden" name="topicId" value="${param.id}">
+            TopicId:-  <input type="text" name="topicId" value="${param.id}">
+            PageNo:-   <input type="text" name="pageNo" value="${param.p}">
             <input type="submit" value="delete">
         </form>
     </body>

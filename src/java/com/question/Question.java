@@ -16,9 +16,7 @@
 package com.question;
 
 import com.answer.time;
-import com.connect.DatabaseConnection;
 import com.index.indexPage;
-import com.index.indexPageExtraFunction;
 import com.index.recentQuestionPojo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,19 +36,17 @@ public class Question {
 
     /**
      *
+     * @param con
      * @param questionId
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean IsQuestionPresentByQuestionId(int questionId) throws SQLException, ClassNotFoundException {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean IsQuestionPresentByQuestionId(Connection con, int questionId) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT q_id FROM question WHERE q_id = ? LIMIT 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.first();
@@ -63,13 +59,12 @@ public class Question {
 
     /**
      *
+     * @param con
      * @return @throws Exception
      */
-    public List<RecentPostQUestionHavingAtLeastOneAnswerPojo> RecentPostQUestionHavingAtLeastOneAnswer() throws Exception {
+    public List<RecentPostQUestionHavingAtLeastOneAnswerPojo> RecentPostQUestionHavingAtLeastOneAnswer(Connection con) throws Exception {
 
         DateAndTime day = new DateAndTime();
-
-        DatabaseConnection connection = new DatabaseConnection();
 
         List<RecentPostQUestionHavingAtLeastOneAnswerPojo> list = new ArrayList<>();
 
@@ -99,8 +94,7 @@ public class Question {
                 + "q.q_id "
                 + "DESC LIMIT 20;";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql);
+        try (PreparedStatement ps = con.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 String userName = rs.getString("userName");
@@ -114,7 +108,7 @@ public class Question {
                 int questionVote = rs.getInt("questionVote");
                 Date lastModify = rs.getDate("lastModify");
                 int ansCount = rs.getInt("ansCount");
-                int days = day.GetDaysByQuestionId(questionId);
+                int days = day.GetDaysByQuestionId(con,questionId);
                 list.add(new RecentPostQUestionHavingAtLeastOneAnswerPojo(userName, fullName, userType, higherEdu, userId, questionId, question, questionView, questionVote, lastModify, ansCount, days));
             }
             return list;
@@ -126,32 +120,29 @@ public class Question {
 
     /**
      *
+     * @param con
      * @return @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public List<recentQuestionPojo> UnAnsweredQuestion() throws SQLException, ClassNotFoundException, Exception {
+    public List<recentQuestionPojo> UnAnsweredQuestion(Connection con) throws SQLException, ClassNotFoundException, Exception {
 
-        indexPageExtraFunction function = new indexPageExtraFunction();
         List<recentQuestionPojo> list = new ArrayList<>();
 
         time time = new time();
         indexPage index = new indexPage();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = " SELECT q.q_id,q.question,q.vote,q.total_view,q.posted_time,q.updated_time AS date,user.id,user.firstname,"
                 + "user.username,user.user_type,user.higher_edu FROM question q INNER JOIN newuser user ON user.id = q.id "
                 + "WHERE q.q_id NOT IN(SELECT q_id FROM answer) ORDER BY q.q_id DESC";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql);
+        try (PreparedStatement ps = con.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int totalView = rs.getInt("q.total_view");
                 String date = rs.getString("date");
                 int questionId = rs.getInt("q.q_id");
-                int days = time.showTime(questionId);
+                int days = time.showTime(con, questionId);
                 String question = rs.getString("q.question");
                 int vote = rs.getInt("q.vote");
                 String fullName = rs.getString("user.firstname");
@@ -159,8 +150,7 @@ public class Question {
                 String userType = rs.getString("user.user_type");
                 String higherEdu = rs.getString("user.higher_edu");
                 int userId = rs.getInt("user.id");
-                int totalAnswer = index.totalAnswer(questionId);
-                //function.updateQuestionView(questionId);// Update view by one is creating some probelm
+                int totalAnswer = index.totalAnswer(con,questionId);
                 recentQuestionPojo recentQuestionPojo = new recentQuestionPojo(totalView, date, days, questionId, question, vote, fullName, userName, userType, higherEdu, userId, totalAnswer);
                 list.add(recentQuestionPojo);
             }

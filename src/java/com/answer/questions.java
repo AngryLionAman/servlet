@@ -15,6 +15,7 @@
  */
 package com.answer;
 
+import com.connect.DatabaseConnection;
 import com.index.indexPage;
 import com.index.indexPageExtraFunction;
 import com.index.recentQuestionPojo;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.question.Question;
 import com.question.getQuestion;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -82,9 +84,12 @@ public class questions extends HttpServlet {
         int questionId = 0;
         String gotException = null;
 
-        try {
+        DatabaseConnection connection = new DatabaseConnection();
+        
+        try (final Connection con = DatabaseConnection.makeConnection()) {
+
             try {
-                randomQuestion = q.getRandomQuestion();
+                randomQuestion = q.getRandomQuestion(con);
             } catch (ClassNotFoundException | SQLException msg) {
                 Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
             }
@@ -98,38 +103,38 @@ public class questions extends HttpServlet {
             }
 
             if (questionId != 0) {
-                if (ques.IsQuestionPresentByQuestionId(questionId)) {
+                if (ques.IsQuestionPresentByQuestionId(con, questionId)) {
 
                     try {
-                        titleAndDescripiton = seo.getTitleAndDescripiton(questionId);
+                        titleAndDescripiton = seo.getTitleAndDescripiton(con, questionId);
                     } catch (Exception msg) {
                         Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
                     }
 
                     try {
-                        questionTag = seo.getQuestionTag(questionId);
+                        questionTag = seo.getQuestionTag(con, questionId);
                     } catch (Exception msg) {
                         Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
                     }
 
                     try {
-                        questionTagWithId = seo.getQuestionTagWithId(questionId);
+                        questionTagWithId = seo.getQuestionTagWithId(con, questionId);
                     } catch (Exception msg) {
                         Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
                     }
 
                     try {
-                        relatedQuestionById = q.getRelatedQuestionById(questionId);
+                        relatedQuestionById = q.getRelatedQuestionById(con, questionId);
                     } catch (ClassNotFoundException | SQLException msg) {
                         Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
                     }
 
-                    question = file.getQuestion(questionId);
+                    question = file.getQuestion(con, questionId);
 
-                    answerById = answer.getAnswerById(questionId);
+                    answerById = answer.getAnswerById(con, questionId);
 
                     try {
-                        function.updateQuestionView(questionId);
+                        function.updateQuestionView(con, questionId);
                     } catch (Exception msg) {
                         Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
                     }
@@ -140,6 +145,7 @@ public class questions extends HttpServlet {
             } else {
                 message = "Question id is zero, or you are hiting the invalid argumet";
             }
+
         } catch (Exception msg) {
             gotException = "Not null";
             message = "Got some unknown error. We already working on this, Please try agina or visit after some time";

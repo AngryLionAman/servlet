@@ -15,7 +15,6 @@
  */
 package com.blog;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,16 +31,15 @@ public class SupportingFunctionBlog {
     /**
      *
      * @param blogId
+     * @param con
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean IsBlogPresentByBlogId(int blogId) throws SQLException, ClassNotFoundException {
+    public boolean IsBlogPresentByBlogId(int blogId, Connection con) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
         String sql = "SELECT unique_id FROM blog WHERE unique_id = ? LIMIT 1";
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, blogId);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.first();
@@ -55,15 +53,14 @@ public class SupportingFunctionBlog {
     /**
      *
      * @param blogId
+     * @param con
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public void increateBlogViewByBlogId(int blogId) throws SQLException, ClassNotFoundException {
+    public void increateBlogViewByBlogId(int blogId, Connection con) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
         String sql = "UPDATE blog SET view = view + 1 WHERE unique_id = ?";
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, blogId);
             ps.execute();
         } catch (SQLException msg) {

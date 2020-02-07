@@ -15,7 +15,6 @@
  */
 package com.topic;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,19 +30,17 @@ public class supportingFunctionTopic {
 
     /**
      *
+     * @param con
      * @param topicId
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean isTopicPresentByTopicId(int topicId) throws SQLException, ClassNotFoundException {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean isTopicPresentByTopicId(Connection con, int topicId) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT unique_id FROM topic WHERE unique_id = ? LIMIT 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicId);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.first();
@@ -56,20 +53,18 @@ public class supportingFunctionTopic {
 
     /**
      *
+     * @param con
      * @param questionid
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String GetAllTopicByQuestionId(int questionid) throws SQLException, ClassNotFoundException {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public String GetAllTopicByQuestionId(Connection con, int questionid) throws SQLException, ClassNotFoundException {
 
         String questionTag = "";
         String sql = "select tag_id as unique_id,(select topic_name from topic where unique_id = question_topic_tag.tag_id)topic_name from question_topic_tag where question_id =?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (  PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionid);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

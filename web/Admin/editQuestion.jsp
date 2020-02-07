@@ -6,9 +6,6 @@
 
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<jsp:useBean class="com.index.indexPage" id="Question" scope="page" />
-<jsp:useBean class="com.answer.SEO" id="tag" scope="page" />
-<jsp:useBean class="com.admin.adminUserDetail" id="user" scope="page"/>
 <c:if test="${sessionScope.adminUserId eq null}">
     <c:redirect url="visit.jsp?msg=Session is not valid"/>
 </c:if>
@@ -55,8 +52,12 @@
                 Who Posted the question : ${q.id} <br><br>
                 <form name="updateQuestionTag" action="<%=request.getContextPath()%>/updateQuestion" method="post">
                     <input type="hidden" name="pageNumber" value="${param.p}">
-                    <c:forEach items="${tag.getQuestionTag(q.q_id)}" var="t">
-                        <c:set var="myVar" value="${t},${myVar}"/>
+                     <sql:query dataSource="jdbc/mydatabase" var="tag_q">
+                        SELECT topic.unique_id AS tag_id, topic.topic_name AS topic_name FROM topic INNER JOIN question_topic_tag ON topic.unique_id = question_topic_tag.tag_id WHERE question_id = ? AND tag_id IS NOT NULL ORDER BY tag_id;
+                        <sql:param value="${q.q_id}"/>
+                    </sql:query>
+                    <c:forEach items="${tag_q.rows}" var="t">
+                        <c:set var="myVar" value="${t.topic_name},${myVar}"/>
                     </c:forEach>
                     Question ID : <input type="text" name="questionId" value="${q.q_id}">
                     <br><br>

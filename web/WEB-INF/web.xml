@@ -4,6 +4,7 @@
     <welcome-file-list>
         <welcome-file>index</welcome-file>
     </welcome-file-list>
+     
     <servlet-mapping>
         <servlet-name>ForgetPasswordsServlet</servlet-name>
         <url-pattern>/forgotpassword</url-pattern>

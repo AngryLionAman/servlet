@@ -48,7 +48,7 @@
                                     </div>
                                 </c:if>
 
-                               
+
                                 <c:if test="${blogList ne null}">
                                     <c:catch var="ex">
                                         <c:forEach items="${blogList}" var="b" >
@@ -72,23 +72,26 @@
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" >
                             <div class="row">
-                                <div class="themeBox" style="height:auto;">
-                                    <div class="boxHeading" style="text-align: center; background-color: gold;">
-                                        Fun Zone
+                                <c:if test="${funCategory ne null and not empty funCategory}">
+                                    <div class="themeBox" style="height:auto;">
+                                        <div class="boxHeading" style="text-align: center; background-color: gold;">
+                                            Fun Zone
+                                        </div>
+                                        <div>
+                                            <ul>
+                                                <c:catch var="msg">
+                                                    <c:forEach items="${funCategory}" var="m">
+                                                        <li><a href="fun?category=${m}">${word.convertStringUpperToLower(m)}</a></li>
+                                                        </c:forEach>
+                                                    </c:catch>
+                                                    <c:if test="${msg ne null}">
+                                                        ${msg}
+                                                    </c:if>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <ul>
-                                            <c:catch var="msg">
-                                                <c:forEach items="${fun.funCategory}" var="m">
-                                                    <li><a href="fun?category=${m}">${word.convertStringUpperToLower(m)}</a></li>
-                                                    </c:forEach>
-                                                </c:catch>
-                                                <c:if test="${msg ne null}">
-                                                    ${msg}
-                                                </c:if>
-                                        </ul>
-                                    </div>
-                                </div>
+                                </c:if>
+
                                 <div class="themeBox" style="height:auto;">
                                     <div class="boxHeading" style="text-align: center; background-color: gold;">
                                         Shortcut Key

@@ -15,9 +15,12 @@
  */
 package com.comments;
 
+import com.connect.DatabaseConnection;
 import com.notifications.CreateNotification;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -54,55 +57,61 @@ public class SaveBlogComment extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("text/html;charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-
-        validateInput input = new validateInput();
-        SaveBlogCommentClassFile blogClassFile = new SaveBlogCommentClassFile();
-        CreateNotification createNotification = new CreateNotification();
-
-        String message = null;
-        int blogId = 0;
-
         try {
 
-            int userId = input.getInputInt(request.getParameter("sessionUserId"));
-            int userIdWhoPostedBog = input.getInputInt(request.getParameter("bloggerUserId"));
-            blogId = input.getInputInt(request.getParameter("blog_id"));
-            String comment = input.getInputString(request.getParameter("comments"));
+            response.setContentType("text/html;charset=UTF-8");
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
 
-            if (blogId != 0 && comment != null) {
-                if (userId != 0) {
-                    if (!blogClassFile.SaveBlogComment(userId, blogId, comment, true)) {
-                        if (userIdWhoPostedBog != 0) {
-                            if (!createNotification.CreateNotificationForBlogComment(userId, userIdWhoPostedBog, blogId)) {
-                                message = "Comment has been saved and notification has been sent to user";
+            validateInput input = new validateInput();
+            SaveBlogCommentClassFile blogClassFile = new SaveBlogCommentClassFile();
+            CreateNotification createNotification = new CreateNotification();
+
+            String message = null;
+            int blogId = 0;
+
+            DatabaseConnection connection = new DatabaseConnection();
+            try (Connection con = DatabaseConnection.makeConnection()) {
+
+                int userId = input.getInputInt(request.getParameter("sessionUserId"));
+                int userIdWhoPostedBog = input.getInputInt(request.getParameter("bloggerUserId"));
+                blogId = input.getInputInt(request.getParameter("blog_id"));
+                String comment = input.getInputString(request.getParameter("comments"));
+
+                if (blogId != 0 && comment != null) {
+                    if (userId != 0) {
+                        if (!blogClassFile.SaveBlogComment(userId, blogId, comment, true)) {
+                            if (userIdWhoPostedBog != 0) {
+                                if (!createNotification.CreateNotificationForBlogComment(userId, userIdWhoPostedBog, blogId)) {
+                                    message = "Comment has been saved and notification has been sent to user";
+                                } else {
+                                    message = "Comment has been posted, but got some probelm in createing notification";
+                                }
                             } else {
-                                message = "Comment has been posted, but got some probelm in createing notification";
+                                message = "This blog is posted by guest user, So comment has been posted but notification will not generate";
                             }
                         } else {
-                            message = "This blog is posted by guest user, So comment has been posted but notification will not generate";
+                            message = "Storing the comment operation faield, Please try again";
                         }
                     } else {
-                        message = "Storing the comment operation faield, Please try again";
+                        if (!blogClassFile.SaveBlogComment(userId, blogId, comment, false)) {
+                            message = "Dear Guest user, Your comment has been saved. Will display after admin approval";
+                        } else {
+                            message = "Dear user, Your comment is not saved. Please try again or report to admin";
+                        }
                     }
                 } else {
-                    if (!blogClassFile.SaveBlogComment(userId, blogId, comment, false)) {
-                        message = "Dear Guest user, Your comment has been saved. Will display after admin approval";
-                    } else {
-                        message = "Dear user, Your comment is not saved. Please try again or report to admin";
-                    }
+                    message = "Blog id is zero, Or comment is empty. Plase try again or report to admin";
                 }
-            } else {
-                message = "Blog id is zero, Or comment is empty. Plase try again or report to admin";
+            } catch (Exception msg) {
+                Logger.getLogger(SaveBlogComment.class.getName()).log(Level.SEVERE, message, msg);
+            } finally {
+                request.setAttribute("message", message);
+                request.setAttribute("id", blogId);
+                request.getRequestDispatcher("blog").forward(request, response);
             }
-        } catch (Exception msg) {
-            Logger.getLogger(SaveBlogComment.class.getName()).log(Level.SEVERE, message, msg);
-        } finally {
-            request.setAttribute("message", message);
-            request.setAttribute("id", blogId);
-            request.getRequestDispatcher("blog").forward(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(SaveBlogComment.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

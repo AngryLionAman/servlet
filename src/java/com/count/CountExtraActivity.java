@@ -15,7 +15,6 @@
  */
 package com.count;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,19 +30,17 @@ public class CountExtraActivity {
 
     /**
      *
+     * @param con
      * @param questionId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int CountTotalAnswerOfQuestionByQuestionId(int questionId) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public int CountTotalAnswerOfQuestionByQuestionId(Connection con, int questionId) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "SELECT COUNT(a_id) AS cnt FROM answer WHERE q_id = ? group by q_id limit 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

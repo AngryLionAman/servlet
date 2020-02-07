@@ -15,9 +15,11 @@
  */
 package com.question;
 
+import com.connect.DatabaseConnection;
 import com.question.user.questionClass;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,16 +58,17 @@ public class guestSaveQuestion extends HttpServlet {
         int questionId = 0;
         int guestId = 0;
 
-        try {
+        DatabaseConnection connection = new DatabaseConnection();
+        try(Connection con  = DatabaseConnection.makeConnection()) {
             String question = input.getInputString(request.getParameter("question"));
             String tag_of_question = input.getInputString(request.getParameter("tag_of_question"));
             if (question != null) {
-                if (!funcation.SaveQuestionByQuestionAndTagandUserId(guestId, question)) {
-                    questionId = funcation.GetQuestionIdByQuestion(question);
+                if (!funcation.SaveQuestionByQuestionAndTagandUserId(con,guestId, question)) {
+                    questionId = funcation.GetQuestionIdByQuestion(con,question);
                     if (tag_of_question != null) {
                         if (questionId != 0) {
-                            if (!funcation.SaveTag(tag_of_question)) {
-                                if (!funcation.SaveTagWithQuestionId(questionId, tag_of_question)) {
+                            if (!funcation.SaveTag(con,tag_of_question)) {
+                                if (!funcation.SaveTagWithQuestionId(con,questionId, tag_of_question)) {
                                     message = "Question has been successfully Posted";
                                 } else {
                                     message = "Tag saved but not integrated with the question id, Please inform us at contact us from";

@@ -15,8 +15,10 @@
  */
 package com.answer.update;
 
+import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,34 +43,39 @@ public class saveUpdatedAnswer extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        
+
         validateInput input = new validateInput();
 
         int answerId = input.getInputInt(request.getParameter("answer_id"));
         int questionId = input.getInputInt(request.getParameter("question_id"));
         String answer = input.getInputString(request.getParameter("answer"));
-        
+
         saveUpdatedAnswerClass answerClass = new saveUpdatedAnswerClass();
-        
+
         String message = null;
-        
+
         if (answerId != 0 && questionId != 0 && answer != null) {
             try {
-                if(!answerClass.SaveupdatedAnswerByAnswerId(answerId, answer)){
-                   message = "Answer has been successfully updated";
-                }else{
-                    message = "Answer not update, Please try again";
+                DatabaseConnection connection = new DatabaseConnection();
+                try (Connection con = DatabaseConnection.makeConnection()) {
+                    if (!answerClass.SaveupdatedAnswerByAnswerId(con, answerId, answer)) {
+                        message = "Answer has been successfully updated";
+                    } else {
+                        message = "Answer not update, Please try again";
+                    }
+                } catch (SQLException | ClassNotFoundException ex) {
+                    Logger.getLogger(saveUpdatedAnswer.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(saveUpdatedAnswer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } catch (SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(saveUpdatedAnswer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(saveUpdatedAnswer.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }else{
+        } else {
             message = "Empty value error, plase try again";
         }
         request.setAttribute("id", questionId);

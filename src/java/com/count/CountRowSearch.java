@@ -37,12 +37,10 @@ public class CountRowSearch {
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int countQuestion(String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
+    public int countQuestion(Connection con, String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection connection = new DatabaseConnection();
         int count = 0;
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement("SELECT count(*) as count FROM question WHERE lower(question) LIKE ? order by q_id")) {
+        try (PreparedStatement ps = con.prepareStatement("SELECT count(*) as count FROM question WHERE lower(question) LIKE ? order by q_id")) {
             ps.setString(1, "%" + searchedQuery + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -85,14 +83,11 @@ public class CountRowSearch {
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int countAnswer(String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public int countAnswer(Connection con, String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "Select count(*)as count  from question q right join answer ans on ans.q_id = q.q_id where lower(answer) LIKE ?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, "%" + searchedQuery + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -113,14 +108,11 @@ public class CountRowSearch {
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int countTopic(String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public int countTopic(Connection con, String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "SELECT count(*)as count FROM topic WHERE lower(topic_name) LIKE ?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, "%" + searchedQuery + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -141,12 +133,11 @@ public class CountRowSearch {
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int countUser(String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
+    public int countUser(Connection con, String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection connection = new DatabaseConnection();
         String sql = "SELECT count(*)as count FROM newuser WHERE lower(firstname) LIKE ?";
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, "%" + searchedQuery + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

@@ -15,7 +15,6 @@
  */
 package com.question;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,17 +31,16 @@ public class getQuestion {
 
     /**
      *
+     * @param con
      * @param limit
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public HashMap<Integer, String> getRandomQuestionByLimit(int limit) throws SQLException, ClassNotFoundException {
+    public HashMap<Integer, String> getRandomQuestionByLimit(Connection con, int limit) throws SQLException, ClassNotFoundException {
         HashMap<Integer, String> map = new HashMap<>();
 
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement("select q_id as questionid,question from question order by rand() limit ?")) {
+        try (  PreparedStatement ps = con.prepareStatement("select q_id as questionid,question from question order by rand() limit ?")) {
 
             ps.setInt(1, limit);
             try (ResultSet rs = ps.executeQuery()) {
@@ -61,17 +59,15 @@ public class getQuestion {
 
     /**
      *
+     * @param con
      * @return @throws SQLException
      * @throws ClassNotFoundException
      */
-    public HashMap<Integer, String> getRandomQuestion() throws SQLException, ClassNotFoundException {
+    public HashMap<Integer, String> getRandomQuestion(Connection con) throws SQLException, ClassNotFoundException {
 
         HashMap<Integer, String> map = new HashMap<>();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement("select q_id as questionid,question from question order by rand() limit 20");
+        try (PreparedStatement ps = con.prepareStatement("select q_id as questionid,question from question order by rand() limit 20");
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int questionId = rs.getInt("questionid");
@@ -87,21 +83,19 @@ public class getQuestion {
 
     /**
      *
+     * @param con
      * @param qId
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public HashMap<Integer, String> getRelatedQuestionById(int qId) throws SQLException, ClassNotFoundException {
+    public HashMap<Integer, String> getRelatedQuestionById(Connection con, int qId) throws SQLException, ClassNotFoundException {
 
         HashMap<Integer, String> map = new HashMap<>();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "SELECT DISTINCT q.question as question,q.q_id as questionid FROM question q RIGHT JOIN question_topic_tag qtt ON qtt.question_id=q.q_id WHERE tag_id IN (SELECT DISTINCT(tag_id) AS tag_id FROM question_topic_tag WHERE question_id = ?) AND q_id IS NOT NULL LIMIT 20";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

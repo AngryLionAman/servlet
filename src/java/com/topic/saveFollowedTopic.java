@@ -15,7 +15,9 @@
  */
 package com.topic;
 
+import com.connect.DatabaseConnection;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,15 +43,22 @@ public class saveFollowedTopic extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        saveTopic topic = new saveTopic();
         try {
-            String userid = request.getParameter("userid");
-            String[] topicName = request.getParameterValues("MultipleSelectedTopic");
-            topic.SaveTopicByTopicIdAndUserId(userid, topicName);
+            
+            saveTopic topic = new saveTopic();
+            
+            DatabaseConnection connection = new DatabaseConnection();
+            try (Connection con = DatabaseConnection.makeConnection()) {
+                String userid = request.getParameter("userid");
+                String[] topicName = request.getParameterValues("MultipleSelectedTopic");
+                topic.SaveTopicByTopicIdAndUserId(con, userid, topicName);
+            } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(saveFollowedTopic.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                request.getRequestDispatcher("index").forward(request, response);
+            }
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(saveFollowedTopic.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            request.getRequestDispatcher("index").forward(request, response);
         }
     }
 }

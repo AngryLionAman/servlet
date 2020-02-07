@@ -15,7 +15,6 @@
  */
 package com.admin.question;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,17 +30,17 @@ public class saveQuestion {
 
     /**
      *
+     * @param con
      * @param questionId
      * @param question
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    protected boolean updateQuestionById(int questionId, String question) throws SQLException, ClassNotFoundException {
-        DatabaseConnection connection = new DatabaseConnection();
+    protected boolean updateQuestionById(Connection con, int questionId, String question) throws SQLException, ClassNotFoundException {
+
         String sql = "update question set question = ? where q_id = ?";
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, question);
             ps.setInt(2, questionId);
             return ps.execute();
@@ -54,17 +53,17 @@ public class saveQuestion {
 
     /**
      *
+     * @param con
      * @param questionId
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    protected boolean deleteQuesstionTag(int questionId) throws SQLException, ClassNotFoundException {
+    protected boolean deleteQuesstionTag(Connection con, int questionId) throws SQLException, ClassNotFoundException {
 
         String sql = "delete from question_topic_tag where question_id = ?";
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
             return ps.execute();
         } catch (SQLException msg) {
@@ -76,18 +75,18 @@ public class saveQuestion {
 
     /**
      *
+     * @param con
      * @param questionId
      * @param question
      * @param questionTag
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public void saveQuestionWithIdAndTag(int questionId, String question, String questionTag) throws SQLException, ClassNotFoundException {
-
-        try (Connection con = DatabaseConnection.makeConnection()) {
+    public void saveQuestionWithIdAndTag(Connection con, int questionId, String question, String questionTag) throws SQLException, ClassNotFoundException {
+        try {
             //Delete the stored question tag
-            boolean status = deleteQuesstionTag(questionId);
-            boolean status2 = updateQuestionById(questionId, question);
+            boolean status = deleteQuesstionTag(con, questionId);
+            boolean status2 = updateQuestionById(con,questionId, question);
             if (!status && !status2) {
                 /**
                  * ***********

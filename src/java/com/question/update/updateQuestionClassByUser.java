@@ -15,7 +15,6 @@
  */
 package com.question.update;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -30,20 +29,18 @@ public class updateQuestionClassByUser {
 
     /**
      *
+     * @param con
      * @param question
      * @param questionId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean UpdateQuestionByQuestionId(String question, int questionId) throws SQLException, ClassNotFoundException, Exception {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean UpdateQuestionByQuestionId(Connection con, String question, int questionId) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "update question set question = ? where q_id=?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, question);
             ps.setInt(2, questionId);
             return ps.execute();

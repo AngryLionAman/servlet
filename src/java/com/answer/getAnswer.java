@@ -15,7 +15,6 @@
  */
 package com.answer;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,10 +30,9 @@ import java.util.logging.Logger;
  */
 public class getAnswer {
 
-    private void updateAnswerCountByOne(int answerId) throws SQLException, ClassNotFoundException, Exception {
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement("UPDATE answer SET total_view = total_view + 1 WHERE a_id =?")) {
+    private void updateAnswerCountByOne(Connection con, int answerId) throws SQLException, ClassNotFoundException, Exception {
+
+        try (PreparedStatement ps = con.prepareStatement("UPDATE answer SET total_view = total_view + 1 WHERE a_id =?")) {
             ps.setInt(1, answerId);
             ps.execute();
         } catch (SQLException msg) {
@@ -44,23 +42,21 @@ public class getAnswer {
 
     /**
      *
+     * @param con
      * @param qId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public List<getAnswerPojo> getAnswerById(int qId) throws SQLException, ClassNotFoundException, Exception {
+    public List<getAnswerPojo> getAnswerById(Connection con, int qId) throws SQLException, ClassNotFoundException, Exception {
 
         List<getAnswerPojo> list = new ArrayList<>();
-
-        DatabaseConnection connection = new DatabaseConnection();
 
         String sql = "SELECT ans.Answer_by_id AS userid, user.user_type AS usertype ,user.username AS username,user.firstname AS fullname,"
                 + "ans.answer AS answer,ans.a_id AS answerid,ans.total_view AS totalview,ans.vote AS vote FROM newuser user "
                 + "RIGHT JOIN answer ans ON user.id = ans.Answer_by_id WHERE q_id = ? AND ans.approved_by_admin = 1 "
                 + "AND approved_by_user = 1 ORDER BY vote DESC";
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, qId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -72,7 +68,7 @@ public class getAnswer {
                     int answerId = rs.getInt("answerid");
 
                     try {
-                        updateAnswerCountByOne(answerId);
+                        updateAnswerCountByOne(con,answerId);
                     } catch (Exception msg) {
                         Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
                     }

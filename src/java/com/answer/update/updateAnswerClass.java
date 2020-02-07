@@ -31,16 +31,15 @@ public class updateAnswerClass {
 
     /**
      *
+     * @param con
      * @param anser_id
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public String GetAnswerByAnswerid(int anser_id) throws SQLException, ClassNotFoundException, Exception {
+    public String GetAnswerByAnswerid(Connection con, int anser_id) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement("select answer from answer where a_id = ?")) {
+        try (PreparedStatement ps = con.prepareStatement("select answer from answer where a_id = ?")) {
             ps.setInt(1, anser_id);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

@@ -2,7 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:useBean class="com.fun.FunHelpingFunction" id="fun" scope="page"/>
 <jsp:useBean class="com.string.WordFormating" id="word" scope="page"/>
 <html lang="en">
     <head>
@@ -56,6 +55,9 @@
         <meta property="og:image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
         <meta property="og:type" content="website">
         <meta property="og:locale" content="en">
+
+        <link rel="icon" href="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" type="image/png" />
+        <meta property="image" content="https://www.inquiryhere.com/images/inquiryhere_Logo.PNG" />
 
         <style>
             input[type=text] {
@@ -179,7 +181,7 @@
                                     <div>
                                         <ul>
                                             <c:catch var="msg">
-                                                <c:forEach items="${fun.funCategory}" var="m">
+                                                <c:forEach items="${funCategory}" var="m">
                                                     <li><a href="fun?category=${m}">${word.convertStringUpperToLower(m)}</a></li>
                                                     </c:forEach>
                                                 </c:catch>

@@ -15,7 +15,6 @@
  */
 package com.topic;
 
-import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,24 +28,20 @@ import java.util.logging.Logger;
  */
 public class saveTopic {
 
-    void SaveTopicByTopicIdAndUserId(String userid, String[] topicName) throws SQLException, ClassNotFoundException {
+    void SaveTopicByTopicIdAndUserId(Connection con, String userid, String[] topicName) throws SQLException, ClassNotFoundException {
 
         validateInput input = new validateInput();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
-        try (Connection con = DatabaseConnection.makeConnection()) {
-            String sql = "insert into topic_followers_detail(topic_id,user_or_followers_id) values(?,?)";
-            for (String obj : topicName) {
-                try (PreparedStatement ps = con.prepareStatement(sql)) {
-                    ps.setInt(1, input.getInputInt(obj));
-                    ps.setInt(2, input.getInputInt(userid));
-                    ps.execute();
-                }
+        String sql = "insert into topic_followers_detail(topic_id,user_or_followers_id) values(?,?)";
+        for (String obj : topicName) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, input.getInputInt(obj));
+                ps.setInt(2, input.getInputInt(userid));
+                ps.execute();
+            } catch (SQLException msg) {
+                Logger.getLogger(saveTopic.class.getName()).log(Level.SEVERE, null, msg);
             }
-
-        } catch (SQLException msg) {
-            Logger.getLogger(saveTopic.class.getName()).log(Level.SEVERE, null, msg);
         }
+
     }
 }

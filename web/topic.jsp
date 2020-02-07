@@ -256,7 +256,7 @@
                                     <c:if test="${count lt 30}">
                                         <div class="themeBox" style="height:auto;">
                                             <h4 style="background-color: yellow;">Also Read..</h4>
-                                            <c:forEach items="${question.getRandomQuestionByLimit(30 - count)}" var="rq">
+                                            <c:forEach items="${randomQuestionByLimit}" var="rq">
                                                 <a href="questions?id=${rq.key}&q=${word.UrlFormat(rq.value)}&ref=topic" >&nbsp;${rq.value}?</a><br><br>                                           
                                             </c:forEach>
                                         </div>

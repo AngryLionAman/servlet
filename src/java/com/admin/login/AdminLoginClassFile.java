@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 AngryLion.
+ * Copyright 2020 AngryLion.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.search;
+package com.admin.login;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,28 +26,23 @@ import java.util.logging.Logger;
  *
  * @author AngryLion
  */
-public class saveSearchedQueryClassFile {
+public class AdminLoginClassFile {
 
-    /**
-     *
-     * @param con
-     * @param query
-     * @param userId
-     * @return
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     */
-    public boolean SaveSearchedQuery(Connection con, String query, int userId) throws SQLException, ClassNotFoundException {
+    public boolean validateAdminUser(Connection con, String eMail, String passWord) {
 
-        String sql = "insert into searched_queary(searched_queary,userid) values(?,?)";
+        String sql = "select id,username from newuser where email = ? and password = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, query);
-            ps.setInt(2, userId);
-            return ps.execute();
+            ps.setString(1, eMail);
+            ps.setString(2, passWord);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.first();
+            }
+
         } catch (SQLException msg) {
-            Logger.getLogger(saveSearchedQueryClassFile.class.getName()).log(Level.SEVERE, null, msg);
+            Logger.getLogger(AdminLoginClassFile.class.getName()).log(Level.SEVERE, eMail, msg);
         }
-        return true;
+        return false;
     }
+
 }

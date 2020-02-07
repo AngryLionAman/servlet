@@ -35,22 +35,19 @@ public class GetComment {
     /**
      *
      * @param blogId
+     * @param con
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public List<BlogCommentPojoFile> getCommentOfBlogByBlogId(int blogId) throws ClassNotFoundException, SQLException {
+    public List<BlogCommentPojoFile> getCommentOfBlogByBlogId(int blogId, Connection con) throws ClassNotFoundException, SQLException {
 
         List<BlogCommentPojoFile> list = new ArrayList<>();
 
         String sql = "SELECT c.comments AS comment, c.time AS date, u.id AS userid,u.username AS username, "
                 + "u.firstname AS fullname, u.user_type AS usertype from comments c INNER JOIN newuser u ON c.user_id = u.id "
                 + "WHERE c.content_id = ? AND approved_by_user = 1 AND approved_by_admin = 1 ORDER BY unique_id DESC";
-
-        DatabaseConnection connection = new DatabaseConnection();
-
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, blogId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -72,23 +69,21 @@ public class GetComment {
 
     /**
      *
+     * @param con
      * @param profileId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public List<ProfileCommentsPojo> GetCommentByProfileId(int profileId) throws SQLException, ClassNotFoundException {
+    public List<ProfileCommentsPojo> GetCommentByProfileId(Connection con, int profileId) throws SQLException, ClassNotFoundException {
 
         List<ProfileCommentsPojo> list = new ArrayList<>();
-
-        DatabaseConnection connection = new DatabaseConnection();
 
         String sql = "SELECT user_id,comments,time,user_type,username,firstname from comments INNER JOIN newuser ON comments.user_id = newuser.id "
                 + "WHERE content_id = ? AND comment_type='comment_on_user_profile' "
                 + "AND approved_by_user = 1 AND approved_by_admin = 1 ORDER BY time DESC LIMIT 10";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, profileId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

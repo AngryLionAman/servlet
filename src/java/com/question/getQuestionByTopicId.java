@@ -15,7 +15,6 @@
  */
 package com.question;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,6 +31,7 @@ public class getQuestionByTopicId {
 
     /**
      *
+     * @param con
      * @param topicId
      * @param pageNo
      * @param recordPerPage
@@ -39,11 +39,9 @@ public class getQuestionByTopicId {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public HashMap<Integer, String> getAllQuestionByTopicId(int topicId, int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
+    public HashMap<Integer, String> getAllQuestionByTopicId(Connection con, int topicId, int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
 
         HashMap<Integer, String> map = new HashMap<>();
-
-        DatabaseConnection connection = new DatabaseConnection();
 
         if (pageNo < 1) {
             pageNo = 1;
@@ -53,8 +51,7 @@ public class getQuestionByTopicId {
 
         String sql = "select q.question as question,q.q_id as questionid from question q right join question_topic_tag qtt on qtt.question_id=q.q_id where tag_id = ? limit ?,?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicId);
             ps.setInt(2, startPage);
             ps.setInt(3, recordPerPage);
