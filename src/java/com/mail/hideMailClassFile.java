@@ -15,7 +15,6 @@
  */
 package com.mail;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -30,15 +29,14 @@ public class hideMailClassFile {
 
     /**
      *
+     * @param con
      * @param userId
      * @param action
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean HideMail(int userId, String action) throws SQLException, ClassNotFoundException {
-
-        DatabaseConnection connection = new DatabaseConnection();
+    public boolean HideMail(Connection con, int userId, String action) throws SQLException, ClassNotFoundException {
 
         String sql;
         if (action.equalsIgnoreCase("hide")) {
@@ -47,8 +45,7 @@ public class hideMailClassFile {
             sql = "UPDATE newuser SET email_s = '0' WHERE id=?";
         }
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             return ps.execute();
         } catch (SQLException msg) {

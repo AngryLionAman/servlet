@@ -15,8 +15,10 @@
  */
 package com.mail;
 
+import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,28 +48,36 @@ public class hideMail extends HttpServlet {
         validateInput input = new validateInput();
 
         int userId = input.getInputInt(request.getParameter("sessionUserId"));
-        String action = input.getInputString(request.getParameter("action"));
-
-        hideMailClassFile hide_Mail = new hideMailClassFile();
-
         String message = null;
 
-        if (userId != 0 && action != null) {
-            try {
-                if (!hide_Mail.HideMail(userId, action)) {
-                    message = "Mail " + action + " successfully";
-                } else {
-                    message = "Action not performed, Please try again";
+        try {
+
+            String action = input.getInputString(request.getParameter("action"));
+            hideMailClassFile hide_Mail = new hideMailClassFile();
+
+            DatabaseConnection connection = new DatabaseConnection();
+            if (userId != 0 && action != null) {
+                try (Connection con = DatabaseConnection.makeConnection()) {
+
+                    if (!hide_Mail.HideMail(con, userId, action)) {
+                        message = "Mail " + action + " successfully";
+                    } else {
+                        message = "Action not performed, Please try again";
+                    }
+                } catch (SQLException | ClassNotFoundException ex) {
+                    Logger.getLogger(hideMail.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } catch (SQLException | ClassNotFoundException ex) {
-                Logger.getLogger(hideMail.class.getName()).log(Level.SEVERE, null, ex);
+            } else {
+                message = "Bad argument, Got some problem please try again";
             }
-        } else {
-            message = "Bad argument, Got some problem please try again";
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(hideMail.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            request.setAttribute("message", message);
+            request.setAttribute("id", userId);
+            request.getRequestDispatcher("profile").forward(request, response);
         }
-        request.setAttribute("message", message);
-        request.setAttribute("id", userId);
-        request.getRequestDispatcher("profile").forward(request, response);
     }
 
 }

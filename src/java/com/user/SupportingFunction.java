@@ -29,9 +29,40 @@ import java.util.logging.Logger;
  */
 public class SupportingFunction {
 
+    /**
+     *
+     * @param con
+     * @param userId
+     * @return
+     * @throws SQLException
+     */
+    public String getEmailbyUserId(Connection con, int userId) throws SQLException {
+       
+        String sql = "SELECT email FROM newuser WHERE id = ? LIMIT 1";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    return rs.getString("email");
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @param con
+     * @param email
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public String GetUserNameByEmail(Connection con, String email) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT username FROM newuser WHERE email = ? limit 1";
+       
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
@@ -56,6 +87,7 @@ public class SupportingFunction {
     public String GetFullNameByEmail(Connection con, String email) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT firstname FROM newuser WHERE email = ? limit 1";
+       
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
@@ -89,7 +121,6 @@ public class SupportingFunction {
                     return rs.getInt("id");
                 }
             }
-
         } catch (SQLException msg) {
             Logger.getLogger(SupportingFunction.class.getName()).log(Level.SEVERE, null, msg);
         }

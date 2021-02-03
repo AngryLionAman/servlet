@@ -3,11 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Project/inquiryhere.com/web/Admin/approva_by_admin.jsp</file>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/admin/approval/action_servlet_question_approval.java</file>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/admin/answer/admin_answer_approval.java</file>
-            <file>file:/D:/Project/inquiryhere.com/web/Admin/approva_by_admin_answer.jsp</file>
-            <file>file:/D:/Project/inquiryhere.com/src/java/com/notifications/CreateNotification.java</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/connect/Database.java</file>
+            <file>file:/D:/Project/inquiryhere.com/web/Answer.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/web/blog.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/web/googleAnalytics.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/web/header.jsp</file>
+            <file>file:/D:/Project/inquiryhere.com/src/java/com/connect/DatabaseConnection.java</file>
         </group>
     </open-files>
 </project-private>

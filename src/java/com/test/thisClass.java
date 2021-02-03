@@ -15,20 +15,40 @@
  */
 package com.test;
 
-import com.string.validateInput;
+import com.connect.DatabaseConnection;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  *
  * @author AngryLion
  */
 public class thisClass {
-
-    public static void main(String[] agrs) {
-        validateInput input = new validateInput();
-        int inputInt = input.getInputInt("@7h3");
-        String n = String.valueOf(inputInt);
-        System.out.println("value is - " + inputInt);
-        System.out.println("length - " + n.length());
-      
+    
+    public static void main(String[] agrs) throws SQLException, ClassNotFoundException {
+        
+        DatabaseConnection connection = new DatabaseConnection();
+        
+        try (Connection con = DatabaseConnection.makeConnection()) {
+            
+            if (con != null) {
+                System.out.println("Connection is not null 1 :- " + con);
+                con.close();
+            }
+            
+            if (con != null) {
+                System.out.println("Connection is not null 2 :- " + con);
+            }
+            
+            if (!con.isClosed()) {
+                System.out.println("Connection is not Closed :- " + con);
+            }
+            
+        } catch (Exception msg) {
+            System.out.println("Exception occred :- " + msg);
+        } finally {
+            System.err.print("this is finaly block");
+        }
+        
     }
 }

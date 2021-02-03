@@ -56,13 +56,14 @@ public class ForgetPasswordsServlet extends HttpServlet {
 
         String message = null;
         String path = "forgotpassword.jsp";
+
         DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection()){
+        try (Connection con = DatabaseConnection.makeConnection()) {
             String userEmail = input.getInputString(request.getParameter("mail"));
             if (userEmail != null) {
                 if (expression.validateEamil(userEmail)) {
-                    if (supportingFunction.EmailIsAvaliabe(con,userEmail)) {
-                        Mail.sendMail(userEmail, supportingFunction.GetFullNameByEmail(con,userEmail), 8901);
+                    if (supportingFunction.EmailIsAvaliabe(con, userEmail)) {
+                        Mail.sendMail(userEmail, supportingFunction.GetFullNameByEmail(con, userEmail), 8901);
                         message = "Mail has been sent, Please check your inbox";
                     } else {
                         message = "This Email is not available in our database, Please create the new account";
