@@ -15,6 +15,7 @@
  */
 package com.topic;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -29,7 +30,6 @@ public class followTopicClassFile {
 
     /**
      *
-     * @param con
      * @param topicId
      * @param userId
      * @param action
@@ -37,7 +37,7 @@ public class followTopicClassFile {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean FollowTopic(Connection con, int topicId, int userId, String action) throws SQLException, ClassNotFoundException {
+    public boolean FollowTopic(int topicId, int userId, String action) throws SQLException, ClassNotFoundException {
 
         String sql;
         if (action.equalsIgnoreCase("follow")) {
@@ -46,7 +46,8 @@ public class followTopicClassFile {
             sql = "DELETE FROM topic_followers_detail WHERE  topic_id=? AND user_or_followers_id=?";
         }
 
-        try (  PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicId);
             ps.setInt(2, userId);
             return ps.execute();

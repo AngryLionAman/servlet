@@ -21,7 +21,6 @@ import com.notifications.CreateNotification;
 import com.string.validateInput;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -47,61 +46,51 @@ public class SaveAnswerAdminModule extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        try {
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        validateInput input = new validateInput();
+        SaveAnswer saveAnswer = new SaveAnswer();
+        CreateNotification notification = new CreateNotification();
+        String message = null;
+        String path = "Admin/unanswerQuestion.jsp";
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
 
-            response.setContentType("text/html;charset=UTF-8");
-            request.setCharacterEncoding("UTF-8");
-            response.setCharacterEncoding("UTF-8");
+            int userId = input.getInputInt(request.getParameter("userId"));
+            int questionId = input.getInputInt(request.getParameter("qId"));
+            int id_of_user_who_posted_question = input.getInputInt(request.getParameter("postedById"));
+            String answer = input.getInputString(request.getParameter("answer"));
 
-            validateInput input = new validateInput();
-            SaveAnswer saveAnswer = new SaveAnswer();
-            CreateNotification notification = new CreateNotification();
-
-            String message = null;
-
-            String path = "Admin/unanswerQuestion.jsp";
-
-            DatabaseConnection connection = new DatabaseConnection();
-            try (Connection con = DatabaseConnection.makeConnection()) {
-
-                int userId = input.getInputInt(request.getParameter("userId"));
-                int questionId = input.getInputInt(request.getParameter("qId"));
-                int id_of_user_who_posted_question = input.getInputInt(request.getParameter("postedById"));
-                String answer = input.getInputString(request.getParameter("answer"));
-
-                if (questionId != 0 && answer != null) {
-                    if (userId != 0) {
-                        if (!saveAnswer.SaveAnswerByQuestionIdAndIdUserId(con, userId, questionId, answer, true)) {
-                            if (id_of_user_who_posted_question != 0) {
-                                if (!notification.UserGotAnswerOfQuestion(con, userId, id_of_user_who_posted_question, questionId)) {
-                                    message = "Answer has been posted and notification has been successfully sent to user";
-                                } else {
-                                    message = "Answer has been posted but notification not sent to user";
-                                }
+            if (questionId != 0 && answer != null) {
+                if (userId != 0) {
+                    if (!saveAnswer.SaveAnswerByQuestionIdAndIdUserId(userId, questionId, answer, true)) {
+                        if (id_of_user_who_posted_question != 0) {
+                            if (!notification.UserGotAnswerOfQuestion(userId, id_of_user_who_posted_question, questionId)) {
+                                message = "Answer has been posted and notification has been successfully sent to user";
                             } else {
-                                message = "Answer has been posted, Notification will not generate for the guest post";
+                                message = "Answer has been posted but notification not sent to user";
                             }
                         } else {
-                            message = "Answer not saved, Please try agina or report to admin";
+                            message = "Answer has been posted, Notification will not generate for the guest post";
                         }
                     } else {
-                        if (!saveAnswer.SaveAnswerByQuestionIdAndIdUserId(con, userId, questionId, answer, false)) {
-                            message = "Dear user, Your answer has been saved. it will visible after admin approval";
-                        } else {
-                            message = "Dear Guest user, Your answer not saved. Please try again or report to admin";
-                        }
+                        message = "Answer not saved, Please try agina or report to admin";
                     }
                 } else {
-                    message = "Question id is zero, or Answer is empty. Please try agian or contact to adminstrator";
+                    if (!saveAnswer.SaveAnswerByQuestionIdAndIdUserId(userId, questionId, answer, false)) {
+                        message = "Dear user, Your answer has been saved. it will visible after admin approval";
+                    } else {
+                        message = "Dear Guest user, Your answer not saved. Please try again or report to admin";
+                    }
                 }
-            } catch (Exception msg) {
-                Logger.getLogger(SaveAnswerAdminModule.class.getName()).log(Level.SEVERE, null, msg);
-            } finally {
-                request.setAttribute("message", message);
-                request.getRequestDispatcher(path).forward(request, response);
+            } else {
+                message = "Question id is zero, or Answer is empty. Please try agian or contact to adminstrator";
             }
-        } catch (SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(SaveAnswerAdminModule.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception msg) {
+            Logger.getLogger(SaveAnswerAdminModule.class.getName()).log(Level.SEVERE, null, msg);
+        } finally {
+            request.setAttribute("message", message);
+            request.getRequestDispatcher(path).forward(request, response);
         }
     }
 }

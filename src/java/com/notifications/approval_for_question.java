@@ -15,10 +15,8 @@
  */
 package com.notifications;
 
-import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -57,12 +55,11 @@ public class approval_for_question extends HttpServlet {
         
         int comment_id = 0 ;
 
-        DatabaseConnection connection = new DatabaseConnection();
-        try(Connection con = DatabaseConnection.makeConnection()) {
+        try{
             int questionId = input.getInputInt(request.getParameter("q_id"));
             comment_id = input.getInputInt(request.getParameter("c_id"));
 
-            questionForApprobval = file.getQuestionForApprobval(con,questionId);
+            questionForApprobval = file.getQuestionForApprobval(questionId);
         } catch (ClassNotFoundException | SQLException msg) {
             Logger.getLogger(approval_for_question.class.getName()).log(Level.SEVERE, null, msg);
         } finally {

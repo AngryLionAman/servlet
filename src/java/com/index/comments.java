@@ -33,32 +33,35 @@ public class comments {
 
         List<commentPojo> list = new ArrayList<>();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "select c.unique_id,c.comments,date_format(c.time,\"%e %b %Y,%h:%i%p\") as date,user.id,user.firstname,"
                 + "user.username,user.user_type from comments c right join newuser user on user.id = c.user_id "
                 + "where c.content_id = ? AND c.comment_type = ? AND approved_by_admin = ? order by 1 desc";
 
-        try (Connection con = DatabaseConnection.makeConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, questionId);
-            ps.setString(2, "commet_on_question");
-            ps.setBoolean(3, true);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    int commentId = rs.getInt("c.unique_id");
-                    String comment = rs.getString("c.comments");
-                    String time = rs.getString("date");
-                    String userType = rs.getString("user_type");
-                    int userId = rs.getInt("user.id");
-                    String userFullName = rs.getString("user.firstname");
-                    String userUserName = rs.getString("user.username");
-                    list.add(new commentPojo(commentId, comment, time, userType, userId, userFullName, userUserName));
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) { 
+                ps.setInt(1, questionId);
+                ps.setString(2, "commet_on_question");
+                ps.setBoolean(3, true);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        int commentId = rs.getInt("c.unique_id");
+                        String comment = rs.getString("c.comments");
+                        String time = rs.getString("date");
+                        String userType = rs.getString("user_type");
+                        int userId = rs.getInt("user.id");
+                        String userFullName = rs.getString("user.firstname");
+                        String userUserName = rs.getString("user.username");
+                        list.add(new commentPojo(commentId, comment, time, userType, userId, userFullName, userUserName));
+                    }
+                    return list;
+                } catch (Exception ex) {
+                    Logger.getLogger(comments.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                return list;
+            } catch (Exception ex) {
+                Logger.getLogger(comments.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (Exception msg) {
-            Logger.getLogger(comments.class.getName()).log(Level.SEVERE, null, msg);
+        } catch (Exception ex) {
+            Logger.getLogger(comments.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }

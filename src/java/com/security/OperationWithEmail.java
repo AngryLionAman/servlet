@@ -15,6 +15,7 @@
  */
 package com.security;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,14 +29,14 @@ public class OperationWithEmail {
 
     /**
      *
-     * @param con
      * @param email
      * @return
      * @throws SQLException
      */
-    public boolean isEmailAvailabe(Connection con, String email) throws SQLException {
+    public boolean isEmailAvailabe(String email) throws SQLException {
         String sql = "SELECT email FROM newuser WHERE email = ? LIMIT 1";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.first();
@@ -45,17 +46,17 @@ public class OperationWithEmail {
 
     /**
      *
-     * @param con
      * @param userId
      * @param data
      * @return
      * @throws SQLException
      */
-    public boolean addEmail(Connection con, int userId, String data) throws SQLException {
+    public boolean addEmail(int userId, String data) throws SQLException {
 
         String sql = "INSERT INTO extra_user_details(user_id,data_type,data)VALUES(?,?,?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, "email");
             ps.setString(3, data);

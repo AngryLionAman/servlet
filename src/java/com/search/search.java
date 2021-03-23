@@ -15,12 +15,10 @@
  */
 package com.search;
 
-import com.connect.DatabaseConnection;
 import com.index.topicDetals;
 import com.index.topicPojo;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -74,7 +72,7 @@ public class search extends HttpServlet {
         SearchClassFile file = new SearchClassFile();
         topicDetals detals = new topicDetals();
         saveSearchedQueryClassFile searchedQueryClassFile = new saveSearchedQueryClassFile();
-        
+
         String message = null;
         String gotException = null;
         String query = null;
@@ -85,8 +83,8 @@ public class search extends HttpServlet {
         List<searchAnswerPojo> answerByQuearyAndLimit = null;
         List<searchTopicPojo> topicByQuearyAndLimit = null;
         List<searchUserPojo> userByQuearyAndLimit = null;
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection()) {
+
+        try {
 
             String tab = "default";
 
@@ -103,7 +101,7 @@ public class search extends HttpServlet {
             }
 
             try {
-                randomTopic = detals.randomTopic(con,50);
+                randomTopic = detals.randomTopic(50);
             } catch (Exception msg) {
                 Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
             }
@@ -111,20 +109,20 @@ public class search extends HttpServlet {
             if (query != null) {
 
                 try {
-                    searchedQueryClassFile.SaveSearchedQuery(con, query, 0);
+                    searchedQueryClassFile.SaveSearchedQuery(query, 0);
                 } catch (ClassNotFoundException | SQLException msg) {
                     Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
                 }
 
                 try {
-                    GetCountRowSearch = file.GetCountRowSearch(con,query);
+                    GetCountRowSearch = file.GetCountRowSearch(query);
                 } catch (Exception msg) {
                     Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
                 }
                 switch (tab) {
                     case "question":
                         try {
-                            questionByQueryAndLimit = file.getQuestionByQueryAndLimit(con,query, 0);
+                            questionByQueryAndLimit = file.getQuestionByQueryAndLimit(query, 0);
                         } catch (Exception msg) {
                             Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
                         }
@@ -132,7 +130,7 @@ public class search extends HttpServlet {
 
                     case "answer":
                         try {
-                            answerByQuearyAndLimit = file.getAnswerByQuearyAndLimit(con,query, 0);
+                            answerByQuearyAndLimit = file.getAnswerByQuearyAndLimit(query, 0);
                         } catch (Exception msg) {
                             Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
                         }
@@ -140,7 +138,7 @@ public class search extends HttpServlet {
 
                     case "topic":
                         try {
-                            topicByQuearyAndLimit = file.getTopicByQuearyAndLimit(con,query, 0);
+                            topicByQuearyAndLimit = file.getTopicByQuearyAndLimit(query, 0);
                         } catch (Exception msg) {
                             Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
                         }
@@ -148,7 +146,7 @@ public class search extends HttpServlet {
 
                     case "profile":
                         try {
-                            userByQuearyAndLimit = file.getUserByQuearyAndLimit(con,query, 0);
+                            userByQuearyAndLimit = file.getUserByQuearyAndLimit(query, 0);
                         } catch (Exception msg) {
                             Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
                         }
@@ -157,25 +155,25 @@ public class search extends HttpServlet {
                     default:
 
                         try {
-                            questionByQueryAndLimit = file.getQuestionByQueryAndLimit(con,query, 5);
+                            questionByQueryAndLimit = file.getQuestionByQueryAndLimit(query, 5);
                         } catch (Exception msg) {
                             Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
                         }
 
                         try {
-                            answerByQuearyAndLimit = file.getAnswerByQuearyAndLimit(con,query, 5);
+                            answerByQuearyAndLimit = file.getAnswerByQuearyAndLimit(query, 5);
                         } catch (Exception msg) {
                             Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
                         }
 
                         try {
-                            topicByQuearyAndLimit = file.getTopicByQuearyAndLimit(con,query, 5);
+                            topicByQuearyAndLimit = file.getTopicByQuearyAndLimit(query, 5);
                         } catch (Exception msg) {
                             Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
                         }
 
                         try {
-                            userByQuearyAndLimit = file.getUserByQuearyAndLimit(con,query, 5);
+                            userByQuearyAndLimit = file.getUserByQuearyAndLimit(query, 5);
                         } catch (Exception msg) {
                             Logger.getLogger(search.class.getName()).log(Level.SEVERE, tab, msg);
                         }

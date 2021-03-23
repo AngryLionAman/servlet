@@ -37,61 +37,40 @@ public class CountRowSearch {
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int countQuestion(Connection con, String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
+    public int countQuestion(String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
 
         int count = 0;
-        try (PreparedStatement ps = con.prepareStatement("SELECT count(*) as count FROM question WHERE lower(question) LIKE ? order by q_id")) {
-            ps.setString(1, "%" + searchedQuery + "%");
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    count = rs.getInt("count");
-                }
-            }
-
-            try (PreparedStatement ps1 = con.prepareStatement("select count(*) as count from question q right join question_topic_tag qtt on qtt.question_id=q.q_id where tag_id in (select unique_id from topic where topic_name like ?)")) {
-                ps1.setString(1, searchedQuery);
-                try (ResultSet rs = ps1.executeQuery()) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement("SELECT count(*) as count FROM question WHERE lower(question) LIKE ? order by q_id")) {
+                ps.setString(1, "%" + searchedQuery + "%");
+                try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        count += rs.getInt("count");
+                        count = rs.getInt("count");
                     }
                 }
 
-                if (count < 50) {
+                try (PreparedStatement ps1 = con.prepareStatement("select count(*) as count from question q right join question_topic_tag qtt on qtt.question_id=q.q_id where tag_id in (select unique_id from topic where topic_name like ?)")) {
+                    ps1.setString(1, searchedQuery);
+                    try (ResultSet rs = ps1.executeQuery()) {
+                        while (rs.next()) {
+                            count += rs.getInt("count");
+                        }
+                    }
 
-                    try (PreparedStatement ps2 = con.prepareStatement("select count(*) as count from question q right join question_topic_tag qtt on qtt.question_id=q.q_id where tag_id in (select unique_id from topic where topic_name like ?)")) {
-                        ps2.setString(1, "%" + searchedQuery + "%");
-                        try (ResultSet rs = ps2.executeQuery()) {
-                            while (rs.next()) {
-                                count += rs.getInt("count");
+                    if (count < 50) {
+
+                        try (PreparedStatement ps2 = con.prepareStatement("select count(*) as count from question q right join question_topic_tag qtt on qtt.question_id=q.q_id where tag_id in (select unique_id from topic where topic_name like ?)")) {
+                            ps2.setString(1, "%" + searchedQuery + "%");
+                            try (ResultSet rs = ps2.executeQuery()) {
+                                while (rs.next()) {
+                                    count += rs.getInt("count");
+                                }
                             }
                         }
                     }
-                }
-                return count;
-            } catch (SQLException msg) {
-                Logger.getLogger(CountRowSearch.class.getName()).log(Level.SEVERE, searchedQuery, msg);
-            }
-        }
-        return 0;
-    }
-
-    /**
-     *
-     * @param searchedQuery
-     * @return
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws Exception
-     */
-    public int countAnswer(Connection con, String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
-
-        String sql = "Select count(*)as count  from question q right join answer ans on ans.q_id = q.q_id where lower(answer) LIKE ?";
-
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, "%" + searchedQuery + "%");
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getInt("count");
+                    return count;
+                } catch (SQLException msg) {
+                    Logger.getLogger(CountRowSearch.class.getName()).log(Level.SEVERE, searchedQuery, msg);
                 }
             }
         } catch (SQLException msg) {
@@ -108,19 +87,23 @@ public class CountRowSearch {
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int countTopic(Connection con, String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
+    public int countAnswer(String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
 
-        String sql = "SELECT count(*)as count FROM topic WHERE lower(topic_name) LIKE ?";
+        String sql = "Select count(*)as count  from question q right join answer ans on ans.q_id = q.q_id where lower(answer) LIKE ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, "%" + searchedQuery + "%");
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getInt("count");
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, "%" + searchedQuery + "%");
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getInt("count");
+                    }
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(CountRowSearch.class.getName()).log(Level.SEVERE, searchedQuery, msg);
             }
         } catch (SQLException msg) {
-            Logger.getLogger(CountRowSearch.class.getName()).log(Level.SEVERE, null, msg);
+            Logger.getLogger(CountRowSearch.class.getName()).log(Level.SEVERE, searchedQuery, msg);
         }
         return 0;
     }
@@ -133,16 +116,49 @@ public class CountRowSearch {
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int countUser(Connection con, String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
+    public int countTopic(String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
+
+        String sql = "SELECT count(*)as count FROM topic WHERE lower(topic_name) LIKE ?";
+
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, "%" + searchedQuery + "%");
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getInt("count");
+                    }
+                }
+            } catch (SQLException msg) {
+                Logger.getLogger(CountRowSearch.class.getName()).log(Level.SEVERE, null, msg);
+            }
+        } catch (SQLException msg) {
+            Logger.getLogger(CountRowSearch.class.getName()).log(Level.SEVERE, searchedQuery, msg);
+        }
+        return 0;
+    }
+
+    /**
+     *
+     * @param searchedQuery
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws Exception
+     */
+    public int countUser(String searchedQuery) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "SELECT count(*)as count FROM newuser WHERE lower(firstname) LIKE ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, "%" + searchedQuery + "%");
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getInt("count");
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, "%" + searchedQuery + "%");
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getInt("count");
+                    }
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(CountRowSearch.class.getName()).log(Level.SEVERE, searchedQuery, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(CountRowSearch.class.getName()).log(Level.SEVERE, searchedQuery, msg);

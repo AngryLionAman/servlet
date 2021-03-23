@@ -59,20 +59,15 @@ public class saveUpdatedAnswer extends HttpServlet {
         String message = null;
 
         if (answerId != 0 && questionId != 0 && answer != null) {
-            try {
-                DatabaseConnection connection = new DatabaseConnection();
-                try (Connection con = DatabaseConnection.makeConnection()) {
-                    if (!answerClass.SaveupdatedAnswerByAnswerId(con, answerId, answer)) {
-                        message = "Answer has been successfully updated";
-                    } else {
-                        message = "Answer not update, Please try again";
-                    }
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Logger.getLogger(saveUpdatedAnswer.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (Exception ex) {
-                    Logger.getLogger(saveUpdatedAnswer.class.getName()).log(Level.SEVERE, null, ex);
+            try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+                if (!answerClass.SaveupdatedAnswerByAnswerId(con, answerId, answer)) {
+                    message = "Answer has been successfully updated";
+                } else {
+                    message = "Answer not update, Please try again";
                 }
             } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(saveUpdatedAnswer.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
                 Logger.getLogger(saveUpdatedAnswer.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {

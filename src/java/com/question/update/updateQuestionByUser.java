@@ -15,11 +15,9 @@
  */
 package com.question.update;
 
-import com.connect.DatabaseConnection;
 import com.question.user.questionClass;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,32 +60,28 @@ public class updateQuestionByUser extends HttpServlet {
         String message = null;
 
         if (question != null && question_id != 0) {
-            try{
-                DatabaseConnection connection = new DatabaseConnection();
-                try(Connection con  = DatabaseConnection.makeConnection()) {
-                    if (!user.UpdateQuestionByQuestionId(con,question, question_id)) {
-                        if (tag != null) {
-                            if (!tag_class.SaveTag(con,tag)) {
-                                if (!tag_class.SaveTagWithQuestionId(con,question_id, tag)) {
-                                    message = "Question and tag has been updated successfully";
-                                } else {
-                                    message = "Question has been updated but not integrated with topic";
-                                }
+
+            try {
+                if (!user.UpdateQuestionByQuestionId(question, question_id)) {
+                    if (tag != null) {
+                        if (!tag_class.SaveTag(tag)) {
+                            if (!tag_class.SaveTagWithQuestionId(question_id, tag)) {
+                                message = "Question and tag has been updated successfully";
                             } else {
-                                message = "Question has been updatd but tag not updated, please try again";
+                                message = "Question has been updated but not integrated with topic";
                             }
                         } else {
-                            message = "Question has been updated but tag is still empty";
+                            message = "Question has been updatd but tag not updated, please try again";
                         }
                     } else {
-                        message = "question not updated,Got some problme.Please try again";
+                        message = "Question has been updated but tag is still empty";
                     }
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Logger.getLogger(updateQuestionByUser.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (Exception ex) {
-                    Logger.getLogger(updateQuestionByUser.class.getName()).log(Level.SEVERE, null, ex);
+                } else {
+                    message = "question not updated,Got some problme.Please try again";
                 }
             } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(updateQuestionByUser.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
                 Logger.getLogger(updateQuestionByUser.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {

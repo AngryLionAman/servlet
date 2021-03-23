@@ -15,6 +15,7 @@
  */
 package com.topic;
 
+import com.connect.DatabaseConnection;
 import com.index.indexPageExtraFunction;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,13 +34,12 @@ public class topicDetail {
 
     /**
      *
-     * @param con
      * @param topicid
      * @return
      * @throws SQLException
      * @throws Exception
      */
-    public List<topicPojo> topic(Connection con, int topicid) throws SQLException, Exception {
+    public List<topicPojo> topic(int topicid) throws SQLException, Exception {
 
         indexPageExtraFunction function = new indexPageExtraFunction();
 
@@ -47,21 +47,27 @@ public class topicDetail {
 
         String sql = "select * from topic where unique_id = ?";
 
-        try (  PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, topicid);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String topicName = rs.getString("topic_name");
-                    int topicId = rs.getInt("unique_id");
-                    String imageUrl = rs.getString("image_url");
-                    String descHindi = rs.getString("desc_hindi");
-                    String descEng = rs.getString("desc_english");
-                    boolean crawl = rs.getBoolean("crawl");
-                    int totalFollowers = function.totalFollowersOfTopic(con,topicId);
-                    int relatedQuestion = function.totalRelatedQuestion(con,topicId);
-                    list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, crawl, totalFollowers, relatedQuestion));
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, topicid);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String topicName = rs.getString("topic_name");
+                        int topicId = rs.getInt("unique_id");
+                        String imageUrl = rs.getString("image_url");
+                        String descHindi = rs.getString("desc_hindi");
+                        String descEng = rs.getString("desc_english");
+                        boolean crawl = rs.getBoolean("crawl");
+                        int totalFollowers = 1432;//function.totalFollowersOfTopic(topicId);
+                        int relatedQuestion = 87;//function.totalRelatedQuestion(topicId);
+                        list.add(new topicPojo(topicName, topicId, imageUrl, descHindi, descEng, crawl, totalFollowers, relatedQuestion));
+                    }
+                    return list;
+                } catch (Exception msg) {
+                    Logger.getLogger(topicDetail.class.getName()).log(Level.SEVERE, null, msg);
                 }
-                return list;
+            } catch (Exception msg) {
+                Logger.getLogger(topicDetail.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (Exception msg) {
             Logger.getLogger(topicDetail.class.getName()).log(Level.SEVERE, null, msg);

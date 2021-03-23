@@ -15,10 +15,8 @@
  */
 package com.blog;
 
-import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,16 +58,11 @@ public class saveblog extends HttpServlet {
 
         if (blog_sub != null && blog_description != null && id_of_user != 0) {
             try {
-                DatabaseConnection connection = new DatabaseConnection();
-                try (Connection con = DatabaseConnection.makeConnection()) {
-                    if (!blog.saveBlog(con, blog_sub, blog_description, id_of_user)) {
-                        message = "Blog has been saved";
-                        //Send notification to all followers
-                    } else {
-                        message = "Blog not saved, Got some unknown error. Please try again";
-                    }
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Logger.getLogger(saveblog.class.getName()).log(Level.SEVERE, null, ex);
+                if (!blog.saveBlog(blog_sub, blog_description, id_of_user)) {
+                    message = "Blog has been saved";
+                    //Send notification to all followers
+                } else {
+                    message = "Blog not saved, Got some unknown error. Please try again";
                 }
             } catch (SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(saveblog.class.getName()).log(Level.SEVERE, null, ex);

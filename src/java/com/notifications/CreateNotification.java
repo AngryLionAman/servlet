@@ -31,11 +31,9 @@ public class CreateNotification {
 
     public boolean userGetFollowed(int notification_receiver_id, int notification_creater_id, int content_id) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "INSERT INTO notification (user_id, notification_type,creater_id, content_id)VALUES(?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, notification_receiver_id);
             ps.setString(2, "followed_by");
@@ -58,11 +56,9 @@ public class CreateNotification {
      */
     public boolean CreateNotificationOfProfileComment(int session_user_id, int on_comment_user_id) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "INSERT INTO notification (user_id,notification_type,creater_id, content_id) VALUES (?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, on_comment_user_id);
             ps.setString(2, "comment_on_Profile");
@@ -84,17 +80,21 @@ public class CreateNotification {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean questionRejectedByAdmin(Connection con, int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
+    public boolean questionRejectedByAdmin(int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
 
         String sql = "INSERT INTO notification (user_id,content_id,notification_type,creater_id)VALUES(?,?,?,?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ps.setInt(2, oldQuestionId);
-            ps.setString(3, "question_approvel_rejected_by_admin");
-            ps.setInt(4, 0);
-            return ps.execute();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                ps.setInt(2, oldQuestionId);
+                ps.setString(3, "question_approvel_rejected_by_admin");
+                ps.setInt(4, 0);
+                return ps.execute();
 
+            } catch (SQLException msg) {
+                Logger.getLogger(CreateNotification.class.getName()).log(Level.SEVERE, null, msg);
+            }
         } catch (SQLException msg) {
             Logger.getLogger(CreateNotification.class.getName()).log(Level.SEVERE, null, msg);
         }
@@ -109,18 +109,21 @@ public class CreateNotification {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean questionRejectedByUser(Connection con,int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
-
+    public boolean questionRejectedByUser(int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
 
         String sql = "INSERT INTO notification (user_id,content_id,notification_type,creater_id)VALUES(?,?,?,?)";
 
-        try ( PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ps.setInt(2, oldQuestionId);
-            ps.setString(3, "question_approvel_rejected_by_user");
-            ps.setInt(4, 0);
-            return ps.execute();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                ps.setInt(2, oldQuestionId);
+                ps.setString(3, "question_approvel_rejected_by_user");
+                ps.setInt(4, 0);
+                return ps.execute();
 
+            } catch (SQLException msg) {
+                Logger.getLogger(CreateNotification.class.getName()).log(Level.SEVERE, null, msg);
+            }
         } catch (SQLException msg) {
             Logger.getLogger(CreateNotification.class.getName()).log(Level.SEVERE, null, msg);
         }
@@ -135,16 +138,20 @@ public class CreateNotification {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean questionApprovedByAdmin(Connection con, int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
+    public boolean questionApprovedByAdmin(int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
 
         String sql = "INSERT INTO notification (user_id,content_id,notification_type,creater_id)VALUES(?,?,?,?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ps.setInt(2, oldQuestionId);
-            ps.setString(3, "question_approved_by_admin");
-            ps.setInt(4, 0);
-            return ps.execute();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                ps.setInt(2, oldQuestionId);
+                ps.setString(3, "question_approved_by_admin");
+                ps.setInt(4, 0);
+                return ps.execute();
+            } catch (SQLException msg) {
+                Logger.getLogger(CreateNotification.class.getName()).log(Level.SEVERE, null, msg);
+            }
         } catch (SQLException msg) {
             Logger.getLogger(CreateNotification.class.getName()).log(Level.SEVERE, null, msg);
         }
@@ -161,11 +168,9 @@ public class CreateNotification {
      */
     public boolean questionApprovedByUser(int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "INSERT INTO notification (user_id,content_id,notification_type,creater_id)VALUES(?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, oldQuestionId);
@@ -186,16 +191,20 @@ public class CreateNotification {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean requestHasBeenApprovedForQuestion(Connection con, int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
+    public boolean requestHasBeenApprovedForQuestion(int userId, int oldQuestionId) throws SQLException, ClassNotFoundException {
 
         String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id)VALUES(?,?,?,?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ps.setString(2, "modified_question_approved");
-            ps.setInt(3, 0);
-            ps.setInt(4, oldQuestionId);
-            return ps.execute();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                ps.setString(2, "modified_question_approved");
+                ps.setInt(3, 0);
+                ps.setInt(4, oldQuestionId);
+                return ps.execute();
+            } catch (SQLException msg) {
+                Logger.getLogger(CreateNotification.class.getName()).log(Level.SEVERE, null, msg);
+            }
         } catch (SQLException msg) {
             Logger.getLogger(CreateNotification.class.getName()).log(Level.SEVERE, null, msg);
         }
@@ -204,7 +213,6 @@ public class CreateNotification {
 
     /**
      *
-     * @param con
      * @param userId
      * @param followerdId
      * @param questionId
@@ -212,11 +220,12 @@ public class CreateNotification {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean modificationOfQuestionRequest(Connection con, int userId, int followerdId, int questionId) throws SQLException, ClassNotFoundException {
+    public boolean modificationOfQuestionRequest(int userId, int followerdId, int questionId) throws SQLException, ClassNotFoundException {
 
         String sql = "INSERT INTO notification (user_id,creater_id,content_id,notification_type)VALUES(?,?,?,?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, followerdId);
             ps.setInt(3, questionId);
@@ -230,7 +239,6 @@ public class CreateNotification {
 
     /**
      *
-     * @param con
      * @param userid
      * @param useridWhoPostedQuestion
      * @param questionid
@@ -238,7 +246,7 @@ public class CreateNotification {
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean UserGotAnswerOfQuestion(Connection con, int userid, int useridWhoPostedQuestion, int questionid) throws SQLException, ClassNotFoundException, Exception {
+    public boolean UserGotAnswerOfQuestion(int userid, int useridWhoPostedQuestion, int questionid) throws SQLException, ClassNotFoundException, Exception {
         /*
         @userid - aslo consider as followers_id, Who gave the answer, id of current active user
         @useridWhoPostedQuestion - who asked the question
@@ -247,7 +255,8 @@ public class CreateNotification {
 
         String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id)VALUES(?,?,?,?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             /* In MySql
             @user_id - who will get the notification, mean who posted the questiion
             @notification_type - 
@@ -275,11 +284,9 @@ public class CreateNotification {
      */
     public boolean CreateNotificationForBlogComment(int sessionUserId, int bloggerId, int blogId) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id) VALUES (?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, bloggerId);
             ps.setString(2, "comment_on_Blog");
@@ -303,11 +310,9 @@ public class CreateNotification {
      */
     public boolean CreateNotificationForQuestionComment(int userIdWhoPostedQuestion, int userId, int questionId) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id ) VALUES (?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userIdWhoPostedQuestion);
             ps.setString(2, "comment_on_question");
@@ -333,10 +338,8 @@ public class CreateNotification {
 
         validateInput input = new validateInput();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         boolean val = true;
-        try (Connection con = DatabaseConnection.makeConnection()) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
             String[] userId = allUserId.split(" ");
             String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id ) VALUES (?,?,?,?)";
             for (String obj : userId) {
@@ -346,6 +349,8 @@ public class CreateNotification {
                     ps.setInt(3, sessionActiveUserId);
                     ps.setInt(4, questionId);
                     val = ps.execute();
+                } catch (SQLException msg) {
+                    Logger.getLogger(CreateNotification.class.getName()).log(Level.SEVERE, allUserId, msg);
                 }
             }
             return val;
@@ -369,11 +374,9 @@ public class CreateNotification {
 
         validateInput input = new validateInput();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         boolean status = true;
 
-        try (Connection con = DatabaseConnection.makeConnection()) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
             String[] userId = allUserId.split(" ");
             String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id) VALUES (?,?,?,?)";
             for (String obj : userId) {
@@ -383,6 +386,8 @@ public class CreateNotification {
                     ps.setInt(3, followersIdWhoCommentd);
                     ps.setInt(4, answerId);
                     status = ps.execute();
+                } catch (SQLException msg) {
+                    Logger.getLogger(CreateNotification.class.getName()).log(Level.SEVERE, null, msg);
                 }
             }
             return status;
@@ -404,11 +409,9 @@ public class CreateNotification {
      */
     public boolean CreateNotificationOfAnswerComment(int userIdWhoPostedQuestion, int followersIdWhoCommentd, int questionId, int answerId) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "INSERT INTO notification (user_id,notification_type,creater_id,content_id) VALUES (?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userIdWhoPostedQuestion);
             ps.setString(2, "comment_on_Answer");

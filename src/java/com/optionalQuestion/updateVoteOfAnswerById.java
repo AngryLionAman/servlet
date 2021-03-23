@@ -63,16 +63,13 @@ public class updateVoteOfAnswerById extends HttpServlet {
                 Connection con = null;
                 PreparedStatement ps = null;
                 try {
-                    DatabaseConnection connection = new DatabaseConnection();
-                    con = DatabaseConnection.makeConnection();
+                    con = DatabaseConnection.getInstance().getConnection();
                     String sql = "update option_of_question set vote = vote + 1 where unique_id = ?";
                     ps = con.prepareStatement(sql);
                     ps.setInt(1, answerId);
                     ps.execute();
                 } catch (SQLException msg) {
                     throw msg;
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(updateVoteOfAnswerById.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
                     if (ps != null) {
                         try {

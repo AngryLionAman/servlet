@@ -68,8 +68,8 @@ public class deleteQuestionById extends HttpServlet {
     private boolean deleteQuestionById(int questionId) throws SQLException, ClassNotFoundException {
         boolean status = false;
 
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
+        
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement("delete from question_topic_tag where question_id = ?")) {
 
             ps.setInt(1, questionId);

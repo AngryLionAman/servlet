@@ -15,6 +15,7 @@
  */
 package com.count;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,21 +31,25 @@ public class CountRowsProfile {
 
     /**
      *
-     * @param con
      * @param userId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int CountBlogRowByUserId(Connection con, int userId) throws SQLException, ClassNotFoundException {
+    public int CountBlogRowByUserId(int userId) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT COUNT(*) AS cnt FROM blog WHERE posted_by = ?";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getInt("cnt");
+
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getInt("cnt");
+                    }
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
@@ -54,24 +59,27 @@ public class CountRowsProfile {
 
     /**
      *
-     * @param con
      * @param userId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int CountFollowersRowByUserId(Connection con, int userId) throws SQLException, ClassNotFoundException {
+    public int CountFollowersRowByUserId(int userId) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT COUNT(*) AS cnt FROM newuser user INNER JOIN ak_follower_detail ak ON ak.followers_id=user.ID WHERE user_id = ? AND user.id <> ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, userId);
-            ps.setInt(2, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getInt("cnt");
+                ps.setInt(1, userId);
+                ps.setInt(2, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getInt("cnt");
+                    }
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
@@ -81,25 +89,28 @@ public class CountRowsProfile {
 
     /**
      *
-     * @param con
      * @param userId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int CountFollowingRowByUserId(Connection con, int userId) throws SQLException, ClassNotFoundException {
+    public int CountFollowingRowByUserId(int userId) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT count(*) AS cnt FROM newuser user INNER JOIN ak_follower_detail ak ON ak.user_id=user.ID WHERE followers_id = ? AND user.id <> ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            ps.setInt(2, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getInt("cnt");
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                ps.setInt(2, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getInt("cnt");
+                    }
                 }
-            }
 
+            } catch (SQLException msg) {
+                Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
+            }
         } catch (SQLException msg) {
             Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
         }
@@ -108,22 +119,25 @@ public class CountRowsProfile {
 
     /**
      *
-     * @param con
      * @param userId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int CountTopicRowByUserId(Connection con, int userId) throws SQLException, ClassNotFoundException {
+    public int CountTopicRowByUserId(int userId) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT COUNT(*) AS cnt FROM topic t INNER JOIN topic_followers_detail de ON t.unique_id = de.topic_id WHERE user_or_followers_id = ? AND t.unique_id IS NOT NULL AND t.topic_name IS NOT NULL";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getInt("cnt");
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getInt("cnt");
+                    }
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
@@ -133,22 +147,25 @@ public class CountRowsProfile {
 
     /**
      *
-     * @param con
      * @param userId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int CountAnswerRowByUserId(Connection con, int userId) throws SQLException, ClassNotFoundException {
+    public int CountAnswerRowByUserId(int userId) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT COUNT(*) AS cnt FROM answer WHERE Answer_by_id = ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getInt("cnt");
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getInt("cnt");
+                    }
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
@@ -163,16 +180,20 @@ public class CountRowsProfile {
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int CountQuestionRowByUserId(Connection con, int userId) throws SQLException, ClassNotFoundException {
+    public int CountQuestionRowByUserId(int userId) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT COUNT(*) AS cnt FROM question WHERE id = ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getInt("cnt");
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getInt("cnt");
+                    }
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(CountRowsProfile.class.getName()).log(Level.SEVERE, null, msg);

@@ -44,8 +44,8 @@ public class approval_admin_class_file {
                 + "FROM modified_question_table o INNER JOIN question q ON o.question_id = q.q_id  WHERE o.modified_question IS NOT NULL";
 
         List<QuestionForApprovalPojo> list = new ArrayList<>();
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
+        
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
 

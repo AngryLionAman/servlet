@@ -15,10 +15,8 @@
  */
 package com.search;
 
-import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,16 +52,12 @@ public class saveSearchedQuaryServlet extends HttpServlet {
 
         saveSearchedQueryClassFile file = new saveSearchedQueryClassFile();
         if (query != null) {
-            try{
-                DatabaseConnection  connection = new DatabaseConnection();
-                try(Connection con = DatabaseConnection.makeConnection()) {
-                    if (!file.SaveSearchedQuery(con,query, userId)) {
-                        message = "Queary has been saved";
-                    } else {
-                        message = "Queary not saved";
-                    }
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Logger.getLogger(saveSearchedQuaryServlet.class.getName()).log(Level.SEVERE, null, ex);
+
+            try {
+                if (!file.SaveSearchedQuery(query, userId)) {
+                    message = "Queary has been saved";
+                } else {
+                    message = "Queary not saved";
                 }
             } catch (SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(saveSearchedQuaryServlet.class.getName()).log(Level.SEVERE, null, ex);

@@ -43,8 +43,8 @@ public class saveTextads {
         PreparedStatement ps = null;
         boolean execute = false;
         try {
-            DatabaseConnection connection = new DatabaseConnection();
-            con = DatabaseConnection.makeConnection();
+            
+            con = DatabaseConnection.getInstance().getConnection();
             String sql = "insert into textads(title,description,link,promoted_by,days)values(?,?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setString(1, title);

@@ -15,10 +15,8 @@
  */
 package com.answer.update;
 
-import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,16 +60,11 @@ public class updateAnswer extends HttpServlet {
 
         if (question_id != 0 && answer_id != 0) {
             try {
-                DatabaseConnection connection = new DatabaseConnection();
-                try (Connection con = DatabaseConnection.makeConnection()) {
-                    //get answer of selected the id
-                    answer = update.GetAnswerByAnswerid(con, answer_id);
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Logger.getLogger(updateAnswer.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (Exception ex) {
-                    Logger.getLogger(updateAnswer.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                //get answer of selected the id
+                answer = update.GetAnswerByAnswerid(answer_id);
             } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(updateAnswer.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
                 Logger.getLogger(updateAnswer.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {

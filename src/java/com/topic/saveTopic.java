@@ -15,6 +15,7 @@
  */
 package com.topic;
 
+import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,13 +29,14 @@ import java.util.logging.Logger;
  */
 public class saveTopic {
 
-    void SaveTopicByTopicIdAndUserId(Connection con, String userid, String[] topicName) throws SQLException, ClassNotFoundException {
+    void SaveTopicByTopicIdAndUserId(String userid, String[] topicName) throws SQLException, ClassNotFoundException {
 
         validateInput input = new validateInput();
 
         String sql = "insert into topic_followers_detail(topic_id,user_or_followers_id) values(?,?)";
         for (String obj : topicName) {
-            try (PreparedStatement ps = con.prepareStatement(sql)) {
+            try (Connection con = DatabaseConnection.getInstance().getConnection();
+                    PreparedStatement ps = con.prepareStatement(sql)) {
                 ps.setInt(1, input.getInputInt(obj));
                 ps.setInt(2, input.getInputInt(userid));
                 ps.execute();

@@ -91,8 +91,7 @@ public class saveOptionalQuestion extends HttpServlet {
             PreparedStatement ps = null;
             ResultSet rs = null;
             try {
-                DatabaseConnection connection = new DatabaseConnection();
-                con = DatabaseConnection.makeConnection();
+                con = DatabaseConnection.getInstance().getConnection();
                 String sql = "insert into optional_question(question,answer,on_topic,posted_by,total_option)values(?,?,?,?,?);";
                 ps = con.prepareStatement(sql);
                 ps.setString(1, question);
@@ -102,11 +101,11 @@ public class saveOptionalQuestion extends HttpServlet {
                 ps.setInt(5, numberOfOption);
                 Boolean value = ps.execute();
                 if (value) {
-                    
+
                 } else {
                     int questionId = 0;
                     try {
-                        
+
                         sql = "select id from optional_question where question = ?";
                         ps = con.prepareStatement(sql);
                         ps.setString(1, question);
@@ -136,28 +135,26 @@ public class saveOptionalQuestion extends HttpServlet {
                 } catch (SQLException ex) {
                     Logger.getLogger(saveOptionalQuestion.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(saveOptionalQuestion.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 if (rs != null) {
                     try {
                         rs.close();
                     } catch (SQLException err) {
-                        
+
                     }
                 }
                 if (ps != null) {
                     try {
                         ps.close();
                     } catch (SQLException err) {
-                        
+
                     }
                 }
                 if (con != null) {
                     try {
                         con.close();
                     } catch (SQLException err) {
-                        
+
                     }
                 }
 

@@ -67,8 +67,8 @@ public class SaveQuestionForAdmin extends HttpServlet {
             out.println(userId);
             if ((question != null && question.length() > 0) && (questionTag != null && questionTag.length() > 0) && userId != 0) {
                 String sql = "insert into question(id,question,vote) values(?,?,?)";
-                DatabaseConnection connection = new DatabaseConnection();
-                con = DatabaseConnection.makeConnection();
+                
+                con = DatabaseConnection.getInstance().getConnection();
                 ps = con.prepareStatement(sql);
                 ps.setInt(1, userId);
                 ps.setString(2, question);
@@ -159,8 +159,6 @@ public class SaveQuestionForAdmin extends HttpServlet {
             } catch (NumberFormatException | SQLException ex) {
                 Logger.getLogger(SaveQuestionForAdmin.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SaveQuestionForAdmin.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             if (rs != null) {
                 try {

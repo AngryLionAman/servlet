@@ -39,11 +39,9 @@ public class UserFollow {
      */
     public boolean IsUserFollowingByUserId(int userId, int followersId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "SELECT * FROM ak_follower_detail WHERE followers_id = ? AND user_id = ? LIMIT 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, followersId);
             ps.setInt(2, userId);

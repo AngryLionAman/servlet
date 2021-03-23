@@ -15,6 +15,7 @@
  */
 package com.security;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,16 +29,16 @@ public class OperationWithMobileNumber {
 
     /**
      *
-     * @param con
      * @param userId
      * @return
      * @throws SQLException
      */
-    public int getMobileNumberByuserId(Connection con, int userId) throws SQLException {
-        
+    public int getMobileNumberByuserId(int userId) throws SQLException {
+
         String sql = "SELECT data FROM extra_user_details WHERE data_type = 'mobile_number' AND user_id = ? ORDER BY unique_id DESC LIMIT 1";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -50,16 +51,16 @@ public class OperationWithMobileNumber {
 
     /**
      *
-     * @param con
      * @param userid
      * @param mob
      * @return
      * @throws SQLException
      */
-    public boolean addMobileNumber(Connection con, int userid, String mob) throws SQLException {
+    public boolean addMobileNumber(int userid, String mob) throws SQLException {
         String sql = "INSERT INTO extra_user_details(user_id,data_type,data)VALUES(?,?,?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userid);
             ps.setString(2, "mobile_number");
             ps.setString(3, mob);
@@ -69,15 +70,15 @@ public class OperationWithMobileNumber {
 
     /**
      *
-     * @param con
      * @param mob
      * @return
      * @throws SQLException
      */
-    public boolean isMobileNumberAvaliable(Connection con, String mob) throws SQLException {
+    public boolean isMobileNumberAvaliable(String mob) throws SQLException {
         String sql = "SELECT * FROM extra_user_details WHERE data = ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, mob);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.first();

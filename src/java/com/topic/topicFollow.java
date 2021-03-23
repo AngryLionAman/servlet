@@ -30,11 +30,9 @@ public class topicFollow {
      */
     public boolean topicFollw(int topicId, int userId) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "select topic_id from topic_followers_detail where topic_id = ? and user_or_followers_id =?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicId);
             ps.setInt(2, userId);

@@ -38,11 +38,9 @@ public class SaveFollowUserClassFile {
      */
     public boolean FollowUser(int userId, int followersId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "INSERT INTO ak_follower_detail(user_id,followers_id) VALUES (?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, followersId);
@@ -64,11 +62,9 @@ public class SaveFollowUserClassFile {
      */
     public boolean UnfollowUser(int userId, int followersId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "DELETE FROM ak_follower_detail WHERE  user_id = ? AND followers_id = ?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, followersId);

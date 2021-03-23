@@ -15,6 +15,7 @@
  */
 package com.optionalQuestion;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,12 +31,14 @@ import java.util.logging.Logger;
  */
 public class DisplayOptionalQuestionClassFile {
 
-    public int getTotalNoOfPageByNoOfPage(Connection con, int recordPerPage, int noOfOption) throws SQLException, ClassNotFoundException {
+    public int getTotalNoOfPageByNoOfPage(int recordPerPage, int noOfOption) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT count(*) AS cnt FROM optional_question WHERE total_option  = ?";
 
         float totalNumberOfpage = 0;
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, noOfOption);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -55,12 +58,13 @@ public class DisplayOptionalQuestionClassFile {
         return 0;
     }
 
-    public int getTotalNoOfPageByBasedOn(Connection con, int recordPerPage, String basedOn) throws SQLException, ClassNotFoundException {
+    public int getTotalNoOfPageByBasedOn(int recordPerPage, String basedOn) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT COUNT(*) AS cnt FROM optional_question WHERE on_topic = ?";
 
         float totalNumberOfpage = 0;
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, basedOn);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -79,10 +83,11 @@ public class DisplayOptionalQuestionClassFile {
         return 0;
     }
 
-    public int getTotalNoOfPage(Connection con, int recordPerPage) throws SQLException, ClassNotFoundException {
+    public int getTotalNoOfPage(int recordPerPage) throws SQLException, ClassNotFoundException {
 
         float totalNumberOfpage = 0;
-        try (PreparedStatement ps = con.prepareStatement("select count(*) as cnt from optional_question");
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement("select count(*) as cnt from optional_question");
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 totalNumberOfpage = rs.getInt("cnt");
@@ -99,7 +104,7 @@ public class DisplayOptionalQuestionClassFile {
         return 0;
     }
 
-    public List<optionalQuestionPojo> getOptionalQuestionByBasedOn(Connection con, String basedOn, int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
+    public List<optionalQuestionPojo> getOptionalQuestionByBasedOn(String basedOn, int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
 
         List<optionalQuestionPojo> list = new ArrayList<>();
 
@@ -110,7 +115,8 @@ public class DisplayOptionalQuestionClassFile {
 
         String sql = "select id,question,answer,on_topic,posted_by,total_option from optional_question where on_topic = ? limit ?,?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, basedOn);
             ps.setInt(2, startPage);
             ps.setInt(3, recordPerPage);
@@ -132,7 +138,7 @@ public class DisplayOptionalQuestionClassFile {
         return null;
     }
 
-    public List<optionalQuestionPojo> getOptionalQuestionByNoOfPage(Connection con, int noOfOption, int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
+    public List<optionalQuestionPojo> getOptionalQuestionByNoOfPage(int noOfOption, int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
 
         List<optionalQuestionPojo> list = new ArrayList<>();
 
@@ -143,7 +149,8 @@ public class DisplayOptionalQuestionClassFile {
 
         String sql = "select id,question,answer,on_topic,posted_by,total_option from optional_question where total_option = ? limit ?,?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, noOfOption);
             ps.setInt(2, startPage);
             ps.setInt(3, recordPerPage);
@@ -165,7 +172,7 @@ public class DisplayOptionalQuestionClassFile {
         return null;
     }
 
-    public List<optionalQuestionPojo> getOptionalQuestionByLimit(Connection con, int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
+    public List<optionalQuestionPojo> getOptionalQuestionByLimit(int pageNo, int recordPerPage) throws SQLException, ClassNotFoundException {
 
         List<optionalQuestionPojo> list = new ArrayList<>();
 
@@ -176,7 +183,8 @@ public class DisplayOptionalQuestionClassFile {
 
         String sql = "select id,question,answer,on_topic,posted_by,total_option from optional_question order by rand() limit ?,?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, startPage);
             ps.setInt(2, recordPerPage);
             try (ResultSet rs = ps.executeQuery()) {

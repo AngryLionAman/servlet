@@ -15,6 +15,7 @@
  */
 package com.answer;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,22 +31,25 @@ public class time {
 
     /**
      *
-     * @param con
      * @param questionId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int showTime(Connection con, int questionId) throws SQLException, ClassNotFoundException, Exception {
+    public int showTime(int questionId) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "SELECT DATEDIFF(CURDATE(), posted_time) AS Date FROM question WHERE q_id = ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, questionId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("Date");
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, questionId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("Date");
+                    }
                 }
+            } catch (Exception msg) {
+                Logger.getLogger(time.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (Exception msg) {
             Logger.getLogger(time.class.getName()).log(Level.SEVERE, null, msg);

@@ -17,11 +17,9 @@ package com.profile;
 
 import com.comments.GetComment;
 import com.comments.ProfileCommentsPojo;
-import com.connect.DatabaseConnection;
 import com.login.supportingFunctionLogin;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -76,12 +74,11 @@ public class profile extends HttpServlet {
         String gotException = null;
         String path = "profile.jsp";
 
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection()) {
+        try {
             int userId = 0;
 
             try {
-                userId = GetUserId(con, request);
+                userId = GetUserId(request);
             } catch (Exception msg) {
                 Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
             }
@@ -116,24 +113,24 @@ public class profile extends HttpServlet {
             if (userId != 0) {
 
                 try {
-                    GetUserDetailByUserId = file.GetUserDetailByUserId(con,userId);
+                    GetUserDetailByUserId = file.GetUserDetailByUserId(userId);
                 } catch (ClassNotFoundException | SQLException msg) {
                     Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
                 }
                 try {
-                    supportingClass.UpdateProfileViewBy1ByUserId(con,userId);
-                } catch (ClassNotFoundException | SQLException msg) {
-                    Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
-                }
-
-                try {
-                    CountRowByUserIdController = supportingClass.CountRowByUserIdController(con,userId);
+                    supportingClass.UpdateProfileViewBy1ByUserId(userId);
                 } catch (ClassNotFoundException | SQLException msg) {
                     Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
                 }
 
                 try {
-                    GetCommentByProfileId = comment.GetCommentByProfileId(con,userId);
+                    CountRowByUserIdController = supportingClass.CountRowByUserIdController(userId);
+                } catch (ClassNotFoundException | SQLException msg) {
+                    Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
+                }
+
+                try {
+                    GetCommentByProfileId = comment.GetCommentByProfileId(userId);
                 } catch (ClassNotFoundException | SQLException msg) {
                     Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
                 }
@@ -141,7 +138,7 @@ public class profile extends HttpServlet {
                 switch (tab) {
                     case "question":
                         try {
-                            GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(con,userId);
+                            GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(userId);
                         } catch (ClassNotFoundException | SQLException msg) {
                             Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
                         }
@@ -150,7 +147,7 @@ public class profile extends HttpServlet {
 
                     case "answer":
                         try {
-                            GetTotalAnswerPostedByUserId = supportingClass.GetTotalAnswerPostedByUserId(con,userId);
+                            GetTotalAnswerPostedByUserId = supportingClass.GetTotalAnswerPostedByUserId(userId);
                         } catch (ClassNotFoundException | SQLException msg) {
                             Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
                         }
@@ -159,7 +156,7 @@ public class profile extends HttpServlet {
 
                     case "topic":
                         try {
-                            GetTotalTopicFollowedByUserId = supportingClass.GetTotalTopicFollowedByUserId(con,userId);
+                            GetTotalTopicFollowedByUserId = supportingClass.GetTotalTopicFollowedByUserId(userId);
                         } catch (ClassNotFoundException | SQLException msg) {
                             Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
                         }
@@ -168,7 +165,7 @@ public class profile extends HttpServlet {
 
                     case "following":
                         try {
-                            GetTotalFollowingByUserId = supportingClass.GetTotalFollowingByUserId(con,userId);
+                            GetTotalFollowingByUserId = supportingClass.GetTotalFollowingByUserId(userId);
                         } catch (ClassNotFoundException | SQLException msg) {
                             Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
                         }
@@ -177,7 +174,7 @@ public class profile extends HttpServlet {
 
                     case "followers":
                         try {
-                            GetTotalFollowersByUserId = supportingClass.GetTotalFollowersByUserId(con,userId);
+                            GetTotalFollowersByUserId = supportingClass.GetTotalFollowersByUserId(userId);
                         } catch (ClassNotFoundException | SQLException msg) {
                             Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
                         }
@@ -186,7 +183,7 @@ public class profile extends HttpServlet {
 
                     case "blog":
                         try {
-                            GetTotalBlogByUserId = supportingClass.GetTotalBlogByUserId(con,userId);
+                            GetTotalBlogByUserId = supportingClass.GetTotalBlogByUserId(userId);
                         } catch (ClassNotFoundException | SQLException msg) {
                             Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
                         }
@@ -195,7 +192,7 @@ public class profile extends HttpServlet {
 
                     default:
                         try {
-                            GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(con,userId);
+                            GetTotalQuestionPostedByUserId = supportingClass.GetTotalQuestionPostedByUserId(userId);
                         } catch (ClassNotFoundException | SQLException msg) {
                             Logger.getLogger(profile.class.getName()).log(Level.SEVERE, path, msg);
                         }
@@ -231,14 +228,13 @@ public class profile extends HttpServlet {
 
     /**
      *
-     * @param con
      * @param request
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public int GetUserId(Connection con, HttpServletRequest request) throws SQLException, ClassNotFoundException, Exception {
+    public int GetUserId(HttpServletRequest request) throws SQLException, ClassNotFoundException, Exception {
 
         validateInput input = new validateInput();
         HttpSession session = request.getSession(false);
@@ -268,23 +264,23 @@ public class profile extends HttpServlet {
         int userId = 0;
 
         if (getParameterUserId != 0) {
-            if (file.IsUserPresent(con, getParameterUserId)) {
+            if (file.IsUserPresent(getParameterUserId)) {
                 userId = getParameterUserId;
             }
         } else if (getParameterUserName != null) {
-            if (file.IsUserPresent(con, getParameterUserName)) {
-                userId = file.GetUserIdByUserName(con,getParameterUserName);
+            if (file.IsUserPresent(getParameterUserName)) {
+                userId = file.GetUserIdByUserName(getParameterUserName);
             }
         } else if (getAttributeUserId != 0) {
-            if (file.IsUserPresent(con, getAttributeUserId)) {
+            if (file.IsUserPresent(getAttributeUserId)) {
                 userId = getAttributeUserId;
             }
         } else if (sessionGetAttributUserId != 0) {
-            if (file.IsUserPresent(con, sessionGetAttributUserId)) {
+            if (file.IsUserPresent(sessionGetAttributUserId)) {
                 userId = sessionGetAttributUserId;
             }
         } else {
-            userId = GetUserIdByCookiesEmailAndPass(con, request);
+            userId = GetUserIdByCookiesEmailAndPass(request);
         }
 
         return userId;
@@ -292,13 +288,12 @@ public class profile extends HttpServlet {
 
     /**
      *
-     * @param con
      * @param request
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int GetUserIdByCookiesEmailAndPass(Connection con, HttpServletRequest request) throws SQLException, ClassNotFoundException, Exception {
+    public int GetUserIdByCookiesEmailAndPass(HttpServletRequest request) throws SQLException, ClassNotFoundException, Exception {
 
         supportingFunctionLogin login = new supportingFunctionLogin();
         validateInput input = new validateInput();
@@ -319,8 +314,8 @@ public class profile extends HttpServlet {
             }
 
             if (input.getInputString(userEmail) != null && input.getInputString(userPass) != null) {
-                if (login.IsUserIsPresent(con, userEmail, userPass)) {
-                    return login.GetUserIdByEmailAndPassword(con, userEmail, userPass);
+                if (login.IsUserIsPresent(userEmail, userPass)) {
+                    return login.GetUserIdByEmailAndPassword(userEmail, userPass);
                 } else {
                     return 0;
                 }

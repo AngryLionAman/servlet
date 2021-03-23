@@ -54,8 +54,8 @@ public class commet_approval extends HttpServlet {
         CommentApprovalClassFile file = new CommentApprovalClassFile();
 
         String message = null;
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection()) {
+        
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
             int commet_id = input.getInputInt(request.getParameter("commet_id"));
             String action = input.getInputString(request.getParameter("action"));
 

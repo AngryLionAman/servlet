@@ -15,6 +15,7 @@
  */
 package com.fun;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,22 +33,25 @@ public class FunHelpingFunction {
 
     /**
      *
-     * @param con
      * @return @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public List<String> getFunCategory(Connection con) throws SQLException, ClassNotFoundException, Exception {
+    public List<String> getFunCategory() throws SQLException, ClassNotFoundException, Exception {
 
         List<String> list = new ArrayList<>();
 
-        try (PreparedStatement ps = con.prepareStatement("SELECT DISTINCT category FROM fun WHERE category IS NOT NULL ORDER BY RAND()");
-                ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                String category = rs.getString("category");
-                list.add(category);
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement("SELECT DISTINCT category FROM fun WHERE category IS NOT NULL ORDER BY RAND()");
+                    ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String category = rs.getString("category");
+                    list.add(category);
+                }
+                return list;
+            } catch (SQLException msg) {
+                Logger.getLogger(FunHelpingFunction.class.getName()).log(Level.SEVERE, null, msg);
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(FunHelpingFunction.class.getName()).log(Level.SEVERE, null, msg);
         }
@@ -56,21 +60,24 @@ public class FunHelpingFunction {
 
     /**
      *
-     * @param con
      * @return @throws SQLException
      * @throws ClassNotFoundException
      */
-    public List<String> getFunType(Connection con) throws SQLException, ClassNotFoundException, Exception {
+    public List<String> getFunType() throws SQLException, ClassNotFoundException, Exception {
 
         List<String> list = new ArrayList<>();
 
-        try (PreparedStatement ps = con.prepareStatement("SELECT DISTINCT type FROM fun WHERE type IS NOT NULL ORDER BY RAND()");
-                ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                String type = rs.getString("type");
-                list.add(type);
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement("SELECT DISTINCT type FROM fun WHERE type IS NOT NULL ORDER BY RAND()");
+                    ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String type = rs.getString("type");
+                    list.add(type);
+                }
+                return list;
+            } catch (SQLException msg) {
+                Logger.getLogger(FunHelpingFunction.class.getName()).log(Level.SEVERE, null, msg);
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(FunHelpingFunction.class.getName()).log(Level.SEVERE, null, msg);
         }
@@ -79,21 +86,24 @@ public class FunHelpingFunction {
 
     /**
      *
-     * @param con
      * @return @throws SQLException
      * @throws ClassNotFoundException
      */
-    public List<String> getFunBasedOn(Connection con) throws SQLException, ClassNotFoundException, Exception {
+    public List<String> getFunBasedOn() throws SQLException, ClassNotFoundException, Exception {
 
         List<String> list = new ArrayList<>();
 
-        try (PreparedStatement ps = con.prepareStatement("SELECT DISTINCT based_on FROM fun WHERE based_on IS NOT NULL ORDER BY RAND()");
-                ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                String basedOn = rs.getString("based_on");
-                list.add(basedOn);
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement("SELECT DISTINCT based_on FROM fun WHERE based_on IS NOT NULL ORDER BY RAND()");
+                    ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String basedOn = rs.getString("based_on");
+                    list.add(basedOn);
+                }
+                return list;
+            } catch (SQLException msg) {
+                Logger.getLogger(FunHelpingFunction.class.getName()).log(Level.SEVERE, null, msg);
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(FunHelpingFunction.class.getName()).log(Level.SEVERE, null, msg);
         }

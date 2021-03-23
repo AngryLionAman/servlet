@@ -15,6 +15,7 @@
  */
 package com.advertise;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,13 +31,17 @@ import java.util.logging.Logger;
  */
 public class displayAds {
 
-    private void updateImpressionOfads(Connection con, int adsId) throws SQLException, ClassNotFoundException, Exception {
+    private void updateImpressionOfads(int adsId) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "UPDATE advertise SET impression = impression+1 WHERE id = ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, adsId);
-            ps.execute();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, adsId);
+                ps.execute();
+            } catch (SQLException msg) {
+                Logger.getLogger(displayAds.class.getName()).log(Level.SEVERE, null, msg);
+            }
         } catch (SQLException msg) {
             Logger.getLogger(displayAds.class.getName()).log(Level.SEVERE, null, msg);
         }
@@ -44,30 +49,33 @@ public class displayAds {
 
     /**
      *
-     * @param con
      * @return @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public List<displayAdsPojo> displayRandomAds(Connection con) throws SQLException, ClassNotFoundException, Exception {
+    public List<displayAdsPojo> displayRandomAds() throws SQLException, ClassNotFoundException, Exception {
 
         List<displayAdsPojo> list = new ArrayList<>();
         String sql = "select * from advertise where display = 1 order by rand() limit 1";
 
-        try (PreparedStatement ps = con.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                int adsId = rs.getInt("id");
-                updateImpressionOfads(con,adsId);
-                String imageName = rs.getString("image_name");
-                String imageAlt = rs.getString("image_alt");
-                int imageHeight = rs.getInt("height");
-                int imageWidth = rs.getInt("width");
-                String promotedBy = rs.getString("promoted_by");
-                String forwardUrl = rs.getString("forward_link");
-                list.add(new displayAdsPojo(adsId, imageName, imageAlt, imageHeight, imageWidth, promotedBy, forwardUrl));
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int adsId = rs.getInt("id");
+                    //updateImpressionOfads(adsId);
+                    String imageName = rs.getString("image_name");
+                    String imageAlt = rs.getString("image_alt");
+                    int imageHeight = rs.getInt("height");
+                    int imageWidth = rs.getInt("width");
+                    String promotedBy = rs.getString("promoted_by");
+                    String forwardUrl = rs.getString("forward_link");
+                    list.add(new displayAdsPojo(adsId, imageName, imageAlt, imageHeight, imageWidth, promotedBy, forwardUrl));
+                }
+                return list;
+            } catch (SQLException msg) {
+                Logger.getLogger(displayAds.class.getName()).log(Level.SEVERE, null, msg);
             }
-            return list;
         } catch (SQLException msg) {
             Logger.getLogger(displayAds.class.getName()).log(Level.SEVERE, null, msg);
         }

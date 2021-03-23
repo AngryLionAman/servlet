@@ -15,6 +15,7 @@
  */
 package com.security;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,16 +29,16 @@ public class UserProfilestatus {
 
     /**
      *
-     * @param con
      * @param userId
      * @return
      * @throws SQLException
      */
-    public boolean getEmailDisplayStatus(Connection con, int userId) throws SQLException {
+    public boolean getEmailDisplayStatus(int userId) throws SQLException {
 
         String sql = "SELECT email_s FROM newuser WHERE id = ? LIMIT 1";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

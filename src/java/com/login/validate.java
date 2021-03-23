@@ -15,10 +15,8 @@
  */
 package com.login;
 
-import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,66 +44,56 @@ public class validate extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        try {
-            response.setContentType("text/html;charset=UTF-8");
-            request.setCharacterEncoding("UTF-8");
-            response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        validateInput input = new validateInput();
+        supportingFunctionLogin login = new supportingFunctionLogin();
+        String email = input.getInputString(request.getParameter("email"));
+        String password = request.getParameter("password");
+        String message = null;
+        if (email != null && password != null && !password.isEmpty()) {
 
-            validateInput input = new validateInput();
-            supportingFunctionLogin login = new supportingFunctionLogin();
+            try {
+                if (login.IsUserIsPresent(email, password)) {
+                    int userId = login.GetUserIdByEmailAndPassword(email, password);
+                    if (userId != 0) {
+                        HttpSession session = request.getSession();
+                        session.setAttribute("Session_id_of_user", userId);
+                        session.setMaxInactiveInterval(600);
+                        try {
+                            Cookie[] cookies = request.getCookies();
+                            if (cookies != null) {
 
-            String email = input.getInputString(request.getParameter("email"));
-            String password = request.getParameter("password");
-
-            String message = null;
-            DatabaseConnection connection = new DatabaseConnection();
-            if (email != null && password != null && !password.isEmpty()) {
-
-                try (Connection con = DatabaseConnection.makeConnection()) {
-                    if (login.IsUserIsPresent(con, email, password)) {
-                        int userId = login.GetUserIdByEmailAndPassword(con, email, password);
-                        if (userId != 0) {
-                            HttpSession session = request.getSession();
-                            session.setAttribute("Session_id_of_user", userId);
-                            session.setMaxInactiveInterval(600);
-                            try {
-                                Cookie[] cookies = request.getCookies();
-                                if (cookies != null) {
-
-                                } else {
-                                    Cookie usernameCookie = new Cookie("usernamecookie", email);
-                                    Cookie passwordCookie = new Cookie("passwordcookie", password);
-                                    usernameCookie.setMaxAge(24 * 60 * 60 * 100);
-                                    passwordCookie.setMaxAge(24 * 60 * 60 * 100);
-                                    response.addCookie(usernameCookie);
-                                    response.addCookie(passwordCookie);
-                                }
-
-                            } catch (Exception msg) {
-                                Logger.getLogger(validate.class.getName()).log(Level.SEVERE, null, msg);
+                            } else {
+                                Cookie usernameCookie = new Cookie("usernamecookie", email);
+                                Cookie passwordCookie = new Cookie("passwordcookie", password);
+                                usernameCookie.setMaxAge(24 * 60 * 60 * 100);
+                                passwordCookie.setMaxAge(24 * 60 * 60 * 100);
+                                response.addCookie(usernameCookie);
+                                response.addCookie(passwordCookie);
                             }
-                            request.getRequestDispatcher("index").forward(request, response);
-                            return;
-                        } else {
-                            message = "Your Email and Password is valid but got some unknown problem, Please contact to administrator";
+
+                        } catch (Exception msg) {
+                            Logger.getLogger(validate.class.getName()).log(Level.SEVERE, null, msg);
                         }
+                        request.getRequestDispatcher("index").forward(request, response);
+                        return;
                     } else {
-                        message = "Email or Password is not valid, Please try again";
+                        message = "Your Email and Password is valid but got some unknown problem, Please contact to administrator";
                     }
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Logger.getLogger(validate.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (Exception ex) {
-                    Logger.getLogger(validate.class.getName()).log(Level.SEVERE, null, ex);
+                } else {
+                    message = "Email or Password is not valid, Please try again";
                 }
-            } else {
-                message = "Email or password is empty, Please try with valid input";
+            } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(validate.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(validate.class.getName()).log(Level.SEVERE, null, ex);
             }
-            request.setAttribute("message", message);
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(validate.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(validate.class.getName()).log(Level.SEVERE, null, ex);
+        } else {
+            message = "Email or password is empty, Please try with valid input";
         }
+        request.setAttribute("message", message);
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 }

@@ -15,6 +15,7 @@
  */
 package com.user;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -29,7 +30,6 @@ public class saveNewUser {
 
     /**
      *
-     * @param con
      * @param fullName
      * @param emailOrMobile
      * @param passWord
@@ -37,7 +37,7 @@ public class saveNewUser {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean saveUser(Connection con, String fullName, String emailOrMobile, String passWord) throws SQLException, ClassNotFoundException {
+    public boolean saveUser(String fullName, String emailOrMobile, String passWord) throws SQLException, ClassNotFoundException {
 
         /*
         @ Need to create the username before re-start the new connection
@@ -45,10 +45,11 @@ public class saveNewUser {
         @ Exception Error :- No operations allowed after connection closed
          */
         SupportingFunction function = new SupportingFunction();
-        String userName = function.CreateUsername(con, fullName.trim().replaceAll(" ", ""));
+        String userName = function.CreateUsername(fullName.trim().replaceAll(" ", ""));
         String sql = "insert into newuser(firstname,username,user_type,email,password) values(?,?,?,?,?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, fullName);
             ps.setString(2, userName);
             ps.setString(3, "registered");

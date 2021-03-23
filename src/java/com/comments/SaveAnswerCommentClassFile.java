@@ -30,7 +30,6 @@ public class SaveAnswerCommentClassFile {
 
     /**
      *
-     * @param con
      * @param userId
      * @param answerId
      * @param comment
@@ -39,11 +38,12 @@ public class SaveAnswerCommentClassFile {
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean SaveAnswerComment(Connection con, int userId, int answerId, String comment, boolean approved_by_admin) throws SQLException, ClassNotFoundException {
+    public boolean SaveAnswerComment(int userId, int answerId, String comment, boolean approved_by_admin) throws SQLException, ClassNotFoundException {
 
         String sql = "INSERT INTO comments (user_id,content_id,comments,comment_type,approved_by_admin)VALUES(?,?,?,?,?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, answerId);
             ps.setString(3, comment);

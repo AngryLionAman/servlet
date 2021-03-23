@@ -62,14 +62,13 @@ public class saveAdvertise extends HttpServlet {
             String adsType = request.getParameter("ads_type");
             String description = request.getParameter("description");
             if (userName.equals(username) && passWord.equals(password)) {
-                if (!forwoarlink.isEmpty() && forwoarlink != null && !imageFileName.isEmpty() && imageFileName != null && height > 0 && width > 0 && !promatedBy.isEmpty() && promatedBy != null && (viewStatus == 0 || viewStatus == 1) && days > 0) {
+                if (!forwoarlink.isEmpty()  && !imageFileName.isEmpty() && height > 0 && width > 0 && !promatedBy.isEmpty() && (viewStatus == 0 || viewStatus == 1) && days > 0) {
                     
                     Connection con = null;
                     PreparedStatement ps = null;
 
                     try {
-                        DatabaseConnection connection = new DatabaseConnection();
-                        con = DatabaseConnection.makeConnection();
+                        con = DatabaseConnection.getInstance().getConnection();
                         String sql = "insert into advertise (image_name,image_alt,height,width,promoted_by,display,days,forward_link,ads_type,description)values(?,?,?,?,?,?,?,?,?,?)";
                         ps = con.prepareStatement(sql);
                         ps.setString(1, imageFileName);
@@ -90,8 +89,6 @@ public class saveAdvertise extends HttpServlet {
                         }
                     } catch (SQLException msg) {
                         throw msg;
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(saveAdvertise.class.getName()).log(Level.SEVERE, null, ex);
                     } finally {
                         if (ps != null) {
                             try {

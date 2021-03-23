@@ -16,6 +16,7 @@
 package com.question;
 
 import com.answer.time;
+import com.connect.DatabaseConnection;
 import com.index.indexPage;
 import com.index.recentQuestionPojo;
 import java.sql.Connection;
@@ -36,22 +37,25 @@ public class Question {
 
     /**
      *
-     * @param con
      * @param questionId
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean IsQuestionPresentByQuestionId(Connection con, int questionId) throws SQLException, ClassNotFoundException {
+    public boolean IsQuestionPresentByQuestionId(int questionId) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT q_id FROM question WHERE q_id = ? LIMIT 1";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, questionId);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.first();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, questionId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    return rs.first();
+                }
+            } catch (SQLException msg) {
+                Logger.getLogger(Question.class.getName()).log(Level.SEVERE, null, msg);
             }
-        } catch (SQLException msg) {
+        } catch (Exception msg) {
             Logger.getLogger(Question.class.getName()).log(Level.SEVERE, null, msg);
         }
         return false;
@@ -59,10 +63,9 @@ public class Question {
 
     /**
      *
-     * @param con
      * @return @throws Exception
      */
-    public List<RecentPostQUestionHavingAtLeastOneAnswerPojo> RecentPostQUestionHavingAtLeastOneAnswer(Connection con) throws Exception {
+    public List<RecentPostQUestionHavingAtLeastOneAnswerPojo> RecentPostQUestionHavingAtLeastOneAnswer() throws Exception {
 
         DateAndTime day = new DateAndTime();
 
@@ -94,25 +97,29 @@ public class Question {
                 + "q.q_id "
                 + "DESC LIMIT 20;";
 
-        try (PreparedStatement ps = con.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                String userName = rs.getString("userName");
-                String fullName = rs.getString("fullName");
-                String userType = rs.getString("userType");
-                String higherEdu = rs.getString("higherEdu");
-                int userId = rs.getInt("userId");
-                int questionId = rs.getInt("questionId");
-                String question = rs.getString("question");
-                int questionView = rs.getInt("questionView");
-                int questionVote = rs.getInt("questionVote");
-                Date lastModify = rs.getDate("lastModify");
-                int ansCount = rs.getInt("ansCount");
-                int days = day.GetDaysByQuestionId(con,questionId);
-                list.add(new RecentPostQUestionHavingAtLeastOneAnswerPojo(userName, fullName, userType, higherEdu, userId, questionId, question, questionView, questionVote, lastModify, ansCount, days));
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String userName = rs.getString("userName");
+                    String fullName = rs.getString("fullName");
+                    String userType = rs.getString("userType");
+                    String higherEdu = rs.getString("higherEdu");
+                    int userId = rs.getInt("userId");
+                    int questionId = rs.getInt("questionId");
+                    String question = rs.getString("question");
+                    int questionView = rs.getInt("questionView");
+                    int questionVote = rs.getInt("questionVote");
+                    Date lastModify = rs.getDate("lastModify");
+                    int ansCount = rs.getInt("ansCount");
+                    int days = 55;//day.GetDaysByQuestionId(questionId);
+                    list.add(new RecentPostQUestionHavingAtLeastOneAnswerPojo(userName, fullName, userType, higherEdu, userId, questionId, question, questionView, questionVote, lastModify, ansCount, days));
+                }
+                return list;
+            } catch (SQLException msg) {
+                Logger.getLogger(Question.class.getName()).log(Level.SEVERE, null, msg);
             }
-            return list;
-        } catch (SQLException msg) {
+        } catch (Exception msg) {
             Logger.getLogger(Question.class.getName()).log(Level.SEVERE, null, msg);
         }
         return null;
@@ -120,12 +127,11 @@ public class Question {
 
     /**
      *
-     * @param con
      * @return @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public List<recentQuestionPojo> UnAnsweredQuestion(Connection con) throws SQLException, ClassNotFoundException, Exception {
+    public List<recentQuestionPojo> UnAnsweredQuestion() throws SQLException, ClassNotFoundException, Exception {
 
         List<recentQuestionPojo> list = new ArrayList<>();
 
@@ -136,25 +142,29 @@ public class Question {
                 + "user.username,user.user_type,user.higher_edu FROM question q INNER JOIN newuser user ON user.id = q.id "
                 + "WHERE q.q_id NOT IN(SELECT q_id FROM answer) ORDER BY q.q_id DESC";
 
-        try (PreparedStatement ps = con.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                int totalView = rs.getInt("q.total_view");
-                String date = rs.getString("date");
-                int questionId = rs.getInt("q.q_id");
-                int days = time.showTime(con, questionId);
-                String question = rs.getString("q.question");
-                int vote = rs.getInt("q.vote");
-                String fullName = rs.getString("user.firstname");
-                String userName = rs.getString("user.username");
-                String userType = rs.getString("user.user_type");
-                String higherEdu = rs.getString("user.higher_edu");
-                int userId = rs.getInt("user.id");
-                int totalAnswer = index.totalAnswer(con,questionId);
-                recentQuestionPojo recentQuestionPojo = new recentQuestionPojo(totalView, date, days, questionId, question, vote, fullName, userName, userType, higherEdu, userId, totalAnswer);
-                list.add(recentQuestionPojo);
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int totalView = rs.getInt("q.total_view");
+                    String date = rs.getString("date");
+                    int questionId = rs.getInt("q.q_id");
+                    int days = 13;//time.showTime(questionId);
+                    String question = rs.getString("q.question");
+                    int vote = rs.getInt("q.vote");
+                    String fullName = rs.getString("user.firstname");
+                    String userName = rs.getString("user.username");
+                    String userType = rs.getString("user.user_type");
+                    String higherEdu = rs.getString("user.higher_edu");
+                    int userId = rs.getInt("user.id");
+                    int totalAnswer = 0;//index.totalAnswer(questionId);
+                    recentQuestionPojo recentQuestionPojo = new recentQuestionPojo(totalView, date, days, questionId, question, vote, fullName, userName, userType, higherEdu, userId, totalAnswer);
+                    list.add(recentQuestionPojo);
+                }
+                return list;
+            } catch (Exception msg) {
+                Logger.getLogger(Question.class.getName()).log(Level.SEVERE, null, msg);
             }
-            return list;
         } catch (Exception msg) {
             Logger.getLogger(Question.class.getName()).log(Level.SEVERE, null, msg);
         }

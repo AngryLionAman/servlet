@@ -40,15 +40,16 @@ public class displayNotification {
      */
     public int countNotificationByUserId(int userId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
         String sql = "SELECT COUNT(*) AS cnt FROM notification WHERE user_id = ? AND seen = 0";
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     return rs.getInt("cnt");
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(displayNotification.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(displayNotification.class.getName()).log(Level.SEVERE, null, msg);
@@ -56,13 +57,17 @@ public class displayNotification {
         return 0;
     }
 
-    private static void updateSeenStatus(Connection con, int notification_id) throws SQLException, ClassNotFoundException {
+    private static void updateSeenStatus(int notification_id) throws SQLException, ClassNotFoundException {
 
         String sql = "UPDATE notification SET seen = 1 WHERE unique_id = ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, notification_id);
-            ps.executeUpdate();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, notification_id);
+                ps.executeUpdate();
+            } catch (SQLException msg) {
+                Logger.getLogger(displayNotification.class.getName()).log(Level.SEVERE, null, msg);
+            }
         } catch (SQLException msg) {
             Logger.getLogger(displayNotification.class.getName()).log(Level.SEVERE, null, msg);
         }
@@ -70,34 +75,39 @@ public class displayNotification {
 
     /**
      *
-     * @param con
      * @param UserId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public List<notificationPojo> notification(Connection con, int UserId) throws SQLException, ClassNotFoundException {
+    public List<notificationPojo> notification(int UserId) throws SQLException, ClassNotFoundException {
         List<notificationPojo> list = new ArrayList<>();
 
         String sql = "SELECT unique_id,user_id,creater_id,content_id,notification_type,seen FROM notification WHERE user_id = ? ORDER BY 1 DESC LIMIT 20";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, UserId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    int comment_id = rs.getInt("unique_id");
-                    int user_id = rs.getInt("user_id");
-                    int notificationCreatedBy = rs.getInt("creater_id");
-                    int content_id = rs.getInt("content_id");
-                    String notification_type = rs.getString("notification_type");
-                    boolean seen = rs.getBoolean("seen");
-                    list.add(new notificationPojo(comment_id, user_id, notificationCreatedBy, content_id, notification_type, seen));
-                    try {
-                        updateSeenStatus(con, comment_id);
-                    } catch (ClassNotFoundException | SQLException msg) {
-                        Logger.getLogger(displayNotification.class.getName()).log(Level.SEVERE, null, msg);
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, UserId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        int comment_id = rs.getInt("unique_id");
+                        int user_id = rs.getInt("user_id");
+                        int notificationCreatedBy = rs.getInt("creater_id");
+                        int content_id = rs.getInt("content_id");
+                        String notification_type = rs.getString("notification_type");
+                        boolean seen = rs.getBoolean("seen");
+                        list.add(new notificationPojo(comment_id, user_id, notificationCreatedBy, content_id, notification_type, seen));
+                        try {
+                            updateSeenStatus(comment_id);
+                        } catch (ClassNotFoundException | SQLException msg) {
+                            Logger.getLogger(displayNotification.class.getName()).log(Level.SEVERE, null, msg);
+                        }
                     }
+                } catch (SQLException msg) {
+                    Logger.getLogger(displayNotification.class.getName()).log(Level.SEVERE, null, msg);
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(displayNotification.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(displayNotification.class.getName()).log(Level.SEVERE, null, msg);

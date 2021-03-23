@@ -15,11 +15,9 @@
  */
 package com.question.modify;
 
-import com.connect.DatabaseConnection;
 import com.notifications.CreateNotification;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,62 +44,52 @@ public class save_modified_question extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        try{
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        validateInput input = new validateInput();
+        ModifiedQuestionClassFile file = new ModifiedQuestionClassFile();
+        CreateNotification notification = new CreateNotification();
+        String message = null;
+        String path = "questions";
+        int questionId = 0;
+        try {
             
-            response.setContentType("text/html;charset=UTF-8");
-            request.setCharacterEncoding("UTF-8");
-            response.setCharacterEncoding("UTF-8");
+            questionId = input.getInputInt(request.getParameter("question_id"));
+            int currentUserId = input.getInputInt(request.getParameter("currentUserId"));
+            int userIdWhoPostedQuestion = input.getInputInt(request.getParameter("userIdWhoPostedQuestion"));
+            String old_question = input.getInputString(request.getParameter("old_question"));
+            String modified_question = input.getInputString(request.getParameter("modified_question"));
             
-            validateInput input = new validateInput();
-            ModifiedQuestionClassFile file = new ModifiedQuestionClassFile();
-            CreateNotification notification = new CreateNotification();
-            
-            String message = null;
-            String path = "questions";
-            
-            int questionId = 0;
-            
-            DatabaseConnection connection = new DatabaseConnection();
-            try(Connection con = DatabaseConnection.makeConnection()) {
-                
-                questionId = input.getInputInt(request.getParameter("question_id"));
-                int currentUserId = input.getInputInt(request.getParameter("currentUserId"));
-                int userIdWhoPostedQuestion = input.getInputInt(request.getParameter("userIdWhoPostedQuestion"));
-                String old_question = input.getInputString(request.getParameter("old_question"));
-                String modified_question = input.getInputString(request.getParameter("modified_question"));
-                
-                if (questionId != 0 && old_question != null && modified_question != null) {
-                    if (!old_question.equalsIgnoreCase(modified_question)) {
-                        if (!file.saveModifiedQuestion(con,currentUserId, questionId, modified_question, userIdWhoPostedQuestion)) {
-                            if (userIdWhoPostedQuestion != 0) {
-                                if (!notification.modificationOfQuestionRequest(con,userIdWhoPostedQuestion, currentUserId, questionId)) {
-                                    message = "Your question approvel is panding by user, If user not respond within five working day then approval will be handover to the admin";
-                                } else {
-                                    message = "Notification not created for the user, Got some probelm. Please report to administrator";
-                                }
+            if (questionId != 0 && old_question != null && modified_question != null) {
+                if (!old_question.equalsIgnoreCase(modified_question)) {
+                    if (!file.saveModifiedQuestion(currentUserId, questionId, modified_question, userIdWhoPostedQuestion)) {
+                        if (userIdWhoPostedQuestion != 0) {
+                            if (!notification.modificationOfQuestionRequest(userIdWhoPostedQuestion, currentUserId, questionId)) {
+                                message = "Your question approvel is panding by user, If user not respond within five working day then approval will be handover to the admin";
                             } else {
-                                message = "Question is posted by Guest user. Now admin will take care of your modification";
+                                message = "Notification not created for the user, Got some probelm. Please report to administrator";
                             }
                         } else {
-                            message = "Your modified question is not saved, Please try agina or report to administrator";
+                            message = "Question is posted by Guest user. Now admin will take care of your modification";
                         }
                     } else {
-                        message = "Old question and the Modified question is same, Question not updated";
+                        message = "Your modified question is not saved, Please try agina or report to administrator";
                     }
                 } else {
-                    message = "Question id can't be zero, Old question can't be empty, or new question can't be empty.If you are getting this message Please report to admin";
+                    message = "Old question and the Modified question is same, Question not updated";
                 }
-                
-            } catch (ClassNotFoundException | SQLException msg) {
-                Logger.getLogger(save_modified_question.class.getName()).log(Level.SEVERE, path, msg);
-            } finally {
-                request.setAttribute("id", questionId);
-                request.setAttribute("message", message);
-                
-                request.getRequestDispatcher(path).forward(request, response);
+            } else {
+                message = "Question id can't be zero, Old question can't be empty, or new question can't be empty.If you are getting this message Please report to admin";
             }
-        } catch (SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(save_modified_question.class.getName()).log(Level.SEVERE, null, ex);
+            
+        } catch (ClassNotFoundException | SQLException msg) {
+            Logger.getLogger(save_modified_question.class.getName()).log(Level.SEVERE, path, msg);
+        } finally {
+            request.setAttribute("id", questionId);
+            request.setAttribute("message", message);
+            
+            request.getRequestDispatcher(path).forward(request, response);
         }
     }
 }

@@ -15,12 +15,10 @@
  */
 package com.approval.user;
 
-import com.connect.DatabaseConnection;
 import com.notifications.CreateNotification;
 import com.notifications.SupportingClassFile;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,8 +59,7 @@ public class action_approval_by_user extends HttpServlet {
         int oldQuestionId = 0;
         String path = "questions";
 
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection()) {
+        try {
 
             int notifiaction_id = input.getInputInt(request.getParameter("notifiaction_id"));
             oldQuestionId = input.getInputInt(request.getParameter("old_question_id"));
@@ -72,13 +69,13 @@ public class action_approval_by_user extends HttpServlet {
 
             if (oldQuestionId != 0 && newQuestionId != 0 && action != null) {
                 if (action.equalsIgnoreCase("Accept")) {
-                    if (classFile.isApprovedByAdmin(con, newQuestionId)) {
-                        if (!classFile.replaceOldQuestionWithNewQuestionAndNewQuestionWithNullAndChangePermission(con, oldQuestionId, newQuestionId, reason_message)) {
-                            if (!file.deleteNotificationByNotificationId(con, notifiaction_id)) {
-                                if (!classFile.changePermissionOfQuestionByUser(con, newQuestionId, reason_message)) {
-                                    int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(con, newQuestionId);
+                    if (classFile.isApprovedByAdmin(newQuestionId)) {
+                        if (!classFile.replaceOldQuestionWithNewQuestionAndNewQuestionWithNullAndChangePermission(oldQuestionId, newQuestionId, reason_message)) {
+                            if (!file.deleteNotificationByNotificationId(notifiaction_id)) {
+                                if (!classFile.changePermissionOfQuestionByUser(newQuestionId, reason_message)) {
+                                    int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(newQuestionId);
                                     if (whoModifiedTheQuestion != 0) {
-                                        if (!notification.requestHasBeenApprovedForQuestion(con, whoModifiedTheQuestion, oldQuestionId)) {
+                                        if (!notification.requestHasBeenApprovedForQuestion(whoModifiedTheQuestion, oldQuestionId)) {
                                             message = "Approval successful, Notification has been successfully sent to user";
                                         } else {
                                             message = "Approval notification failed to send";
@@ -96,9 +93,9 @@ public class action_approval_by_user extends HttpServlet {
                             message = "Question modification operaion failed, Please try agin or report to admin";
                         }
                     } else {
-                        if (!classFile.changePermissionOfQuestionByUser(con, newQuestionId, reason_message)) {
-                            if (!file.deleteNotificationByNotificationId(con, notifiaction_id)) {
-                                int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(con, newQuestionId);
+                        if (!classFile.changePermissionOfQuestionByUser(newQuestionId, reason_message)) {
+                            if (!file.deleteNotificationByNotificationId(notifiaction_id)) {
+                                int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(newQuestionId);
                                 if (whoModifiedTheQuestion != 0) {
                                     if (!notification.questionApprovedByUser(whoModifiedTheQuestion, oldQuestionId)) {
                                         message = "Question is approved by You, Approval is panding by the admin";
@@ -116,11 +113,11 @@ public class action_approval_by_user extends HttpServlet {
                         }
                     }
                 } else if (action.equalsIgnoreCase("Delete")) {
-                    if (!classFile.questionRequestRejectedByUser(con, newQuestionId, reason_message)) {
-                        if (!file.deleteNotificationByNotificationId(con, notifiaction_id)) {
-                            int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(con, newQuestionId);
+                    if (!classFile.questionRequestRejectedByUser(newQuestionId, reason_message)) {
+                        if (!file.deleteNotificationByNotificationId(notifiaction_id)) {
+                            int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(newQuestionId);
                             if (whoModifiedTheQuestion != 0) {
-                                if (!notification.questionRejectedByUser(con, whoModifiedTheQuestion, oldQuestionId)) {
+                                if (!notification.questionRejectedByUser(whoModifiedTheQuestion, oldQuestionId)) {
                                     message = "You have rejected the modification of question request, it has been informaed to the user";
                                 } else {
                                     message = "Failed to send the rejection notification to the user.";

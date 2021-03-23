@@ -48,57 +48,50 @@ public class deleteTopic extends HttpServlet {
         validateInput input = new validateInput();
 
         String message = null;
-        int pageNo = 0;
-        try {
-            int topicId = input.getInputInt(request.getParameter("topicId"));
-            pageNo = input.getInputInt(request.getParameter("pageNo"));
-
-            if (topicId != 0) {
-                DatabaseConnection connection = new DatabaseConnection();
-                try (Connection con = DatabaseConnection.makeConnection()) {
-                    /**
-                     * ***************
-                     * deleting the question tag form question_tag_table
-                     * *************************
-                     */
-
-                    try (PreparedStatement ps = con.prepareStatement("delete from question_topic_tag where tag_id = ?")) {
-                        ps.setInt(1, topicId);
-                        ps.execute();
-                    }
-
-                    /**
-                     * *****
-                     * Deleting the followers detail *********************
-                     */
-                    try (PreparedStatement ps = con.prepareStatement("delete from topic_followers_detail where topic_id = ?")) {
-                        ps.setInt(1, topicId);
-                        ps.execute();
-                    }
-                    /**
-                     * ************
-                     * delteting topic from topic table ************
-                     */
-
-                    try (PreparedStatement ps = con.prepareStatement("delete from topic where unique_id = ?")) {
-                        ps.setInt(1, topicId);
-                        ps.execute();
-                    }
-
-                    message = "Topic has been deleted";
-                } catch (SQLException msg) {
-                    Logger.getLogger(deleteTopic.class.getName()).log(Level.SEVERE, null, msg);
+        int pageNo;
+        int topicId = input.getInputInt(request.getParameter("topicId"));
+        pageNo = input.getInputInt(request.getParameter("pageNo"));
+        if (topicId != 0) {
+            
+            try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+                /**
+                 * ***************
+                 * deleting the question tag form question_tag_table
+                 * *************************
+                 */
+                
+                try (PreparedStatement ps = con.prepareStatement("delete from question_topic_tag where tag_id = ?")) {
+                    ps.setInt(1, topicId);
+                    ps.execute();
                 }
-            } else {
-                message = "Topic Id is not valid or Zero";
+                
+                /**
+                 * *****
+                 * Deleting the followers detail *********************
+                 */
+                try (PreparedStatement ps = con.prepareStatement("delete from topic_followers_detail where topic_id = ?")) {
+                    ps.setInt(1, topicId);
+                    ps.execute();
+                }
+                /**
+                 * ************
+                 * delteting topic from topic table ************
+                 */
+                
+                try (PreparedStatement ps = con.prepareStatement("delete from topic where unique_id = ?")) {
+                    ps.setInt(1, topicId);
+                    ps.execute();
+                }
+                
+                message = "Topic has been deleted";
+            } catch (SQLException msg) {
+                Logger.getLogger(deleteTopic.class.getName()).log(Level.SEVERE, null, msg);
             }
-
-        } catch (SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(deleteTopic.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            request.setAttribute("pageNo", pageNo);
-            request.setAttribute("message", message);
-            request.getRequestDispatcher("Admin/topic.jsp").forward(request, response);
+        } else {
+            message = "Topic Id is not valid or Zero";
         }
+        request.setAttribute("pageNo", pageNo);
+        request.setAttribute("message", message);
+        request.getRequestDispatcher("Admin/topic.jsp").forward(request, response);
     }
 }

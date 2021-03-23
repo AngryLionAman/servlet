@@ -15,11 +15,8 @@
  */
 package com.topic;
 
-import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,36 +56,23 @@ public class moretopic extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        allTopic topic = new allTopic();
+        getTotalnumberOfColum colum = new getTotalnumberOfColum();
+        validateInput input = new validateInput();
+        int pageNo = input.getInputInt(request.getParameter("p"));
+        if (pageNo < 1) {
+            pageNo = 1;
+        }
+        int recordPerPage = 30;
         try {
+            List<allTopicPojo> list = topic.topic(pageNo, recordPerPage);
+            int totalNumberOfpage = colum.totalNumberOfColumnOfTopic(recordPerPage);
 
-            allTopic topic = new allTopic();
-            getTotalnumberOfColum colum = new getTotalnumberOfColum();
-            validateInput input = new validateInput();
+            request.setAttribute("list", list);
+            request.setAttribute("totalNumberOfpage", totalNumberOfpage);
+            request.getRequestDispatcher("FollowMoreTopic.jsp").forward(request, response);
 
-            int pageNo = input.getInputInt(request.getParameter("p"));
-
-            if (pageNo < 1) {
-                pageNo = 1;
-            }
-
-            int recordPerPage = 30;
-            DatabaseConnection connection = new DatabaseConnection();
-            try (Connection con = DatabaseConnection.makeConnection()) {
-                List<allTopicPojo> list = topic.topic(con, pageNo, recordPerPage);
-                int totalNumberOfpage = colum.totalNumberOfColumnOfTopic(con,recordPerPage);
-
-                request.setAttribute("list", list);
-                request.setAttribute("totalNumberOfpage", totalNumberOfpage);
-                request.getRequestDispatcher("FollowMoreTopic.jsp").forward(request, response);
-
-            } catch (Exception ex) {
-                try {
-                    throw ex;
-                } catch (Exception ex1) {
-                    Logger.getLogger(moretopic.class.getName()).log(Level.SEVERE, null, ex1);
-                }
-            }
-        } catch (SQLException | ClassNotFoundException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(moretopic.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

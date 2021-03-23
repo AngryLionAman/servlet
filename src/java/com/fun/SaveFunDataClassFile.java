@@ -41,11 +41,9 @@ public class SaveFunDataClassFile {
      */
     public boolean saveFunData(int userId, String title, String description, String category, String basedon, String type) throws Exception {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "insert into fun(posted_by_id,title,description,category,based_on,type)value(?,?,?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, title);

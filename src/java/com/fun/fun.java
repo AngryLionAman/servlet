@@ -15,10 +15,8 @@
  */
 package com.fun;
 
-import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -74,30 +72,29 @@ public class fun extends HttpServlet {
             message = (String) request.getAttribute("message");
         }
 
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection()) {
+        try {
             if (category != null) {
 
-                funData = file.getFunDataByCategory(con,category);
+                funData = file.getFunDataByCategory(category);
 
             } else if (type != null) {
 
-                funData = file.getFunDataByType(con,type);
+                funData = file.getFunDataByType(type);
 
             } else if (basedOn != null) {
 
-                funData = file.getFunDataByBasedOn(con,basedOn);
+                funData = file.getFunDataByBasedOn(basedOn);
 
             } else {
 
-                funData = file.getRandomFunData(con,pageNo, recordPerPage);
-                totalNumberOfpage = file.totalNumberOfpage(con,recordPerPage);
+                funData = file.getRandomFunData(pageNo, recordPerPage);
+                totalNumberOfpage = file.totalNumberOfpage(recordPerPage);
 
             }
 
-            funBasedOn = function.getFunBasedOn(con);
-            funCategory = function.getFunCategory(con);
-            funType = function.getFunType(con);
+            funBasedOn = function.getFunBasedOn();
+            funCategory = function.getFunCategory();
+            funType = function.getFunType();
 
         } catch (Exception msg) {
             gotException = "Not null";

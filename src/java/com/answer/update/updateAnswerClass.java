@@ -31,20 +31,25 @@ public class updateAnswerClass {
 
     /**
      *
-     * @param con
      * @param anser_id
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public String GetAnswerByAnswerid(Connection con, int anser_id) throws SQLException, ClassNotFoundException, Exception {
+    public String GetAnswerByAnswerid(int anser_id) throws SQLException, ClassNotFoundException, Exception {
 
-        try (PreparedStatement ps = con.prepareStatement("select answer from answer where a_id = ?")) {
-            ps.setInt(1, anser_id);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getString("answer");
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement("select answer from answer where a_id = ?")) {
+                ps.setInt(1, anser_id);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getString("answer");
+                    }
+                } catch (SQLException msg) {
+                    Logger.getLogger(updateAnswerClass.class.getName()).log(Level.SEVERE, null, msg);
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(updateAnswerClass.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(updateAnswerClass.class.getName()).log(Level.SEVERE, null, msg);

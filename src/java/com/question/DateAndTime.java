@@ -15,6 +15,7 @@
  */
 package com.question;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,15 +31,15 @@ public class DateAndTime {
 
     /**
      *
-     * @param con
      * @param questionId
      * @return
      * @throws Exception
      */
-    public int GetDaysByQuestionId(Connection con, int questionId) throws Exception {
+    public int GetDaysByQuestionId(int questionId) throws Exception {
         String sql = "SELECT DATEDIFF(CURDATE(), posted_time) AS Date FROM question WHERE q_id = ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {

@@ -15,6 +15,7 @@
  */
 package com.blog;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -29,7 +30,6 @@ public class saveBlogClass {
 
     /**
      *
-     * @param con
      * @param sub
      * @param desc
      * @param id
@@ -37,11 +37,12 @@ public class saveBlogClass {
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean saveBlog(Connection con, String sub, String desc, int id) throws SQLException, ClassNotFoundException {
+    public boolean saveBlog(String sub, String desc, int id) throws SQLException, ClassNotFoundException {
 
         String sql = "insert into blog(subject,`desc`,posted_by) values(?,?,?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, sub);
             ps.setString(2, desc);
             ps.setInt(3, id);

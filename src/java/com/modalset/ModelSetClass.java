@@ -47,7 +47,7 @@ public class ModelSetClass {
         ResultSet rs = null;
 
         try {
-            con = DatabaseConnection.makeConnection();
+            con = DatabaseConnection.getInstance().getConnection();
             String sql = "INSERT INTO set_question_option (question_id, answer) VALUES (?,?)";
             for (String obj : opt) {
                 ps = con.prepareStatement(sql);
@@ -95,7 +95,7 @@ public class ModelSetClass {
         ResultSet rs = null;
 
         try {
-            con = DatabaseConnection.makeConnection();
+            con = DatabaseConnection.getInstance().getConnection();
             String sql = "SELECT unique_id FROM set_question WHERE question = ? ORDER BY 1 DESC LIMIT 1";
             ps = con.prepareStatement(sql);
             ps.setString(1, question);
@@ -144,7 +144,7 @@ public class ModelSetClass {
         PreparedStatement ps = null;
 
         try {
-            con = DatabaseConnection.makeConnection();
+            con = DatabaseConnection.getInstance().getConnection();
             String sql = "INSERT INTO set_question(exam_of,set_no,question,correct_ans) VALUES (?,?,?,?)";
             ps = con.prepareStatement(sql);
             ps.setString(1, exam_of);

@@ -15,11 +15,9 @@
  */
 package com.notifications;
 
-import com.connect.DatabaseConnection;
 import com.profile.profileDetailClassFile;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -60,19 +58,14 @@ public class notification extends HttpServlet {
 
         if (userId != 0) {
             try {
-                DatabaseConnection connection = new DatabaseConnection();
-                try (Connection con = DatabaseConnection.makeConnection()){
-                    if (file.IsUserPresent(con,userId)) {
-                        notification1 = notification.notification(con,userId);
-                    } else {
-                        message = "The id you are looking for notification is not avaliable";
-                    }
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Logger.getLogger(notification.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (Exception ex) {
-                    Logger.getLogger(notification.class.getName()).log(Level.SEVERE, null, ex);
+                if (file.IsUserPresent(userId)) {
+                    notification1 = notification.notification(userId);
+                } else {
+                    message = "The id you are looking for notification is not avaliable";
                 }
             } catch (SQLException | ClassNotFoundException ex) {
+                Logger.getLogger(notification.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
                 Logger.getLogger(notification.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {

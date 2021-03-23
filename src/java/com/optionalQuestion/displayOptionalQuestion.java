@@ -15,10 +15,8 @@
  */
 package com.optionalQuestion;
 
-import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -36,7 +34,7 @@ public class displayOptionalQuestion extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException, ClassNotFoundException {
-        
+
         validateInput input = new validateInput();
         DisplayOptionalQuestionClassFile file = new DisplayOptionalQuestionClassFile();
         supportingFunction function = new supportingFunction();
@@ -47,8 +45,7 @@ public class displayOptionalQuestion extends HttpServlet {
 
         int totalNoOfPage = 0;
 
-        DatabaseConnection connection = new DatabaseConnection(); 
-        try (Connection con = DatabaseConnection.makeConnection()) {
+        try {
             final int recordPerPage = 30;
 
             int pageNo = 0;
@@ -73,26 +70,26 @@ public class displayOptionalQuestion extends HttpServlet {
             }
 
             try {
-                onTopicName = function.onTopicName(con);
+                onTopicName = function.onTopicName();
             } catch (ClassNotFoundException | SQLException msg) {
                 Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, msg);
             }
 
             try {
-                totalNumberOfOption = function.totalNumberOfOption(con);
+                totalNumberOfOption = function.totalNumberOfOption();
             } catch (ClassNotFoundException | SQLException msg) {
                 Logger.getLogger(displayOptionalQuestion.class.getName()).log(Level.SEVERE, null, msg);
             }
 
             if (numOfoption != 0) {
-                optionalQuestionByLimit = file.getOptionalQuestionByNoOfPage(con,numOfoption, pageNo, recordPerPage);
-                totalNoOfPage = file.getTotalNoOfPageByNoOfPage(con,recordPerPage, numOfoption);
+                optionalQuestionByLimit = file.getOptionalQuestionByNoOfPage(numOfoption, pageNo, recordPerPage);
+                totalNoOfPage = file.getTotalNoOfPageByNoOfPage(recordPerPage, numOfoption);
             } else if (basedOn != null && !"all".equalsIgnoreCase(basedOn)) {
-                optionalQuestionByLimit = file.getOptionalQuestionByBasedOn(con,basedOn, pageNo, recordPerPage);
-                totalNoOfPage = file.getTotalNoOfPageByBasedOn(con,recordPerPage, basedOn);
+                optionalQuestionByLimit = file.getOptionalQuestionByBasedOn(basedOn, pageNo, recordPerPage);
+                totalNoOfPage = file.getTotalNoOfPageByBasedOn(recordPerPage, basedOn);
             } else {
-                optionalQuestionByLimit = file.getOptionalQuestionByLimit(con,pageNo, recordPerPage);
-                totalNoOfPage = file.getTotalNoOfPage(con,recordPerPage);
+                optionalQuestionByLimit = file.getOptionalQuestionByLimit(pageNo, recordPerPage);
+                totalNoOfPage = file.getTotalNoOfPage(recordPerPage);
             }
 
         } catch (ClassNotFoundException | SQLException msg) {

@@ -15,6 +15,7 @@
  */
 package com.search;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -29,21 +30,24 @@ public class saveSearchedQueryClassFile {
 
     /**
      *
-     * @param con
      * @param query
      * @param userId
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean SaveSearchedQuery(Connection con, String query, int userId) throws SQLException, ClassNotFoundException {
+    public boolean SaveSearchedQuery(String query, int userId) throws SQLException, ClassNotFoundException {
 
         String sql = "insert into searched_queary(searched_queary,userid) values(?,?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, query);
-            ps.setInt(2, userId);
-            return ps.execute();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, query);
+                ps.setInt(2, userId);
+                return ps.execute();
+            } catch (SQLException msg) {
+                Logger.getLogger(saveSearchedQueryClassFile.class.getName()).log(Level.SEVERE, null, msg);
+            }
         } catch (SQLException msg) {
             Logger.getLogger(saveSearchedQueryClassFile.class.getName()).log(Level.SEVERE, null, msg);
         }

@@ -15,8 +15,6 @@
  */
 package com.answer;
 
-import com.connect.DatabaseConnection;
-import com.index.indexPage;
 import com.index.indexPageExtraFunction;
 import com.index.recentQuestionPojo;
 import com.string.validateInput;
@@ -27,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.question.Question;
 import com.question.getQuestion;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +58,7 @@ public class questions extends HttpServlet {
         validateInput input = new validateInput();
         Question ques = new Question();
         SEO seo = new SEO();
-        indexPage page = new indexPage();
+        //indexPage page = new indexPage();
         getAnswer answer = new getAnswer();
         getQuestion q = new getQuestion();
         indexPageExtraFunction function = new indexPageExtraFunction();
@@ -84,12 +81,10 @@ public class questions extends HttpServlet {
         int questionId = 0;
         String gotException = null;
 
-        DatabaseConnection connection = new DatabaseConnection();
-        
-        try (final Connection con = DatabaseConnection.makeConnection()) {
+        try {
 
             try {
-                randomQuestion = q.getRandomQuestion(con);
+                randomQuestion = q.getRandomQuestion();
             } catch (ClassNotFoundException | SQLException msg) {
                 Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
             }
@@ -103,38 +98,38 @@ public class questions extends HttpServlet {
             }
 
             if (questionId != 0) {
-                if (ques.IsQuestionPresentByQuestionId(con, questionId)) {
+                if (ques.IsQuestionPresentByQuestionId(questionId)) {
 
                     try {
-                        titleAndDescripiton = seo.getTitleAndDescripiton(con, questionId);
+                        titleAndDescripiton = seo.getTitleAndDescripiton(questionId);
                     } catch (Exception msg) {
                         Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
                     }
 
                     try {
-                        questionTag = seo.getQuestionTag(con, questionId);
+                        questionTag = seo.getQuestionTag(questionId);
                     } catch (Exception msg) {
                         Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
                     }
 
                     try {
-                        questionTagWithId = seo.getQuestionTagWithId(con, questionId);
+                        questionTagWithId = seo.getQuestionTagWithId(questionId);
                     } catch (Exception msg) {
                         Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
                     }
 
                     try {
-                        relatedQuestionById = q.getRelatedQuestionById(con, questionId);
+                        relatedQuestionById = q.getRelatedQuestionById(questionId);
                     } catch (ClassNotFoundException | SQLException msg) {
                         Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
                     }
 
-                    question = file.getQuestion(con, questionId);
+                    question = file.getQuestion(questionId);
 
-                    answerById = answer.getAnswerById(con, questionId);
+                    answerById = answer.getAnswerById(questionId);
 
                     try {
-                        function.updateQuestionView(con, questionId);
+                        function.updateQuestionView(questionId);
                     } catch (Exception msg) {
                         Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
                     }
@@ -146,10 +141,6 @@ public class questions extends HttpServlet {
                 message = "Question id is zero, or you are hiting the invalid argumet";
             }
 
-        } catch (Exception msg) {
-            gotException = "Not null";
-            message = "Got some unknown error. We already working on this, Please try agina or visit after some time";
-            Logger.getLogger(questions.class.getName()).log(Level.SEVERE, null, msg);
         } finally {
             request.setAttribute("gotException", gotException);
             request.setAttribute("message", message);

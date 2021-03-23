@@ -40,11 +40,9 @@ public class onProfileCommentClass {
      */
     public boolean SaveCommentOfProfie(int userId, int comment_on_id, String comment, boolean approval_by_admin) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "INSERT INTO comments (user_id,content_id,comments,comment_type,approved_by_admin)VALUES(?,?,?,?,?)";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, comment_on_id);

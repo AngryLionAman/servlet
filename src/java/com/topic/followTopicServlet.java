@@ -15,10 +15,8 @@
  */
 package com.topic;
 
-import com.connect.DatabaseConnection;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,15 +56,10 @@ public class followTopicServlet extends HttpServlet {
 
         if (topic_id != 0 && followers_id != 0 && action != null) {
             try {
-                DatabaseConnection connection = new DatabaseConnection();
-                try (Connection con = DatabaseConnection.makeConnection()) {
-                    if (!file.FollowTopic(con, topic_id, followers_id, action)) {
-                        message = "Action performed successfully";
-                    } else {
-                        message = "Action not performaed";
-                    }
-                } catch (SQLException | ClassNotFoundException ex) {
-                    Logger.getLogger(followTopicServlet.class.getName()).log(Level.SEVERE, null, ex);
+                if (!file.FollowTopic(topic_id, followers_id, action)) {
+                    message = "Action performed successfully";
+                } else {
+                    message = "Action not performaed";
                 }
             } catch (SQLException | ClassNotFoundException ex) {
                 Logger.getLogger(followTopicServlet.class.getName()).log(Level.SEVERE, null, ex);

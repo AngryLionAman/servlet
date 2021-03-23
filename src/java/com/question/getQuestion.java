@@ -15,6 +15,7 @@
  */
 package com.question;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,25 +32,55 @@ public class getQuestion {
 
     /**
      *
-     * @param con
      * @param limit
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public HashMap<Integer, String> getRandomQuestionByLimit(Connection con, int limit) throws SQLException, ClassNotFoundException {
+    public HashMap<Integer, String> getRandomQuestionByLimit(int limit) throws SQLException, ClassNotFoundException {
         HashMap<Integer, String> map = new HashMap<>();
 
-        try (  PreparedStatement ps = con.prepareStatement("select q_id as questionid,question from question order by rand() limit ?")) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement("select q_id as questionid,question from question order by rand() limit ?")) {
 
-            ps.setInt(1, limit);
-            try (ResultSet rs = ps.executeQuery()) {
+                ps.setInt(1, limit);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        int questionId = rs.getInt("questionid");
+                        String question = rs.getString("question");
+                        map.putIfAbsent(questionId, question);
+                    }
+                    return map;
+                }
+            } catch (SQLException msg) {
+                Logger.getLogger(getQuestion.class.getName()).log(Level.SEVERE, null, msg);
+            }
+        } catch (SQLException msg) {
+            Logger.getLogger(getQuestion.class.getName()).log(Level.SEVERE, null, msg);
+        }
+
+        return null;
+    }
+
+    /**
+     *
+     * @return @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public HashMap<Integer, String> getRandomQuestion() throws SQLException, ClassNotFoundException {
+
+        HashMap<Integer, String> map = new HashMap<>();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement("select q_id as questionid,question from question order by rand() limit 20");
+                    ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int questionId = rs.getInt("questionid");
                     String question = rs.getString("question");
                     map.putIfAbsent(questionId, question);
                 }
                 return map;
+            } catch (SQLException msg) {
+                Logger.getLogger(getQuestion.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(getQuestion.class.getName()).log(Level.SEVERE, null, msg);
@@ -59,53 +90,32 @@ public class getQuestion {
 
     /**
      *
-     * @param con
-     * @return @throws SQLException
-     * @throws ClassNotFoundException
-     */
-    public HashMap<Integer, String> getRandomQuestion(Connection con) throws SQLException, ClassNotFoundException {
-
-        HashMap<Integer, String> map = new HashMap<>();
-
-        try (PreparedStatement ps = con.prepareStatement("select q_id as questionid,question from question order by rand() limit 20");
-                ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                int questionId = rs.getInt("questionid");
-                String question = rs.getString("question");
-                map.putIfAbsent(questionId, question);
-            }
-            return map;
-        } catch (SQLException msg) {
-            Logger.getLogger(getQuestion.class.getName()).log(Level.SEVERE, null, msg);
-        }
-        return null;
-    }
-
-    /**
-     *
-     * @param con
      * @param qId
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public HashMap<Integer, String> getRelatedQuestionById(Connection con, int qId) throws SQLException, ClassNotFoundException {
+    public HashMap<Integer, String> getRelatedQuestionById(int qId) throws SQLException, ClassNotFoundException {
 
         HashMap<Integer, String> map = new HashMap<>();
 
         String sql = "SELECT DISTINCT q.question as question,q.q_id as questionid FROM question q RIGHT JOIN question_topic_tag qtt ON qtt.question_id=q.q_id WHERE tag_id IN (SELECT DISTINCT(tag_id) AS tag_id FROM question_topic_tag WHERE question_id = ?) AND q_id IS NOT NULL LIMIT 20";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, qId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    int questionId = rs.getInt("questionid");
-                    String question = rs.getString("question");
-                    if (questionId != qId) {
-                        map.putIfAbsent(questionId, question);
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, qId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        int questionId = rs.getInt("questionid");
+                        String question = rs.getString("question");
+                        if (questionId != qId) {
+                            map.putIfAbsent(questionId, question);
+                        }
                     }
+                    return map;
                 }
-                return map;
+            } catch (SQLException msg) {
+                Logger.getLogger(getQuestion.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(getQuestion.class.getName()).log(Level.SEVERE, null, msg);

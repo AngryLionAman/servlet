@@ -20,7 +20,6 @@ import com.string.validateInput;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -92,46 +91,39 @@ public class login extends HttpServlet {
             throws ServletException, IOException {
         String message = null;
         String path = "Admin/visit.jsp";
-        try {
-            HttpSession session = request.getSession(false);
-            validateInput input = new validateInput();
-            AdminLoginClassFile file = new AdminLoginClassFile();
-            SupportingFunction function = new SupportingFunction();
+        HttpSession session = request.getSession(false);
+        validateInput input = new validateInput();
+        AdminLoginClassFile file = new AdminLoginClassFile();
+        SupportingFunction function = new SupportingFunction();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
 
-            DatabaseConnection connection = new DatabaseConnection();
-            try (Connection con = DatabaseConnection.makeConnection()) {
+            String email = input.getInputString(request.getParameter("email"));
+            String password = input.getInputString(request.getParameter("password"));
+            String code = input.getInputString(request.getParameter("code"));
 
-                String email = input.getInputString(request.getParameter("email"));
-                String password = input.getInputString(request.getParameter("password"));
-                String code = input.getInputString(request.getParameter("code"));
+            if (email != null && password != null && code != null) {
+                if (code.equals("sampur")) {
+                    if (file.validateAdminUser(con, email, password)) {
 
-                if (email != null && password != null && code != null) {
-                    if (code.equals("sampur")) {
-                        if (file.validateAdminUser(con, email, password)) {
-
-                            session.setAttribute("adminUserId", function.GetUserIdByEmail(con, email));
-                            session.setAttribute("userName", function.GetUserNameByEmail(con, email));
-                            session.setMaxInactiveInterval(600);
-                            path = "Admin/adminModule.jsp";
-                        } else {
-                            message = "UserName and Password not valid";
-                        }
+                        session.setAttribute("adminUserId", function.GetUserIdByEmail(email));
+                        session.setAttribute("userName", function.GetUserNameByEmail(email));
+                        session.setMaxInactiveInterval(600);
+                        path = "Admin/adminModule.jsp";
                     } else {
-                        message = "Security code not valid, Contact to admin";
+                        message = "UserName and Password not valid";
                     }
                 } else {
-                    message = "All field value required";
+                    message = "Security code not valid, Contact to admin";
                 }
-
-            } catch (Exception msg) {
-                Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, msg);
+            } else {
+                message = "All field value required";
             }
-        } catch (SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            request.setAttribute("message", message);
-            request.getRequestDispatcher(path).forward(request, response);
+
+        } catch (Exception msg) {
+            Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, msg);
         }
+        request.setAttribute("message", message);
+        request.getRequestDispatcher(path).forward(request, response);
     }
 
     /**

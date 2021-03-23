@@ -5,6 +5,7 @@
  */
 package com.index;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,39 +21,46 @@ public class indexPageExtraFunction {
 
     /**
      *
-     * @param con
      * @param questionId
      * @throws Exception
      */
-    public void updateQuestionView(Connection con, int questionId) throws Exception {
+    public void updateQuestionView(int questionId) throws Exception {
 
         String sql = "UPDATE question SET total_view = total_view + 1 WHERE q_id = ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, questionId);
-            ps.execute();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, questionId);
+                ps.execute();
+            } catch (SQLException msg) {
+                Logger.getLogger(indexPageExtraFunction.class.getName()).log(Level.SEVERE, null, msg);
+            }
         } catch (SQLException msg) {
             Logger.getLogger(indexPageExtraFunction.class.getName()).log(Level.SEVERE, null, msg);
         }
+
     }
 
     /**
      *
-     * @param con
      * @param topicId
      * @return
      * @throws Exception
      */
-    public int totalFollowersOfTopic(Connection con, int topicId) throws Exception {
+    public int totalFollowersOfTopic(int topicId) throws Exception {
 
         String sql = "select count(topic_id)as cnt from topic_followers_detail where topic_id = ? group by topic_id";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, topicId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getInt("cnt");
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, topicId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getInt("cnt");
+                    }
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(indexPageExtraFunction.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(indexPageExtraFunction.class.getName()).log(Level.SEVERE, null, msg);
@@ -62,21 +70,24 @@ public class indexPageExtraFunction {
 
     /**
      *
-     * @param con
      * @param topicId
      * @return
      * @throws Exception
      */
-    public int totalRelatedQuestion(Connection con, int topicId) throws Exception {
+    public int totalRelatedQuestion(int topicId) throws Exception {
 
         String sql = "select count(*) as cnt from question_topic_tag where tag_id = ? group by tag_id";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, topicId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getInt("cnt");
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, topicId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getInt("cnt");
+                    }
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(indexPageExtraFunction.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(indexPageExtraFunction.class.getName()).log(Level.SEVERE, null, msg);

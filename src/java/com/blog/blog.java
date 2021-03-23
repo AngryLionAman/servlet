@@ -17,11 +17,9 @@ package com.blog;
 
 import com.comments.BlogCommentPojoFile;
 import com.comments.GetComment;
-import com.connect.DatabaseConnection;
 import com.fun.FunHelpingFunction;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -77,47 +75,45 @@ public class blog extends HttpServlet {
         List<String> funCategory = null;
 
         try {
-            DatabaseConnection connection = new DatabaseConnection();
-            try (final Connection con = DatabaseConnection.makeConnection()) {
 
-                try{
-                   funCategory = fhf.getFunCategory(con);
-                }catch(Exception msg){
-                    Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
-                }
-                
-                if (blogId != 0) {
-                    if (function.IsBlogPresentByBlogId(blogId, con)) {
-
-                        blogByBlogId = blog.blogByBlogId(blogId, con);
-                        try {
-                            function.increateBlogViewByBlogId(blogId, con);
-                        } catch (ClassNotFoundException | SQLException msg) {
-                            Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
-                        }
-
-                        try {
-                            blogByLimit = blog.blogByLimit(10, con);
-                        } catch (ClassNotFoundException | SQLException msg) {
-                            Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
-                        }
-
-                        try {
-                            commentOfBlogByBlogId = comment.getCommentOfBlogByBlogId(blogId, con);
-                        } catch (ClassNotFoundException | SQLException msg) {
-                            Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
-                        }
-
-                        page = "D_Blog.jsp";
-
-                    } else {
-                        message = "The blog you are looking for has been removed or delete. Sorry for the inconvenience";
-                        blog1 = blog.blog(con);
-                    }
-                } else {
-                    blog1 = blog.blog(con);
-                }
+            try {
+                funCategory = fhf.getFunCategory();
+            } catch (Exception msg) {
+                Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
             }
+
+            if (blogId != 0) {
+                if (function.IsBlogPresentByBlogId(blogId)) {
+
+                    blogByBlogId = blog.blogByBlogId(blogId);
+                    try {
+                        function.increateBlogViewByBlogId(blogId);
+                    } catch (ClassNotFoundException | SQLException msg) {
+                        Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
+                    }
+
+                    try {
+                        blogByLimit = blog.blogByLimit(10);
+                    } catch (ClassNotFoundException | SQLException msg) {
+                        Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
+                    }
+
+                    try {
+                        commentOfBlogByBlogId = comment.getCommentOfBlogByBlogId(blogId);
+                    } catch (ClassNotFoundException | SQLException msg) {
+                        Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
+                    }
+
+                    page = "D_Blog.jsp";
+
+                } else {
+                    message = "The blog you are looking for has been removed or delete. Sorry for the inconvenience";
+                    blog1 = blog.blog();
+                }
+            } else {
+                blog1 = blog.blog();
+            }
+
         } catch (ClassNotFoundException | SQLException msg) {
             Logger.getLogger(blog.class.getName()).log(Level.SEVERE, null, msg);
         } finally {

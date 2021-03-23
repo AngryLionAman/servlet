@@ -46,10 +46,9 @@ public class GuestUser {
             return "NoString";
         }
 
-        DatabaseConnection connection = new DatabaseConnection();
         String sql = "SELECT LOWER(username) FROM newuser WHERE username =? LIMIT 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, guestName);
             try (ResultSet rs = ps.executeQuery()) {

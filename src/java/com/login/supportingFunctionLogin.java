@@ -31,24 +31,27 @@ public class supportingFunctionLogin {
 
     /**
      *
-     * @param con
      * @param email
      * @param password
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int GetUserIdByEmailAndPassword(Connection con, String email, String password) throws SQLException, ClassNotFoundException, Exception {
+    public int GetUserIdByEmailAndPassword(String email, String password) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "select id from newuser where email = ? and password = ? limit 1";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, email);
-            ps.setString(2, password);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    return rs.getInt("id");
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, email);
+                ps.setString(2, password);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return rs.getInt("id");
+                    }
                 }
+            } catch (SQLException msg) {
+                Logger.getLogger(supportingFunctionLogin.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(supportingFunctionLogin.class.getName()).log(Level.SEVERE, null, msg);
@@ -58,22 +61,25 @@ public class supportingFunctionLogin {
 
     /**
      *
-     * @param con
      * @param email
      * @param password
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean IsUserIsPresent(Connection con, String email, String password) throws SQLException, ClassNotFoundException, Exception {
+    public boolean IsUserIsPresent(String email, String password) throws SQLException, ClassNotFoundException, Exception {
 
         String sql = "select id from newuser where email = ? and password = ? limit 1";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, email);
-            ps.setString(2, password);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.first();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, email);
+                ps.setString(2, password);
+                try (ResultSet rs = ps.executeQuery()) {
+                    return rs.first();
+                }
+            } catch (SQLException msg) {
+                Logger.getLogger(supportingFunctionLogin.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(supportingFunctionLogin.class.getName()).log(Level.SEVERE, null, msg);

@@ -47,8 +47,7 @@ public class comments {
                 + "FROM comments inner join newuser on newuser.id = comments.user_id "
                 + "WHERE content_id = ? AND comment_type = ? AND approved_by_admin = ? AND approved_by_user = ? order by 1 desc";
 
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, answerId);
             ps.setString(2, "commet_on_answer");
@@ -67,6 +66,8 @@ public class comments {
                     list.add(new getAnswerCommentPojo(commentId, comments, date, commentPostedById, userName, fullName, userType));
                 }
                 return list;
+            } catch (SQLException msg) {
+                Logger.getLogger(comments.class.getName()).log(Level.SEVERE, null, msg);
             }
         } catch (SQLException msg) {
             Logger.getLogger(comments.class.getName()).log(Level.SEVERE, null, msg);

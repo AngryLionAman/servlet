@@ -12,27 +12,37 @@ import java.util.logging.Logger;
  */
 public class DatabaseConnection {
 
-    // private static Database instance;
-    public static Connection connection;
-    private final String url = "jdbc:mysql://localhost/bharat?useUnicode=true&characterEncoding=utf-8";
-    private String username = "root";
-    private String password = null;
+    String jdbcUrl = "";
+    //String jdbcUrl = "jdbc:mysql://localhost/bharat?user=root&password=&useUnicode=true&characterEncoding=utf-8";
 
-    public DatabaseConnection() throws SQLException, ClassNotFoundException {
-        System.out.println("com.connect.DatabaseConnection.<init>()" + "Constructor execuated");
+    //private static final String URL = "";
+    //private static final String USERNAME = "";
+    //private static final String PASSWORD = "";
+    //private static final String URL = "jdbc:mysql://localhost/bharat?useUnicode=true&characterEncoding=utf-8";
+    //private static final String USERNAME = "root";
+    //private static final String PASSWORD = "";
+    private static DatabaseConnection instance;
+    private Connection connection;
+
+    private DatabaseConnection() throws SQLException {
         try {
-            Class.forName("com.mysql.jdbc.Driver"); // Throws classNotFoundException
-            connection = DriverManager.getConnection(url, username, password); //Throws SQLException
-        } catch (ClassNotFoundException | SQLException ex) {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            this.connection = DriverManager.getConnection(jdbcUrl);
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    /**
-     *
-     * @return @throws java.sql.SQLException
-     */
-    public static Connection makeConnection() throws SQLException {
+    public Connection getConnection() {
         return connection;
+    }
+
+    public static DatabaseConnection getInstance() throws SQLException {
+        if (instance == null) {
+            instance = new DatabaseConnection();
+        } else if (instance.getConnection().isClosed()) {
+            instance = new DatabaseConnection();
+        }
+        return instance;
     }
 }

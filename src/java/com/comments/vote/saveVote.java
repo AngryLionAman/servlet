@@ -40,9 +40,7 @@ public class saveVote {
      */
     public boolean saveVoteOfQuestionAndAnswer(String action, String section, int questionOrAnswerId, int userId) throws SQLException, ClassNotFoundException {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
-        String sql = null ;
+        String sql = null;
         if (section.equals("answer") && action.equals("upvote")) {
 
             sql = "insert into vote_by_user(answer_id,user_id)values(?,?)";
@@ -64,7 +62,7 @@ public class saveVote {
 
         }
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionOrAnswerId);
             ps.setInt(2, userId);

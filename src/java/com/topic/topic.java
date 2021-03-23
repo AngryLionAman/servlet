@@ -15,12 +15,10 @@
  */
 package com.topic;
 
-import com.connect.DatabaseConnection;
 import com.question.getQuestion;
 import com.question.getQuestionByTopicId;
 import com.string.validateInput;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -66,9 +64,8 @@ public class topic extends HttpServlet {
         int totalNumberOfpage = 0;
         HashMap<Integer, String> topicDetailByRefId = null;
         HashMap<Integer, String> randomQuestionByLimit = null;
-        
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection()) {
+
+        try {
 
             int pageNo = 0;
 
@@ -85,9 +82,9 @@ public class topic extends HttpServlet {
             } catch (Exception msg) {
                 Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
             }
-            
+
             try {
-              randomQuestionByLimit = q.getRandomQuestionByLimit(con, 10);
+                randomQuestionByLimit = q.getRandomQuestionByLimit(10);
             } catch (ClassNotFoundException | SQLException msg) {
                 Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
             }
@@ -95,27 +92,27 @@ public class topic extends HttpServlet {
             if (topicId != 0) {
                 validInput = "Got valid input";
 
-                if (ft.isTopicPresentByTopicId(con,topicId)) {
+                if (ft.isTopicPresentByTopicId(topicId)) {
                     try {
-                        topicDetailForSeo = detailForSeo.topic(con,topicId);
+                        topicDetailForSeo = detailForSeo.topic(topicId);
                     } catch (Exception msg) {
                         Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
                     }
 
                     try {
-                        allQuestionByTopicId = byTopicId.getAllQuestionByTopicId(con,topicId, pageNo, recoredPerPage);
+                        allQuestionByTopicId = byTopicId.getAllQuestionByTopicId(topicId, pageNo, recoredPerPage);
                     } catch (ClassNotFoundException | SQLException msg) {
                         Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
                     }
 
                     try {
-                        totalNumberOfpage = colum.totalNumberOfPageOfTopicByTopicId(con,topicId, recoredPerPage);
+                        totalNumberOfpage = colum.totalNumberOfPageOfTopicByTopicId(topicId, recoredPerPage);
                     } catch (ClassNotFoundException | SQLException msg) {
                         Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
                     }
 
                     try {
-                        topicDetailByRefId = topicObj.getTopicDetailByRefId(con,topicId);
+                        topicDetailByRefId = topicObj.getTopicDetailByRefId(topicId);
                     } catch (ClassNotFoundException | SQLException msg) {
                         Logger.getLogger(topic.class.getName()).log(Level.SEVERE, message, msg);
                     }

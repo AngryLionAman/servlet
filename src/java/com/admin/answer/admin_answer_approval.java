@@ -52,8 +52,8 @@ public class admin_answer_approval extends HttpServlet {
         AnswerApprovalAdminClassFile file = new AnswerApprovalAdminClassFile();
 
         String message = null;
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection()) {
+        
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
             int answerId = input.getInputInt(request.getParameter("answer_id"));
             String action = input.getInputString(request.getParameter("action"));
 

@@ -62,8 +62,7 @@ public class action_servlet_question_approval extends HttpServlet {
 
         String message = null;
 
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection()) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
             int old_question_id = input.getInputInt(request.getParameter("o_q_id"));
             int new_question_id = input.getInputInt(request.getParameter("n_q_id"));
             String commet_message = input.getInputString(request.getParameter(""));
@@ -73,11 +72,11 @@ public class action_servlet_question_approval extends HttpServlet {
             if (old_question_id != 0 && action != null) {
                 if (action.equalsIgnoreCase("Accept")) {
                     if (file.isApprovedByUser(con, new_question_id)) {
-                        if (!classFile.replaceOldQuestionWithNewQuestionAndNewQuestionWithNullAndChangePermission(con, old_question_id, new_question_id, commet_message)) {
-                            if (!classFile.changePermissionOfQuestionByAdmin(con, new_question_id, message)) {
-                                int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(con, new_question_id);
+                        if (!classFile.replaceOldQuestionWithNewQuestionAndNewQuestionWithNullAndChangePermission(old_question_id, new_question_id, commet_message)) {
+                            if (!classFile.changePermissionOfQuestionByAdmin(new_question_id, message)) {
+                                int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(new_question_id);
                                 if (whoModifiedTheQuestion != 0) {
-                                    if (!notification.requestHasBeenApprovedForQuestion(con, whoModifiedTheQuestion, old_question_id)) {
+                                    if (!notification.requestHasBeenApprovedForQuestion(whoModifiedTheQuestion, old_question_id)) {
                                         message = "Notification has been successfully sent to user";
                                     } else {
                                         message = "Notification not sent to user";
@@ -93,10 +92,10 @@ public class action_servlet_question_approval extends HttpServlet {
                             message = "Replace question with the new question is failed";
                         }
                     } else {
-                        if (!classFile.changePermissionOfQuestionByAdmin(con, new_question_id, message)) {
-                            int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(con, new_question_id);
+                        if (!classFile.changePermissionOfQuestionByAdmin(new_question_id, message)) {
+                            int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(new_question_id);
                             if (whoModifiedTheQuestion != 0) {
-                                if (!notification.questionApprovedByAdmin(con, whoModifiedTheQuestion, old_question_id)) {
+                                if (!notification.questionApprovedByAdmin(whoModifiedTheQuestion, old_question_id)) {
                                     message = "Question is approved by You, Approval is panding by the User";
                                 } else {
                                     message = "Sendig notification to user is failed";
@@ -109,10 +108,10 @@ public class action_servlet_question_approval extends HttpServlet {
                         }
                     }
                 } else if (action.equalsIgnoreCase("Delete")) {
-                    if (!classFile.questionRequestRejectedByAdmin(con, new_question_id, message)) {
-                        int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(con, new_question_id);
+                    if (!classFile.questionRequestRejectedByAdmin(new_question_id, message)) {
+                        int whoModifiedTheQuestion = classFile.whoModifiedTheQuestion(new_question_id);
                         if (whoModifiedTheQuestion != 0) {
-                            if (!notification.questionRejectedByAdmin(con, whoModifiedTheQuestion, old_question_id)) {
+                            if (!notification.questionRejectedByAdmin(whoModifiedTheQuestion, old_question_id)) {
                                 message = "You have the rejected the question request, it has been informaed to the user";
                             } else {
                                 message = "question request rejected by user , operation failed ";
@@ -124,7 +123,7 @@ public class action_servlet_question_approval extends HttpServlet {
                         message = "Question approval rejected by admin operation failed";
                     }
                 } else if (action.equalsIgnoreCase("Remove")) {
-                    if (!classFile.deleteModificationQuestionByAdmin(con, new_question_id)) {
+                    if (!classFile.deleteModificationQuestionByAdmin(new_question_id)) {
                         message = "Approval question deleted successfully";
                     } else {
                         message = "Not deleted, Try again";

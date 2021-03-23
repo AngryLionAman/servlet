@@ -15,9 +15,7 @@
  */
 package com.topic;
 
-import com.connect.DatabaseConnection;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.logging.Level;
@@ -43,21 +41,17 @@ public class FollowTopicAtAcountCreation extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            selectSomeTopic topic = new selectSomeTopic();
 
-            Map<Integer, String> SelectSomeTopic = null;
-            DatabaseConnection connection = new DatabaseConnection();
-            try (Connection con = DatabaseConnection.makeConnection()) {
-                SelectSomeTopic = topic.SelectSomeTopic(con);
-            } catch (SQLException | ClassNotFoundException ex) {
-                Logger.getLogger(FollowTopicAtAcountCreation.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                request.setAttribute("topic", SelectSomeTopic);
-                request.getRequestDispatcher("CompleteProfilefFollowTopic.jsp").forward(request, response);
-            }
+        selectSomeTopic topic = new selectSomeTopic();
+        Map<Integer, String> SelectSomeTopic = null;
+
+        try {
+            SelectSomeTopic = topic.SelectSomeTopic();
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(FollowTopicAtAcountCreation.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            request.setAttribute("topic", SelectSomeTopic);
+            request.getRequestDispatcher("CompleteProfilefFollowTopic.jsp").forward(request, response);
         }
     }
 }

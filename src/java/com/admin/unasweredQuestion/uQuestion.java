@@ -42,8 +42,8 @@ public class uQuestion {
         String sql = "SELECT q_id as qId,posted_time AS Date,question,newuser.id AS userId,firstname AS userFullName "
                 + "FROM question INNER JOIN newuser ON newuser.id = question.id WHERE q_id NOT IN(SELECT q_id FROM answer) ORDER BY q_id DESC";
 
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection con = DatabaseConnection.makeConnection();
+        
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {

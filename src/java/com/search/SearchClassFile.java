@@ -15,6 +15,7 @@
  */
 package com.search;
 
+import com.connect.DatabaseConnection;
 import com.count.CountRowSearch;
 import com.index.indexPage;
 import com.index.indexPageExtraFunction;
@@ -36,19 +37,18 @@ public class SearchClassFile {
 
     /**
      *
-     * @param con
      * @param query
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws Exception
      */
-    public List<CountSearchPojo> GetCountRowSearch(Connection con, String query) throws SQLException, ClassNotFoundException, Exception {
+    public List<CountSearchPojo> GetCountRowSearch(String query) throws SQLException, ClassNotFoundException, Exception {
         CountRowSearch cRow = new CountRowSearch();
-        int countQuestion = cRow.countQuestion(con, query);
-        int countAnswer = cRow.countAnswer(con, query);
-        int countTopic = cRow.countTopic(con, query);
-        int countUser = cRow.countUser(con, query);
+        int countQuestion = cRow.countQuestion(query);
+        int countAnswer = cRow.countAnswer(query);
+        int countTopic = cRow.countTopic(query);
+        int countUser = cRow.countUser(query);
         List<CountSearchPojo> list = new ArrayList<>();
         list.add(new CountSearchPojo(countQuestion, countAnswer, countTopic, countUser));
         return list;
@@ -56,18 +56,17 @@ public class SearchClassFile {
 
     /**
      *
-     * @param con
      * @param query
      * @param Limit
      * @return
      * @throws SQLException
      * @throws Exception
      */
-    public List<searchUserPojo> getUserByQuearyAndLimit(Connection con, String query, int Limit) throws SQLException, Exception {
+    public List<searchUserPojo> getUserByQuearyAndLimit(String query, int Limit) throws SQLException, Exception {
         List<searchUserPojo> list = new ArrayList<>();
 
         WordFormating formating = new WordFormating();
-        try {
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
             // String sql;
             if (0 == Limit) {
                 String sql = "select id as userId,username,firstname as fullName,bio,imagepath as imageLink from newuser WHERE lower(firstname) LIKE ? order by userId limit 50";
@@ -84,7 +83,11 @@ public class SearchClassFile {
                             list.add(new searchUserPojo(userId, userName, userFullName, bio, imageLink, totalFollowers));
                         }
                         return list;
+                    } catch (SQLException msg) {
+                        Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                     }
+                } catch (SQLException msg) {
+                    Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                 }
             } else {
                 String sql = "select id as userId,username,firstname as fullName,bio,imagepath as imageLink from newuser WHERE lower(firstname) LIKE ? order by userId limit ?";
@@ -102,7 +105,11 @@ public class SearchClassFile {
                             list.add(new searchUserPojo(userId, userName, userFullName, bio, imageLink, totalFollowers));
                         }
                         return list;
+                    } catch (SQLException msg) {
+                        Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                     }
+                } catch (SQLException msg) {
+                    Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                 }
             }
         } catch (SQLException msg) {
@@ -113,21 +120,20 @@ public class SearchClassFile {
 
     /**
      *
-     * @param con
      * @param query
      * @param Limit
      * @return
      * @throws SQLException
      * @throws Exception
      */
-    public List<searchTopicPojo> getTopicByQuearyAndLimit(Connection con, String query, int Limit) throws SQLException, Exception {
+    public List<searchTopicPojo> getTopicByQuearyAndLimit(String query, int Limit) throws SQLException, Exception {
 
         indexPageExtraFunction function = new indexPageExtraFunction();
         List<searchTopicPojo> list = new ArrayList<>();
 
         WordFormating formating = new WordFormating();
 
-        try {
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
 
             if (Limit == 0) {
                 String sql = "select unique_id as topicid,topic_name as topicname,image_url as imagelink from topic WHERE lower(topic_name) LIKE ? order by topicid limit 100";
@@ -137,12 +143,16 @@ public class SearchClassFile {
                         while (rs.next()) {
                             int topicId = rs.getInt("topicid");
                             String topic = formating.convertStringUpperToLower(rs.getString("topicname"));
-                            int totalrelatedQuestion = function.totalRelatedQuestion(con, topicId);
+                            int totalrelatedQuestion = function.totalRelatedQuestion(topicId);
                             String imagePath = rs.getString("imagelink");
                             list.add(new searchTopicPojo(topicId, topic, totalrelatedQuestion, imagePath));
                         }
                         return list;
+                    } catch (SQLException msg) {
+                        Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                     }
+                } catch (SQLException msg) {
+                    Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                 }
 
             } else {
@@ -154,12 +164,16 @@ public class SearchClassFile {
                         while (rs.next()) {
                             int topicId = rs.getInt("topicid");
                             String topic = formating.convertStringUpperToLower(rs.getString("topicname"));
-                            int totalrelatedQuestion = function.totalRelatedQuestion(con, topicId);
+                            int totalrelatedQuestion = 45;//function.totalRelatedQuestion(topicId);
                             String imagePath = rs.getString("imagelink");
                             list.add(new searchTopicPojo(topicId, topic, totalrelatedQuestion, imagePath));
                         }
                         return list;
+                    } catch (SQLException msg) {
+                        Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                     }
+                } catch (SQLException msg) {
+                    Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                 }
             }
         } catch (SQLException msg) {
@@ -170,18 +184,17 @@ public class SearchClassFile {
 
     /**
      *
-     * @param con
      * @param query
      * @param Limit
      * @return
      * @throws SQLException
      * @throws Exception
      */
-    public List<searchAnswerPojo> getAnswerByQuearyAndLimit(Connection con, String query, int Limit) throws SQLException, Exception {
+    public List<searchAnswerPojo> getAnswerByQuearyAndLimit(String query, int Limit) throws SQLException, Exception {
         indexPage page = new indexPage();
         List<searchAnswerPojo> list = new ArrayList<>();
 
-        try {
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
             if (Limit == 0) {
                 String sql = "Select q.question as question,q.total_view as totalview,q.q_id as questionid,ans.answer as answer from question q right join answer ans on ans.q_id = q.q_id where lower(answer) LIKE ? and question is not null limit 50";
                 try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -192,11 +205,15 @@ public class SearchClassFile {
                             String question = rs.getString("question");
                             String answer = rs.getString("answer");
                             int totalViewOfQuestion = rs.getInt("totalview");
-                            int totalAnswerOfQuestion = page.totalAnswer(con, questionId);
+                            int totalAnswerOfQuestion = 78;//page.totalAnswer(questionId);
                             list.add(new searchAnswerPojo(questionId, question, answer, totalViewOfQuestion, totalAnswerOfQuestion));
                         }
                         return list;
+                    } catch (SQLException msg) {
+                        Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                     }
+                } catch (SQLException msg) {
+                    Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                 }
 
             } else {
@@ -210,11 +227,15 @@ public class SearchClassFile {
                             String question = rs.getString("question");
                             String answer = rs.getString("answer");
                             int totalViewOfQuestion = rs.getInt("totalview");
-                            int totalAnswerOfQuestion = page.totalAnswer(con, questionId);
+                            int totalAnswerOfQuestion = 34;//page.totalAnswer(questionId);
                             list.add(new searchAnswerPojo(questionId, question, answer, totalViewOfQuestion, totalAnswerOfQuestion));
                         }
                         return list;
+                    } catch (SQLException msg) {
+                        Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                     }
+                } catch (SQLException msg) {
+                    Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                 }
             }
 
@@ -226,21 +247,20 @@ public class SearchClassFile {
 
     /**
      *
-     * @param con
      * @param query
      * @param Limit
      * @return
      * @throws SQLException
      * @throws Exception
      */
-    public List<searchQuestionPojo> getQuestionByQueryAndLimit(Connection con, String query, int Limit) throws SQLException, Exception {
+    public List<searchQuestionPojo> getQuestionByQueryAndLimit(String query, int Limit) throws SQLException, Exception {
         indexPage page = new indexPage();
         List<searchQuestionPojo> list = new ArrayList<>();
 
         PreparedStatement ps = null;
         ResultSet rs = null;
 
-        try {
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
 
             String sql;
             if (Limit == 0) {
@@ -254,7 +274,7 @@ public class SearchClassFile {
                     int questionId = rs.getInt("questionid");
                     String question = rs.getString("question");
                     int totalView = rs.getInt("totalview");
-                    int totalAnswer = page.totalAnswer(con, questionId);
+                    int totalAnswer = page.totalAnswer(questionId);
                     if (list.isEmpty()) {
                         list.add(new searchQuestionPojo(questionId, question, totalView, totalAnswer));
                     } else {
@@ -277,7 +297,7 @@ public class SearchClassFile {
                         int questionId = rs.getInt("questionid");
                         String question = rs.getString("question");
                         int totalView = rs.getInt("totalview");
-                        int totalAnswer = page.totalAnswer(con, questionId);
+                        int totalAnswer = page.totalAnswer(questionId);
                         if (list.isEmpty()) {
                             list.add(new searchQuestionPojo(questionId, question, totalView, totalAnswer));
                         } else {
@@ -301,7 +321,7 @@ public class SearchClassFile {
                         int questionId = rs.getInt("questionid");
                         String question = rs.getString("question");
                         int totalView = rs.getInt("totalview");
-                        int totalAnswer = page.totalAnswer(con, questionId);
+                        int totalAnswer = page.totalAnswer(questionId);
                         if (list.isEmpty()) {
                             list.add(new searchQuestionPojo(questionId, question, totalView, totalAnswer));
                         } else {
@@ -323,7 +343,7 @@ public class SearchClassFile {
                     int questionId = rs.getInt("questionid");
                     String question = rs.getString("question");
                     int totalView = rs.getInt("totalview");
-                    int totalAnswer = page.totalAnswer(con, questionId);
+                    int totalAnswer = 77;//page.totalAnswer(questionId);
                     if (list.isEmpty()) {
                         list.add(new searchQuestionPojo(questionId, question, totalView, totalAnswer));
                     } else {
@@ -345,7 +365,7 @@ public class SearchClassFile {
                         int questionId = rs.getInt("questionid");
                         String question = rs.getString("question");
                         int totalView = rs.getInt("totalview");
-                        int totalAnswer = page.totalAnswer(con, questionId);
+                        int totalAnswer = 88;//page.totalAnswer(questionId);
                         if (list.isEmpty()) {
                             list.add(new searchQuestionPojo(questionId, question, totalView, totalAnswer));
                         } else {
@@ -368,7 +388,7 @@ public class SearchClassFile {
                         int questionId = rs.getInt("questionid");
                         String question = rs.getString("question");
                         int totalView = rs.getInt("totalview");
-                        int totalAnswer = page.totalAnswer(con, questionId);
+                        int totalAnswer = 34;//page.totalAnswer(questionId);
                         if (list.isEmpty()) {
                             list.add(new searchQuestionPojo(questionId, question, totalView, totalAnswer));
                         } else {
@@ -388,14 +408,14 @@ public class SearchClassFile {
                 try {
                     rs.close();
                 } catch (SQLException msg) {
-
+                    Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                 }
             }
             if (ps != null) {
                 try {
                     ps.close();
                 } catch (SQLException msg) {
-
+                    Logger.getLogger(SearchClassFile.class.getName()).log(Level.SEVERE, query, msg);
                 }
             }
         }

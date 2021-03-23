@@ -15,6 +15,7 @@
  */
 package com.topic;
 
+import com.connect.DatabaseConnection;
 import com.user.saveNewUser;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,15 +34,15 @@ public class selectSomeTopic {
 
     /**
      *
-     * @param con
      * @return @throws SQLException
      * @throws ClassNotFoundException
      */
-    public Map<Integer, String> SelectSomeTopic(Connection con) throws SQLException, ClassNotFoundException {
+    public Map<Integer, String> SelectSomeTopic() throws SQLException, ClassNotFoundException {
 
         Map<Integer, String> map = new HashMap<>();
 
-        try (PreparedStatement ps = con.prepareStatement("select unique_id,topic_name from topic where crawl = 1 order by rand() limit 500");
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement("select unique_id,topic_name from topic where crawl = 1 order by rand() limit 500");
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 map.put(rs.getInt("unique_id"), rs.getString("topic_name"));

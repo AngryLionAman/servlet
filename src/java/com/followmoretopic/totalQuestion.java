@@ -29,11 +29,9 @@ public class totalQuestion {
      */
     public int totalQestion(int topicId) throws SQLException, ClassNotFoundException, Exception {
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "select count(q.question_id)as cnt from topic t left join question_topic_tag q on q.tag_id = t.unique_id where t.unique_id =?";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, topicId);
 

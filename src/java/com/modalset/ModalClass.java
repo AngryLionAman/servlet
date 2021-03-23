@@ -43,11 +43,9 @@ public class ModalClass {
 
         List<String> list = new ArrayList<>();
 
-        DatabaseConnection connection = new DatabaseConnection();
-
         String sql = "SELECT answer FROM set_question_option WHERE question_id  = ? ORDER BY 1";
 
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, questionId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -74,9 +72,7 @@ public class ModalClass {
 
         HashMap<Integer, String> map = new HashMap<>();
         
-        DatabaseConnection connection = new DatabaseConnection();
-
-        try (Connection con = DatabaseConnection.makeConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
                 PreparedStatement ps = con.prepareStatement("SELECT unique_id, question FROM set_question");
                 ResultSet rs = ps.executeQuery()){
             while (rs.next()) {
@@ -109,7 +105,7 @@ public class ModalClass {
         ResultSet rs = null;
 
         try {
-            con = DatabaseConnection.makeConnection();
+            con = DatabaseConnection.getInstance().getConnection();
             String sql = "SELECT unique_id,question,correct_ans FROM set_question WHERE exam_of = ? AND set_no = ?";
             ps = con.prepareStatement(sql);
             ps.setString(1, exam_of);
@@ -163,7 +159,7 @@ public class ModalClass {
         ResultSet rs = null;
 
         try {
-            con = DatabaseConnection.makeConnection();
+            con = DatabaseConnection.getInstance().getConnection();
             String sql = "SELECT COUNT(*) AS cnt FROM set_question WHERE exam_of = ? AND set_no = ? GROUP BY exam_of";
             ps = con.prepareStatement(sql);
             ps.setString(1, exam_of);

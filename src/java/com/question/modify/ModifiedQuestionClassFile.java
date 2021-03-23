@@ -15,6 +15,7 @@
  */
 package com.question.modify;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -29,7 +30,6 @@ public class ModifiedQuestionClassFile {
 
     /**
      *
-     * @param con
      * @param userId
      * @param questionId
      * @param modified_question
@@ -38,7 +38,7 @@ public class ModifiedQuestionClassFile {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public boolean saveModifiedQuestion(Connection con, int userId, int questionId, String modified_question, int questionPostedBy) throws SQLException, ClassNotFoundException {
+    public boolean saveModifiedQuestion(int userId, int questionId, String modified_question, int questionPostedBy) throws SQLException, ClassNotFoundException {
 
         boolean approvelByUser = false;
 
@@ -48,7 +48,8 @@ public class ModifiedQuestionClassFile {
 
         String sql = "INSERT INTO modified_question_table (question_id,modified_question,modified_question_by,approved_by_user)VALUES(?,?,?,?)";
 
-        try (  PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, questionId);
             ps.setString(2, modified_question);

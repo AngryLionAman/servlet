@@ -15,6 +15,7 @@
  */
 package com.answer;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,25 +31,29 @@ import java.util.logging.Logger;
  */
 public class getAnswer {
 
-    private void updateAnswerCountByOne(Connection con, int answerId) throws SQLException, ClassNotFoundException, Exception {
+    private void updateAnswerCountByOne(int answerId) throws SQLException, ClassNotFoundException, Exception {
 
-        try (PreparedStatement ps = con.prepareStatement("UPDATE answer SET total_view = total_view + 1 WHERE a_id =?")) {
-            ps.setInt(1, answerId);
-            ps.execute();
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement("UPDATE answer SET total_view = total_view + 1 WHERE a_id =?")) {
+                ps.setInt(1, answerId);
+                ps.execute();
+            } catch (SQLException msg) {
+                Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
+            }
         } catch (SQLException msg) {
             Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
         }
+
     }
 
     /**
      *
-     * @param con
      * @param qId
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public List<getAnswerPojo> getAnswerById(Connection con, int qId) throws SQLException, ClassNotFoundException, Exception {
+    public List<getAnswerPojo> getAnswerById(int qId) throws SQLException, ClassNotFoundException, Exception {
 
         List<getAnswerPojo> list = new ArrayList<>();
 
@@ -56,30 +61,35 @@ public class getAnswer {
                 + "ans.answer AS answer,ans.a_id AS answerid,ans.total_view AS totalview,ans.vote AS vote FROM newuser user "
                 + "RIGHT JOIN answer ans ON user.id = ans.Answer_by_id WHERE q_id = ? AND ans.approved_by_admin = 1 "
                 + "AND approved_by_user = 1 ORDER BY vote DESC";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, qId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    int userId = rs.getInt("userid");
-                    String userType = rs.getString("usertype");
-                    String userName = rs.getString("username");
-                    String fullName = rs.getString("fullname");
-                    String answer = rs.getString("answer");
-                    int answerId = rs.getInt("answerid");
 
-                    try {
-                        updateAnswerCountByOne(con,answerId);
-                    } catch (Exception msg) {
-                        Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, qId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        int userId = rs.getInt("userid");
+                        String userType = rs.getString("usertype");
+                        String userName = rs.getString("username");
+                        String fullName = rs.getString("fullname");
+                        String answer = rs.getString("answer");
+                        int answerId = rs.getInt("answerid");
+
+                        try {
+                           // updateAnswerCountByOne(answerId);
+                        } catch (Exception msg) {
+                            Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
+                        }
+
+                        int totalView = rs.getInt("totalview");
+                        int vote = rs.getInt("vote");
+                        list.add(new getAnswerPojo(userId, userType, userName, fullName, answer, answerId, totalView, vote));
                     }
-
-                    int totalView = rs.getInt("totalview");
-                    int vote = rs.getInt("vote");
-                    list.add(new getAnswerPojo(userId, userType, userName, fullName, answer, answerId, totalView, vote));
+                    return list;
                 }
-                return list;
-            }
 
+            } catch (SQLException msg) {
+                Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
+            }
         } catch (SQLException msg) {
             Logger.getLogger(getAnswer.class.getName()).log(Level.SEVERE, null, msg);
         }

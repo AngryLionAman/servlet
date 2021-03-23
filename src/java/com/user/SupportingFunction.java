@@ -15,6 +15,7 @@
  */
 package com.user;
 
+import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,16 +32,16 @@ public class SupportingFunction {
 
     /**
      *
-     * @param con
      * @param userId
      * @return
      * @throws SQLException
      */
-    public String getEmailbyUserId(Connection con, int userId) throws SQLException {
-       
+    public String getEmailbyUserId(int userId) throws SQLException {
+
         String sql = "SELECT email FROM newuser WHERE id = ? LIMIT 1";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -53,17 +54,17 @@ public class SupportingFunction {
 
     /**
      *
-     * @param con
      * @param email
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String GetUserNameByEmail(Connection con, String email) throws SQLException, ClassNotFoundException {
+    public String GetUserNameByEmail(String email) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT username FROM newuser WHERE email = ? limit 1";
-       
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -78,17 +79,17 @@ public class SupportingFunction {
 
     /**
      *
-     * @param con
      * @param email
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public String GetFullNameByEmail(Connection con, String email) throws SQLException, ClassNotFoundException {
+    public String GetFullNameByEmail(String email) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT firstname FROM newuser WHERE email = ? limit 1";
-       
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -103,17 +104,17 @@ public class SupportingFunction {
 
     /**
      *
-     * @param con
      * @param email
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public int GetUserIdByEmail(Connection con, String email) throws SQLException, ClassNotFoundException {
+    public int GetUserIdByEmail(String email) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT id FROM newuser WHERE email = ? limit 1";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, email);
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -129,23 +130,23 @@ public class SupportingFunction {
 
     /**
      *
-     * @param con
      * @param username
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String CreateUsername(Connection con, String username) throws SQLException, ClassNotFoundException {
+    public String CreateUsername(String username) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT username FROM newuser WHERE username = ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.first()) {
                     Random rand = new Random();
                     int number = rand.nextInt(100);
-                    return CreateUsername(con, username + number);
+                    return CreateUsername(username + number);
                 } else {
                     return username;
                 }
@@ -159,17 +160,17 @@ public class SupportingFunction {
 
     /**
      *
-     * @param con
      * @param args
      * @return
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    public boolean EmailIsAvaliabe(Connection con, String args) throws SQLException, ClassNotFoundException {
+    public boolean EmailIsAvaliabe(String args) throws SQLException, ClassNotFoundException {
 
         String sql = "SELECT email FROM newuser WHERE email = ?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, args);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.first();

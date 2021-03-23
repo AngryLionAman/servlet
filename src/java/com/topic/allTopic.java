@@ -15,6 +15,7 @@
  */
 package com.topic;
 
+import com.connect.DatabaseConnection;
 import com.followmoretopic.totalQuestion;
 import com.index.indexPageExtraFunction;
 import java.sql.Connection;
@@ -34,14 +35,13 @@ public class allTopic {
 
     /**
      *
-     * @param con
      * @param pageNo
      * @param recordPerPage
      * @return
      * @throws SQLException
      * @throws Exception
      */
-    public List<allTopicPojo> topic(Connection con, int pageNo, int recordPerPage) throws SQLException, Exception {
+    public List<allTopicPojo> topic(int pageNo, int recordPerPage) throws SQLException, Exception {
 
         totalQuestion q = new totalQuestion();
         indexPageExtraFunction function = new indexPageExtraFunction();
@@ -51,21 +51,26 @@ public class allTopic {
 
         String sql = "select unique_id,topic_name,image_url from topic limit ?,?";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, startPage);
-            ps.setInt(2, recordPerPage);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    int topicId = rs.getInt("unique_id");
-                    String topicName = rs.getString("topic_name") == null ? "Unknown Topic" : rs.getString("topic_name");
-                    String imageUrl = rs.getString("image_url");
-                    int totalQuestion = q.totalQestion(topicId);
-                    int totalFollowers = function.totalFollowersOfTopic(con, topicId);
-                    list.add(new allTopicPojo(topicId, topicName, imageUrl, totalQuestion, totalFollowers));
+        try (Connection con = DatabaseConnection.getInstance().getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, startPage);
+                ps.setInt(2, recordPerPage);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        int topicId = rs.getInt("unique_id");
+                        String topicName = rs.getString("topic_name") == null ? "Unknown Topic" : rs.getString("topic_name");
+                        String imageUrl = rs.getString("image_url");
+                        int totalQuestion = 79;//q.totalQestion(topicId);
+                        int totalFollowers = 45;//function.totalFollowersOfTopic(topicId);
+                        list.add(new allTopicPojo(topicId, topicName, imageUrl, totalQuestion, totalFollowers));
+                    }
+                    return list;
+                } catch (SQLException msg) {
+                    Logger.getLogger(allTopic.class.getName()).log(Level.SEVERE, null, msg);
                 }
-                return list;
+            } catch (SQLException msg) {
+                Logger.getLogger(allTopic.class.getName()).log(Level.SEVERE, null, msg);
             }
-
         } catch (SQLException msg) {
             Logger.getLogger(allTopic.class.getName()).log(Level.SEVERE, null, msg);
         }

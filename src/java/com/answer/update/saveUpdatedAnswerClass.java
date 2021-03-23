@@ -15,7 +15,6 @@
  */
 package com.answer.update;
 
-import com.connect.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
