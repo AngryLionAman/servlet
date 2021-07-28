@@ -1,6 +1,13 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="modal fade" id="myModal2" role="dialog">
-    <b> Page under maintenance, Thanks for visiting </b>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                Welcome
+            </div>
+              Page under maintenance, Thanks for visiting
+        </div>
+    </div>
 </div>
 <footer style="text-align: center;">
     <a href="index" style="color: white;">Home</a> &nbsp;&nbsp;
