@@ -42,9 +42,11 @@ public class guestSaveQuestion extends HttpServlet {
      * @throws ClassNotFoundException
      * @throws Exception
      */
+    
+    /**
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException, ClassNotFoundException, Exception {
-/*
+        
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -92,10 +94,9 @@ public class guestSaveQuestion extends HttpServlet {
             request.setAttribute("id", questionId);
 
             request.getRequestDispatcher("questions").forward(request, response);
-        } */
-    request.getRequestDispatcher("Error404.jsp").forward(request, response);
+        } 
     }
-
+*/
     /**
      *
      * @param request
@@ -106,13 +107,13 @@ public class guestSaveQuestion extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
+     /**   try {
             processRequest(request, response);
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(guestSaveQuestion.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(guestSaveQuestion.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }   */
     }
 
     /**
@@ -125,12 +126,13 @@ public class guestSaveQuestion extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
+      /**  try {
             processRequest(request, response);
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(guestSaveQuestion.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(guestSaveQuestion.class.getName()).log(Level.SEVERE, null, ex);
         }
+        **/
     }
 }
