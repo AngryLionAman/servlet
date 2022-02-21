@@ -1,0 +1,38 @@
+  yum update -y // Update complete system without asking the "Yes" permission
+ yum update // Update the complete system
+ java -version // To check the current java version
+ yum install tomcat // To install the tomcat server
+ yum install tomcat-webapps tomcat-admin-webapps tomcat-docs-webapps tomcat-javadoc // To download the specific file
+ sudo service tomcat start // To start the tomcat server
+ service tomcat stop // to stop the tomcat server
+ systemctl start tomcat // Also work to start the tomcat server
+ sudo systemctl stop tomcat // Also work to stop the tomcat server
+ sudo service tomcat status // To check the server status. It's running or not
+ sudo systemctl status nginx // for nginx server
+ sudo systemctl stop nginx
+ sudo systemctl start nginx
+ sudo systemctl reload nginx //Restart Nginx
+ sudo systemctl restart nginx // Force Restart Nginx
+//Job for nginx.service failed because a configured resource limit was exceeded. See "systemctl status //nginx.service" and "journalctl -xe" for details.
+//Try to run the following two commands: // Nginx
+ sudo fuser -k 80/tcp
+ sudo fuser -k 443/tcp
+		Then execute
+ sudo service nginx restart
+
+ netstat -lnp | grep 8080 // List the all running port and find with 8000 
+3.108.254.47 // Public ip for my aws linux instance
+sudo nano /usr/share/tomcat/conf/tomcat-users.xml //to Edit the username nad password and alow the permission to specific app
+Since late 2012, it is usually under /usr/share/tomcat7
+
+To compile the file, open your terminal and type
+
+javac filename.java
+To run the generated class file, use
+
+java filename
+
+
+
+
+TASKKILL /F /IM httpd.exe /T      (To shutdown the all apache running instance, make sure run cmd as administrator)
